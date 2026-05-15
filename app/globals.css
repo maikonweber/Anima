@@ -1,0 +1,124 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f8f7fc;
+  --foreground: #171717;
+
+  --emotion-joy: #F5D76E;
+  --emotion-sadness: #7EB8DA;
+  --emotion-fear: #B8A4E8;
+  --emotion-anger: #E88B8B;
+  --emotion-disgust: #7BC67E;
+  --emotion-surprise: #F5A962;
+
+  --anima-violet: #7c5cbf;
+  --anima-lilac: #c3a6e8;
+  --anima-indigo: #5b6abf;
+  --anima-surface-glass: rgba(255, 255, 255, 0.6);
+  --anima-border-glass: rgba(255, 255, 255, 0.25);
+  --anima-glow: rgba(124, 92, 191, 0.25);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  --color-emotion-joy: var(--emotion-joy);
+  --color-emotion-sadness: var(--emotion-sadness);
+  --color-emotion-fear: var(--emotion-fear);
+  --color-emotion-anger: var(--emotion-anger);
+  --color-emotion-disgust: var(--emotion-disgust);
+  --color-emotion-surprise: var(--emotion-surprise);
+
+  --color-anima-violet: var(--anima-violet);
+  --color-anima-lilac: var(--anima-lilac);
+  --color-anima-indigo: var(--anima-indigo);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0c0a14;
+    --foreground: #ededed;
+
+    --anima-surface-glass: rgba(255, 255, 255, 0.06);
+    --anima-border-glass: rgba(255, 255, 255, 0.1);
+    --anima-glow: rgba(124, 92, 191, 0.35);
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+/* Glass panel utility */
+.glass-panel {
+  background: var(--anima-surface-glass);
+  border: 1px solid var(--anima-border-glass);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-radius: 1.5rem;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Emotion glow utility */
+.emotion-glow {
+  box-shadow: 0 0 30px -8px var(--anima-glow);
+}
+
+/* Emotion pulse keyframes */
+@keyframes emotion-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.06);
+    opacity: 0.85;
+  }
+}
+
+@keyframes emotion-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes gentle-float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.animate-emotion-pulse {
+  animation: emotion-pulse 3s ease-in-out infinite;
+}
+
+.animate-emotion-fade-in {
+  animation: emotion-fade-in 0.5s ease-out both;
+}
+
+.animate-gentle-float {
+  animation: gentle-float 6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-emotion-pulse,
+  .animate-emotion-fade-in,
+  .animate-gentle-float {
+    animation: none;
+  }
+}
