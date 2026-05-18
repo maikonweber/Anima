@@ -2,9 +2,11 @@
 
 import { use, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ApiError } from "@/lib/api-client";
 import {
   useAnalyzeDiaryEntry,
+  useDeleteDiaryEntry,
   useDiaryAnalysis,
   useDiaryEntry,
 } from "@/hooks/use-diary";
@@ -19,11 +21,16 @@ export default function DiaryDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = use(params);
+  const router = useRouter();
   const { data: entry, isLoading: loadingEntry, error: entryError, refetch: refetchEntry } = useDiaryEntry(id);
   const { data: analysis, isLoading: loadingAnalysis, refetch: refetchAnalysis } = useDiaryAnalysis(id);
   const analyze = useAnalyzeDiaryEntry();
+  const deleteEntry = useDeleteDiaryEntry();
   const [analyzeError, setAnalyzeError] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
   const didAutoAnalyze = useRef(false);
+
+  const forbidden = entryError instanceof ApiError && entryError.status === 403;
 
   useEffect(() => {
     if (didAutoAnalyze.current || loadingEntry || !entry || analysis) return;
@@ -49,6 +56,23 @@ export default function DiaryDetailPage({
     }
   }
 
+  async function handleDelete() {
+    if (!window.confirm("Excluir este registro? Esta ação não pode ser desfeita.")) {
+      return;
+    }
+    setDeleteError(null);
+    try {
+      await deleteEntry.mutateAsync(id);
+      router.push("/diary");
+    } catch (err) {
+      setDeleteError(
+        err instanceof ApiError
+          ? err.message
+          : "Não foi possível excluir o registro.",
+      );
+    }
+  }
+
   if (loadingEntry) {
     return <DiaryDetailSkeleton />;
   }
@@ -57,7 +81,11 @@ export default function DiaryDetailPage({
     return (
       <div className="max-w-2xl mx-auto px-4 py-12">
         <ErrorMessage
-          message="Registro não encontrado."
+          message={
+            forbidden
+              ? entryError.message
+              : "Registro não encontrado."
+          }
           onRetry={() => refetchEntry()}
         />
         <Link href="/diary" className="block mt-4 text-sm text-anima-violet">
@@ -72,12 +100,36 @@ export default function DiaryDetailPage({
 
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
-      <Link
-        href="/diary"
-        className="text-xs text-foreground/40 hover:text-anima-violet transition-colors"
-      >
-        ← Histórico
-      </Link>
+      <div className="flex items-center justify-between gap-4">
+        <Link
+          href="/diary"
+          className="text-xs text-foreground/40 hover:text-anima-violet transition-colors"
+        >
+          ← Histórico
+        </Link>
+        <div className="flex gap-2">
+          <Link
+            href={`/diary/${id}/edit`}
+            className="text-xs px-3 py-1.5 rounded-full border border-foreground/[0.1] text-foreground/60 hover:text-anima-violet hover:border-anima-violet/30 transition-colors"
+          >
+            Editar
+          </Link>
+          <button
+            type="button"
+            onClick={handleDelete}
+            disabled={deleteEntry.isPending}
+            className="text-xs px-3 py-1.5 rounded-full border border-red-400/20 text-red-400/80 hover:bg-red-500/10 transition-colors disabled:opacity-50"
+          >
+            {deleteEntry.isPending ? "Excluindo..." : "Excluir"}
+          </button>
+        </div>
+      </div>
+
+      {deleteError && (
+        <div className="mt-4">
+          <ErrorMessage message={deleteError} />
+        </div>
+      )}
 
       <header className="mt-4 mb-8">
         <p className="text-xs text-foreground/35 mb-2">
@@ -138,7 +190,7 @@ function DiaryDetailMeta({
 }: {
   energia: number;
   style: ReturnType<typeof getCategoryStyle>;
-  emotions?: { nome: string; cor?: string }[];
+  emotions?: { nome: string; cor?: string | null }[];
 }) {
   return (
     <div className="flex flex-wrap items-center gap-3">

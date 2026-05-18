@@ -30,12 +30,17 @@ export interface Emotion {
   atualizadoEm: string;
 }
 
+export interface DiaryEmotion {
+  emotionId: string;
+  intensidade?: number;
+}
+
 export interface DiaryEntryEmotion {
   id: string;
   emotionId: string;
-  intensidade?: number;
+  intensidade: number | null;
   nome: string;
-  cor?: string;
+  cor: string | null;
 }
 
 export interface DiaryEntry {
@@ -43,20 +48,53 @@ export interface DiaryEntry {
   userId: string;
   texto: string;
   energiaInformada: number;
-  observacoes?: string;
+  observacoes: string | null;
   dataRegistro: string;
   criadoEm: string;
   atualizadoEm: string;
   emotions?: DiaryEntryEmotion[];
 }
 
-export interface DiaryEntryInput {
-  userId: string;
+export type DiaryEntryDetail = DiaryEntry & {
+  emotions: DiaryEntryEmotion[];
+};
+
+export interface CreateDiaryEntry {
   texto: string;
   energiaInformada: number;
-  emotions: { emotionId: string; intensidade?: number }[];
+  emotions: DiaryEmotion[];
   observacoes?: string;
   dataRegistro?: string;
+}
+
+export interface UpdateDiaryEntry {
+  texto?: string;
+  energiaInformada?: number;
+  emotions?: DiaryEmotion[];
+  observacoes?: string | null;
+  dataRegistro?: string;
+}
+
+/** @deprecated Use CreateDiaryEntry */
+export type DiaryEntryInput = CreateDiaryEntry;
+
+export interface DiaryEntriesQuery {
+  page?: number;
+  limit?: number;
+  from?: string;
+  to?: string;
+}
+
+export interface PaginatedMeta {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+
+export interface PaginatedDiaryEntries {
+  data: DiaryEntry[];
+  meta: PaginatedMeta;
 }
 
 export interface DiaryAnalysis {
@@ -104,4 +142,8 @@ export interface RegulationPractice {
   tipo?: string;
   criadoEm: string;
   atualizadoEm: string;
+}
+
+export interface DeleteDiaryEntryResponse {
+  message: string;
 }

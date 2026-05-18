@@ -1,48 +1,84 @@
 import { api, ApiError } from "@/lib/api-client";
 import type {
+  CreateDiaryEntry,
+  DeleteDiaryEntryResponse,
   DiaryAnalysis,
-  DiaryEntry,
-  DiaryEntryInput,
+  DiaryEntriesQuery,
+  DiaryEntryDetail,
   Emotion,
+  PaginatedDiaryEntries,
+  UpdateDiaryEntry,
   WeekSummary,
 } from "@/lib/types";
 
-export async function fetchEmotions(token?: string) {
-  return api<Emotion[]>("/emotions", { token });
+function buildQuery(params: Record<string, string | number | undefined>): string {
+  const search = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) {
+    if (value !== undefined && value !== "") {
+      search.set(key, String(value));
+    }
+  }
+  const qs = search.toString();
+  return qs ? `?${qs}` : "";
 }
 
-export async function createDiaryEntry(data: DiaryEntryInput, token?: string) {
-  return api<DiaryEntry>("/diary-entries", {
+export async function fetchEmotions() {
+  return api<Emotion[]>("/emotions");
+}
+
+export async function createDiaryEntry(data: CreateDiaryEntry) {
+  return api<DiaryEntryDetail>("/diary-entries", {
     method: "POST",
     body: JSON.stringify(data),
-    token,
+    auth: true,
   });
 }
 
-export async function fetchDiaryEntry(id: string, token?: string) {
-  return api<DiaryEntry>(`/diary-entries/${id}`, { token });
+export async function fetchDiaryEntries(query: DiaryEntriesQuery = {}) {
+  const qs = buildQuery({
+    page: query.page ?? 1,
+    limit: query.limit ?? 20,
+    from: query.from,
+    to: query.to,
+  });
+  return api<PaginatedDiaryEntries>(`/diary-entries${qs}`, { auth: true });
 }
 
-export async function fetchUserDiaryEntries(userId: string, token?: string) {
-  return api<DiaryEntry[]>(`/users/${userId}/diary-entries`, { token });
+export async function fetchDiaryEntry(id: string) {
+  return api<DiaryEntryDetail>(`/diary-entries/${id}`, { auth: true });
 }
 
-export async function fetchWeekSummary(userId: string, token?: string) {
-  return api<WeekSummary>(`/users/${userId}/diary-entries/week-summary`, {
-    token,
+export async function updateDiaryEntry(id: string, data: UpdateDiaryEntry) {
+  return api<DiaryEntryDetail>(`/diary-entries/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(data),
+    auth: true,
   });
 }
 
-export async function analyzeDiaryEntry(id: string, token?: string) {
+export async function deleteDiaryEntry(id: string) {
+  return api<DeleteDiaryEntryResponse>(`/diary-entries/${id}`, {
+    method: "DELETE",
+    auth: true,
+  });
+}
+
+export async function fetchWeekSummary() {
+  return api<WeekSummary>("/diary-entries/week-summary", { auth: true });
+}
+
+export async function analyzeDiaryEntry(id: string) {
   return api<DiaryAnalysis>(`/diary-entries/${id}/analyze`, {
     method: "POST",
-    token,
+    auth: true,
   });
 }
 
-export async function fetchDiaryAnalysis(id: string, token?: string) {
+export async function fetchDiaryAnalysis(id: string) {
   try {
-    return await api<DiaryAnalysis>(`/diary-entries/${id}/analysis`, { token });
+    return await api<DiaryAnalysis>(`/diary-entries/${id}/analysis`, {
+      auth: true,
+    });
   } catch (e) {
     if (e instanceof ApiError && e.status === 404) return null;
     throw e;

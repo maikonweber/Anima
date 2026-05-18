@@ -9,7 +9,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { ApiError } from "@/lib/api-client";
+import { ApiError, configureApiClient } from "@/lib/api-client";
 import { loginApi, meApi, registerApi } from "@/lib/api/auth";
 import {
   clearAuth,
@@ -47,6 +47,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setState({ user: null, accessToken: null, isLoading: false });
   }, []);
 
+  const handleUnauthorized = useCallback(() => {
+    clearAuth();
+    setState({ user: null, accessToken: null, isLoading: false });
+    if (
+      typeof window !== "undefined" &&
+      !window.location.pathname.startsWith("/login") &&
+      !window.location.pathname.startsWith("/register")
+    ) {
+      window.location.href = "/login";
+    }
+  }, []);
+
+  useEffect(() => {
+    configureApiClient({
+      getToken: () => getStoredToken(),
+      onUnauthorized: handleUnauthorized,
+    });
+  }, [handleUnauthorized]);
+
   useEffect(() => {
     const token = getStoredToken();
     const storedUser = getStoredUser();
@@ -63,7 +82,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       })
       .catch((err: unknown) => {
         if (err instanceof ApiError && err.status === 401) {
-          clearAuth();
+          handleUnauthorized();
+          return;
         }
         setState({
           user: storedUser,

@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ApiError } from "@/lib/api-client";
 import { diaryEntrySchema } from "@/lib/validations/diary";
-import { useAuth } from "@/providers/auth-provider";
 import { useCreateDiaryEntry, useEmotions } from "@/hooks/use-diary";
 import { EnergySlider } from "@/components/diary/EnergySlider";
 import { EmotionPicker, type SelectedEmotion } from "@/components/diary/EmotionPicker";
@@ -14,7 +13,6 @@ import { ErrorMessage } from "@/components/ui/ErrorMessage";
 
 export default function NewDiaryPage() {
   const router = useRouter();
-  const { user } = useAuth();
   const { data: emotions = [], isLoading: loadingEmotions, error: emotionsError, refetch } = useEmotions();
   const createEntry = useCreateDiaryEntry();
 
@@ -27,8 +25,6 @@ export default function NewDiaryPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setFormError(null);
-
-    if (!user) return;
 
     const parsed = diaryEntrySchema.safeParse({
       texto,
@@ -44,7 +40,6 @@ export default function NewDiaryPage() {
 
     try {
       const entry = await createEntry.mutateAsync({
-        userId: user.id,
         texto: parsed.data.texto,
         energiaInformada: parsed.data.energiaInformada,
         emotions: parsed.data.emotions,

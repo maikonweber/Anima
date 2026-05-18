@@ -1,13 +1,36 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
+import { ApiError } from "@/lib/api-client";
 import { useDiaryEntries } from "@/hooks/use-diary";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { getCategoryFromEnergy, getCategoryStyle } from "@/lib/energy";
 import { Button } from "@/components/ui/Button";
 
+const PAGE_SIZE = 20;
+
 export default function DiaryListPage() {
-  const { data: entries = [], isLoading, error, refetch } = useDiaryEntries();
+  const [page, setPage] = useState(1);
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
+
+  const { data, isLoading, error, refetch } = useDiaryEntries({
+    page,
+    limit: PAGE_SIZE,
+    from: from || undefined,
+    to: to || undefined,
+  });
+
+  const entries = data?.data ?? [];
+  const meta = data?.meta;
+  const forbidden = error instanceof ApiError && error.status === 403;
+
+  function clearDateFilter() {
+    setFrom("");
+    setTo("");
+    setPage(1);
+  }
 
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
@@ -24,16 +47,57 @@ export default function DiaryListPage() {
           href="/diary/new"
           className="shrink-0 px-4 py-2 rounded-full text-sm font-medium text-white"
           style={{
-            background: "linear-gradient(135deg, var(--anima-violet), var(--anima-indigo))",
+            background:
+              "linear-gradient(135deg, var(--anima-violet), var(--anima-indigo))",
           }}
         >
           + Novo
         </Link>
       </div>
 
+      <div className="glass-panel p-4 mb-6 flex flex-wrap items-end gap-3">
+        <div className="flex flex-col gap-1">
+          <label htmlFor="from" className="text-xs text-foreground/40">
+            De
+          </label>
+          <input
+            id="from"
+            type="date"
+            value={from}
+            onChange={(e) => setFrom(e.target.value)}
+            className="text-sm bg-foreground/[0.04] border border-foreground/[0.08] rounded-lg px-3 py-1.5 text-foreground/80"
+          />
+        </div>
+        <div className="flex flex-col gap-1">
+          <label htmlFor="to" className="text-xs text-foreground/40">
+            Até
+          </label>
+          <input
+            id="to"
+            type="date"
+            value={to}
+            onChange={(e) => setTo(e.target.value)}
+            className="text-sm bg-foreground/[0.04] border border-foreground/[0.08] rounded-lg px-3 py-1.5 text-foreground/80"
+          />
+        </div>
+        {(from || to) && (
+          <button
+            type="button"
+            onClick={clearDateFilter}
+            className="text-xs text-foreground/40 hover:text-anima-violet transition-colors pb-2"
+          >
+            Limpar filtros
+          </button>
+        )}
+      </div>
+
       {error && (
         <ErrorMessage
-          message="Não foi possível carregar o histórico."
+          message={
+            forbidden
+              ? error.message
+              : "Não foi possível carregar o histórico."
+          }
           onRetry={() => refetch()}
         />
       )}
@@ -41,7 +105,10 @@ export default function DiaryListPage() {
       {isLoading && (
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-24 rounded-2xl bg-foreground/[0.06] animate-pulse" />
+            <div
+              key={i}
+              className="h-24 rounded-2xl bg-foreground/[0.06] animate-pulse"
+            />
           ))}
         </div>
       )}
@@ -84,12 +151,38 @@ export default function DiaryListPage() {
                     {entry.energiaInformada} — {style.label}
                   </span>
                 </div>
-                <p className="text-sm text-foreground/70 line-clamp-2">{entry.texto}</p>
+                <p className="text-sm text-foreground/70 line-clamp-2">
+                  {entry.texto}
+                </p>
               </Link>
             </li>
           );
         })}
       </ul>
+
+      {meta && meta.totalPages > 1 && (
+        <div className="flex items-center justify-between mt-8 pt-4 border-t border-foreground/[0.06]">
+          <Button
+            type="button"
+            variant="secondary"
+            disabled={page <= 1}
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+          >
+            ← Anterior
+          </Button>
+          <span className="text-xs text-foreground/40">
+            Página {meta.page} de {meta.totalPages} ({meta.total} registros)
+          </span>
+          <Button
+            type="button"
+            variant="secondary"
+            disabled={page >= meta.totalPages}
+            onClick={() => setPage((p) => p + 1)}
+          >
+            Próxima →
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
