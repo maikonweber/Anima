@@ -12,6 +12,7 @@ import type { User, AuthState } from "./types";
 
 interface AuthContextValue extends AuthState {
   login: (email: string, password: string) => Promise<void>;
+  register: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
   resetPassword: (email: string) => Promise<void>;
 }
@@ -45,12 +46,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const login = useCallback(async (email: string, _password: string) => {
-    await new Promise((r) => setTimeout(r, 800));
-    const user: User = { ...MOCK_USER, email };
+  const persistUser = useCallback((user: User) => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
     setState({ user, isLoading: false });
   }, []);
+
+  const login = useCallback(
+    async (email: string, _password: string) => {
+      await new Promise((r) => setTimeout(r, 800));
+      persistUser({ ...MOCK_USER, email });
+    },
+    [persistUser],
+  );
+
+  const register = useCallback(
+    async (name: string, email: string, _password: string) => {
+      await new Promise((r) => setTimeout(r, 800));
+      persistUser({
+        id: crypto.randomUUID(),
+        name: name.trim(),
+        email: email.trim(),
+      });
+    },
+    [persistUser],
+  );
 
   const logout = useCallback(() => {
     localStorage.removeItem(STORAGE_KEY);
@@ -63,7 +82,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ ...state, login, logout, resetPassword }}
+      value={{ ...state, login, register, logout, resetPassword }}
     >
       {children}
     </AuthContext.Provider>

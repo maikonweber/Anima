@@ -21,7 +21,7 @@ export default function Home() {
             Entrar
           </Link>
           <Link
-            href="/login"
+            href="/register"
             className="px-4 py-2 rounded-full text-sm font-medium text-white transition-all duration-200 hover:shadow-lg hover:shadow-[var(--anima-glow)]"
             style={{
               background:
@@ -56,7 +56,7 @@ export default function Home() {
         </p>
         <div className="relative flex gap-3">
           <Link
-            href="/login"
+            href="/register"
             className="px-8 py-3 rounded-full text-sm font-semibold text-white transition-all duration-200 hover:shadow-xl hover:shadow-[var(--anima-glow)] hover:scale-105"
             style={{
               background:
@@ -201,7 +201,7 @@ export default function Home() {
             sobre você.
           </p>
           <Link
-            href="/login"
+            href="/register"
             className="inline-block px-8 py-3 rounded-full text-sm font-semibold text-white transition-all duration-200 hover:shadow-xl hover:shadow-[var(--anima-glow)] hover:scale-105"
             style={{
               background:

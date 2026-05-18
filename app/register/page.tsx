@@ -8,26 +8,42 @@ import { AuthLayout } from "@/components/ui/AuthLayout";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const router = useRouter();
-  const { login } = useAuth();
+  const { register } = useAuth();
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    if (!email.trim() || !password.trim()) return;
-
-    setIsLoading(true);
     setError(null);
 
+    if (!name.trim() || !email.trim() || !password.trim()) {
+      setError("Preencha todos os campos obrigatórios.");
+      return;
+    }
+
+    if (password.length < 6) {
+      setError("A senha deve ter pelo menos 6 caracteres.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError("As senhas não coincidem.");
+      return;
+    }
+
+    setIsLoading(true);
+
     try {
-      await login(email, password);
+      await register(name, email, password);
       router.push("/dashboard");
     } catch {
-      setError("Email ou senha incorretos. Tente novamente.");
+      setError("Não foi possível criar sua conta. Tente novamente.");
     } finally {
       setIsLoading(false);
     }
@@ -35,8 +51,8 @@ export default function LoginPage() {
 
   return (
     <AuthLayout
-      title="Bem-vindo de volta"
-      subtitle="Entre para continuar sua jornada emocional"
+      title="Criar sua conta"
+      subtitle="Comece sua jornada de autoconhecimento emocional"
     >
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         {error && (
@@ -44,6 +60,16 @@ export default function LoginPage() {
             {error}
           </div>
         )}
+
+        <Input
+          label="Nome"
+          type="text"
+          placeholder="Como podemos te chamar?"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          autoComplete="name"
+          required
+        />
 
         <Input
           label="Email"
@@ -58,46 +84,34 @@ export default function LoginPage() {
         <Input
           label="Senha"
           type="password"
-          placeholder="Sua senha"
+          placeholder="Mínimo 6 caracteres"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          autoComplete="current-password"
+          autoComplete="new-password"
           required
         />
 
-        <div className="flex justify-end">
-          <Link
-            href="/reset-password"
-            className="text-xs text-anima-violet hover:text-anima-lilac transition-colors"
-          >
-            Esqueceu a senha?
-          </Link>
-        </div>
+        <Input
+          label="Confirmar senha"
+          type="password"
+          placeholder="Repita sua senha"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          autoComplete="new-password"
+          required
+        />
 
         <Button type="submit" isLoading={isLoading} className="mt-2">
-          Entrar
+          Criar conta
         </Button>
 
-        <div className="relative my-3">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-foreground/[0.06]" />
-          </div>
-          <div className="relative flex justify-center text-xs">
-            <span className="bg-background px-3 text-foreground/30">ou</span>
-          </div>
-        </div>
-
-        <Button type="button" variant="secondary" disabled>
-          Continuar com Google
-        </Button>
-
-        <p className="text-center text-xs text-foreground/40 mt-4">
-          Ainda não tem conta?{" "}
+        <p className="text-center text-xs text-foreground/40 mt-2">
+          Já tem conta?{" "}
           <Link
-            href="/register"
+            href="/login"
             className="text-anima-violet hover:text-anima-lilac transition-colors font-medium"
           >
-            Criar conta
+            Entrar
           </Link>
         </p>
       </form>
