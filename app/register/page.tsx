@@ -3,7 +3,8 @@
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useAuth } from "@/lib/auth/AuthContext";
+import { ApiError } from "@/lib/api-client";
+import { useAuth } from "@/providers/auth-provider";
 import { AuthLayout } from "@/components/ui/AuthLayout";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
@@ -42,8 +43,12 @@ export default function RegisterPage() {
     try {
       await register(name, email, password);
       router.push("/dashboard");
-    } catch {
-      setError("Não foi possível criar sua conta. Tente novamente.");
+    } catch (err) {
+      setError(
+        err instanceof ApiError
+          ? err.message
+          : "Não foi possível criar sua conta. Tente novamente.",
+      );
     } finally {
       setIsLoading(false);
     }

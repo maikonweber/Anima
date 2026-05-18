@@ -3,7 +3,8 @@
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "motion/react";
-import { useAuth } from "@/lib/auth/AuthContext";
+import { ApiError } from "@/lib/api-client";
+import { useAuth } from "@/providers/auth-provider";
 import { AuthLayout } from "@/components/ui/AuthLayout";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
@@ -25,8 +26,12 @@ export default function ResetPasswordPage() {
     try {
       await resetPassword(email);
       setIsSent(true);
-    } catch {
-      setError("Não foi possível enviar o email. Tente novamente.");
+    } catch (err) {
+      setError(
+        err instanceof ApiError
+          ? err.message
+          : "Não foi possível enviar o email. Tente novamente.",
+      );
     } finally {
       setIsLoading(false);
     }

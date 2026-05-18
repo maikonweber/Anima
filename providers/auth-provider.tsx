@@ -1,0 +1,114 @@
+"use client";
+
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
+import { ApiError } from "@/lib/api-client";
+import { loginApi, meApi, registerApi } from "@/lib/api/auth";
+import {
+  clearAuth,
+  getStoredToken,
+  getStoredUser,
+  persistAuth,
+} from "@/lib/auth/storage";
+import type { User } from "@/lib/types";
+
+interface AuthState {
+  user: User | null;
+  accessToken: string | null;
+  isLoading: boolean;
+}
+
+interface AuthContextValue extends AuthState {
+  login: (email: string, senha: string) => Promise<void>;
+  register: (nome: string, email: string, senha: string) => Promise<void>;
+  logout: () => void;
+  resetPassword: (email: string) => Promise<void>;
+  getToken: () => string | null;
+}
+
+const AuthContext = createContext<AuthContextValue | null>(null);
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [state, setState] = useState<AuthState>({
+    user: null,
+    accessToken: null,
+    isLoading: true,
+  });
+
+  const logout = useCallback(() => {
+    clearAuth();
+    setState({ user: null, accessToken: null, isLoading: false });
+  }, []);
+
+  useEffect(() => {
+    const token = getStoredToken();
+    const storedUser = getStoredUser();
+
+    if (!token) {
+      setState({ user: null, accessToken: null, isLoading: false });
+      return;
+    }
+
+    meApi(token)
+      .then((user) => {
+        persistAuth(token, user);
+        setState({ user, accessToken: token, isLoading: false });
+      })
+      .catch((err: unknown) => {
+        if (err instanceof ApiError && err.status === 401) {
+          clearAuth();
+        }
+        setState({
+          user: storedUser,
+          accessToken: storedUser ? token : null,
+          isLoading: false,
+        });
+      });
+  }, []);
+
+  const login = useCallback(async (email: string, senha: string) => {
+    const { accessToken, user } = await loginApi(email, senha);
+    persistAuth(accessToken, user);
+    setState({ user, accessToken, isLoading: false });
+  }, []);
+
+  const register = useCallback(
+    async (nome: string, email: string, senha: string) => {
+      const { accessToken, user } = await registerApi(nome, email, senha);
+      persistAuth(accessToken, user);
+      setState({ user, accessToken, isLoading: false });
+    },
+    [],
+  );
+
+  const getToken = useCallback(() => state.accessToken, [state.accessToken]);
+
+  const resetPassword = useCallback(async (_email: string) => {
+    throw new ApiError(
+      501,
+      "Redefinição de senha não disponível neste MVP.",
+    );
+  }, []);
+
+  const value = useMemo(
+    () => ({ ...state, login, register, logout, resetPassword, getToken }),
+    [state, login, register, logout, resetPassword, getToken],
+  );
+
+  return (
+    <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+  );
+}
+
+export function useAuth() {
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error("useAuth must be used within AuthProvider");
+  return ctx;
+}

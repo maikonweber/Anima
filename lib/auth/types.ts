@@ -1,11 +1,6 @@
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  avatarUrl?: string;
-}
+export type { User } from "@/lib/types";
 
 export interface AuthState {
-  user: User | null;
+  user: import("@/lib/types").User | null;
   isLoading: boolean;
 }

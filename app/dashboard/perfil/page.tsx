@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
-import { useAuth } from "@/lib/auth/AuthContext";
+import { useAuth } from "@/providers/auth-provider";
 import { Button } from "@/components/ui/Button";
 
 export default function PerfilPage() {
@@ -28,12 +28,12 @@ export default function PerfilPage() {
         <div className="flex items-center gap-4 mb-6">
           <div className="w-14 h-14 rounded-full bg-anima-violet/15 flex items-center justify-center">
             <span className="text-xl font-bold text-anima-violet">
-              {user?.name?.charAt(0) ?? "U"}
+              {user?.nome?.charAt(0) ?? "U"}
             </span>
           </div>
           <div>
             <h2 className="text-lg font-semibold text-foreground/80">
-              {user?.name}
+              {user?.nome}
             </h2>
             <p className="text-sm text-foreground/40">{user?.email}</p>
           </div>
@@ -43,7 +43,7 @@ export default function PerfilPage() {
           <div className="flex justify-between items-center">
             <span className="text-sm text-foreground/50">Nome</span>
             <span className="text-sm font-medium text-foreground/70">
-              {user?.name}
+              {user?.nome}
             </span>
           </div>
           <div className="flex justify-between items-center">

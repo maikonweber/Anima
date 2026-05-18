@@ -3,7 +3,8 @@
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useAuth } from "@/lib/auth/AuthContext";
+import { ApiError } from "@/lib/api-client";
+import { useAuth } from "@/providers/auth-provider";
 import { AuthLayout } from "@/components/ui/AuthLayout";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
@@ -26,8 +27,12 @@ export default function LoginPage() {
     try {
       await login(email, password);
       router.push("/dashboard");
-    } catch {
-      setError("Email ou senha incorretos. Tente novamente.");
+    } catch (err) {
+      setError(
+        err instanceof ApiError
+          ? err.message
+          : "Email ou senha incorretos. Tente novamente.",
+      );
     } finally {
       setIsLoading(false);
     }
