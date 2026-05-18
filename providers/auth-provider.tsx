@@ -29,7 +29,6 @@ interface AuthContextValue extends AuthState {
   login: (email: string, senha: string) => Promise<void>;
   register: (nome: string, email: string, senha: string) => Promise<void>;
   logout: () => void;
-  resetPassword: (email: string) => Promise<void>;
   getToken: () => string | null;
 }
 
@@ -53,7 +52,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (
       typeof window !== "undefined" &&
       !window.location.pathname.startsWith("/login") &&
-      !window.location.pathname.startsWith("/register")
+      !window.location.pathname.startsWith("/register") &&
+      !window.location.pathname.startsWith("/forgot-password") &&
+      !window.location.pathname.startsWith("/reset-password")
     ) {
       window.location.href = "/login";
     }
@@ -110,16 +111,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const getToken = useCallback(() => state.accessToken, [state.accessToken]);
 
-  const resetPassword = useCallback(async (_email: string) => {
-    throw new ApiError(
-      501,
-      "Redefinição de senha não disponível neste MVP.",
-    );
-  }, []);
-
   const value = useMemo(
-    () => ({ ...state, login, register, logout, resetPassword, getToken }),
-    [state, login, register, logout, resetPassword, getToken],
+    () => ({ ...state, login, register, logout, getToken }),
+    [state, login, register, logout, getToken],
   );
 
   return (

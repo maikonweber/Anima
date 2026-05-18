@@ -53,6 +53,8 @@ Depois de salvar, faça um **Redeploy** (variáveis `NEXT_PUBLIC_*` entram no bu
 |------|-----------|
 | `/` | Landing |
 | `/login`, `/register` | Autenticação |
+| `/forgot-password` | Solicitar link de redefinição de senha |
+| `/reset-password?token=...` | Nova senha (link do e-mail) |
 | `/dashboard` | Resumo semanal + atalho novo registro |
 | `/diary/new` | Formulário de novo registro |
 | `/diary/[id]` | Detalhe + análise IA |
@@ -77,7 +79,8 @@ components/
 1. Login/registro → token em `localStorage` + redirecionamento para `/dashboard`
 2. Novo registro em `/diary/new` → `POST /diary-entries`
 3. Redirecionamento para `/diary/[id]` → análise automática via `POST /diary-entries/:id/analyze`
-4. Dashboard consome `GET /users/:userId/diary-entries/week-summary`
+4. Dashboard consome `GET /diary-entries/week-summary` (JWT)
+5. Esqueci a senha: `POST /auth/forgot-password` → e-mail com link para `/reset-password?token=...` → `POST /auth/reset-password`
 
 ## Scripts
 

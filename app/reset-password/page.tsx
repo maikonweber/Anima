@@ -1,129 +1,152 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { Suspense, useState, type FormEvent } from "react";
 import Link from "next/link";
-import { motion, AnimatePresence } from "motion/react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ApiError } from "@/lib/api-client";
-import { useAuth } from "@/providers/auth-provider";
+import { resetPasswordApi } from "@/lib/api/auth";
+import { resetPasswordFormSchema } from "@/lib/validations/auth";
 import { AuthLayout } from "@/components/ui/AuthLayout";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 
-export default function ResetPasswordPage() {
-  const { resetPassword } = useAuth();
-  const [email, setEmail] = useState("");
+function ResetPasswordForm() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token")?.trim() ?? "";
+
+  const [senha, setSenha] = useState("");
+  const [confirmarSenha, setConfirmarSenha] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isSent, setIsSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  if (!token) {
+    return (
+      <div className="flex flex-col gap-4 text-center py-2">
+        <p className="text-sm text-foreground/50 leading-relaxed">
+          Este link de redefinição é inválido ou está incompleto.
+        </p>
+        <Link href="/forgot-password">
+          <Button type="button" className="w-full">
+            Solicitar novo link
+          </Button>
+        </Link>
+        <Link
+          href="/login"
+          className="text-sm text-anima-violet hover:text-anima-lilac transition-colors font-medium"
+        >
+          Voltar ao login
+        </Link>
+      </div>
+    );
+  }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    if (!email.trim()) return;
-
-    setIsLoading(true);
     setError(null);
 
+    const parsed = resetPasswordFormSchema.safeParse({
+      token,
+      senha,
+      confirmarSenha,
+    });
+
+    if (!parsed.success) {
+      setError(parsed.error.issues[0]?.message ?? "Verifique os campos.");
+      return;
+    }
+
+    setIsLoading(true);
+
     try {
-      await resetPassword(email);
-      setIsSent(true);
+      await resetPasswordApi(parsed.data.token, parsed.data.senha);
+      router.push("/login?reset=success");
     } catch (err) {
-      setError(
-        err instanceof ApiError
-          ? err.message
-          : "Não foi possível enviar o email. Tente novamente.",
-      );
+      if (err instanceof ApiError && err.status === 400) {
+        setError(
+          err.message ||
+            "Link inválido ou expirado. Solicite uma nova redefinição de senha.",
+        );
+      } else if (err instanceof ApiError && err.status >= 500) {
+        setError("Tente novamente mais tarde.");
+      } else if (err instanceof ApiError) {
+        setError(err.message);
+      } else {
+        setError("Não foi possível redefinir a senha. Tente novamente.");
+      }
     } finally {
       setIsLoading(false);
     }
   }
 
   return (
-    <AuthLayout
-      title="Redefinir senha"
-      subtitle="Enviaremos um link para seu email"
-    >
-      <AnimatePresence mode="wait">
-        {isSent ? (
-          <motion.div
-            key="sent"
-            className="flex flex-col items-center gap-4 py-4"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.3 }}
-          >
-            <div className="w-16 h-16 rounded-full bg-anima-violet/10 flex items-center justify-center">
-              <svg
-                className="w-8 h-8 text-anima-violet"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={1.5}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"
-                />
-              </svg>
-            </div>
-            <div className="text-center">
-              <h3 className="text-base font-semibold text-foreground/80 mb-1">
-                Email enviado
-              </h3>
-              <p className="text-sm text-foreground/45 leading-relaxed max-w-xs">
-                Verifique sua caixa de entrada em{" "}
-                <span className="font-medium text-foreground/60">{email}</span>{" "}
-                e siga as instruções para redefinir sua senha.
-              </p>
-            </div>
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      {error && (
+        <div className="rounded-lg bg-red-500/10 border border-red-400/20 px-4 py-3 text-sm text-red-400 space-y-3">
+          <p>{error}</p>
+          {error.toLowerCase().includes("expirado") ||
+          error.toLowerCase().includes("inválido") ? (
             <Link
-              href="/login"
-              className="mt-2 text-sm text-anima-violet hover:text-anima-lilac transition-colors font-medium"
+              href="/forgot-password"
+              className="block text-xs font-medium text-anima-violet hover:text-anima-lilac"
             >
-              Voltar ao login
+              Solicitar novo link →
             </Link>
-          </motion.div>
-        ) : (
-          <motion.form
-            key="form"
-            onSubmit={handleSubmit}
-            className="flex flex-col gap-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            {error && (
-              <div className="rounded-lg bg-red-500/10 border border-red-400/20 px-4 py-3 text-sm text-red-400">
-                {error}
-              </div>
-            )}
+          ) : null}
+        </div>
+      )}
 
-            <Input
-              label="Email"
-              type="email"
-              placeholder="seu@email.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              autoComplete="email"
-              required
-            />
+      <Input
+        label="Nova senha"
+        type="password"
+        placeholder="Mínimo 6 caracteres"
+        value={senha}
+        onChange={(e) => setSenha(e.target.value)}
+        autoComplete="new-password"
+        required
+      />
 
-            <Button type="submit" isLoading={isLoading} className="mt-2">
-              Enviar link de redefinição
-            </Button>
+      <Input
+        label="Confirmar senha"
+        type="password"
+        placeholder="Repita a nova senha"
+        value={confirmarSenha}
+        onChange={(e) => setConfirmarSenha(e.target.value)}
+        autoComplete="new-password"
+        required
+      />
 
-            <p className="text-center text-xs text-foreground/40 mt-2">
-              Lembrou a senha?{" "}
-              <Link
-                href="/login"
-                className="text-anima-violet hover:text-anima-lilac transition-colors font-medium"
-              >
-                Voltar ao login
-              </Link>
-            </p>
-          </motion.form>
-        )}
-      </AnimatePresence>
+      <Button type="submit" isLoading={isLoading} className="mt-2">
+        Redefinir senha
+      </Button>
+
+      <p className="text-center text-xs text-foreground/40 mt-2">
+        <Link
+          href="/login"
+          className="text-anima-violet hover:text-anima-lilac transition-colors font-medium"
+        >
+          Voltar ao login
+        </Link>
+      </p>
+    </form>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <AuthLayout
+      title="Nova senha"
+      subtitle="Escolha uma senha segura para sua conta"
+    >
+      <Suspense
+        fallback={
+          <div className="py-8 text-center text-sm text-foreground/40">
+            Carregando...
+          </div>
+        }
+      >
+        <ResetPasswordForm />
+      </Suspense>
     </AuthLayout>
   );
 }
