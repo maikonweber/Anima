@@ -1,3 +1,5 @@
+import type { SubscriptionSummary } from "@/types/subscription";
+
 export type EnergyCategory =
   | "EXAUSTAO"
   | "BAIXA"
@@ -13,6 +15,7 @@ export interface User {
   email: string;
   criadoEm: string;
   atualizadoEm: string;
+  subscription?: SubscriptionSummary;
 }
 
 export interface AuthResponse {

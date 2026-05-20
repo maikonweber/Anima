@@ -19,6 +19,11 @@ import type {
 } from "@/lib/types";
 import { useAuth } from "@/providers/auth-provider";
 
+function useRefreshSubscription() {
+  const { refreshUser } = useAuth();
+  return refreshUser;
+}
+
 export function useEmotions() {
   return useQuery({
     queryKey: ["emotions"],
@@ -62,12 +67,14 @@ export function useDiaryAnalysis(entryId: string, enabled = true) {
 
 export function useCreateDiaryEntry() {
   const queryClient = useQueryClient();
+  const refreshUser = useRefreshSubscription();
 
   return useMutation({
     mutationFn: (data: CreateDiaryEntry) => createDiaryEntry(data),
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ["diary-entries"] });
       queryClient.invalidateQueries({ queryKey: ["week-summary"] });
+      await refreshUser();
     },
   });
 }
@@ -102,12 +109,14 @@ export function useDeleteDiaryEntry() {
 
 export function useAnalyzeDiaryEntry() {
   const queryClient = useQueryClient();
+  const refreshUser = useRefreshSubscription();
 
   return useMutation({
     mutationFn: (entryId: string) => analyzeDiaryEntry(entryId),
-    onSuccess: (data, entryId) => {
+    onSuccess: async (data, entryId) => {
       queryClient.setQueryData(["diary-analysis", entryId], data);
       queryClient.invalidateQueries({ queryKey: ["week-summary"] });
+      await refreshUser();
     },
   });
 }

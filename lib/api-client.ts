@@ -1,3 +1,5 @@
+import type { PlanLimitError } from "@/types/subscription";
+
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3000";
 
@@ -10,6 +12,15 @@ export class ApiError extends Error {
     super(message);
     this.name = "ApiError";
   }
+
+  get planLimit(): PlanLimitError | null {
+    if (this.status !== 402 || !this.details || typeof this.details !== "object") {
+      return null;
+    }
+    const d = this.details as Record<string, unknown>;
+    if (typeof d.code !== "string") return null;
+    return d as PlanLimitError;
+  }
 }
 
 export const FORBIDDEN_MESSAGE =
@@ -18,12 +29,13 @@ export const FORBIDDEN_MESSAGE =
 type ApiClientConfig = {
   getToken: () => string | null;
   onUnauthorized: () => void;
+  onPaymentRequired?: (error: PlanLimitError) => void;
 };
 
 let clientConfig: ApiClientConfig | null = null;
 
-export function configureApiClient(config: ApiClientConfig): void {
-  clientConfig = config;
+export function configureApiClient(config: Partial<ApiClientConfig>): void {
+  clientConfig = { ...(clientConfig ?? {}), ...config } as ApiClientConfig;
 }
 
 export function getApiUrl(): string {
@@ -61,6 +73,11 @@ export async function api<T>(
 
     if (res.status === 401) {
       clientConfig?.onUnauthorized();
+    }
+
+    if (res.status === 402 && typeof err === "object" && err !== null) {
+      const planError = err as PlanLimitError;
+      clientConfig?.onPaymentRequired?.(planError);
     }
 
     throw new ApiError(res.status, message, err);

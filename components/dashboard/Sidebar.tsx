@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth/AuthContext";
+import { useSubscription } from "@/providers/subscription-provider";
 
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Início", icon: HomeIcon },
@@ -16,6 +17,8 @@ const NAV_ITEMS = [
 export function Sidebar() {
   const pathname = usePathname();
   const { user, logout } = useAuth();
+  const { subscription, planSlug } = useSubscription();
+  const planLabel = subscription?.plan.nome ?? "Essencial";
 
   return (
     <>
@@ -66,6 +69,13 @@ export function Sidebar() {
               <p className="text-[10px] text-foreground/35 truncate">
                 {user?.email}
               </p>
+              <Link
+                href="/assinatura"
+                className="text-[10px] text-anima-violet hover:underline mt-0.5 inline-block"
+              >
+                {planLabel}
+                {planSlug === "essencial" ? " · Upgrade" : ""}
+              </Link>
             </div>
           </div>
           <button

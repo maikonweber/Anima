@@ -10,9 +10,13 @@ import { EnergySlider } from "@/components/diary/EnergySlider";
 import { EmotionPicker, type SelectedEmotion } from "@/components/diary/EmotionPicker";
 import { Button } from "@/components/ui/Button";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
+import { UsageMeter } from "@/components/subscription/UsageMeter";
+import { useSubscription } from "@/providers/subscription-provider";
+import { isNearLimit } from "@/lib/subscription/utils";
 
 export default function NewDiaryPage() {
   const router = useRouter();
+  const { usage } = useSubscription();
   const { data: emotions = [], isLoading: loadingEmotions, error: emotionsError, refetch } = useEmotions();
   const createEntry = useCreateDiaryEntry();
 
@@ -47,6 +51,7 @@ export default function NewDiaryPage() {
       });
       router.push(`/diary/${entry.id}`);
     } catch (err) {
+      if (err instanceof ApiError && err.status === 402) return;
       if (err instanceof ApiError) {
         setFormError(err.message);
       } else {
@@ -78,6 +83,28 @@ export default function NewDiaryPage() {
             message="Não foi possível carregar as emoções."
             onRetry={() => refetch()}
           />
+        </div>
+      )}
+
+      {usage && (
+        <div className="glass-panel p-4 mb-6">
+          <UsageMeter
+            label="Registros este mês"
+            used={usage.diaryEntries.used}
+            limit={usage.diaryEntries.limit}
+          />
+          {usage.diaryEntries.limit !== null &&
+            isNearLimit(
+              usage.diaryEntries.used,
+              usage.diaryEntries.limit,
+            ) && (
+              <p className="text-xs text-amber-500/90 mt-2">
+                Você está perto do limite.{" "}
+                <Link href="/assinatura" className="underline">
+                  Ver planos
+                </Link>
+              </p>
+            )}
         </div>
       )}
 

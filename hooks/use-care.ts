@@ -52,10 +52,12 @@ export function useSharedDashboard(ownerUserId: string) {
 
 export function useCreateInvite() {
   const queryClient = useQueryClient();
+  const { refreshUser } = useAuth();
   return useMutation({
     mutationFn: (viewerEmail: string) => createInvite(viewerEmail),
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ["care-invites-sent"] });
+      await refreshUser();
     },
   });
 }

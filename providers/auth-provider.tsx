@@ -29,6 +29,7 @@ interface AuthContextValue extends AuthState {
   login: (email: string, senha: string) => Promise<void>;
   register: (nome: string, email: string, senha: string) => Promise<void>;
   setSession: (accessToken: string, user: User) => void;
+  refreshUser: () => Promise<User | null>;
   logout: () => void;
   getToken: () => string | null;
 }
@@ -56,7 +57,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       !window.location.pathname.startsWith("/register") &&
       !window.location.pathname.startsWith("/forgot-password") &&
       !window.location.pathname.startsWith("/reset-password") &&
-      !window.location.pathname.startsWith("/care-invite")
+      !window.location.pathname.startsWith("/care-invite") &&
+      !window.location.pathname.startsWith("/assinatura")
     ) {
       window.location.href = "/login";
     }
@@ -116,11 +118,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setState({ user, accessToken, isLoading: false });
   }, []);
 
+  const refreshUser = useCallback(async () => {
+    const token = getStoredToken();
+    if (!token) return null;
+    try {
+      const user = await meApi(token);
+      persistAuth(token, user);
+      setState((prev) => ({ ...prev, user, accessToken: token }));
+      return user;
+    } catch {
+      return null;
+    }
+  }, []);
+
   const getToken = useCallback(() => state.accessToken, [state.accessToken]);
 
   const value = useMemo(
-    () => ({ ...state, login, register, setSession, logout, getToken }),
-    [state, login, register, setSession, logout, getToken],
+    () => ({
+      ...state,
+      login,
+      register,
+      setSession,
+      refreshUser,
+      logout,
+      getToken,
+    }),
+    [state, login, register, setSession, refreshUser, logout, getToken],
   );
 
   return (

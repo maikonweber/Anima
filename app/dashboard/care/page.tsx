@@ -14,8 +14,12 @@ import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import type { CareInvitePublic } from "@/lib/types";
+import { UpgradeBadge } from "@/components/subscription/UpgradeBadge";
+import { useSubscription } from "@/providers/subscription-provider";
+import Link from "next/link";
 
 export default function DashboardCarePage() {
+  const { canShareDashboard, usage } = useSubscription();
   const [email, setEmail] = useState("");
   const [formError, setFormError] = useState<string | null>(null);
   const [formSuccess, setFormSuccess] = useState<string | null>(null);
@@ -40,6 +44,7 @@ export default function DashboardCarePage() {
       setEmail("");
       setFormSuccess("Convite enviado! O acompanhante receberá um e-mail.");
     } catch (err) {
+      if (err instanceof ApiError && err.status === 402) return;
       setFormError(
         err instanceof ApiError
           ? err.message
@@ -63,12 +68,31 @@ export default function DashboardCarePage() {
           semanal e registros do diário (somente leitura).
         </p>
 
+        {!canShareDashboard && (
+          <div className="glass-panel p-4 mb-6 flex flex-wrap items-center justify-between gap-3">
+            <p className="text-sm text-foreground/50">
+              Compartilhar com acompanhante está disponível no plano Pleno.
+            </p>
+            <UpgradeBadge planName="Pleno" href="/assinatura?plan=pleno" />
+          </div>
+        )}
+
+        {usage &&
+          usage.careInvitesActive.limit !== null &&
+          canShareDashboard && (
+          <p className="text-xs text-foreground/40 mb-4">
+            Convites ativos: {usage.careInvitesActive.used}/
+            {usage.careInvitesActive.limit}
+          </p>
+        )}
+
         <form
           onSubmit={handleSubmit}
           className="glass-panel p-5 mb-8 flex flex-col gap-4"
         >
-          <h2 className="text-sm font-semibold text-foreground/70">
+          <h2 className="text-sm font-semibold text-foreground/70 flex items-center gap-2">
             Novo convite
+            {!canShareDashboard && <UpgradeBadge planName="Pleno" />}
           </h2>
 
           {formError && (
@@ -89,11 +113,18 @@ export default function DashboardCarePage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            disabled={!canShareDashboard}
           />
 
-          <Button type="submit" isLoading={createMutation.isPending}>
-            Enviar convite
-          </Button>
+          {canShareDashboard ? (
+            <Button type="submit" isLoading={createMutation.isPending}>
+              Enviar convite
+            </Button>
+          ) : (
+            <Link href="/assinatura?plan=pleno">
+              <Button type="button">Assinar Pleno para convidar</Button>
+            </Link>
+          )}
         </form>
 
         <h2 className="text-sm font-semibold text-foreground/70 mb-4">

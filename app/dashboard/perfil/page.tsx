@@ -1,11 +1,19 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "motion/react";
-import { useAuth } from "@/providers/auth-provider";
+import { SubscriptionUsagePanel } from "@/components/subscription/SubscriptionUsagePanel";
+import { UsageMeter } from "@/components/subscription/UsageMeter";
 import { Button } from "@/components/ui/Button";
+import { useAuth } from "@/providers/auth-provider";
+import { useSubscription } from "@/providers/subscription-provider";
 
 export default function PerfilPage() {
   const { user, logout } = useAuth();
+  const { subscription, planSlug, hasPaidSubscription } = useSubscription();
+
+  const planNome = subscription?.plan.nome ?? "Essencial";
+  const statusLabel = getStatusLabel(subscription?.status);
 
   return (
     <div className="max-w-lg mx-auto px-4 sm:px-6 py-8 sm:py-12">
@@ -52,14 +60,75 @@ export default function PerfilPage() {
               {user?.email}
             </span>
           </div>
-          <div className="flex justify-between items-center">
-            <span className="text-sm text-foreground/50">Plano</span>
-            <span className="text-xs font-medium px-2.5 py-0.5 rounded-full bg-anima-violet/10 text-anima-violet">
-              Premium
-            </span>
-          </div>
         </div>
       </motion.div>
+
+      <motion.div
+        className="glass-panel p-6 mt-6"
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.15 }}
+      >
+        <h2 className="text-sm font-semibold text-foreground/70 mb-4">
+          Seu plano
+        </h2>
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <div>
+            <span className="text-xs font-medium px-2.5 py-0.5 rounded-full bg-anima-violet/10 text-anima-violet">
+              {planNome}
+            </span>
+            {statusLabel && (
+              <p className="text-[10px] text-foreground/35 mt-2">
+                {statusLabel}
+              </p>
+            )}
+          </div>
+          <Link
+            href="/assinatura"
+            className="text-sm text-anima-violet hover:text-anima-lilac transition-colors"
+          >
+            Ver planos →
+          </Link>
+        </div>
+
+        {subscription?.usage && (
+          <div className="space-y-3 mb-4">
+            <UsageMeter
+              label="Registros este mês"
+              used={subscription.usage.diaryEntries.used}
+              limit={subscription.usage.diaryEntries.limit}
+            />
+            <UsageMeter
+              label="Análises IA este mês"
+              used={subscription.usage.aiAnalyses.used}
+              limit={subscription.usage.aiAnalyses.limit}
+            />
+          </div>
+        )}
+
+        {hasPaidSubscription && (
+          <Link href="/assinatura/gerenciar">
+            <Button variant="secondary">Gerenciar assinatura</Button>
+          </Link>
+        )}
+
+        {planSlug === "essencial" && !hasPaidSubscription && (
+          <Link href="/assinatura" className="block mt-2">
+            <Button>Fazer upgrade</Button>
+          </Link>
+        )}
+      </motion.div>
+
+      {subscription?.usage && (
+        <motion.div
+          className="mt-6"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.25 }}
+        >
+          <SubscriptionUsagePanel usage={subscription.usage} />
+        </motion.div>
+      )}
 
       <motion.div
         className="mt-6"
@@ -73,4 +142,14 @@ export default function PerfilPage() {
       </motion.div>
     </div>
   );
+}
+
+function getStatusLabel(status: string | undefined): string | null {
+  if (!status || status === "active") return null;
+  const labels: Record<string, string> = {
+    trialing: "Período de teste",
+    past_due: "Pagamento pendente — limites do Essencial",
+    canceled: "Cancelada — limites do Essencial",
+  };
+  return labels[status] ?? null;
 }

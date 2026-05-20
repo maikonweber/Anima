@@ -8,6 +8,8 @@ import { useSharedDashboard } from "@/hooks/use-care";
 import { WeekSummaryChart } from "@/components/diary/WeekSummaryChart";
 import { SharedDiaryList } from "@/components/care/SharedDiaryList";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
+import { UpgradeBadge } from "@/components/subscription/UpgradeBadge";
+import { useSubscription } from "@/providers/subscription-provider";
 
 export default function SharedPatientDashboardPage({
   params,
@@ -15,8 +17,11 @@ export default function SharedPatientDashboardPage({
   params: Promise<{ ownerUserId: string }>;
 }) {
   const { ownerUserId } = use(params);
+  const { canViewSharedDashboard } = useSubscription();
   const { data, isLoading, error, refetch } = useSharedDashboard(ownerUserId);
   const forbidden = error instanceof ApiError && error.status === 403;
+  const paymentRequired =
+    error instanceof ApiError && error.status === 402;
 
   return (
     <div className="relative max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
@@ -35,15 +40,38 @@ export default function SharedPatientDashboardPage({
         </div>
       )}
 
+      {!canViewSharedDashboard && !isLoading && !error && (
+        <div className="glass-panel p-6 text-center">
+          <p className="text-sm text-foreground/50 mb-4">
+            Visualizar dashboards de pacientes requer o plano Cuidado.
+          </p>
+          <UpgradeBadge planName="Cuidado" href="/assinatura?plan=cuidado" />
+        </div>
+      )}
+
       {error && (
-        <ErrorMessage
-          message={
-            forbidden
-              ? error.message
-              : "Não foi possível carregar o dashboard compartilhado."
-          }
-          onRetry={() => refetch()}
-        />
+        <div className="glass-panel p-6">
+          <ErrorMessage
+            message={
+              paymentRequired && error.planLimit?.code === "PLAN_LIMIT_OWNER_SHARE"
+                ? "O paciente precisa assinar o plano Pleno para compartilhar o dashboard."
+                : forbidden
+                  ? error.message
+                  : paymentRequired
+                    ? error.message
+                    : "Não foi possível carregar o dashboard compartilhado."
+            }
+            onRetry={paymentRequired ? undefined : () => refetch()}
+          />
+          {paymentRequired && (
+            <Link
+              href="/assinatura?plan=cuidado"
+              className="block mt-4 text-center text-sm text-anima-violet"
+            >
+              Ver plano Cuidado →
+            </Link>
+          )}
+        </div>
       )}
 
       {data && !isLoading && (

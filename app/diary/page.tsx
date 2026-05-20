@@ -7,10 +7,13 @@ import { useDiaryEntries } from "@/hooks/use-diary";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { getCategoryFromEnergy, getCategoryStyle } from "@/lib/energy";
 import { Button } from "@/components/ui/Button";
+import { UsageMeter } from "@/components/subscription/UsageMeter";
+import { useSubscription } from "@/providers/subscription-provider";
 
 const PAGE_SIZE = 20;
 
 export default function DiaryListPage() {
+  const { isEssencial, usage } = useSubscription();
   const [page, setPage] = useState(1);
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
@@ -54,6 +57,27 @@ export default function DiaryListPage() {
           + Novo
         </Link>
       </div>
+
+      {isEssencial && (
+        <div className="glass-panel p-4 mb-4 border border-anima-violet/15">
+          <p className="text-xs text-foreground/50">
+            No plano Essencial, o histórico mostra os últimos 30 dias.{" "}
+            <Link href="/assinatura" className="text-anima-violet hover:underline">
+              Histórico completo no Pleno
+            </Link>
+          </p>
+        </div>
+      )}
+
+      {usage && (
+        <div className="glass-panel p-4 mb-4">
+          <UsageMeter
+            label="Registros este mês"
+            used={usage.diaryEntries.used}
+            limit={usage.diaryEntries.limit}
+          />
+        </div>
+      )}
 
       <div className="glass-panel p-4 mb-6 flex flex-wrap items-end gap-3">
         <div className="flex flex-col gap-1">

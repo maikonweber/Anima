@@ -14,6 +14,8 @@ import { AnalysisCard } from "@/components/analysis/AnalysisCard";
 import { Button } from "@/components/ui/Button";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { getCategoryFromEnergy, getCategoryStyle } from "@/lib/energy";
+import { UsageMeter } from "@/components/subscription/UsageMeter";
+import { useSubscription } from "@/providers/subscription-provider";
 
 export default function DiaryDetailPage({
   params,
@@ -22,6 +24,7 @@ export default function DiaryDetailPage({
 }) {
   const { id } = use(params);
   const router = useRouter();
+  const { usage } = useSubscription();
   const { data: entry, isLoading: loadingEntry, error: entryError, refetch: refetchEntry } = useDiaryEntry(id);
   const { data: analysis, isLoading: loadingAnalysis, refetch: refetchAnalysis } = useDiaryAnalysis(id);
   const analyze = useAnalyzeDiaryEntry();
@@ -44,6 +47,7 @@ export default function DiaryDetailPage({
       await analyze.mutateAsync(id);
       await refetchAnalysis();
     } catch (err) {
+      if (err instanceof ApiError && err.status === 402) return;
       if (err instanceof ApiError) {
         if (err.status === 503) {
           setAnalyzeError("Serviço de IA indisponível. Tente novamente em instantes.");
@@ -172,6 +176,16 @@ export default function DiaryDetailPage({
 
       {analysis && !analyze.isPending && (
         <AnalysisCard analysis={analysis} entry={entry} />
+      )}
+
+      {usage && (
+        <div className="glass-panel p-4 mb-4">
+          <UsageMeter
+            label="Análises IA este mês"
+            used={usage.aiAnalyses.used}
+            limit={usage.aiAnalyses.limit}
+          />
+        </div>
       )}
 
       {!analysis && !analyze.isPending && !analyzeError && (
