@@ -51,12 +51,12 @@ export async function api<T>(
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     const message =
-      res.status === 403
-        ? FORBIDDEN_MESSAGE
-        : typeof err.message === "string"
-          ? err.message
-          : Array.isArray(err.message)
-            ? err.message.join(", ")
+      typeof err.message === "string"
+        ? err.message
+        : Array.isArray(err.message)
+          ? err.message.join(", ")
+          : res.status === 403
+            ? FORBIDDEN_MESSAGE
             : res.statusText;
 
     if (res.status === 401) {

@@ -147,3 +147,64 @@ export interface RegulationPractice {
 export interface DeleteDiaryEntryResponse {
   message: string;
 }
+
+export type CareInviteStatus = "PENDENTE" | "ACEITO" | "REVOGADO";
+
+export interface CareInvitePublic {
+  id: string;
+  ownerUserId: string;
+  viewerEmail: string;
+  viewerUserId: string | null;
+  status: CareInviteStatus;
+  visualizacaoAtiva: boolean;
+  criadoEm: string;
+  aceitoEm: string | null;
+  revogadoEm: string | null;
+  ownerNome?: string;
+  viewerNome?: string;
+  ownerEmail?: string;
+}
+
+export interface CareInviteByToken {
+  status: CareInviteStatus;
+  visualizacaoAtiva: boolean;
+  viewerEmail: string;
+  owner: { id: string; nome: string };
+  expirado: boolean;
+}
+
+export interface AccessibleUser {
+  inviteId: string;
+  owner: { id: string; nome: string; email: string };
+  aceitoEm: string | null;
+}
+
+export interface SharedDiaryEntry {
+  id: string;
+  userId: string;
+  texto: string;
+  energiaInformada: number;
+  dataRegistro: string;
+  observacoes: string | null;
+  criadoEm: string;
+  atualizadoEm: string;
+}
+
+export interface SharedDashboard {
+  owner: { id: string; nome: string; email: string };
+  weekSummary: WeekSummary;
+  diaryEntries: SharedDiaryEntry[];
+}
+
+export interface RegisterWithInvitePayload {
+  nome: string;
+  email: string;
+  senha: string;
+  inviteToken: string;
+}
+
+export interface RegisterWithInviteResponse {
+  accessToken: string;
+  user: User;
+  invite: CareInvitePublic;
+}

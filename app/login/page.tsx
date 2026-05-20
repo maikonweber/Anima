@@ -14,6 +14,7 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const resetSuccess = searchParams.get("reset") === "success";
+  const redirectTo = searchParams.get("redirect");
   const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -34,7 +35,9 @@ function LoginForm() {
 
     try {
       await login(parsed.data.email, parsed.data.senha);
-      router.push("/dashboard");
+      router.push(
+        redirectTo?.startsWith("/") ? redirectTo : "/dashboard",
+      );
     } catch (err) {
       setError(
         err instanceof ApiError
