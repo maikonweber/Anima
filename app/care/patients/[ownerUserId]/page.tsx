@@ -228,7 +228,7 @@ export default function SharedPatientDashboardPage({
                   <h2 className="text-sm font-semibold text-foreground/70 mb-3">
                     Relatório inteligente
                   </h2>
-                  {data.intelligentReport.risks?.length > 0 && (
+                  {data.intelligentReport.risks && data.intelligentReport.risks.length > 0 && (
                     <div className="mb-4">
                       <p className="text-xs uppercase tracking-[0.2em] text-foreground/40 mb-2">
                         Riscos e sinais
@@ -240,7 +240,7 @@ export default function SharedPatientDashboardPage({
                       </ul>
                     </div>
                   )}
-                  {data.intelligentReport.progressHighlights?.length > 0 && (
+                  {data.intelligentReport.progressHighlights && data.intelligentReport.progressHighlights.length > 0 && (
                     <div className="mb-4">
                       <p className="text-xs uppercase tracking-[0.2em] text-foreground/40 mb-2">
                         Progresso
@@ -252,7 +252,7 @@ export default function SharedPatientDashboardPage({
                       </ul>
                     </div>
                   )}
-                  {data.intelligentReport.recommendations?.length > 0 && (
+                  {data.intelligentReport.recommendations && data.intelligentReport.recommendations.length > 0 && (
                     <div className="mb-4">
                       <p className="text-xs uppercase tracking-[0.2em] text-foreground/40 mb-2">
                         Recomendações suaves
@@ -264,7 +264,7 @@ export default function SharedPatientDashboardPage({
                       </ul>
                     </div>
                   )}
-                  {data.intelligentReport.patternsDetected?.length > 0 && (
+                  {data.intelligentReport.patternsDetected && data.intelligentReport.patternsDetected.length > 0 && (
                     <div className="text-sm text-foreground/60">
                       <p className="text-xs uppercase tracking-[0.2em] text-foreground/40 mb-2">
                         Padrões detectados</p>
