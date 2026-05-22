@@ -209,7 +209,7 @@ export default function SharedPatientDashboardPage({
                     </p>
                   )}
                   <ul className="space-y-3">
-                    {data.preConsultSummary.points.map((point, index) => (
+                    {(data.preConsultSummary.points ?? []).map((point, index) => (
                       <li key={index} className="text-sm text-foreground/60">
                         • {point}
                       </li>

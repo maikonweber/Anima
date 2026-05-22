@@ -8,7 +8,7 @@ interface SharedDiaryListProps {
 }
 
 export function SharedDiaryList({ entries }: SharedDiaryListProps) {
-  if (entries.length === 0) {
+  if (!entries || entries.length === 0) {
     return (
       <div className="glass-panel p-10 text-center">
         <p className="text-sm text-foreground/50">
