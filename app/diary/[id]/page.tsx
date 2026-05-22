@@ -154,6 +154,11 @@ export default function DiaryDetailPage({
           energia={entry.energiaInformada}
           style={informedStyle}
           emotions={entry.emotions}
+          humor={entry.humor}
+          ansiedadeInformada={entry.ansiedadeInformada}
+          intensidadeEmocional={entry.intensidadeEmocional}
+          tagsEmocionais={entry.tagsEmocionais}
+          tracking={entry.tracking}
         />
       </header>
 
@@ -201,22 +206,115 @@ function DiaryDetailMeta({
   energia,
   style,
   emotions,
+  humor,
+  ansiedadeInformada,
+  intensidadeEmocional,
+  tagsEmocionais,
+  tracking,
 }: {
   energia: number;
   style: ReturnType<typeof getCategoryStyle>;
   emotions?: { nome: string; cor?: string | null }[];
+  humor?: string;
+  ansiedadeInformada?: number;
+  intensidadeEmocional?: number;
+  tagsEmocionais?: string[];
+  tracking?: {
+    sono?: number;
+    estresse?: number;
+    socializacao?: number;
+    motivacao?: number;
+    burnout?: number;
+  };
 }) {
+  const trackingItems = [
+    { label: "Sono", value: tracking?.sono },
+    { label: "Estresse", value: tracking?.estresse },
+    { label: "Socialização", value: tracking?.socializacao },
+    { label: "Motivação", value: tracking?.motivacao },
+    { label: "Burnout", value: tracking?.burnout },
+  ];
+
   return (
-    <div className="flex flex-wrap items-center gap-3">
-      <span className="text-sm text-foreground/50">
-        Energia informada:{" "}
-        <strong style={{ color: style.color }}>{energia}/100</strong>
-      </span>
-      <span className={`text-xs px-2 py-0.5 rounded-full border ${style.bg}`}>
-        {style.label}
-      </span>
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center gap-3">
+        <span className="text-sm text-foreground/50">
+          Energia informada:{" "}
+          <strong style={{ color: style.color }}>{energia}/100</strong>
+        </span>
+        <span className={`text-xs px-2 py-0.5 rounded-full border ${style.bg}`}>
+          {style.label}
+        </span>
+        {humor && (
+          <span className="text-xs px-2 py-0.5 rounded-full border border-foreground/[0.08] text-foreground/75">
+            Humor: {humor}
+          </span>
+        )}
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {typeof ansiedadeInformada === "number" && (
+          <div className="glass-panel p-3 border border-foreground/[0.08]">
+            <p className="text-[10px] uppercase tracking-[0.25em] text-foreground/40 mb-1">
+              Ansiedade
+            </p>
+            <p className="text-sm font-semibold text-foreground/80">
+              {ansiedadeInformada}%
+            </p>
+          </div>
+        )}
+        {typeof intensidadeEmocional === "number" && (
+          <div className="glass-panel p-3 border border-foreground/[0.08]">
+            <p className="text-[10px] uppercase tracking-[0.25em] text-foreground/40 mb-1">
+              Intensidade emocional
+            </p>
+            <p className="text-sm font-semibold text-foreground/80">
+              {intensidadeEmocional}%
+            </p>
+          </div>
+        )}
+      </div>
+
+      {tagsEmocionais && tagsEmocionais.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {tagsEmocionais.map((tag) => (
+            <span
+              key={tag}
+              className="text-[11px] px-2.5 py-1 rounded-full border border-foreground/[0.08] text-foreground/65"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
+
+      {trackingItems.some((item) => item.value !== undefined) && (
+        <div className="grid grid-cols-2 gap-3">
+          {trackingItems.map(
+            (item) =>
+              item.value !== undefined && (
+                <div
+                  key={item.label}
+                  className="glass-panel p-3 border border-foreground/[0.08]"
+                >
+                  <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.2em] text-foreground/40 mb-2">
+                    <span>{item.label}</span>
+                    <span>{Math.round(item.value)}/100</span>
+                  </div>
+                  <div className="h-2 rounded-full bg-foreground/[0.06] overflow-hidden">
+                    <div
+                      className="h-full rounded-full bg-gradient-to-r from-anima-violet to-anima-lilac"
+                      style={{ width: `${item.value}%` }}
+                    />
+                  </div>
+                </div>
+              ),
+          )}
+        </div>
+      )}
+
       {emotions && emotions.length > 0 && (
-        <div className="flex flex-wrap gap-1.5 w-full mt-1">
+        <div className="flex flex-wrap gap-1.5">
           {emotions.map((e) => (
             <span
               key={e.nome}

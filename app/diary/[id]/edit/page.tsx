@@ -30,6 +30,17 @@ export default function EditDiaryPage({
   const updateEntry = useUpdateDiaryEntry();
 
   const [texto, setTexto] = useState("");
+  const [humor, setHumor] = useState("");
+  const [ansiedade, setAnsiedade] = useState(50);
+  const [intensidadeEmocional, setIntensidadeEmocional] = useState(50);
+  const [tagsText, setTagsText] = useState("");
+  const [tracking, setTracking] = useState({
+    sono: 50,
+    estresse: 50,
+    socializacao: 50,
+    motivacao: 50,
+    burnout: 50,
+  });
   const [energia, setEnergia] = useState(50);
   const [selectedEmotions, setSelectedEmotions] = useState<SelectedEmotion[]>(
     [],
@@ -41,6 +52,17 @@ export default function EditDiaryPage({
   useEffect(() => {
     if (!entry || initialized) return;
     setTexto(entry.texto);
+    setHumor(entry.humor ?? "");
+    setAnsiedade(entry.ansiedadeInformada ?? 50);
+    setIntensidadeEmocional(entry.intensidadeEmocional ?? 50);
+    setTagsText(entry.tagsEmocionais?.join(", ") ?? "");
+    setTracking({
+      sono: entry.tracking?.sono ?? 50,
+      estresse: entry.tracking?.estresse ?? 50,
+      socializacao: entry.tracking?.socializacao ?? 50,
+      motivacao: entry.tracking?.motivacao ?? 50,
+      burnout: entry.tracking?.burnout ?? 50,
+    });
     setEnergia(entry.energiaInformada);
     setObservacoes(entry.observacoes ?? "");
     setSelectedEmotions(
@@ -56,8 +78,18 @@ export default function EditDiaryPage({
     e.preventDefault();
     setFormError(null);
 
+    const tagsEmocionais = tagsText
+      .split(",")
+      .map((tag) => tag.trim())
+      .filter(Boolean);
+
     const parsed = diaryEntrySchema.safeParse({
       texto,
+      humor: humor || undefined,
+      ansiedadeInformada: ansiedade,
+      intensidadeEmocional,
+      tagsEmocionais: tagsEmocionais.length > 0 ? tagsEmocionais : undefined,
+      tracking,
       energiaInformada: energia,
       emotions: selectedEmotions,
       observacoes: observacoes || undefined,
@@ -73,6 +105,11 @@ export default function EditDiaryPage({
         id,
         data: {
           texto: parsed.data.texto,
+          humor: parsed.data.humor,
+          ansiedadeInformada: parsed.data.ansiedadeInformada,
+          intensidadeEmocional: parsed.data.intensidadeEmocional,
+          tagsEmocionais: parsed.data.tagsEmocionais,
+          tracking: parsed.data.tracking,
           energiaInformada: parsed.data.energiaInformada,
           emotions: parsed.data.emotions,
           observacoes: parsed.data.observacoes ?? null,
@@ -145,6 +182,108 @@ export default function EditDiaryPage({
             className="w-full bg-transparent text-foreground/80 text-sm leading-relaxed resize-none focus:outline-none"
             required
           />
+        </div>
+
+        <div className="glass-panel p-5 space-y-6">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <label className="text-sm font-medium text-foreground/70">
+              Humor
+            </label>
+            <select
+              value={humor}
+              onChange={(e) => setHumor(e.target.value)}
+              className="w-full bg-transparent border border-foreground/[0.08] rounded-xl px-3 py-2 text-sm text-foreground/80"
+            >
+              <option value="">Escolher humor</option>
+              <option value="Calmo">Calmo</option>
+              <option value="Tenso">Tenso</option>
+              <option value="Esperançoso">Esperançoso</option>
+              <option value="Sobrecarregado">Sobrecarregado</option>
+              <option value="Confuso">Confuso</option>
+            </select>
+          </div>
+
+          <div className="space-y-5">
+            <div>
+              <div className="flex items-center justify-between mb-1 text-sm text-foreground/70">
+                <span>Ansiedade informada</span>
+                <span>{ansiedade}%</span>
+              </div>
+              <input
+                type="range"
+                min={0}
+                max={100}
+                value={ansiedade}
+                onChange={(e) => setAnsiedade(Number(e.target.value))}
+                className="w-full"
+              />
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between mb-1 text-sm text-foreground/70">
+                <span>Intensidade emocional</span>
+                <span>{intensidadeEmocional}%</span>
+              </div>
+              <input
+                type="range"
+                min={0}
+                max={100}
+                value={intensidadeEmocional}
+                onChange={(e) => setIntensidadeEmocional(Number(e.target.value))}
+                className="w-full"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="glass-panel p-5 space-y-6">
+          <div className="space-y-2">
+            <label htmlFor="tagsEmocionais" className="text-sm font-medium text-foreground/70">
+              Tags emocionais
+            </label>
+            <input
+              id="tagsEmocionais"
+              value={tagsText}
+              onChange={(e) => setTagsText(e.target.value)}
+              placeholder="ansiedade, cansaço, foco"
+              className="w-full bg-transparent border border-foreground/[0.08] rounded-xl px-3 py-2 text-sm text-foreground/80"
+            />
+            <p className="text-xs text-foreground/40">
+              Separe as tags com vírgulas para identificar temas-chave.
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            {(
+              [
+                { label: "Sono", field: "sono" },
+                { label: "Estresse", field: "estresse" },
+                { label: "Socialização", field: "socializacao" },
+                { label: "Motivação", field: "motivacao" },
+                { label: "Burnout", field: "burnout" },
+              ] as const
+            ).map(({ label, field }) => (
+              <div key={field}>
+                <div className="flex items-center justify-between mb-1 text-sm text-foreground/70">
+                  <span>{label}</span>
+                  <span>{tracking[field]}%</span>
+                </div>
+                <input
+                  type="range"
+                  min={0}
+                  max={100}
+                  value={tracking[field]}
+                  onChange={(e) =>
+                    setTracking((current) => ({
+                      ...current,
+                      [field]: Number(e.target.value),
+                    }))
+                  }
+                  className="w-full"
+                />
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className="glass-panel p-5">

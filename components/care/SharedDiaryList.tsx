@@ -39,6 +39,26 @@ export function SharedDiaryList({ entries }: SharedDiaryListProps) {
             <p className="text-sm text-foreground/70 line-clamp-3">
               {entry.texto}
             </p>
+            <div className="mt-3 flex flex-wrap gap-2 text-[11px] text-foreground/50">
+              {entry.humor && (
+                <span className="rounded-full border border-foreground/[0.08] px-2 py-1">
+                  Humor: {entry.humor}
+                </span>
+              )}
+              {typeof entry.ansiedadeInformada === "number" && (
+                <span className="rounded-full border border-foreground/[0.08] px-2 py-1">
+                  Ansiedade: {entry.ansiedadeInformada}%
+                </span>
+              )}
+              {entry.tagsEmocionais?.slice(0, 3).map((tag) => (
+                <span
+                  key={tag}
+                  className="rounded-full border border-foreground/[0.08] px-2 py-1"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
             {entry.observacoes && (
               <p className="text-xs text-foreground/40 mt-2 line-clamp-2">
                 {entry.observacoes}

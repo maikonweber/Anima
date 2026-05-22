@@ -21,6 +21,14 @@ export function WeekSummaryChart({ summary }: WeekSummaryChartProps) {
     1,
   );
 
+  const trackingItems = [
+    { label: "Sono", value: summary.mediaSono },
+    { label: "Estresse", value: summary.mediaEstresse },
+    { label: "Socialização", value: summary.mediaSocializacao },
+    { label: "Motivação", value: summary.mediaMotivacao },
+    { label: "Burnout", value: summary.mediaBurnout },
+  ] as const;
+
   return (
     <div className="space-y-5">
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -47,6 +55,21 @@ export function WeekSummaryChart({ summary }: WeekSummaryChartProps) {
           />
         )}
       </div>
+
+      {trackingItems.some((item) => item.value !== undefined) && (
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+          {trackingItems.map((item) =>
+            item.value !== undefined ? (
+              <StatCard
+                key={item.label}
+                label={`Média ${item.label.toLowerCase()}`}
+                value={`${Math.round(item.value)}`}
+                suffix="/100"
+              />
+            ) : null,
+          )}
+        </div>
+      )}
 
       {summary.emocoesMaisFrequentes.length > 0 && (
         <div className="glass-panel p-5">

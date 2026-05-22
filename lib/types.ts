@@ -46,10 +46,23 @@ export interface DiaryEntryEmotion {
   cor: string | null;
 }
 
+export interface EmotionalTracking {
+  sono?: number;
+  estresse?: number;
+  socializacao?: number;
+  motivacao?: number;
+  burnout?: number;
+}
+
 export interface DiaryEntry {
   id: string;
   userId: string;
   texto: string;
+  humor?: string;
+  ansiedadeInformada?: number;
+  intensidadeEmocional?: number;
+  tagsEmocionais?: string[];
+  tracking?: EmotionalTracking;
   energiaInformada: number;
   observacoes: string | null;
   dataRegistro: string;
@@ -64,6 +77,11 @@ export type DiaryEntryDetail = DiaryEntry & {
 
 export interface CreateDiaryEntry {
   texto: string;
+  humor?: string;
+  ansiedadeInformada?: number;
+  intensidadeEmocional?: number;
+  tagsEmocionais?: string[];
+  tracking?: EmotionalTracking;
   energiaInformada: number;
   emotions: DiaryEmotion[];
   observacoes?: string;
@@ -72,6 +90,11 @@ export interface CreateDiaryEntry {
 
 export interface UpdateDiaryEntry {
   texto?: string;
+  humor?: string;
+  ansiedadeInformada?: number;
+  intensidadeEmocional?: number;
+  tagsEmocionais?: string[];
+  tracking?: EmotionalTracking;
   energiaInformada?: number;
   emotions?: DiaryEmotion[];
   observacoes?: string | null;
@@ -121,6 +144,11 @@ export interface DiaryAnalysis {
 export interface WeekSummary {
   periodo: { inicio: string; fim: string };
   mediaEnergia: number;
+  mediaSono?: number;
+  mediaEstresse?: number;
+  mediaSocializacao?: number;
+  mediaMotivacao?: number;
+  mediaBurnout?: number;
   emocoesMaisFrequentes: { nome: string; count: number }[];
   emocaoCompostaMaisFrequente: { nome: string; count: number } | null;
   quantidadeRegistros: number;
@@ -186,6 +214,11 @@ export interface SharedDiaryEntry {
   id: string;
   userId: string;
   texto: string;
+  humor?: string;
+  ansiedadeInformada?: number;
+  intensidadeEmocional?: number;
+  tagsEmocionais?: string[];
+  tracking?: EmotionalTracking;
   energiaInformada: number;
   dataRegistro: string;
   observacoes: string | null;
@@ -193,10 +226,49 @@ export interface SharedDiaryEntry {
   atualizadoEm: string;
 }
 
+export interface DashboardAlert {
+  id: string;
+  title: string;
+  description: string;
+  severity?: "low" | "medium" | "high";
+}
+
+export interface TherapyTimelineEvent {
+  id: string;
+  date: string;
+  title: string;
+  description: string;
+}
+
+export interface LongTermPattern {
+  id: string;
+  title: string;
+  description: string;
+  theme?: string;
+}
+
+export interface PreConsultSummary {
+  subtitle?: string;
+  points: string[];
+  note?: string;
+}
+
+export interface IntelligentReport {
+  risks?: string[];
+  progressHighlights?: string[];
+  recommendations?: string[];
+  patternsDetected?: string[];
+}
+
 export interface SharedDashboard {
   owner: { id: string; nome: string; email: string };
   weekSummary: WeekSummary;
   diaryEntries: SharedDiaryEntry[];
+  alerts?: DashboardAlert[];
+  therapyTimeline?: TherapyTimelineEvent[];
+  longTermPatterns?: LongTermPattern[];
+  preConsultSummary?: PreConsultSummary;
+  intelligentReport?: IntelligentReport;
 }
 
 export interface RegisterWithInvitePayload {
