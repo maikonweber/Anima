@@ -20,6 +20,10 @@ export const metadata: Metadata = {
   title: "Anima — Diário de Energia Emocional",
   description:
     "Diário emocional com análise de IA. Registre como você se sente e descubra insights sobre sua energia.",
+  icons: {
+    icon: "/logo.png",
+    apple: "/logo.png",
+  },
 };
 
 export default function RootLayout({

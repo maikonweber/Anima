@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AnimaLogo } from "@/components/brand/AnimaLogo";
 import { BASE_EMOTIONS } from "@/lib/emotion/base-emotions";
 import { BLEND_DEFINITIONS } from "@/lib/emotion/blends";
 
@@ -59,9 +60,7 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-full">
       <nav className="relative z-10 flex items-center justify-between px-6 py-4 max-w-6xl mx-auto w-full">
-        <span className="text-lg font-bold tracking-tight text-foreground/90">
-          Anima
-        </span>
+        <AnimaLogo href="/" size="sm" showWordmark />
         <div className="flex items-center gap-3 sm:gap-4">
           <a
             href="#para-psicologos"

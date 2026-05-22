@@ -2,6 +2,7 @@
 
 import { motion } from "motion/react";
 import type { ReactNode } from "react";
+import { AnimaLogo } from "@/components/brand/AnimaLogo";
 
 interface AuthLayoutProps {
   children: ReactNode;
@@ -34,11 +35,8 @@ export function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
         transition={{ duration: 0.5, ease: "easeOut" }}
       >
         {/* Logo */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold tracking-tight text-foreground/90 mb-1">
-            Anima
-          </h1>
-          <div className="w-8 h-0.5 mx-auto rounded-full bg-gradient-to-r from-anima-violet to-anima-lilac mb-4" />
+        <div className="flex flex-col items-center text-center mb-8">
+          <AnimaLogo size="xl" className="mb-4" />
           <h2 className="text-lg font-semibold text-foreground/80">
             {title}
           </h2>

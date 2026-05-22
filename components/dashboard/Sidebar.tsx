@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { AnimaLogo } from "@/components/brand/AnimaLogo";
 import { useAuth } from "@/lib/auth/AuthContext";
 import { useSubscription } from "@/providers/subscription-provider";
 
@@ -25,12 +26,7 @@ export function Sidebar() {
       {/* Desktop sidebar */}
       <aside className="hidden lg:flex flex-col w-64 h-full border-r border-foreground/[0.06] bg-background/80 backdrop-blur-sm">
         <div className="p-6 pb-4">
-          <Link href="/dashboard" className="flex items-center gap-2">
-            <span className="text-xl font-bold tracking-tight text-foreground/90">
-              Anima
-            </span>
-          </Link>
-          <div className="w-6 h-0.5 rounded-full bg-gradient-to-r from-anima-violet to-anima-lilac mt-2" />
+          <AnimaLogo href="/dashboard" size="md" showWordmark />
         </div>
 
         <nav className="flex-1 px-3 py-2 space-y-1">
