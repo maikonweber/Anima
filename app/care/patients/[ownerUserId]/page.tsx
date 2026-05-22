@@ -107,7 +107,7 @@ export default function SharedPatientDashboardPage({
             )}
           </section>
 
-          {data.alerts?.length > 0 && (
+          {data.alerts && data.alerts.length > 0 && (
             <section className="mb-10">
               <h2 className="text-sm font-semibold text-foreground/70 mb-4">
                 Alertas sutis
