@@ -106,7 +106,12 @@ function CareInviteContent() {
         ...parsed.data,
         inviteToken: token!,
       });
-      setSession(res.accessToken, res.user);
+      setSession({
+        accessToken: res.accessToken,
+        refreshToken: res.refreshToken,
+        accessTokenExpiresIn: res.accessTokenExpiresIn,
+        user: res.user,
+      });
       router.push("/care/patients");
     } catch (err) {
       setFormError(

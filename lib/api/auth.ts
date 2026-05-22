@@ -1,5 +1,5 @@
 import { api } from "@/lib/api-client";
-import type { AuthResponse, User } from "@/lib/types";
+import type { AuthResponse, RegisterResponse, User } from "@/lib/types";
 
 export async function googleLoginApi(idToken: string) {
   return api<AuthResponse>("/auth/google", {
@@ -30,9 +30,30 @@ export async function loginApi(email: string, senha: string) {
 }
 
 export async function registerApi(nome: string, email: string, senha: string) {
-  return api<AuthResponse>("/auth/register", {
+  return api<RegisterResponse>("/auth/register", {
     method: "POST",
     body: JSON.stringify({ nome, email, senha }),
+  });
+}
+
+export async function refreshApi(refreshToken: string) {
+  return api<AuthResponse>("/auth/refresh", {
+    method: "POST",
+    body: JSON.stringify({ refreshToken }),
+  });
+}
+
+export async function logoutApi(refreshToken: string) {
+  return api<void>("/auth/logout", {
+    method: "POST",
+    body: JSON.stringify({ refreshToken }),
+  });
+}
+
+export async function logoutAllApi(accessToken: string) {
+  return api<void>("/auth/logout-all", {
+    method: "POST",
+    token: accessToken,
   });
 }
 

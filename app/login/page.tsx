@@ -1,6 +1,7 @@
 "use client";
 
-import { Suspense, useState, type FormEvent } from "react";
+import { Suspense, useEffect, useState, type FormEvent } from "react";
+import { consumeSessionReuseWarning } from "@/lib/auth/storage";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { GoogleLogin } from "@react-oauth/google";
@@ -24,6 +25,13 @@ function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [sessionReuseWarning, setSessionReuseWarning] = useState(false);
+
+  useEffect(() => {
+    if (consumeSessionReuseWarning()) {
+      setSessionReuseWarning(true);
+    }
+  }, []);
 
   function destination(emailVerified: boolean) {
     if (!emailVerified) return "/aguardando-verificacao";
@@ -85,6 +93,13 @@ function LoginForm() {
       {verifiedSuccess && (
         <div className="rounded-lg bg-green-500/10 border border-green-500/20 px-4 py-3 text-sm text-green-500">
           E-mail confirmado! Faça login para continuar.
+        </div>
+      )}
+
+      {sessionReuseWarning && (
+        <div className="rounded-lg bg-amber-500/10 border border-amber-500/20 px-4 py-3 text-sm text-amber-200">
+          Sua sessão foi encerrada por segurança (possível uso do mesmo login em
+          outro dispositivo). Entre novamente.
         </div>
       )}
 

@@ -21,7 +21,13 @@ export interface User {
 
 export interface AuthResponse {
   accessToken: string;
+  refreshToken: string;
+  accessTokenExpiresIn: number;
   user: User;
+}
+
+export interface RegisterResponse extends AuthResponse {
+  message?: string;
 }
 
 export interface Emotion {
@@ -281,6 +287,8 @@ export interface RegisterWithInvitePayload {
 
 export interface RegisterWithInviteResponse {
   accessToken: string;
+  refreshToken: string;
+  accessTokenExpiresIn: number;
   user: User;
   invite: CareInvitePublic;
 }
