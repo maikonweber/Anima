@@ -143,7 +143,7 @@ export default function SharedPatientDashboardPage({
             </section>
           )}
 
-          {data.therapyTimeline?.length > 0 && (
+          {data.therapyTimeline && data.therapyTimeline.length > 0 && (
             <section className="mb-10">
               <h2 className="text-sm font-semibold text-foreground/70 mb-4">
                 Timeline terapêutica
@@ -173,7 +173,7 @@ export default function SharedPatientDashboardPage({
             </section>
           )}
 
-          {data.longTermPatterns?.length > 0 && (
+          {data.longTermPatterns && data.longTermPatterns.length > 0 && (
             <section className="mb-10">
               <h2 className="text-sm font-semibold text-foreground/70 mb-4">
                 Padrões de longo prazo
