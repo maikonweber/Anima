@@ -13,6 +13,7 @@ export interface User {
   id: string;
   nome: string;
   email: string;
+  emailVerified: boolean;
   criadoEm: string;
   atualizadoEm: string;
   subscription?: SubscriptionSummary;

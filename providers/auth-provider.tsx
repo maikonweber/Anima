@@ -10,7 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import { ApiError, configureApiClient } from "@/lib/api-client";
-import { loginApi, meApi, registerApi } from "@/lib/api/auth";
+import { googleLoginApi, loginApi, meApi, registerApi } from "@/lib/api/auth";
 import {
   clearAuth,
   getStoredToken,
@@ -26,8 +26,9 @@ interface AuthState {
 }
 
 interface AuthContextValue extends AuthState {
-  login: (email: string, senha: string) => Promise<void>;
-  register: (nome: string, email: string, senha: string) => Promise<void>;
+  login: (email: string, senha: string) => Promise<User>;
+  register: (nome: string, email: string, senha: string) => Promise<User>;
+  googleLogin: (idToken: string) => Promise<User>;
   setSession: (accessToken: string, user: User) => void;
   refreshUser: () => Promise<User | null>;
   logout: () => void;
@@ -64,12 +65,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  const handleEmailNotVerified = useCallback(() => {
+    if (
+      typeof window !== "undefined" &&
+      !window.location.pathname.startsWith("/aguardando-verificacao") &&
+      !window.location.pathname.startsWith("/verify-email") &&
+      !window.location.pathname.startsWith("/login") &&
+      !window.location.pathname.startsWith("/register") &&
+      !window.location.pathname.startsWith("/assinatura")
+    ) {
+      window.location.href = "/aguardando-verificacao";
+    }
+  }, []);
+
   useEffect(() => {
     configureApiClient({
       getToken: () => getStoredToken(),
       onUnauthorized: handleUnauthorized,
+      onEmailNotVerified: handleEmailNotVerified,
     });
-  }, [handleUnauthorized]);
+  }, [handleUnauthorized, handleEmailNotVerified]);
 
   useEffect(() => {
     const token = getStoredToken();
@@ -102,6 +117,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { accessToken, user } = await loginApi(email, senha);
     persistAuth(accessToken, user);
     setState({ user, accessToken, isLoading: false });
+    return user;
   }, []);
 
   const register = useCallback(
@@ -109,9 +125,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { accessToken, user } = await registerApi(nome, email, senha);
       persistAuth(accessToken, user);
       setState({ user, accessToken, isLoading: false });
+      return user;
     },
     [],
   );
+
+  const googleLogin = useCallback(async (idToken: string) => {
+    const { accessToken, user } = await googleLoginApi(idToken);
+    persistAuth(accessToken, user);
+    setState({ user, accessToken, isLoading: false });
+    return user;
+  }, []);
 
   const setSession = useCallback((accessToken: string, user: User) => {
     persistAuth(accessToken, user);
@@ -138,12 +162,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       ...state,
       login,
       register,
+      googleLogin,
       setSession,
       refreshUser,
       logout,
       getToken,
     }),
-    [state, login, register, setSession, refreshUser, logout, getToken],
+    [state, login, register, googleLogin, setSession, refreshUser, logout, getToken],
   );
 
   return (

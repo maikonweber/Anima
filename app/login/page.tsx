@@ -3,10 +3,12 @@
 import { Suspense, useState, type FormEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { GoogleLogin } from "@react-oauth/google";
 import { ApiError } from "@/lib/api-client";
 import { useAuth } from "@/providers/auth-provider";
 import { loginSchema } from "@/lib/validations/auth";
 import { AuthLayout } from "@/components/ui/AuthLayout";
+import { EmailInput } from "@/components/ui/EmailInput";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 
@@ -14,12 +16,19 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const resetSuccess = searchParams.get("reset") === "success";
+  const verifiedSuccess = searchParams.get("verified") === "true";
   const redirectTo = searchParams.get("redirect");
-  const { login } = useAuth();
+  const { login, googleLogin } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  function destination(emailVerified: boolean) {
+    if (!emailVerified) return "/aguardando-verificacao";
+    return redirectTo?.startsWith("/") ? redirectTo : "/dashboard";
+  }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -34,10 +43,8 @@ function LoginForm() {
     setIsLoading(true);
 
     try {
-      await login(parsed.data.email, parsed.data.senha);
-      router.push(
-        redirectTo?.startsWith("/") ? redirectTo : "/dashboard",
-      );
+      const user = await login(parsed.data.email, parsed.data.senha);
+      router.push(destination(user.emailVerified));
     } catch (err) {
       setError(
         err instanceof ApiError
@@ -49,11 +56,35 @@ function LoginForm() {
     }
   }
 
+  async function handleGoogleSuccess(idToken: string) {
+    setIsGoogleLoading(true);
+    setError(null);
+
+    try {
+      const user = await googleLogin(idToken);
+      router.push(destination(user.emailVerified));
+    } catch (err) {
+      setError(
+        err instanceof ApiError
+          ? err.message
+          : "Não foi possível entrar com Google. Tente novamente.",
+      );
+    } finally {
+      setIsGoogleLoading(false);
+    }
+  }
+
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       {resetSuccess && (
         <div className="rounded-lg bg-anima-violet/10 border border-anima-violet/20 px-4 py-3 text-sm text-anima-violet">
           Senha alterada. Faça login com sua nova senha.
+        </div>
+      )}
+
+      {verifiedSuccess && (
+        <div className="rounded-lg bg-green-500/10 border border-green-500/20 px-4 py-3 text-sm text-green-500">
+          E-mail confirmado! Faça login para continuar.
         </div>
       )}
 
@@ -63,12 +94,10 @@ function LoginForm() {
         </div>
       )}
 
-      <Input
+      <EmailInput
         label="Email"
-        type="email"
-        placeholder="seu@email.com"
         value={email}
-        onChange={(e) => setEmail(e.target.value)}
+        onChange={setEmail}
         autoComplete="email"
         required
       />
@@ -96,7 +125,7 @@ function LoginForm() {
         Entrar
       </Button>
 
-      <div className="relative my-3">
+      <div className="relative my-1">
         <div className="absolute inset-0 flex items-center">
           <div className="w-full border-t border-foreground/[0.06]" />
         </div>
@@ -105,11 +134,24 @@ function LoginForm() {
         </div>
       </div>
 
-      <Button type="button" variant="secondary" disabled>
-        Continuar com Google
-      </Button>
+      <div
+        className={`flex justify-center transition-opacity ${isGoogleLoading ? "opacity-50 pointer-events-none" : ""}`}
+      >
+        <GoogleLogin
+          onSuccess={(credentialResponse) => {
+            const idToken = credentialResponse.credential;
+            if (!idToken) return;
+            handleGoogleSuccess(idToken);
+          }}
+          onError={() =>
+            setError("Não foi possível entrar com Google. Tente novamente.")
+          }
+          text="signin_with"
+          useOneTap={false}
+        />
+      </div>
 
-      <p className="text-center text-xs text-foreground/40 mt-4">
+      <p className="text-center text-xs text-foreground/40 mt-2">
         Ainda não tem conta?{" "}
         <Link
           href="/register"

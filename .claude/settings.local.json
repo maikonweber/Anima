@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem \"c:\\\\Users\\\\MaikonWeverdeCarvalh\\\\Anima\" -File | Where-Object { $_.Name -match \"^\\\\.\" })",
+      "Bash(npm install *)",
+      "Bash(npx tsc *)"
+    ]
+  }
+}

@@ -29,6 +29,7 @@ export const FORBIDDEN_MESSAGE =
 type ApiClientConfig = {
   getToken: () => string | null;
   onUnauthorized: () => void;
+  onEmailNotVerified?: () => void;
   onPaymentRequired?: (error: PlanLimitError) => void;
 };
 
@@ -73,6 +74,15 @@ export async function api<T>(
 
     if (res.status === 401) {
       clientConfig?.onUnauthorized();
+    }
+
+    if (
+      res.status === 403 &&
+      typeof err === "object" &&
+      err !== null &&
+      (err as Record<string, unknown>).code === "EMAIL_NOT_VERIFIED"
+    ) {
+      clientConfig?.onEmailNotVerified?.();
     }
 
     if (res.status === 402 && typeof err === "object" && err !== null) {

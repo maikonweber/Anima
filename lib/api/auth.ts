@@ -1,6 +1,27 @@
 import { api } from "@/lib/api-client";
 import type { AuthResponse, User } from "@/lib/types";
 
+export async function googleLoginApi(idToken: string) {
+  return api<AuthResponse>("/auth/google", {
+    method: "POST",
+    body: JSON.stringify({ idToken }),
+  });
+}
+
+export async function verifyEmailApi(token: string) {
+  return api<{ message: string }>("/auth/verify-email", {
+    method: "POST",
+    body: JSON.stringify({ token }),
+  });
+}
+
+export async function resendVerificationApi(email: string) {
+  return api<{ message: string }>("/auth/resend-verification", {
+    method: "POST",
+    body: JSON.stringify({ email }),
+  });
+}
+
 export async function loginApi(email: string, senha: string) {
   return api<AuthResponse>("/auth/login", {
     method: "POST",

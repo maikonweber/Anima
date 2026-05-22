@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ApiError } from "@/lib/api-client";
 import { useAuth } from "@/providers/auth-provider";
 import { AuthLayout } from "@/components/ui/AuthLayout";
+import { EmailInput } from "@/components/ui/EmailInput";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 
@@ -41,8 +42,8 @@ export default function RegisterPage() {
     setIsLoading(true);
 
     try {
-      await register(name, email, password);
-      router.push("/dashboard");
+      const user = await register(name, email, password);
+      router.push(user.emailVerified ? "/dashboard" : "/aguardando-verificacao");
     } catch (err) {
       setError(
         err instanceof ApiError
@@ -76,12 +77,10 @@ export default function RegisterPage() {
           required
         />
 
-        <Input
+        <EmailInput
           label="Email"
-          type="email"
-          placeholder="seu@email.com"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={setEmail}
           autoComplete="email"
           required
         />
