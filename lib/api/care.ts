@@ -1,3 +1,4 @@
+import { normalizeSharedDashboard } from "@/lib/care/normalize-shared-dashboard";
 import { api } from "@/lib/api-client";
 import type {
   AccessibleUser,
@@ -61,8 +62,9 @@ export async function updateInvite(
 }
 
 export async function getSharedDashboard(ownerUserId: string) {
-  return api<SharedDashboard>(
+  const raw = await api<SharedDashboard>(
     `/care/dashboard/${encodeURIComponent(ownerUserId)}`,
     { auth: true },
   );
+  return normalizeSharedDashboard(raw);
 }

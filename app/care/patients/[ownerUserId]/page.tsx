@@ -4,6 +4,11 @@ import { use } from "react";
 import Link from "next/link";
 import { motion } from "motion/react";
 import { ApiError } from "@/lib/api-client";
+import {
+  hasIntelligentReportContent,
+  hasLongTermPatternContent,
+  hasPreConsultContent,
+} from "@/lib/care/normalize-shared-dashboard";
 import { useSharedDashboard } from "@/hooks/use-care";
 import { WeekSummaryChart } from "@/components/diary/WeekSummaryChart";
 import { SharedDiaryList } from "@/components/care/SharedDiaryList";
@@ -173,103 +178,112 @@ export default function SharedPatientDashboardPage({
             </section>
           )}
 
-          {data.longTermPatterns && data.longTermPatterns.length > 0 && (
+          {hasLongTermPatternContent(data.longTermPatterns) && (
             <section className="mb-10">
               <h2 className="text-sm font-semibold text-foreground/70 mb-4">
                 Padrões de longo prazo
               </h2>
               <div className="grid gap-4 sm:grid-cols-2">
-                {data.longTermPatterns.map((pattern) => (
+                {data.longTermPatterns!.map((pattern) => (
                   <div key={pattern.id} className="glass-panel p-5">
                     <p className="text-sm font-semibold text-foreground/80 mb-2">
                       {pattern.title}
                     </p>
-                    <p className="text-xs text-foreground/40 uppercase tracking-[0.2em] mb-3">
-                      {pattern.theme ?? "Tema emocional"}
-                    </p>
-                    <p className="text-sm text-foreground/60 leading-relaxed">
-                      {pattern.description}
-                    </p>
+                    {pattern.theme && (
+                      <p className="text-xs text-foreground/40 uppercase tracking-[0.2em] mb-3">
+                        {pattern.theme}
+                      </p>
+                    )}
+                    {pattern.description && (
+                      <p className="text-sm text-foreground/60 leading-relaxed">
+                        {pattern.description}
+                      </p>
+                    )}
                   </div>
                 ))}
               </div>
             </section>
           )}
 
-          {(data.preConsultSummary || data.intelligentReport) && (
+          {(hasPreConsultContent(data.preConsultSummary) ||
+            hasIntelligentReportContent(data.intelligentReport)) && (
             <section className="grid gap-4 lg:grid-cols-2 mb-10">
-              {data.preConsultSummary && (
+              {hasPreConsultContent(data.preConsultSummary) && (
                 <div className="glass-panel p-5">
                   <h2 className="text-sm font-semibold text-foreground/70 mb-3">
                     Pré-consulta
                   </h2>
-                  {data.preConsultSummary.subtitle && (
+                  {data.preConsultSummary!.subtitle && (
                     <p className="text-xs uppercase tracking-[0.2em] text-foreground/40 mb-3">
-                      {data.preConsultSummary.subtitle}
+                      {data.preConsultSummary!.subtitle}
                     </p>
                   )}
                   <ul className="space-y-3">
-                    {(data.preConsultSummary.points ?? []).map((point, index) => (
+                    {data.preConsultSummary!.points.map((point, index) => (
                       <li key={index} className="text-sm text-foreground/60">
                         • {point}
                       </li>
                     ))}
                   </ul>
-                  {data.preConsultSummary.note && (
+                  {data.preConsultSummary!.note && (
                     <p className="mt-4 text-sm text-foreground/50">
-                      {data.preConsultSummary.note}
+                      {data.preConsultSummary!.note}
                     </p>
                   )}
                 </div>
               )}
 
-              {data.intelligentReport && (
+              {hasIntelligentReportContent(data.intelligentReport) && (
                 <div className="glass-panel p-5">
                   <h2 className="text-sm font-semibold text-foreground/70 mb-3">
                     Relatório inteligente
                   </h2>
-                  {data.intelligentReport.risks && data.intelligentReport.risks.length > 0 && (
+                  {data.intelligentReport!.risks &&
+                    data.intelligentReport!.risks.length > 0 && (
                     <div className="mb-4">
                       <p className="text-xs uppercase tracking-[0.2em] text-foreground/40 mb-2">
                         Riscos e sinais
                       </p>
                       <ul className="space-y-2 text-sm text-foreground/60">
-                        {data.intelligentReport.risks.map((item, index) => (
+                        {data.intelligentReport!.risks.map((item, index) => (
                           <li key={index}>• {item}</li>
                         ))}
                       </ul>
                     </div>
                   )}
-                  {data.intelligentReport.progressHighlights && data.intelligentReport.progressHighlights.length > 0 && (
+                  {data.intelligentReport!.progressHighlights &&
+                    data.intelligentReport!.progressHighlights.length > 0 && (
                     <div className="mb-4">
                       <p className="text-xs uppercase tracking-[0.2em] text-foreground/40 mb-2">
                         Progresso
                       </p>
                       <ul className="space-y-2 text-sm text-foreground/60">
-                        {data.intelligentReport.progressHighlights.map((item, index) => (
+                        {data.intelligentReport!.progressHighlights.map((item, index) => (
                           <li key={index}>• {item}</li>
                         ))}
                       </ul>
                     </div>
                   )}
-                  {data.intelligentReport.recommendations && data.intelligentReport.recommendations.length > 0 && (
+                  {data.intelligentReport!.recommendations &&
+                    data.intelligentReport!.recommendations.length > 0 && (
                     <div className="mb-4">
                       <p className="text-xs uppercase tracking-[0.2em] text-foreground/40 mb-2">
                         Recomendações suaves
                       </p>
                       <ul className="space-y-2 text-sm text-foreground/60">
-                        {data.intelligentReport.recommendations.map((item, index) => (
+                        {data.intelligentReport!.recommendations.map((item, index) => (
                           <li key={index}>• {item}</li>
                         ))}
                       </ul>
                     </div>
                   )}
-                  {data.intelligentReport.patternsDetected && data.intelligentReport.patternsDetected.length > 0 && (
+                  {data.intelligentReport!.patternsDetected &&
+                    data.intelligentReport!.patternsDetected.length > 0 && (
                     <div className="text-sm text-foreground/60">
                       <p className="text-xs uppercase tracking-[0.2em] text-foreground/40 mb-2">
                         Padrões detectados</p>
                       <ul className="space-y-2">
-                        {data.intelligentReport.patternsDetected.map((item, index) => (
+                        {data.intelligentReport!.patternsDetected.map((item, index) => (
                           <li key={index}>• {item}</li>
                         ))}
                       </ul>
