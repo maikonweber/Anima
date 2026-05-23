@@ -3,6 +3,8 @@ export type PlanSlug = "essencial" | "pleno" | "cuidado" | "preview";
 export type PlanLimits = {
   diaryEntriesPerMonth: number | null;
   aiAnalysesPerMonth: number | null;
+  /** Mensagens do assistente conversacional por mês; `null` = ilimitado */
+  assistantMessagesPerMonth?: number | null;
   historyDays: number | null;
   careInvitesActive: number | null;
   accessiblePatients: number | null;
@@ -23,6 +25,8 @@ export type SubscriptionSummary = {
     period: string;
     diaryEntries: { used: number; limit: number | null };
     aiAnalyses: { used: number; limit: number | null };
+    /** Assistente conversacional — omitido em clientes/backends mais antigos */
+    assistantMessages?: { used: number; limit: number | null };
     careInvitesActive: { used: number; limit: number | null };
     accessiblePatients: { used: number; limit: number | null };
   };
@@ -36,15 +40,24 @@ export type Plan = {
   stripePriceId: string | null;
 };
 
+export type PlanLimitErrorDetails = {
+  limit?: number | null;
+  used?: number;
+  resetsAt?: string;
+  planSlug?: string;
+};
+
 export type PlanLimitError = {
   statusCode: 402;
-  error: string;
+  error?: string;
   code: string;
   message: string;
   limit?: number | null;
   used?: number;
   resetsAt?: string;
   planSlug?: string;
+  /** Corpo estruturado retornado pela API em alguns limites */
+  details?: PlanLimitErrorDetails;
 };
 
 export type CheckoutResponse = { url: string };

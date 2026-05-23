@@ -20,6 +20,23 @@ export function formatLimit(value: number | null, unit?: string): string {
   return unit ? `${value} ${unit}` : String(value);
 }
 
+export function normalizedPlanLimitFields(e: {
+  limit?: number | null;
+  used?: number;
+  resetsAt?: string;
+  details?: { limit?: number | null; used?: number; resetsAt?: string };
+}): {
+  limit: number | null;
+  used: number | undefined;
+  resetsAt: string | undefined;
+} {
+  return {
+    limit: e.details?.limit ?? e.limit ?? null,
+    used: e.details?.used ?? e.used,
+    resetsAt: e.details?.resetsAt ?? e.resetsAt,
+  };
+}
+
 export function formatResetsAt(iso: string | undefined): string | null {
   if (!iso) return null;
   try {

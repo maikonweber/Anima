@@ -10,6 +10,12 @@ const NAV_ITEMS = [
   { href: "/dashboard", label: "Início", icon: HomeIcon },
   { href: "/diary/new", label: "Novo registro", icon: PlusIcon },
   { href: "/diary", label: "Linha do tempo", icon: ClockIcon },
+  {
+    href: "/assistente",
+    label: "Assistente AI",
+    shortLabel: "Assistente",
+    icon: AssistantChatIcon,
+  },
   { href: "/care/patients", label: "Acompanhamentos", icon: PatientsIcon },
   { href: "/dashboard/care", label: "Convidar profissional", icon: ShareIcon },
   { href: "/dashboard/perfil", label: "Perfil", icon: UserIcon },
@@ -102,7 +108,9 @@ export function Sidebar() {
                 }`}
               >
                 <item.icon active={isActive} />
-                <span className="text-[10px] font-medium">{item.label}</span>
+                <span className="text-[10px] font-medium leading-tight text-center max-w-[3.75rem]">
+                  {"shortLabel" in item && item.shortLabel ? item.shortLabel : item.label}
+                </span>
               </Link>
             );
           })}
@@ -180,6 +188,33 @@ function ClockIcon({ active }: { active: boolean }) {
         strokeLinejoin="round"
         d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
       />
+    </svg>
+  );
+}
+
+function AssistantChatIcon({ active }: { active: boolean }) {
+  return (
+    <svg
+      className="w-5 h-5"
+      fill={active ? "currentColor" : "none"}
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={active ? 0 : 1.6}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M4.875 13.813v-6.938a3.188 3.188 0 013.187-3.187h8.625a3.188 3.188 0 013.188 3.187v5.063a3.188 3.188 0 01-3.188 3.187h-5.063l-3.562 4.594v-4.594H8.063a3.188 3.188 0 01-3.188-3.187z" />
+      {!active ? (
+        <>
+          <path d="M8.063 11.063h8.156" strokeWidth={1.75} />
+          <path d="M8.063 13.969h5.063" strokeWidth={1.75} />
+          <circle cx={18} cy={8} r={1} fill="currentColor" stroke="none" aria-hidden />
+        </>
+      ) : (
+        <>
+          <path stroke="white" fill="none" opacity={0.9} strokeWidth={1.5} d="M8 11h9M8 14h6" />
+        </>
+      )}
     </svg>
   );
 }

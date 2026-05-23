@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
-import { formatResetsAt } from "@/lib/subscription/utils";
+import { formatResetsAt, normalizedPlanLimitFields } from "@/lib/subscription/utils";
 import type { PlanLimitError } from "@/types/subscription";
 
 interface PaywallModalProps {
@@ -21,8 +21,14 @@ export function PaywallModal({
 
   if (!error || previewMode) return null;
 
-  const resetsLabel = formatResetsAt(error.resetsAt);
+  const nf = normalizedPlanLimitFields(error);
+  const resetsLabel = formatResetsAt(nf.resetsAt);
   const cta = getPaywallCta(error.code);
+
+  const title =
+    error.code === "PLAN_LIMIT_ASSISTANT_MESSAGES"
+      ? "Limite de mensagens atingido"
+      : "Limite do plano atingido";
 
   return (
     <div
@@ -42,24 +48,33 @@ export function PaywallModal({
           id="paywall-title"
           className="text-lg font-bold text-foreground/90 mb-2"
         >
-          Limite do plano atingido
+          {title}
         </h2>
         <p className="text-sm text-foreground/50 mb-1">
           {error.code === "PLAN_LIMIT_OWNER_SHARE"
             ? "Quem registra momentos precisa do plano Pleno para autorizar você a visualizar o dashboard compartilhado."
             : error.code === "PLAN_LIMIT_ACCESSIBLE_PATIENTS"
               ? "Você atingiu o limite de 25 acompanhamentos no plano Cuidado. Entre em contato para ampliar sua capacidade."
+              : error.code === "PLAN_LIMIT_ASSISTANT_MESSAGES"
+                ? (() => {
+                    const lim = nf.limit;
+                    const resets = resetsLabel ?? "uma data próxima";
+                    if (lim != null) {
+                      return `Você usou todas as ${lim} mensagens do assistente neste período. O limite renova em ${resets}.`;
+                    }
+                    return error.message;
+                  })()
               : error.message}
         </p>
-        {resetsLabel && (
+        {resetsLabel && error.code !== "PLAN_LIMIT_ASSISTANT_MESSAGES" && (
           <p className="text-xs text-foreground/35 mb-4">
             Renova em {resetsLabel}
           </p>
         )}
-        {error.used != null && error.limit != null && (
+        {nf.used != null && nf.limit != null && (
           <p className="text-xs text-foreground/40 mb-4">
-            Uso: {error.used}
-            {error.limit != null ? ` / ${error.limit}` : ""}
+            Uso: {nf.used}
+            {nf.limit != null ? ` / ${nf.limit}` : ""}
           </p>
         )}
 
@@ -132,6 +147,13 @@ function getPaywallCta(code: string): {
       return {
         primary: "Entendi",
         secondary: undefined,
+        showPlansLink: true,
+      };
+    case "PLAN_LIMIT_ASSISTANT_MESSAGES":
+      return {
+        primary: "Fazer upgrade para Pleno",
+        primaryHref: "/assinatura?plan=pleno",
+        secondary: "Fechar",
         showPlansLink: true,
       };
     case "PLAN_LIMIT_OWNER_SHARE":
