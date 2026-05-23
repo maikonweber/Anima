@@ -183,7 +183,7 @@ export default function LoginPage() {
   return (
     <AuthLayout
       title="Bem-vindo de volta"
-      subtitle="Entre para continuar sua jornada emocional"
+      subtitle="Sua porta de entrada para uma plataforma de cuidado emocional contínuo"
     >
       <Suspense
         fallback={

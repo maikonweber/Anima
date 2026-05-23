@@ -16,7 +16,7 @@ export function EnergySlider({ value, onChange, disabled }: EnergySliderProps) {
     <div className="space-y-3">
       <div className="flex items-center justify-between gap-3">
         <label htmlFor="energia-slider" className="text-sm font-medium text-foreground/70">
-          Nível de energia
+          Energia emocional
         </label>
         <div className="flex items-center gap-2">
           <span className="text-lg font-bold tabular-nums" style={{ color }} aria-live="polite">
@@ -45,7 +45,7 @@ export function EnergySlider({ value, onChange, disabled }: EnergySliderProps) {
         aria-valuemin={0}
         aria-valuemax={100}
         aria-valuenow={value}
-        aria-label={`Nível de energia: ${value} de 100, categoria ${label}`}
+        aria-label={`Energia emocional: ${value} de 100, escala ${label}`}
       />
 
       <div className="flex justify-between text-[10px] text-foreground/30 px-0.5">

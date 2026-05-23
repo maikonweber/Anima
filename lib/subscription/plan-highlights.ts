@@ -2,11 +2,10 @@ import { formatLimit } from "@/lib/subscription/utils";
 import type { PlanLimits, PlanSlug } from "@/types/subscription";
 
 const PLAN_TAGLINES: Record<PlanSlug, string> = {
-  essencial:
-    "Grátis para começar — registros limitados, IA e um compartilhamento conforme limites da conta",
-  pleno: "Postagens e IA ilimitadas, com um vínculo de acompanhamento ativo",
+  essencial: "Para começar sua jornada emocional.",
+  pleno: "Para quem deseja acompanhamento contínuo e insights avançados.",
   cuidado:
-    "Para psicólogos: acompanhe quem compartilhou o diário, com dashboard e uso profissional sem limites típicos",
+    "Para profissionais que acompanham pacientes com mais contexto.",
   preview: "Modo demonstração — limites ampliados durante o período experimental",
 };
 
@@ -19,7 +18,7 @@ export function buildPlanHighlights(limits: PlanLimits): string[] {
   const items: string[] = [];
 
   if (limits.diaryEntriesPerMonth === null) {
-    items.push("Registros ilimitados no diário");
+    items.push("Registros emocionais ilimitados");
   } else {
     items.push(
       `${formatLimit(limits.diaryEntriesPerMonth)} registros por mês`,
@@ -27,42 +26,42 @@ export function buildPlanHighlights(limits: PlanLimits): string[] {
   }
 
   if (limits.aiAnalysesPerMonth === null) {
-    items.push("Análises com IA ilimitadas");
+    items.push("Insights SENTIO AI ilimitados");
   } else {
     items.push(
-      `${formatLimit(limits.aiAnalysesPerMonth)} análises com IA por mês`,
+      `${formatLimit(limits.aiAnalysesPerMonth)} rodadas de insights SENTIO AI por mês`,
     );
   }
 
   if (limits.historyDays === null) {
-    items.push("Histórico completo");
+    items.push("Linha do tempo completa");
   } else {
-    items.push(`Histórico dos últimos ${limits.historyDays} dias`);
+    items.push(`${limits.historyDays} dias visíveis na linha do tempo`);
   }
 
   if (limits.careInvitesActive === 1) {
-    items.push("1 compartilhamento com acompanhante ativo");
+    items.push("1 compartilhamento ativo com profissional");
   } else if (
     limits.careInvitesActive != null &&
     limits.careInvitesActive > 1
   ) {
     items.push(
-      `Até ${limits.careInvitesActive} compartilhamentos ativos`,
+      `Até ${limits.careInvitesActive} compartilhamentos ativos com profissionais`,
     );
   }
 
   if (limits.accessiblePatients != null) {
     items.push(
-      `Até ${limits.accessiblePatients} acompanhamentos com dashboard`,
+      `Até ${limits.accessiblePatients} dashboards de pacientes autorizados`,
     );
   }
 
-  if (limits.canShareDashboard && !items.some((i) => i.includes("compartilh"))) {
-    items.push("Compartilhar dashboard com acompanhante");
+  if (limits.canShareDashboard && !items.some((i) => i.toLowerCase().includes("compartilh"))) {
+    items.push("Convidar profissionais para dashboard em leitura");
   }
 
   if (limits.canViewSharedDashboard) {
-    items.push("Visualizar dashboards compartilhados com você");
+    items.push("Visualizar dashboards compartilhados por pacientes");
   }
 
   return items;

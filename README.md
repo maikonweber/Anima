@@ -1,6 +1,6 @@
-# Anima — Diário de Energia Emocional
+# EmotiveCare (MutterCorp) — produto frontend
 
-Frontend Next.js (App Router) do MVP de diário emocional com análise de IA, integrado à API NestJS.
+Cliente web Next.js (App Router) da plataforma de acompanhamento emocional contínuo com **SENTIO AI**, integrado à API NestJS.
 
 ## Pré-requisitos
 

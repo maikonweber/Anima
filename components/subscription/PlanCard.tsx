@@ -78,7 +78,7 @@ export function PlanCard({
             disabled={isCurrent}
             variant={isCurrent ? "secondary" : "primary"}
           >
-            {isCurrent ? "Plano ativo" : "Assinar"}
+            {isCurrent ? "Plano ativo" : "Começar agora"}
           </Button>
         ) : (
           <p className="text-center text-xs text-foreground/40 py-3">
@@ -93,18 +93,18 @@ export function PlanCard({
 function PlanLimitsList({ limits }: { limits: Plan["limits"] }) {
   const items = [
     `Registros/mês: ${formatLimit(limits.diaryEntriesPerMonth)}`,
-    `Análises IA/mês: ${formatLimit(limits.aiAnalysesPerMonth)}`,
+    `Insights SENTIO AI/mês: ${formatLimit(limits.aiAnalysesPerMonth)}`,
     limits.historyDays != null
-      ? `Histórico: ${limits.historyDays} dias`
-      : "Histórico: completo",
+      ? `Linha do tempo: últimos ${limits.historyDays} dias`
+      : "Linha do tempo: retrospectiva completa",
     limits.careInvitesActive != null
       ? `Compartilhamentos ativos: ${formatLimit(limits.careInvitesActive)}`
       : null,
     limits.accessiblePatients != null
       ? `Acompanhamentos: ${formatLimit(limits.accessiblePatients)}`
       : null,
-    limits.canShareDashboard ? "Pode convidar acompanhante" : null,
-    limits.canViewSharedDashboard ? "Pode ver dashboards compartilhados" : null,
+    limits.canShareDashboard ? "Pode convidar profissional" : null,
+    limits.canViewSharedDashboard ? "Pode ver dashboards autorizados" : null,
   ].filter(Boolean) as string[];
 
   return (

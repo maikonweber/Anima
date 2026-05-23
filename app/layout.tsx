@@ -19,9 +19,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Anima — Diário de Energia Emocional",
+  title: "EmotiveCare — O futuro do cuidado emocional · SENTIO AI",
   description:
-    "Diário emocional com análise de IA. Registre como você se sente e descubra insights sobre sua energia.",
+    "Plataforma de acompanhamento emocional contínuo com inteligência SENTIO AI, memória emocional e insights terapêuticos — por MutterCorp. Para uso pessoal e profissional.",
   icons: {
     icon: [
       { url: "/favicon.png", type: "image/png", sizes: "32x32" },

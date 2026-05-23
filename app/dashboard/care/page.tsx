@@ -42,7 +42,7 @@ export default function DashboardCarePage() {
     try {
       await createMutation.mutateAsync(parsed.data.viewerEmail);
       setEmail("");
-      setFormSuccess("Convite enviado! O acompanhante receberá um e-mail.");
+      setFormSuccess("Convite enviado! O profissional receberá instruções por e-mail.");
     } catch (err) {
       if (err instanceof ApiError && err.status === 402) return;
       setFormError(
@@ -61,17 +61,17 @@ export default function DashboardCarePage() {
         transition={{ duration: 0.4 }}
       >
         <h1 className="text-2xl sm:text-3xl font-bold text-foreground/90 mb-1">
-          Compartilhar com acompanhante
+          Convidar profissional
         </h1>
         <p className="text-sm text-foreground/40 mb-8">
-          Convide um profissional de confiança para acompanhar seu resumo
-          semanal e registros do diário (somente leitura).
+          Autorize alguém de confiança a enxergar resumos entre sessões e os
+          momentos que você salvar na linha do tempo (somente leitura).
         </p>
 
         {!canShareDashboard && (
           <div className="glass-panel p-4 mb-6 flex flex-wrap items-center justify-between gap-3">
             <p className="text-sm text-foreground/50">
-              Compartilhar com acompanhante está disponível no plano Pleno.
+              Esta função faz parte do plano Pleno, para compartilhamento ético entre sessões.
             </p>
             <UpgradeBadge planName="Pleno" href="/assinatura?plan=pleno" />
           </div>
@@ -107,7 +107,7 @@ export default function DashboardCarePage() {
           )}
 
           <Input
-            label="E-mail do acompanhante"
+            label="E-mail do profissional"
             type="email"
             placeholder="psicologo@email.com"
             value={email}
@@ -122,7 +122,7 @@ export default function DashboardCarePage() {
             </Button>
           ) : (
             <Link href="/assinatura?plan=pleno">
-              <Button type="button">Assinar Pleno para convidar</Button>
+              <Button type="button">Assinar plano Pleno para convidar</Button>
             </Link>
           )}
         </form>
@@ -152,8 +152,7 @@ export default function DashboardCarePage() {
         {!isLoading && !error && (!invites || invites.length === 0) && (
           <div className="glass-panel p-8 text-center">
             <p className="text-sm text-foreground/50">
-              Você ainda não enviou convites. Use o formulário acima para
-              convidar um acompanhante.
+              Você ainda não enviou convites. Envie pelo formulário acima quando quiser trazer sua rede de apoio clínico para dentro da sua jornada.
             </p>
           </div>
         )}

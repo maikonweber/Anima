@@ -50,12 +50,12 @@ export default function DiaryDetailPage({
       if (err instanceof ApiError && err.status === 402) return;
       if (err instanceof ApiError) {
         if (err.status === 503) {
-          setAnalyzeError("Serviço de IA indisponível. Tente novamente em instantes.");
+          setAnalyzeError("Insights indisponíveis no momento. Tente novamente em instantes.");
         } else {
           setAnalyzeError(err.message);
         }
       } else {
-        setAnalyzeError("Não foi possível analisar este registro.");
+        setAnalyzeError("Não foi possível gerar insights neste momento.");
       }
     }
   }
@@ -93,7 +93,7 @@ export default function DiaryDetailPage({
           onRetry={() => refetchEntry()}
         />
         <Link href="/diary" className="block mt-4 text-sm text-anima-violet">
-          ← Voltar ao histórico
+          ← Voltar à linha do tempo
         </Link>
       </div>
     );
@@ -109,7 +109,7 @@ export default function DiaryDetailPage({
           href="/diary"
           className="text-xs text-foreground/40 hover:text-anima-violet transition-colors"
         >
-          ← Histórico
+          ← Linha do tempo
         </Link>
         <div className="flex gap-2">
           <Link
@@ -166,7 +166,7 @@ export default function DiaryDetailPage({
         <div className="glass-panel p-8 text-center mb-6">
           <DiaryDetailSpinner />
           <p className="text-sm text-foreground/50 mt-4">
-            Analisando suas emoções...
+            A SENTIO AI está preparando seus insights...
           </p>
         </div>
       )}
@@ -186,7 +186,7 @@ export default function DiaryDetailPage({
       {usage && (
         <div className="glass-panel p-4 mb-4">
           <UsageMeter
-            label="Análises IA este mês"
+            label="Insights SENTIO AI este mês"
             used={usage.aiAnalyses.used}
             limit={usage.aiAnalyses.limit}
           />
@@ -195,7 +195,7 @@ export default function DiaryDetailPage({
 
       {!analysis && !analyze.isPending && !analyzeError && (
         <Button onClick={runAnalyze} isLoading={analyze.isPending} className="mt-4">
-          Analisar com IA
+          Explorar insights
         </Button>
       )}
     </div>

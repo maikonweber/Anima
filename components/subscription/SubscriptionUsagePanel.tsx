@@ -18,25 +18,25 @@ export function SubscriptionUsagePanel({
         Uso em {formatPeriod(usage.period)}
       </h3>
       <UsageMeter
-        label="Registros no diário"
+        label="Registros na linha do tempo"
         used={usage.diaryEntries.used}
         limit={usage.diaryEntries.limit}
       />
       <UsageMeter
-        label="Análises com IA"
+        label="Insights SENTIO AI"
         used={usage.aiAnalyses.used}
         limit={usage.aiAnalyses.limit}
       />
       {usage.careInvitesActive.limit !== null && (
         <UsageMeter
-          label="Convites care ativos"
+          label="Compartilhamentos com profissionais"
           used={usage.careInvitesActive.used}
           limit={usage.careInvitesActive.limit}
         />
       )}
       {usage.accessiblePatients.limit !== null && (
         <UsageMeter
-          label="Acompanhamentos ativos"
+          label="Acompanhamentos com dashboard"
           used={usage.accessiblePatients.used}
           limit={usage.accessiblePatients.limit}
         />

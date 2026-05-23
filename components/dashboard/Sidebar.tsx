@@ -9,9 +9,9 @@ import { useSubscription } from "@/providers/subscription-provider";
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Início", icon: HomeIcon },
   { href: "/diary/new", label: "Novo registro", icon: PlusIcon },
-  { href: "/diary", label: "Histórico", icon: ClockIcon },
+  { href: "/diary", label: "Linha do tempo", icon: ClockIcon },
   { href: "/care/patients", label: "Acompanhamentos", icon: PatientsIcon },
-  { href: "/dashboard/care", label: "Compartilhar", icon: ShareIcon },
+  { href: "/dashboard/care", label: "Convidar profissional", icon: ShareIcon },
   { href: "/dashboard/perfil", label: "Perfil", icon: UserIcon },
 ];
 

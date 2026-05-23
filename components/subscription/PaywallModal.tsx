@@ -46,7 +46,7 @@ export function PaywallModal({
         </h2>
         <p className="text-sm text-foreground/50 mb-1">
           {error.code === "PLAN_LIMIT_OWNER_SHARE"
-            ? "Quem compartilha o diário precisa do plano Pleno para liberar o dashboard com você."
+            ? "Quem registra momentos precisa do plano Pleno para autorizar você a visualizar o dashboard compartilhado."
             : error.code === "PLAN_LIMIT_ACCESSIBLE_PATIENTS"
               ? "Você atingiu o limite de 25 acompanhamentos no plano Cuidado. Entre em contato para ampliar sua capacidade."
               : error.message}

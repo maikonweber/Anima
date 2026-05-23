@@ -94,13 +94,13 @@ export default function NewDiaryPage() {
           href="/dashboard"
           className="text-xs text-foreground/40 hover:text-anima-violet transition-colors"
         >
-          ← Voltar ao início
+          ← Voltar ao painel inicial
         </Link>
         <h1 className="text-2xl sm:text-3xl font-bold text-foreground/90 mt-3 mb-1">
           Novo registro
         </h1>
         <p className="text-sm text-foreground/40">
-          Como você está se sentindo hoje?
+          Um espaço gentil para nomear o que você sente e receber insights da SENTIO AI quando salvar.
         </p>
       </div>
 
@@ -116,7 +116,7 @@ export default function NewDiaryPage() {
       {usage && (
         <div className="glass-panel p-4 mb-6">
           <UsageMeter
-            label="Registros este mês"
+            label="Momentos registrados este mês"
             used={usage.diaryEntries.used}
             limit={usage.diaryEntries.limit}
           />
@@ -285,7 +285,7 @@ export default function NewDiaryPage() {
         </div>
 
         <Button type="submit" isLoading={createEntry.isPending}>
-          Salvar e analisar
+          Salvar e gerar insights
         </Button>
       </form>
     </div>

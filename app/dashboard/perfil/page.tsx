@@ -5,7 +5,6 @@ import { motion } from "motion/react";
 import { SponsoredBenefitBadge } from "@/components/subscription/SponsoredBenefitBadge";
 import { SubscriptionUsagePanel } from "@/components/subscription/SubscriptionUsagePanel";
 import { UsageMeter } from "@/components/subscription/UsageMeter";
-import { hasLimitedHistory } from "@/lib/subscription/plan-highlights";
 import { Button } from "@/components/ui/Button";
 import { useAuth } from "@/providers/auth-provider";
 import { useSubscription } from "@/providers/subscription-provider";
@@ -120,12 +119,12 @@ export default function PerfilPage() {
         {subscription?.usage && (
           <div className="space-y-3 mb-4">
             <UsageMeter
-              label="Registros este mês"
+              label="Momentos registrados este mês"
               used={subscription.usage.diaryEntries.used}
               limit={subscription.usage.diaryEntries.limit}
             />
             <UsageMeter
-              label="Análises IA este mês"
+              label="Insights SENTIO AI este mês"
               used={subscription.usage.aiAnalyses.used}
               limit={subscription.usage.aiAnalyses.limit}
             />

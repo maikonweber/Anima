@@ -44,10 +44,10 @@ export default function DiaryListPage() {
       <div className="flex items-start justify-between gap-4 mb-8">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-foreground/90 mb-1">
-            Histórico
+            Linha do tempo
           </h1>
           <p className="text-sm text-foreground/40">
-            Seus registros emocionais
+            Seus momentos e sua memória emocional
           </p>
         </div>
         <Link
@@ -65,10 +65,10 @@ export default function DiaryListPage() {
       {showHistoryHint && limits?.historyDays != null && (
         <div className="glass-panel p-4 mb-4 border border-anima-violet/15">
           <p className="text-xs text-foreground/50">
-            No plano Essencial, o histórico mostra os últimos {limits.historyDays}{" "}
-            dias.{" "}
+            No plano Essencial, você vê apenas os últimos {limits.historyDays}{" "}
+            dias na linha do tempo.{" "}
             <Link href="/assinatura" className="text-anima-violet hover:underline">
-              Histórico completo no Pleno
+              Histórico completo no plano Pleno
             </Link>
           </p>
         </div>
@@ -77,7 +77,7 @@ export default function DiaryListPage() {
       {usage && (
         <div className="glass-panel p-4 mb-4">
           <UsageMeter
-            label="Registros este mês"
+            label="Momentos registrados este mês"
             used={usage.diaryEntries.used}
             limit={usage.diaryEntries.limit}
           />
@@ -125,7 +125,7 @@ export default function DiaryListPage() {
           message={
             forbidden
               ? error.message
-              : "Não foi possível carregar o histórico."
+              : "Não foi possível carregar sua linha do tempo."
           }
           onRetry={() => refetch()}
         />
@@ -148,13 +148,13 @@ export default function DiaryListPage() {
             📝
           </p>
           <h3 className="text-base font-semibold text-foreground/70 mb-2">
-            Nenhum registro ainda
+            Nenhum momento registrado ainda
           </h3>
           <p className="text-sm text-foreground/40 mb-6 max-w-xs mx-auto">
-            Comece seu diário emocional registrando como você se sente hoje.
+            Que tal iniciar sua rotina com um registro sobre como você está hoje?
           </p>
           <Link href="/diary/new">
-            <Button>Fazer primeiro registro</Button>
+            <Button>Criar meu primeiro registro</Button>
           </Link>
         </div>
       )}

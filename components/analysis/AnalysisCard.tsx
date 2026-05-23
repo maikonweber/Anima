@@ -15,7 +15,7 @@ export function AnalysisCard({ analysis, entry }: AnalysisCardProps) {
   return (
     <div className="space-y-5">
       <div className="glass-panel p-6 emotion-glow">
-        <p className="text-sm text-foreground/40 mb-2">Resumo emocional</p>
+        <p className="text-sm text-foreground/40 mb-2">Resumo emocional · SENTIO AI</p>
         <p className="text-base sm:text-lg text-foreground/85 leading-relaxed italic">
           &ldquo;{analysis.resumoEmocional}&rdquo;
         </p>
@@ -23,7 +23,7 @@ export function AnalysisCard({ analysis, entry }: AnalysisCardProps) {
 
       <div className="glass-panel p-5 space-y-4">
         <div className="flex flex-wrap items-center gap-3">
-          <span className="text-sm text-foreground/50">Energia calculada</span>
+          <span className="text-sm text-foreground/50">Energia estimada</span>
           <span className="text-2xl font-bold tabular-nums" style={{ color: style.color }}>
             {analysis.energiaCalculada}
             <span className="text-sm font-normal text-foreground/30">/100</span>
@@ -41,7 +41,7 @@ export function AnalysisCard({ analysis, entry }: AnalysisCardProps) {
         {analysis.emocoesBaseDetectadas.length > 0 && (
           <div>
             <p className="text-xs font-medium text-foreground/40 uppercase tracking-wide mb-2">
-              Emoções detectadas
+              Emoções em evidência neste texto
             </p>
             <div className="flex flex-wrap gap-2">
               {analysis.emocoesBaseDetectadas.map((nome) => (
@@ -73,7 +73,7 @@ export function AnalysisCard({ analysis, entry }: AnalysisCardProps) {
 
         <div className="rounded-xl p-4 border border-anima-violet/20 bg-anima-violet/5">
           <p className="text-xs font-medium text-anima-violet uppercase tracking-wide mb-1">
-            Ação sugerida
+            Sugestão de autocuidado
           </p>
           <p className="text-sm font-medium text-foreground/80 leading-relaxed">
             {analysis.acaoSugerida}
@@ -81,7 +81,7 @@ export function AnalysisCard({ analysis, entry }: AnalysisCardProps) {
         </div>
 
         <p className="text-xs text-foreground/35 text-right">
-          Confiança da análise: {confiancaPct}%
+          Confiança do insight · SENTIO AI: {confiancaPct}%
         </p>
       </div>
     </div>

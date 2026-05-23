@@ -143,7 +143,7 @@ function CareInviteContent() {
       subtitle={
         revoked
           ? "Este convite não está mais disponível."
-          : `${invite.owner.nome} convidou você para acompanhar o dashboard emocional.`
+          : `${invite.owner.nome} convidou você para acompanhar o painel emocional compartilhado.`
       }
     >
       <motion.div
@@ -165,8 +165,7 @@ function CareInviteContent() {
 
         {revoked && (
           <p className="text-sm text-red-400 text-center">
-            Este convite foi revogado ou expirou. Peça um novo convite a quem
-            compartilhou o diário.
+            Este convite foi revogado ou expirou. Peça uma nova autorização diretamente à pessoa que o enviou.
           </p>
         )}
 

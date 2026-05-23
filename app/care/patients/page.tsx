@@ -19,7 +19,7 @@ export default function CarePatientsPage() {
           Acompanhamentos
         </h1>
         <p className="text-sm text-foreground/40 mb-8">
-          Quem compartilhou o diário com você
+          Pacientes que compartilham a evolução com você
         </p>
 
         {error && (
@@ -49,7 +49,7 @@ export default function CarePatientsPage() {
               Nenhum acompanhamento ainda
             </h3>
             <p className="text-sm text-foreground/40 max-w-sm mx-auto">
-              Quando alguém aceitar seu convite e compartilhar o diário, aparecerá
+              Quando uma pessoa autorizar você a ver seus dados, aparecerá
               aqui.
             </p>
           </div>

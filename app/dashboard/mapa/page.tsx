@@ -18,8 +18,7 @@ export default function MapaEmocionalPage() {
           Mapa Emocional
         </h1>
         <p className="text-sm text-foreground/40 mb-8">
-          Explore todas as combinações emocionais e descubra como seus
-          sentimentos se conectam.
+          Descubra combinações e camadas emocionais — um mapa vivo para explorar nomenclatura e autoconhecimento.
         </p>
       </motion.div>
 

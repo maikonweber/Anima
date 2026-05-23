@@ -58,7 +58,7 @@ export default function RegisterPage() {
   return (
     <AuthLayout
       title="Criar sua conta"
-      subtitle="Comece sua jornada de autoconhecimento emocional"
+      subtitle="Comece sua jornada na EmotiveCare com apoio da SENTIO AI — simples e acolhedor"
     >
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         {error && (

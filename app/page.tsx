@@ -1,26 +1,83 @@
 import Link from "next/link";
 import { AnimaLogo } from "@/components/brand/AnimaLogo";
 
+const HOW_IT_WORKS = [
+  {
+    step: "1",
+    title: "Registre seu momento",
+    text: "Escreva sobre seu dia, selecione emoções e acompanhe sua energia emocional.",
+  },
+  {
+    step: "2",
+    title: "Receba insights com IA",
+    text: "A SENTIO AI identifica padrões, nuances emocionais e sugestões de autocuidado leve.",
+  },
+  {
+    step: "3",
+    title: "Acompanhe sua evolução",
+    text: "Visualize sua linha do tempo emocional, tendências semanais e mudanças importantes.",
+  },
+  {
+    step: "4",
+    title: "Compartilhe com profissionais",
+    text: "Quando quiser, compartilhe sua evolução com psicólogos ou profissionais de confiança.",
+  },
+] as const;
+
+const PERSONAL_FEATURES = [
+  "Diário emocional inteligente",
+  "Mapa de emoções",
+  "Energia emocional",
+  "Histórico e padrões",
+  "Sugestões de regulação",
+  "Memória emocional longitudinal",
+  "Alertas suaves de sobrecarga",
+  "Jornada de autoconhecimento",
+] as const;
+
+const DIFFERENTIALS = [
+  {
+    title: "Memória emocional",
+    description:
+      "A plataforma acompanha padrões ao longo do tempo, ajudando a transformar registros em contexto.",
+  },
+  {
+    title: "IA contextual",
+    description:
+      "A SENTIO AI interpreta emoções, energia e sinais recorrentes para gerar insights mais humanos.",
+  },
+  {
+    title: "Cuidado contínuo",
+    description:
+      "Entre uma sessão e outra, você continua com apoio leve ao autoconhecimento e à organização emocional.",
+  },
+  {
+    title: "Privacidade e controle",
+    description:
+      "Você decide o que registrar, acompanhar e compartilhar — inclusive com profissionais.",
+  },
+] as const;
+
 const PROFESSIONAL_FEATURES = [
   {
     title: "Convite por e-mail",
     description:
-      "Quem usa o diário convida você com um link seguro. Você aceita o convite e passa a acompanhar apenas o que foi autorizado.",
+      "O paciente envia um convite seguro por e-mail. Você aceita e acompanha apenas o que foi autorizado, em modo somente leitura.",
   },
   {
     title: "Dashboard compartilhado",
     description:
-      "Resumo semanal, histórico de registros e detalhes do diário em modo somente leitura — sem expor dados além do consentimento.",
+      "Resumo entre sessões, histórico e contexto para enriquecer a escuta — sem substituir a avaliação clínica nem editar registros.",
   },
   {
     title: "Lista de acompanhamentos",
     description:
-      "Centralize o acompanhamento de quem compartilhou o diário. Ideal para clínicas e consultórios com volume moderado.",
+      "Centralize pacientes que compartilharam dados com você. Ideal para consultórios e equipes com volume moderado.",
   },
   {
     title: "Plano Cuidado",
     description:
-      "Até 25 acompanhamentos com dashboard, pensado para psicólogos e outros profissionais que acompanham processos terapêuticos.",
+      "Até 25 acompanhamentos com dashboard dedicado para profissionais que desejam mais contexto longitudinal.",
   },
 ] as const;
 
@@ -29,7 +86,13 @@ export default function Home() {
     <div className="flex flex-col min-h-full">
       <nav className="relative z-10 flex items-center justify-between px-6 sm:px-8 py-5 sm:py-6 max-w-6xl mx-auto w-full min-h-[5rem]">
         <AnimaLogo href="/" size="header" showWordmark />
-        <div className="flex items-center gap-3 sm:gap-4">
+        <div className="flex items-center gap-3 sm:gap-4 flex-wrap justify-end">
+          <a
+            href="#como-funciona"
+            className="hidden sm:inline text-sm font-medium text-foreground/50 hover:text-foreground/80 transition-colors"
+          >
+            Como funciona
+          </a>
           <a
             href="#para-psicologos"
             className="hidden sm:inline text-sm font-medium text-foreground/50 hover:text-foreground/80 transition-colors"
@@ -50,7 +113,7 @@ export default function Home() {
                 "linear-gradient(135deg, var(--anima-violet), var(--anima-indigo))",
             }}
           >
-            Começar agora
+            Começar minha jornada
           </Link>
         </div>
       </nav>
@@ -68,22 +131,19 @@ export default function Home() {
         />
 
         <p className="relative text-xs sm:text-sm font-medium uppercase tracking-widest text-anima-violet/80 mb-4">
-          Diário de energia emocional
+          Plataforma de acompanhamento emocional contínuo · Powered by SENTIO AI
         </p>
         <h1 className="relative text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-foreground/90 mb-4 max-w-4xl">
-          Continuidade emocional entre uma sessão e outra
+          O futuro do cuidado emocional.
         </h1>
         <div className="relative w-12 h-0.5 rounded-full bg-gradient-to-r from-anima-violet to-anima-lilac mb-6" />
         <p className="relative text-base sm:text-lg text-foreground/50 max-w-2xl leading-relaxed mb-4">
-          O Anima é uma plataforma para registrar, nomear e refletir sobre
-          sentimentos no dia a dia — com apoio de IA e, quando você
-          autoriza, compartilhamento seguro com psicólogos e profissionais de
-          saúde mental.
+          Uma plataforma de acompanhamento emocional contínuo com IA para
+          autoconhecimento, organização das emoções e apoio entre sessões — para
+          quem está em ou fora da terapia.
         </p>
-        <p className="relative text-sm text-foreground/35 max-w-xl leading-relaxed mb-8">
-          Para quem está em terapia: um diário guiado que fortalece o
-          autoconhecimento. Para quem acompanha: visibilidade ética do processo,
-          sem substituir a escuta clínica.
+        <p className="relative text-sm text-foreground/35 max-w-xl leading-relaxed mb-8 italic">
+          &ldquo;Entenda suas emoções. Cuide da sua mente.&rdquo;
         </p>
         <div className="relative flex flex-col sm:flex-row gap-3">
           <Link
@@ -94,13 +154,13 @@ export default function Home() {
                 "linear-gradient(135deg, var(--anima-violet), var(--anima-indigo))",
             }}
           >
-            Criar conta gratuita
+            Começar minha jornada
           </Link>
           <a
-            href="#para-psicologos"
+            href="#como-funciona"
             className="px-8 py-3 rounded-full text-sm font-semibold text-foreground/70 border border-foreground/10 hover:border-anima-violet/30 hover:text-anima-violet transition-colors"
           >
-            Sou psicólogo(a)
+            Conhecer a plataforma
           </a>
         </div>
       </header>
@@ -108,46 +168,36 @@ export default function Home() {
       <section className="py-12 px-4 border-t border-foreground/[0.04]">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-xl sm:text-2xl font-bold text-foreground/85 mb-4">
-            O que é o Anima
+            EmotiveCare
           </h2>
           <p className="text-sm sm:text-base text-foreground/45 leading-relaxed max-w-2xl mx-auto">
-            Um produto completo de inteligência emocional: você registra
-            energia e emoções, recebe análises da IA e acompanha tendências no
-            dashboard. Quando faz sentido no tratamento, convida o profissional
-            para ver o mesmo resumo — sempre com consentimento explícito e
-            acesso somente leitura. Quem acompanha ganha material concreto para
-            sessões; quem registra ganha um ritual diário de cuidado consigo.
+            Mais que um lugar para anotar sentimentos — um sistema que integra{" "}
+            <strong className="text-foreground/60 font-semibold">
+              inteligência emocional da SENTIO AI
+            </strong>
+            , memória longitudinal e ferramentas para pacientes e profissionais
+            colaborarem com ética e transparência.
+          </p>
+          <p className="text-xs text-foreground/30 mt-4">
+            Produto desenvolvido por MutterCorp.
           </p>
         </div>
       </section>
 
-      <section className="py-14 px-4 bg-foreground/[0.02]">
+      <section
+        id="como-funciona"
+        className="py-14 px-4 bg-foreground/[0.02] scroll-mt-20"
+      >
         <div className="max-w-5xl mx-auto">
           <h2 className="text-2xl sm:text-3xl font-bold text-foreground/85 text-center mb-3">
-            Como funciona
+            Como a EmotiveCare acompanha sua jornada emocional
           </h2>
           <p className="text-sm text-foreground/40 text-center max-w-lg mx-auto mb-10">
-            Do registro individual ao acompanhamento profissional, em três
-            passos.
+            Quatro pilares pensados para cuidado contínuo, com tecnologia ao
+            serviço das pessoas.
           </p>
-          <ol className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              {
-                step: "1",
-                title: "Registro no diário",
-                text: "No app, registra energia, emoções e contexto. A IA sugere reflexões sobre o que foi escrito.",
-              },
-              {
-                step: "2",
-                title: "Evolução visível",
-                text: "Resumo semanal, histórico e mapa emocional mostram padrões ao longo do tempo.",
-              },
-              {
-                step: "3",
-                title: "Compartilhamento opcional",
-                text: "Com plano adequado, quem registra convida o profissional por e-mail. Você acessa dashboards autorizados.",
-              },
-            ].map((item) => (
+          <ol className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {HOW_IT_WORKS.map((item) => (
               <li key={item.step} className="glass-panel p-6">
                 <span className="inline-flex w-8 h-8 items-center justify-center rounded-full bg-anima-violet/15 text-sm font-bold text-anima-violet mb-4">
                   {item.step}
@@ -165,31 +215,58 @@ export default function Home() {
       </section>
 
       <section
+        id="para-uso-pessoal"
+        className="py-16 px-4 border-t border-foreground/[0.04] scroll-mt-20"
+      >
+        <div className="max-w-5xl mx-auto">
+          <div className="glass-panel p-8 sm:p-10">
+            <h2 className="text-2xl sm:text-3xl font-bold text-foreground/90 mb-4 text-center sm:text-left">
+              Autoconhecimento que evolui com você
+            </h2>
+            <p className="text-sm sm:text-base text-foreground/45 leading-relaxed max-w-3xl mb-8">
+              A EmotiveCare ajuda você a entender padrões emocionais, reconhecer
+              possíveis gatilhos, acompanhar sua energia e construir uma rotina de
+              cuidado mais consciente — com IA como apoio, nunca como substituto do
+              vínculo humano ou do acompanhamento profissional.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {PERSONAL_FEATURES.map((feat) => (
+                <div
+                  key={feat}
+                  className="flex gap-3 text-sm text-foreground/60 items-start"
+                >
+                  <span className="text-anima-violet mt-0.5">✓</span>
+                  {feat}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section
         id="para-psicologos"
         className="py-16 px-4 scroll-mt-20 border-t border-foreground/[0.04]"
       >
         <div className="max-w-5xl mx-auto">
           <div className="glass-panel p-8 sm:p-10 mb-10 text-center sm:text-left">
             <p className="text-xs font-medium uppercase tracking-widest text-anima-violet mb-3">
-              Anima Care
+              Para profissionais
             </p>
             <h2 className="text-2xl sm:text-3xl font-bold text-foreground/90 mb-4">
-              Para psicólogos e profissionais de saúde mental
+              Acompanhamento emocional entre sessões
             </h2>
             <p className="text-sm sm:text-base text-foreground/45 leading-relaxed max-w-3xl mb-4">
-              O módulo de acompanhamento foi desenhado para ampliar sua visão
-              clínica sem violar a autonomia de quem registra. A pessoa mantém o diário;
-              você recebe convite, aceita o vínculo e consulta resumos e
-              registros compartilhados — nunca altera o conteúdo dele.
+              Apoie seus pacientes com uma visão contínua da evolução emocional,
+              padrões que emergem aos poucos e resumos que podem subsidiar suas
+              conversas terapêuticas — sempre com consentimento informado e
+              leitura segura dos dados autorizados.
             </p>
             <p className="text-sm text-foreground/35 leading-relaxed max-w-3xl">
-              Indicado para psicoterapia individual, acompanhamento
-              psicopedagógico e outras práticas em que registros emocionais
-              entre sessões enriquecem a intervenção. O plano{" "}
-              <strong className="text-foreground/55 font-semibold">
-                Cuidado
-              </strong>{" "}
-              permite gerenciar até 25 acompanhamentos com dashboard dedicado.
+              O plano{" "}
+              <strong className="text-foreground/55 font-semibold">Cuidado</strong>{" "}
+              permite gerenciar até 25 acompanhamentos com dashboards dedicados. A plataforma
+              complementa sua prática; não define diagnóstico nem substitui sua escuta clínica.
             </p>
           </div>
 
@@ -215,7 +292,7 @@ export default function Home() {
                   "linear-gradient(135deg, var(--anima-violet), var(--anima-indigo))",
               }}
             >
-              Criar conta profissional
+              Criar minha conta profissional
             </Link>
             <Link
               href="/login"
@@ -225,21 +302,61 @@ export default function Home() {
             </Link>
           </div>
           <p className="text-xs text-foreground/30 text-center mt-6 max-w-xl mx-auto">
-            Quem compartilha o diário precisa do plano Pleno para enviar convites. Profissionais
-            usam o plano Cuidado para visualizar múltiplos dashboards. Detalhes
-            em Planos após o login.
+            Quem compartilha dados com você precisa de um plano com convites ativos (Pleno). Profissionais
+            costumam utilizar o plano Cuidado para visualizar múltiplos painéis. Detalhes
+            em Planos após entrar na conta.
           </p>
         </div>
       </section>
 
-      <section className="py-16 px-4 text-center">
+      <section className="py-14 px-4 bg-foreground/[0.02]">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl font-bold text-foreground/85 text-center mb-3">
+            Mais que um diário. Um sistema de cuidado emocional.
+          </h2>
+          <p className="text-sm text-foreground/40 text-center max-w-2xl mx-auto mb-10">
+            Tecnologia e sensibilidade andando juntas — com a SENTIO AI gerando insights
+            que respeitam sua história.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {DIFFERENTIALS.map((item) => (
+              <div key={item.title} className="glass-panel p-6">
+                <h3 className="text-base font-semibold text-foreground/80 mb-2">
+                  {item.title}
+                </h3>
+                <p className="text-sm text-foreground/40 leading-relaxed">
+                  {item.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section
+        id="seguranca"
+        className="py-16 px-4 border-t border-foreground/[0.04] scroll-mt-20"
+      >
+        <div className="max-w-3xl mx-auto text-center">
+          <h2 className="text-2xl sm:text-3xl font-bold text-foreground/85 mb-4">
+            Tecnologia com responsabilidade emocional
+          </h2>
+          <p className="text-sm sm:text-base text-foreground/45 leading-relaxed">
+            A EmotiveCare não substitui acompanhamento psicológico ou médico. A plataforma
+            oferece apoio ao autoconhecimento, organização emocional e acompanhamento
+            complementar — com espaço para diálogo ético entre pacientes e profissionais.
+          </p>
+        </div>
+      </section>
+
+      <section className="py-16 px-4 text-center bg-foreground/[0.015] border-t border-foreground/[0.04]">
         <div className="max-w-md mx-auto">
           <h2 className="text-2xl font-bold text-foreground/85 mb-3">
-            Comece hoje
+            Inicie onde você está — evolua com apoio
           </h2>
           <p className="text-sm text-foreground/40 mb-6 leading-relaxed">
-            Conta gratuita no plano Essencial. Evolua para Pleno ou Cuidado
-            conforme sua necessidade — uso pessoal, profissional ou ambos.
+            Experimente pelo plano Essencial e avance conforme suas necessidades
+            — uso pessoal, compartilhamento com especialistas ou prática assistida.
           </p>
           <Link
             href="/register"
@@ -249,16 +366,30 @@ export default function Home() {
                 "linear-gradient(135deg, var(--anima-violet), var(--anima-indigo))",
             }}
           >
-            Criar conta gratuita
+            Criar minha conta
           </Link>
+          <p className="mt-6">
+            <Link
+              href="/login"
+              className="text-sm text-anima-violet hover:text-anima-lilac transition-colors"
+            >
+              Ou entrar para acompanhar minha evolução →
+            </Link>
+          </p>
         </div>
       </section>
 
       <footer className="py-8 text-center border-t border-foreground/[0.04]">
-        <p className="text-xs text-foreground/30 max-w-md mx-auto leading-relaxed px-4">
-          Anima — diário emocional com IA e acompanhamento profissional
-          consentido. Não substitui avaliação, diagnóstico ou tratamento
-          clínico.
+        <p className="text-xs text-foreground/30 max-w-lg mx-auto leading-relaxed px-4 mb-3">
+          <strong className="text-foreground/40 font-semibold">
+            EmotiveCare
+          </strong>{" "}
+          · plataforma de acompanhamento emocional contínuo com IA (SENTIO AI). Uma empresa{" "}
+          <strong className="text-foreground/40 font-semibold">MutterCorp</strong>
+          . Não substitui avaliação, diagnóstico ou tratamento clínico.
+        </p>
+        <p className="text-[10px] text-foreground/25 px-4">
+          O futuro do cuidado emocional · Cuidado emocional com inteligência
         </p>
       </footer>
     </div>

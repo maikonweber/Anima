@@ -59,7 +59,7 @@ export default function SharedPatientDashboardPage({
           <ErrorMessage
             message={
               paymentRequired && error.planLimit?.code === "PLAN_LIMIT_OWNER_SHARE"
-                ? "Quem compartilha precisa do plano Pleno para liberar o dashboard."
+                ? "Para liberar esse painel compartilhado, é preciso que a pessoa que registra esteja no plano Pleno."
                 : forbidden
                   ? error.message
                   : paymentRequired
@@ -281,7 +281,8 @@ export default function SharedPatientDashboardPage({
                     data.intelligentReport!.patternsDetected.length > 0 && (
                     <div className="text-sm text-foreground/60">
                       <p className="text-xs uppercase tracking-[0.2em] text-foreground/40 mb-2">
-                        Padrões detectados</p>
+                        Padrões sugeridos pela leitura
+                      </p>
                       <ul className="space-y-2">
                         {data.intelligentReport!.patternsDetected.map((item, index) => (
                           <li key={index}>• {item}</li>
@@ -296,7 +297,7 @@ export default function SharedPatientDashboardPage({
 
           <section>
             <h2 className="text-sm font-semibold text-foreground/70 mb-4">
-              Registros do diário
+              Momentos na linha do tempo
             </h2>
             <SharedDiaryList entries={data.diaryEntries} />
           </section>

@@ -20,7 +20,7 @@ export function PreviewModeBanner() {
             Modo preview
           </span>
           {" — "}
-          você está usando uma versão experimental do Anima. Os limites podem
+          você está usando uma versão experimental da EmotiveCare. Os limites podem
           ser mais amplos que no lançamento; em breve migraremos para os planos
           premium oficiais.
         </p>

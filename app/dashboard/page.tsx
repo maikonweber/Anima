@@ -35,7 +35,7 @@ export default function DashboardHome() {
           {greeting}, {user?.nome?.split(" ")[0]}
         </h1>
         <p className="text-sm text-foreground/40 mb-6">
-          Resumo da sua semana emocional
+          Seu panorama emocional desta semana
         </p>
 
         <Link
@@ -46,7 +46,7 @@ export default function DashboardHome() {
               "linear-gradient(135deg, var(--anima-violet), var(--anima-indigo))",
           }}
         >
-          + Novo registro
+          + Novo momento
         </Link>
       </motion.div>
 
@@ -84,10 +84,10 @@ export default function DashboardHome() {
           animate={{ opacity: 1 }}
         >
           <p className="text-sm text-foreground/50 mb-4">
-            Você ainda não tem registros esta semana. Que tal começar agora?
+            Você ainda não registrou momentos esta semana. Como está se sentindo hoje?
           </p>
           <Link href="/diary/new">
-            <Button>Fazer primeiro registro</Button>
+            <Button>Registrar primeiro momento</Button>
           </Link>
         </motion.div>
       )}
@@ -102,7 +102,7 @@ export default function DashboardHome() {
           href="/diary"
           className="text-sm text-anima-violet hover:text-anima-lilac transition-colors"
         >
-          Ver histórico completo →
+          Ver linha do tempo completa →
         </Link>
       </motion.div>
     </div>

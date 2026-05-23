@@ -12,7 +12,7 @@ export function SharedDiaryList({ entries }: SharedDiaryListProps) {
     return (
       <div className="glass-panel p-10 text-center">
         <p className="text-sm text-foreground/50">
-          Nenhum registro disponível para visualização.
+          Ainda não há momentos disponíveis para visualização autorizada neste período.
         </p>
       </div>
     );

@@ -8,7 +8,7 @@ export function SponsoredBenefitBadge({
   return (
     <span
       className={`inline-flex items-center gap-1 text-[10px] font-medium px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20 ${className}`}
-      title="Limites ampliados pelo vínculo com seu profissional no plano Cuidado"
+      title="Benefício vinculado ao plano profissional (Cuidado) do seu acompanhante"
     >
       <svg
         className="w-3 h-3 shrink-0"

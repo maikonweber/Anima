@@ -39,14 +39,14 @@ export default function AssinaturaSucessoPage() {
         <p className="text-sm text-foreground/45 mb-8">
           {isLoading || !ready
             ? "Atualizando seu plano..."
-            : "Seu plano foi atualizado. Aproveite os novos recursos!"}
+            : "Boas-vindas à próxima etapa da sua rotina na EmotiveCare — com mais contexto entre sessões e insights da SENTIO AI quando aplicável."}
         </p>
         <Button
           onClick={() => router.push("/diary")}
           disabled={!ready}
           isLoading={!ready}
         >
-          Ir para o diário
+          Ir para a linha do tempo
         </Button>
       </motion.div>
     </div>

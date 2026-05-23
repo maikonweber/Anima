@@ -92,7 +92,7 @@ function AssinaturaPageContent() {
           Planos
         </h1>
         <p className="text-sm text-foreground/40 mb-4">
-          Escolha o plano ideal para sua jornada emocional
+          Escolha o plano para expandir registros, insights SENTIO AI e vínculos com profissionais
         </p>
         {(previewMode || isPreviewPlan) && (
           <p className="text-xs text-foreground/45 mb-8 px-3 py-2 rounded-lg bg-amber-500/10 border border-amber-500/20">

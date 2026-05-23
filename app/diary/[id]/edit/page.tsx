@@ -147,7 +147,7 @@ export default function EditDiaryPage({
           }
         />
         <Link href="/diary" className="block mt-4 text-sm text-anima-violet">
-          ← Voltar ao histórico
+          ← Voltar à linha do tempo
         </Link>
       </div>
     );
