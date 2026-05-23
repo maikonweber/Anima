@@ -1,5 +1,39 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { AnimaLogo } from "@/components/brand/AnimaLogo";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { medicalHomePageSchema } from "@/components/seo/schema";
+import { DEFAULT_SITE_KEYWORDS, OG_IMAGE_PATH, SITE_URL } from "@/lib/seo/site";
+
+export const metadata: Metadata = {
+  title: "O futuro do cuidado emocional",
+  description:
+    "Plataforma de cuidado emocional com IA para autoconhecimento, acompanhamento emocional e apoio terapêutico contínuo.",
+  alternates: { canonical: `${SITE_URL}/` },
+  keywords: [...DEFAULT_SITE_KEYWORDS, "prevenção emocional", "memória emocional longitudinal"],
+  openGraph: {
+    url: SITE_URL,
+    title: "EmotiveCare · O futuro do cuidado emocional",
+    description:
+      "Plataforma de cuidado emocional com IA para autoconhecimento, acompanhamento emocional e apoio terapêutico contínuo.",
+    images: [
+      {
+        url: `${SITE_URL}${OG_IMAGE_PATH}`,
+        width: 1200,
+        height: 630,
+        alt: "EmotiveCare — SENTIO AI · MutterCorp",
+      },
+    ],
+    type: "website",
+    locale: "pt_BR",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "EmotiveCare · Plataforma de cuidado emocional com IA",
+    description:
+      "Plataforma de cuidado emocional com IA para autoconhecimento, acompanhamento emocional e apoio terapêutico contínuo.",
+  },
+};
 
 const HOW_IT_WORKS = [
   {
@@ -93,8 +127,14 @@ const PROFESSIONAL_FEATURES = [
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-full">
-      <nav className="relative z-10 flex items-center justify-between px-6 sm:px-8 py-5 sm:py-6 max-w-6xl mx-auto w-full min-h-[5rem]">
+    <>
+      <JsonLd data={medicalHomePageSchema()} />
+      <div className="flex flex-col min-h-full">
+        <header>
+          <nav
+            aria-label="Navegação principal da EmotiveCare"
+            className="relative z-10 flex items-center justify-between px-6 sm:px-8 py-5 sm:py-6 max-w-6xl mx-auto w-full min-h-[5rem]"
+          >
         <AnimaLogo href="/" size="header" showWordmark />
         <div className="flex items-center gap-3 sm:gap-4 flex-wrap justify-end">
           <a
@@ -127,8 +167,13 @@ export default function Home() {
           </Link>
         </div>
       </nav>
+    </header>
 
-      <header className="relative flex flex-col items-center justify-center pt-12 pb-16 sm:pt-20 sm:pb-24 px-4 text-center overflow-hidden">
+    <main id="main-content" role="main" className="flex flex-col flex-1">
+      <section
+        aria-labelledby="hero-heading"
+        className="relative flex flex-col items-center justify-center pt-12 pb-16 sm:pt-20 sm:pb-24 px-4 text-center overflow-hidden"
+      >
         <div
           className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full opacity-15 blur-3xl pointer-events-none"
           style={{ backgroundColor: "var(--anima-violet)" }}
@@ -143,7 +188,10 @@ export default function Home() {
         <p className="relative text-xs sm:text-sm font-medium uppercase tracking-widest text-anima-violet/80 mb-4">
           Plataforma de acompanhamento emocional contínuo · Powered by SENTIO AI
         </p>
-        <h1 className="relative text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-foreground/90 mb-4 max-w-4xl">
+        <h1
+          id="hero-heading"
+          className="relative text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-foreground/90 mb-4 max-w-4xl"
+        >
           O futuro do cuidado emocional.
         </h1>
         <div className="relative w-12 h-0.5 rounded-full bg-gradient-to-r from-anima-violet to-anima-lilac mb-6" />
@@ -172,7 +220,7 @@ export default function Home() {
             Conhecer a plataforma
           </a>
         </div>
-      </header>
+      </section>
 
       <section className="py-12 px-4 border-t border-foreground/[0.04]">
         <div className="max-w-4xl mx-auto text-center">
@@ -397,7 +445,9 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="py-8 text-center border-t border-foreground/[0.04]">
+    </main>
+
+      <footer className="py-8 text-center border-t border-foreground/[0.04]" role="contentinfo">
         <p className="text-xs text-foreground/30 max-w-lg mx-auto leading-relaxed px-4 mb-3">
           <strong className="text-foreground/40 font-semibold">
             EmotiveCare
@@ -409,7 +459,31 @@ export default function Home() {
         <p className="text-[10px] text-foreground/25 px-4">
           O futuro do cuidado emocional · Cuidado emocional com inteligência
         </p>
+        <nav
+          aria-label="Links rápidos do rodapé"
+          className="mt-6 flex flex-wrap justify-center gap-4 text-[11px] font-medium text-foreground/35"
+        >
+          <Link href="/about" prefetch={false} className="hover:text-anima-violet transition-colors">
+            Sobre
+          </Link>
+          <Link href="/plans" prefetch={false} className="hover:text-anima-violet transition-colors">
+            Planos
+          </Link>
+          <Link href="/faq" prefetch={false} className="hover:text-anima-violet transition-colors">
+            FAQ
+          </Link>
+          <Link href="/blog" prefetch={false} className="hover:text-anima-violet transition-colors">
+            Blog
+          </Link>
+          <Link href="/privacy" prefetch={false} className="hover:text-anima-violet transition-colors">
+            Privacidade
+          </Link>
+          <Link href="/terms" prefetch={false} className="hover:text-anima-violet transition-colors">
+            Termos
+          </Link>
+        </nav>
       </footer>
     </div>
+    </>
   );
 }

@@ -1,0 +1,28 @@
+# EmotiveCare — diretrizes para crawlers
+# Ajuste o host em produção se usar domínio diferente em NEXT_PUBLIC_SITE_URL
+
+User-agent: *
+Allow: /
+
+Disallow: /api/
+Disallow: /dashboard/
+Disallow: /diary/
+Disallow: /care/
+Disallow: /assinatura/
+
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /verify-email
+Disallow: /aguardando-verificacao
+Disallow: /care-invite
+
+# Rotas mencionadas no checklist de segurança (reservadas)
+Disallow: /admin/
+Disallow: /settings/
+Disallow: /auth/
+Disallow: /private/
+Disallow: /checkout/
+
+Sitemap: https://www.emotivecare.com.br/sitemap.xml

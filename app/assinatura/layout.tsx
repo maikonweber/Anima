@@ -1,5 +1,9 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { AnimaLogo } from "@/components/brand/AnimaLogo";
+import { NO_INDEX_METADATA } from "@/lib/seo/private-metadata";
+
+export const metadata: Metadata = NO_INDEX_METADATA;
 
 export default function AssinaturaLayout({
   children,
@@ -19,7 +23,9 @@ export default function AssinaturaLayout({
           </Link>
         </div>
       </header>
-      <main className="flex-1">{children}</main>
+      <main id="main-content" className="flex-1">
+        {children}
+      </main>
     </div>
   );
 }
