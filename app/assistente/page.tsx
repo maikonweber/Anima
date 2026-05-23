@@ -4,7 +4,7 @@ import { AssistantChatPage } from "@/components/assistant/AssistantChatPage";
 
 export default function AssistentePage() {
   return (
-    <div className="p-4 lg:p-8 max-w-[1600px] mx-auto w-full flex flex-col flex-1 min-h-0 min-w-0">
+    <div className="flex min-h-0 flex-1 flex-col px-3 pb-3 pt-1 sm:px-5 lg:px-10 lg:py-8">
       <AssistantChatPage />
     </div>
   );
