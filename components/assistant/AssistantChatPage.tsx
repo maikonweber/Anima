@@ -80,12 +80,6 @@ export function AssistantChatPage() {
 
   const awaitingReply = sendMutation.isPending;
 
-  const showMessageThread =
-    !!selectedSessionId ||
-    messages.length > 0 ||
-    optimisticSnippet !== null ||
-    awaitingReply;
-
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({
       behavior: "smooth",
@@ -414,8 +408,7 @@ export function AssistantChatPage() {
             </p>
           ) : null}
 
-          {showMessageThread ? (
-            <ul className="mx-auto flex w-full min-w-0 max-w-3xl flex-col gap-3 pb-1">
+          <ul className="mx-auto flex w-full min-w-0 max-w-3xl flex-col gap-3 pb-1">
               {messages.map((m) => (
                 <li
                   key={m.id}
@@ -467,8 +460,7 @@ export function AssistantChatPage() {
                   </div>
                 </li>
               ) : null}
-            </ul>
-          ) : null}
+          </ul>
           <div ref={messagesEndRef} className="h-px shrink-0" aria-hidden />
         </div>
 
