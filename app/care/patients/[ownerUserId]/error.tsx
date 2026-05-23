@@ -9,11 +9,11 @@ export default function PatientDashboardError() {
         href="/care/patients"
         className="text-sm text-anima-violet hover:text-anima-lilac transition-colors mb-6 inline-block"
       >
-        ← Voltar para pacientes
+        ← Voltar aos acompanhamentos
       </Link>
       <div className="glass-panel p-6 text-center">
         <p className="text-sm text-foreground/50 mb-2">
-          Não foi possível carregar o dashboard do paciente.
+          Não foi possível carregar o dashboard compartilhado.
         </p>
         <p className="text-xs text-foreground/35">
           Tente recarregar a página ou volte mais tarde.

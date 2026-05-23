@@ -6,7 +6,7 @@ const PLAN_TAGLINES: Record<PlanSlug, string> = {
     "Grátis para começar — registros limitados, IA e um compartilhamento conforme limites da conta",
   pleno: "Postagens e IA ilimitadas, com um vínculo de acompanhamento ativo",
   cuidado:
-    "Para psicólogos: acompanhe pacientes com dashboard e diário profissional sem limites típicos",
+    "Para psicólogos: acompanhe quem compartilhou o diário, com dashboard e uso profissional sem limites típicos",
   preview: "Modo demonstração — limites ampliados durante o período experimental",
 };
 
@@ -53,7 +53,7 @@ export function buildPlanHighlights(limits: PlanLimits): string[] {
 
   if (limits.accessiblePatients != null) {
     items.push(
-      `Até ${limits.accessiblePatients} pacientes com dashboard`,
+      `Até ${limits.accessiblePatients} acompanhamentos com dashboard`,
     );
   }
 
@@ -62,7 +62,7 @@ export function buildPlanHighlights(limits: PlanLimits): string[] {
   }
 
   if (limits.canViewSharedDashboard) {
-    items.push("Visualizar dashboards compartilhados pelos pacientes");
+    items.push("Visualizar dashboards compartilhados com você");
   }
 
   return items;

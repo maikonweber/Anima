@@ -154,7 +154,7 @@ function CareInviteContent() {
         <div className="rounded-xl bg-foreground/[0.04] border border-foreground/[0.08] p-4 space-y-2">
           <div className="flex items-center justify-between gap-2">
             <p className="text-sm text-foreground/70">
-              Paciente: <strong>{invite.owner.nome}</strong>
+              Compartilhado por: <strong>{invite.owner.nome}</strong>
             </p>
             <InviteStatusBadge status={invite.status} />
           </div>
@@ -165,8 +165,8 @@ function CareInviteContent() {
 
         {revoked && (
           <p className="text-sm text-red-400 text-center">
-            Este convite foi revogado ou expirou. Peça um novo convite ao
-            paciente.
+            Este convite foi revogado ou expirou. Peça um novo convite a quem
+            compartilhou o diário.
           </p>
         )}
 
@@ -177,7 +177,7 @@ function CareInviteContent() {
             </p>
             {user ? (
               <Link href="/care/patients">
-                <Button className="w-full">Ver pacientes</Button>
+                <Button className="w-full">Ver acompanhamentos</Button>
               </Link>
             ) : (
               <Link href={loginHref}>

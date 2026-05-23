@@ -16,15 +16,15 @@ export default function CarePatientsPage() {
         transition={{ duration: 0.4 }}
       >
         <h1 className="text-2xl sm:text-3xl font-bold text-foreground/90 mb-1">
-          Pacientes
+          Acompanhamentos
         </h1>
         <p className="text-sm text-foreground/40 mb-8">
-          Dashboards compartilhados com você
+          Quem compartilhou o diário com você
         </p>
 
         {error && (
           <ErrorMessage
-            message="Não foi possível carregar a lista de pacientes."
+            message="Não foi possível carregar a lista de acompanhamentos."
             onRetry={() => refetch()}
           />
         )}
@@ -46,11 +46,11 @@ export default function CarePatientsPage() {
               👥
             </p>
             <h3 className="text-base font-semibold text-foreground/70 mb-2">
-              Nenhum paciente ainda
+              Nenhum acompanhamento ainda
             </h3>
             <p className="text-sm text-foreground/40 max-w-sm mx-auto">
-              Quando um paciente aceitar seu convite de acompanhamento, ele
-              aparecerá aqui.
+              Quando alguém aceitar seu convite e compartilhar o diário, aparecerá
+              aqui.
             </p>
           </div>
         )}

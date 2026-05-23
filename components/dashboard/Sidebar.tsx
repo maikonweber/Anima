@@ -10,7 +10,7 @@ const NAV_ITEMS = [
   { href: "/dashboard", label: "Início", icon: HomeIcon },
   { href: "/diary/new", label: "Novo registro", icon: PlusIcon },
   { href: "/diary", label: "Histórico", icon: ClockIcon },
-  { href: "/care/patients", label: "Pacientes", icon: PatientsIcon },
+  { href: "/care/patients", label: "Acompanhamentos", icon: PatientsIcon },
   { href: "/dashboard/care", label: "Compartilhar", icon: ShareIcon },
   { href: "/dashboard/perfil", label: "Perfil", icon: UserIcon },
 ];

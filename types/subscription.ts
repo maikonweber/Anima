@@ -15,7 +15,7 @@ export type SubscriptionSummary = {
   status: "active" | "trialing" | "past_due" | "canceled" | string;
   currentPeriodEnd: string | null;
   stripeConfigured: boolean;
-  /** Paciente com benefícios tipo Pleno via profissional no plano Cuidado */
+  /** Usuário com benefícios tipo Pleno via profissional no plano Cuidado */
   sponsoredByPsychologist?: boolean;
   /** Resposta em modo demonstração (slug pode ser `preview`) */
   preview?: boolean;

@@ -5,7 +5,7 @@ const PROFESSIONAL_FEATURES = [
   {
     title: "Convite por e-mail",
     description:
-      "O paciente convida você com um link seguro. Você aceita o convite e passa a acompanhar apenas o que foi autorizado.",
+      "Quem usa o diário convida você com um link seguro. Você aceita o convite e passa a acompanhar apenas o que foi autorizado.",
   },
   {
     title: "Dashboard compartilhado",
@@ -13,14 +13,14 @@ const PROFESSIONAL_FEATURES = [
       "Resumo semanal, histórico de registros e detalhes do diário em modo somente leitura — sem expor dados além do consentimento.",
   },
   {
-    title: "Lista de pacientes",
+    title: "Lista de acompanhamentos",
     description:
       "Centralize o acompanhamento de quem compartilhou o diário. Ideal para clínicas e consultórios com volume moderado.",
   },
   {
     title: "Plano Cuidado",
     description:
-      "Até 25 pacientes com dashboard, pensado para psicólogos e outros profissionais que acompanham processos terapêuticos.",
+      "Até 25 acompanhamentos com dashboard, pensado para psicólogos e outros profissionais que acompanham processos terapêuticos.",
   },
 ] as const;
 
@@ -76,7 +76,7 @@ export default function Home() {
         <div className="relative w-12 h-0.5 rounded-full bg-gradient-to-r from-anima-violet to-anima-lilac mb-6" />
         <p className="relative text-base sm:text-lg text-foreground/50 max-w-2xl leading-relaxed mb-4">
           O Anima é uma plataforma para registrar, nomear e refletir sobre
-          sentimentos no dia a dia — com apoio de IA e, quando o paciente
+          sentimentos no dia a dia — com apoio de IA e, quando você
           autoriza, compartilhamento seguro com psicólogos e profissionais de
           saúde mental.
         </p>
@@ -111,12 +111,12 @@ export default function Home() {
             O que é o Anima
           </h2>
           <p className="text-sm sm:text-base text-foreground/45 leading-relaxed max-w-2xl mx-auto">
-            Um produto completo de inteligência emocional: o paciente registra
+            Um produto completo de inteligência emocional: você registra
             energia e emoções, recebe análises da IA e acompanha tendências no
             dashboard. Quando faz sentido no tratamento, convida o profissional
             para ver o mesmo resumo — sempre com consentimento explícito e
-            acesso somente leitura. Você ganha material concreto para sessões;
-            seu paciente ganha um ritual diário de cuidado consigo.
+            acesso somente leitura. Quem acompanha ganha material concreto para
+            sessões; quem registra ganha um ritual diário de cuidado consigo.
           </p>
         </div>
       </section>
@@ -134,7 +134,7 @@ export default function Home() {
             {[
               {
                 step: "1",
-                title: "Paciente registra",
+                title: "Registro no diário",
                 text: "No app, registra energia, emoções e contexto. A IA sugere reflexões sobre o que foi escrito.",
               },
               {
@@ -145,7 +145,7 @@ export default function Home() {
               {
                 step: "3",
                 title: "Compartilhamento opcional",
-                text: "Com plano adequado, o paciente convida o psicólogo por e-mail. Você acessa dashboards autorizados.",
+                text: "Com plano adequado, quem registra convida o profissional por e-mail. Você acessa dashboards autorizados.",
               },
             ].map((item) => (
               <li key={item.step} className="glass-panel p-6">
@@ -178,7 +178,7 @@ export default function Home() {
             </h2>
             <p className="text-sm sm:text-base text-foreground/45 leading-relaxed max-w-3xl mb-4">
               O módulo de acompanhamento foi desenhado para ampliar sua visão
-              clínica sem violar a autonomia do paciente. Ele mantém o diário;
+              clínica sem violar a autonomia de quem registra. A pessoa mantém o diário;
               você recebe convite, aceita o vínculo e consulta resumos e
               registros compartilhados — nunca altera o conteúdo dele.
             </p>
@@ -189,7 +189,7 @@ export default function Home() {
               <strong className="text-foreground/55 font-semibold">
                 Cuidado
               </strong>{" "}
-              permite gerenciar até 25 pacientes com dashboard dedicado.
+              permite gerenciar até 25 acompanhamentos com dashboard dedicado.
             </p>
           </div>
 
@@ -225,7 +225,7 @@ export default function Home() {
             </Link>
           </div>
           <p className="text-xs text-foreground/30 text-center mt-6 max-w-xl mx-auto">
-            O paciente precisa do plano Pleno para enviar convites. Profissionais
+            Quem compartilha o diário precisa do plano Pleno para enviar convites. Profissionais
             usam o plano Cuidado para visualizar múltiplos dashboards. Detalhes
             em Planos após o login.
           </p>
@@ -239,7 +239,7 @@ export default function Home() {
           </h2>
           <p className="text-sm text-foreground/40 mb-6 leading-relaxed">
             Conta gratuita no plano Essencial. Evolua para Pleno ou Cuidado
-            conforme sua necessidade — paciente, profissional ou ambos.
+            conforme sua necessidade — uso pessoal, profissional ou ambos.
           </p>
           <Link
             href="/register"

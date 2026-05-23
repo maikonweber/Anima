@@ -101,10 +101,10 @@ function PlanLimitsList({ limits }: { limits: Plan["limits"] }) {
       ? `Compartilhamentos ativos: ${formatLimit(limits.careInvitesActive)}`
       : null,
     limits.accessiblePatients != null
-      ? `Pacientes: ${formatLimit(limits.accessiblePatients)}`
+      ? `Acompanhamentos: ${formatLimit(limits.accessiblePatients)}`
       : null,
     limits.canShareDashboard ? "Pode convidar acompanhante" : null,
-    limits.canViewSharedDashboard ? "Pode ver dashboards de pacientes" : null,
+    limits.canViewSharedDashboard ? "Pode ver dashboards compartilhados" : null,
   ].filter(Boolean) as string[];
 
   return (

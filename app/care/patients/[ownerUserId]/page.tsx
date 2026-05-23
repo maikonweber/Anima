@@ -34,7 +34,7 @@ export default function SharedPatientDashboardPage({
         href="/care/patients"
         className="text-sm text-anima-violet hover:text-anima-lilac transition-colors mb-6 inline-block"
       >
-        ← Voltar para pacientes
+        ← Voltar aos acompanhamentos
       </Link>
 
       {isLoading && (
@@ -48,7 +48,7 @@ export default function SharedPatientDashboardPage({
       {!canViewSharedDashboard && !isLoading && !error && (
         <div className="glass-panel p-6 text-center">
           <p className="text-sm text-foreground/50 mb-4">
-            Visualizar dashboards de pacientes requer o plano Cuidado.
+            Visualizar dashboards compartilhados requer o plano Cuidado.
           </p>
           <UpgradeBadge planName="Cuidado" href="/assinatura?plan=cuidado" />
         </div>
@@ -59,7 +59,7 @@ export default function SharedPatientDashboardPage({
           <ErrorMessage
             message={
               paymentRequired && error.planLimit?.code === "PLAN_LIMIT_OWNER_SHARE"
-                ? "O paciente precisa assinar o plano Pleno para compartilhar o dashboard."
+                ? "Quem compartilha precisa do plano Pleno para liberar o dashboard."
                 : forbidden
                   ? error.message
                   : paymentRequired

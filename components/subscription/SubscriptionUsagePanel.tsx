@@ -36,7 +36,7 @@ export function SubscriptionUsagePanel({
       )}
       {usage.accessiblePatients.limit !== null && (
         <UsageMeter
-          label="Pacientes acessíveis"
+          label="Acompanhamentos ativos"
           used={usage.accessiblePatients.used}
           limit={usage.accessiblePatients.limit}
         />
