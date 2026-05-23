@@ -23,9 +23,12 @@ export const metadata: Metadata = {
   description:
     "Diário emocional com análise de IA. Registre como você se sente e descubra insights sobre sua energia.",
   icons: {
-    icon: [{ url: "/logo.png", type: "image/png" }],
-    shortcut: "/logo.png",
-    apple: [{ url: "/logo.png", type: "image/png" }],
+    icon: [
+      { url: "/favicon.png", type: "image/png", sizes: "32x32" },
+      { url: "/logo.png", type: "image/png", sizes: "512x512" },
+    ],
+    shortcut: "/favicon.png",
+    apple: [{ url: "/apple-touch-icon.png", type: "image/png", sizes: "180x180" }],
   },
 };
 

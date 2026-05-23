@@ -2,10 +2,11 @@ import Image from "next/image";
 import Link from "next/link";
 
 const SIZES = {
-  sm: 36,
-  md: 48,
-  lg: 56,
-  xl: 72,
+  sm: 44,
+  md: 56,
+  lg: 64,
+  xl: 80,
+  header: 72,
 } as const;
 
 type AnimaLogoSize = keyof typeof SIZES;
@@ -40,7 +41,7 @@ export function AnimaLogo({
       {showWordmark && (
         <span
           className={`font-bold tracking-tight text-foreground/90 ${
-            px >= 48 ? "text-2xl" : "text-xl"
+            px >= 64 ? "text-3xl" : px >= 56 ? "text-2xl" : "text-xl"
           }`}
         >
           Anima
