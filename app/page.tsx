@@ -60,7 +60,7 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-full">
       <nav className="relative z-10 flex items-center justify-between px-6 py-4 max-w-6xl mx-auto w-full">
-        <AnimaLogo href="/" size="sm" showWordmark />
+        <AnimaLogo href="/" size="md" showWordmark />
         <div className="flex items-center gap-3 sm:gap-4">
           <a
             href="#para-psicologos"
