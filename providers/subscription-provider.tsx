@@ -12,6 +12,7 @@ import {
 import { configureApiClient } from "@/lib/api-client";
 import { PaywallModal } from "@/components/subscription/PaywallModal";
 import { useAuth } from "@/providers/auth-provider";
+import { useFeatureFlagsContext } from "@/providers/feature-flags-provider";
 import type { PlanLimitError, PlanSlug, SubscriptionSummary } from "@/types/subscription";
 
 interface SubscriptionContextValue {
@@ -21,6 +22,10 @@ interface SubscriptionContextValue {
   isPleno: boolean;
   isCuidado: boolean;
   isEssencial: boolean;
+  isPreviewPlan: boolean;
+  previewMode: boolean;
+  sponsoredByPsychologist: boolean;
+  shouldSuggestUpgrade: boolean;
   canShareDashboard: boolean;
   canViewSharedDashboard: boolean;
   hasPaidSubscription: boolean;
@@ -34,11 +39,16 @@ const SubscriptionContext = createContext<SubscriptionContextValue | null>(
 
 export function SubscriptionProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
+  const { previewMode: featurePreviewMode } = useFeatureFlagsContext();
   const [paywallError, setPaywallError] = useState<PlanLimitError | null>(null);
 
-  const showPaywall = useCallback((error: PlanLimitError) => {
-    setPaywallError(error);
-  }, []);
+  const showPaywall = useCallback(
+    (error: PlanLimitError) => {
+      if (featurePreviewMode) return;
+      setPaywallError(error);
+    },
+    [featurePreviewMode],
+  );
 
   const closePaywall = useCallback(() => {
     setPaywallError(null);
@@ -53,6 +63,13 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
   const subscription = user?.subscription ?? null;
   const planSlug = subscription?.plan.slug ?? "essencial";
   const limits = subscription?.plan.limits;
+  const sponsoredByPsychologist =
+    subscription?.sponsoredByPsychologist === true;
+  const previewMode =
+    featurePreviewMode ||
+    subscription?.preview === true ||
+    planSlug === "preview";
+  const isPreviewPlan = planSlug === "preview" || subscription?.preview === true;
 
   const value = useMemo<SubscriptionContextValue>(
     () => ({
@@ -62,10 +79,23 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
       isPleno: planSlug === "pleno",
       isCuidado: planSlug === "cuidado",
       isEssencial: planSlug === "essencial",
+      isPreviewPlan,
+      previewMode,
+      sponsoredByPsychologist,
+      shouldSuggestUpgrade:
+        planSlug === "essencial" &&
+        !sponsoredByPsychologist &&
+        !previewMode &&
+        !(
+          !!subscription?.currentPeriodEnd &&
+          (subscription.status === "active" ||
+            subscription.status === "trialing" ||
+            subscription.status === "past_due")
+        ),
       canShareDashboard: limits?.canShareDashboard ?? false,
       canViewSharedDashboard: limits?.canViewSharedDashboard ?? false,
       hasPaidSubscription:
-        planSlug !== "essencial" &&
+        (planSlug === "pleno" || planSlug === "cuidado") &&
         !!subscription?.currentPeriodEnd &&
         (subscription.status === "active" ||
           subscription.status === "trialing" ||
@@ -73,13 +103,26 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
       showPaywall,
       closePaywall,
     }),
-    [subscription, planSlug, limits, showPaywall, closePaywall],
+    [
+      subscription,
+      planSlug,
+      limits,
+      isPreviewPlan,
+      previewMode,
+      sponsoredByPsychologist,
+      showPaywall,
+      closePaywall,
+    ],
   );
 
   return (
     <SubscriptionContext.Provider value={value}>
       {children}
-      <PaywallModal error={paywallError} onClose={closePaywall} />
+      <PaywallModal
+        error={paywallError}
+        onClose={closePaywall}
+        previewMode={previewMode}
+      />
     </SubscriptionContext.Provider>
   );
 }

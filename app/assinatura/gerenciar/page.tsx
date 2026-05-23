@@ -13,7 +13,8 @@ import { useSubscription } from "@/providers/subscription-provider";
 export default function AssinaturaGerenciarPage() {
   const router = useRouter();
   const { user, isLoading: authLoading } = useAuth();
-  const { planSlug, hasPaidSubscription, subscription } = useSubscription();
+  const { shouldSuggestUpgrade, hasPaidSubscription, subscription } =
+    useSubscription();
   const portal = useBillingPortal();
   const [error, setError] = useState<string | null>(null);
 
@@ -26,10 +27,10 @@ export default function AssinaturaGerenciarPage() {
   }, [authLoading, user, router]);
 
   useEffect(() => {
-    if (!authLoading && user && !hasPaidSubscription && planSlug === "essencial") {
+    if (!authLoading && user && shouldSuggestUpgrade) {
       router.replace("/assinatura");
     }
-  }, [authLoading, user, hasPaidSubscription, planSlug, router]);
+  }, [authLoading, user, shouldSuggestUpgrade, router]);
 
   async function openPortal() {
     setError(null);
@@ -68,7 +69,7 @@ export default function AssinaturaGerenciarPage() {
         <p className="text-sm text-foreground/45 mb-1">
           Plano atual:{" "}
           <strong className="text-foreground/70">
-            {subscription?.plan.nome ?? planSlug}
+            {subscription?.plan.nome ?? "Essencial"}
           </strong>
         </p>
         {subscription?.currentPeriodEnd && (

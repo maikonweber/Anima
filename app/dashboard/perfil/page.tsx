@@ -2,17 +2,31 @@
 
 import Link from "next/link";
 import { motion } from "motion/react";
+import { SponsoredBenefitBadge } from "@/components/subscription/SponsoredBenefitBadge";
 import { SubscriptionUsagePanel } from "@/components/subscription/SubscriptionUsagePanel";
 import { UsageMeter } from "@/components/subscription/UsageMeter";
+import { hasLimitedHistory } from "@/lib/subscription/plan-highlights";
 import { Button } from "@/components/ui/Button";
 import { useAuth } from "@/providers/auth-provider";
 import { useSubscription } from "@/providers/subscription-provider";
 
 export default function PerfilPage() {
   const { user, logout } = useAuth();
-  const { subscription, planSlug, hasPaidSubscription } = useSubscription();
+  const {
+    subscription,
+    planSlug,
+    hasPaidSubscription,
+    sponsoredByPsychologist,
+    shouldSuggestUpgrade,
+    isPreviewPlan,
+    previewMode,
+  } = useSubscription();
 
   const planNome = subscription?.plan.nome ?? "Essencial";
+  const displayPlanNome =
+    isPreviewPlan || planSlug === "preview"
+      ? `${planNome} (demonstração)`
+      : planNome;
   const statusLabel = getStatusLabel(subscription?.status);
 
   return (
@@ -73,14 +87,26 @@ export default function PerfilPage() {
           Seu plano
         </h2>
         <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-          <div>
-            <span className="text-xs font-medium px-2.5 py-0.5 rounded-full bg-anima-violet/10 text-anima-violet">
-              {planNome}
-            </span>
-            {statusLabel && (
-              <p className="text-[10px] text-foreground/35 mt-2">
-                {statusLabel}
+          <div className="space-y-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs font-medium px-2.5 py-0.5 rounded-full bg-anima-violet/10 text-anima-violet">
+                {displayPlanNome}
+              </span>
+              {sponsoredByPsychologist && <SponsoredBenefitBadge />}
+            </div>
+            {sponsoredByPsychologist && (
+              <p className="text-[10px] text-foreground/45 max-w-xs">
+                Você permanece no plano gratuito, com limites ampliados pelo
+                vínculo com seu profissional — conforme retornado pela API.
               </p>
+            )}
+            {(previewMode || isPreviewPlan) && (
+              <p className="text-[10px] text-foreground/40">
+                Modo demonstração — migração para planos premium em breve.
+              </p>
+            )}
+            {statusLabel && (
+              <p className="text-[10px] text-foreground/35">{statusLabel}</p>
             )}
           </div>
           <Link
@@ -112,7 +138,7 @@ export default function PerfilPage() {
           </Link>
         )}
 
-        {planSlug === "essencial" && !hasPaidSubscription && (
+        {shouldSuggestUpgrade && (
           <Link href="/assinatura" className="block mt-2">
             <Button>Fazer upgrade</Button>
           </Link>

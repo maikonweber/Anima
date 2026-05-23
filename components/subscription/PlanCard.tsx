@@ -1,44 +1,17 @@
 "use client";
 
 import { Button } from "@/components/ui/Button";
+import {
+  buildPlanHighlights,
+  getPlanTagline,
+} from "@/lib/subscription/plan-highlights";
 import { formatLimit } from "@/lib/subscription/utils";
 import type { Plan, PlanSlug } from "@/types/subscription";
-
-const PLAN_COPY: Record<
-  PlanSlug,
-  { tagline: string; highlights: string[] }
-> = {
-  essencial: {
-    tagline: "Grátis para começar",
-    highlights: [
-      "15 registros por mês",
-      "5 análises com IA por mês",
-      "Histórico dos últimos 30 dias",
-    ],
-  },
-  pleno: {
-    tagline: "Para quem registra o diário e quer compartilhar com 1 acompanhante",
-    highlights: [
-      "Diário ilimitado",
-      "30 análises com IA por mês",
-      "Histórico completo",
-      "1 convite care ativo",
-    ],
-  },
-  cuidado: {
-    tagline: "Para psicólogos e profissionais que acompanham pacientes",
-    highlights: [
-      "Até 25 pacientes com dashboard",
-      "30 análises com IA por mês (uso próprio)",
-      "Visualização de dashboards compartilhados",
-    ],
-  },
-};
 
 interface PlanCardProps {
   plan: Plan;
   isCurrent?: boolean;
-  onSubscribe?: (slug: Exclude<PlanSlug, "essencial">) => void;
+  onSubscribe?: (slug: Exclude<PlanSlug, "essencial" | "preview">) => void;
   isLoading?: boolean;
   showUsage?: boolean;
 }
@@ -50,7 +23,10 @@ export function PlanCard({
   isLoading,
   showUsage,
 }: PlanCardProps) {
-  const copy = PLAN_COPY[plan.slug];
+  if (plan.slug === "preview") return null;
+
+  const highlights = buildPlanHighlights(plan.limits);
+  const tagline = plan.descricao ?? getPlanTagline(plan.slug);
   const canCheckout = plan.slug !== "essencial" && plan.stripePriceId;
 
   return (
@@ -65,11 +41,9 @@ export function PlanCard({
         </span>
       )}
       <h3 className="text-xl font-bold text-foreground/90">{plan.nome}</h3>
-      <p className="text-sm text-foreground/45 mt-2 mb-4 flex-1">
-        {plan.descricao ?? copy.tagline}
-      </p>
+      <p className="text-sm text-foreground/45 mt-2 mb-4 flex-1">{tagline}</p>
       <ul className="space-y-2 mb-6">
-        {copy.highlights.map((item) => (
+        {highlights.map((item) => (
           <li
             key={item}
             className="text-xs text-foreground/55 flex items-start gap-2"
@@ -96,7 +70,9 @@ export function PlanCard({
         ) : canCheckout ? (
           <Button
             onClick={() =>
-              onSubscribe?.(plan.slug as Exclude<PlanSlug, "essencial">)
+              onSubscribe?.(
+                plan.slug as Exclude<PlanSlug, "essencial" | "preview">,
+              )
             }
             isLoading={isLoading}
             disabled={isCurrent}
@@ -121,8 +97,14 @@ function PlanLimitsList({ limits }: { limits: Plan["limits"] }) {
     limits.historyDays != null
       ? `Histórico: ${limits.historyDays} dias`
       : "Histórico: completo",
-    limits.canShareDashboard ? "Compartilhar com acompanhante" : null,
-    limits.canViewSharedDashboard ? "Ver dashboards de pacientes" : null,
+    limits.careInvitesActive != null
+      ? `Compartilhamentos ativos: ${formatLimit(limits.careInvitesActive)}`
+      : null,
+    limits.accessiblePatients != null
+      ? `Pacientes: ${formatLimit(limits.accessiblePatients)}`
+      : null,
+    limits.canShareDashboard ? "Pode convidar acompanhante" : null,
+    limits.canViewSharedDashboard ? "Pode ver dashboards de pacientes" : null,
   ].filter(Boolean) as string[];
 
   return (

@@ -29,7 +29,8 @@ function AssinaturaPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, isLoading: authLoading } = useAuth();
-  const { planSlug, subscription } = useSubscription();
+  const { planSlug, subscription, isPreviewPlan, previewMode } =
+    useSubscription();
   const { data: plans, isLoading, error, refetch } = usePlans();
   const checkout = useCheckout();
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
@@ -42,7 +43,9 @@ function AssinaturaPageContent() {
     }
   }, [authLoading, user, router]);
 
-  async function handleSubscribe(slug: Exclude<PlanSlug, "essencial">) {
+  async function handleSubscribe(
+    slug: Exclude<PlanSlug, "essencial" | "preview">,
+  ) {
     setCheckoutError(null);
     try {
       await checkout.mutateAsync(slug);
@@ -68,10 +71,15 @@ function AssinaturaPageContent() {
     );
   }
 
-  const sortedPlans = [...(plans ?? [])].sort((a, b) => {
-    const order: PlanSlug[] = ["essencial", "pleno", "cuidado"];
-    return order.indexOf(a.slug) - order.indexOf(b.slug);
-  });
+  const sortedPlans = [...(plans ?? [])]
+    .filter((p) => p.slug !== "preview")
+    .sort((a, b) => {
+      const order: PlanSlug[] = ["essencial", "pleno", "cuidado"];
+      return order.indexOf(a.slug) - order.indexOf(b.slug);
+    });
+
+  const currentSlug =
+    planSlug === "preview" ? ("essencial" as PlanSlug) : planSlug;
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-12 pb-24">
@@ -83,9 +91,16 @@ function AssinaturaPageContent() {
         <h1 className="text-2xl sm:text-3xl font-bold text-foreground/90 mb-1">
           Planos
         </h1>
-        <p className="text-sm text-foreground/40 mb-8">
+        <p className="text-sm text-foreground/40 mb-4">
           Escolha o plano ideal para sua jornada emocional
         </p>
+        {(previewMode || isPreviewPlan) && (
+          <p className="text-xs text-foreground/45 mb-8 px-3 py-2 rounded-lg bg-amber-500/10 border border-amber-500/20">
+            Modo demonstração ativo — limites exibidos refletem a API; a
+            cobrança premium será habilitada na migração oficial.
+          </p>
+        )}
+        {!(previewMode || isPreviewPlan) && <div className="mb-4" />}
 
         {error && (
           <ErrorMessage
@@ -124,7 +139,7 @@ function AssinaturaPageContent() {
               >
                 <PlanCard
                   plan={plan}
-                  isCurrent={plan.slug === planSlug}
+                  isCurrent={plan.slug === currentSlug}
                   onSubscribe={handleSubscribe}
                   isLoading={checkout.isPending}
                 />
@@ -137,7 +152,7 @@ function AssinaturaPageContent() {
           <SubscriptionUsagePanel usage={subscription.usage} />
         )}
 
-        {subscription && planSlug !== "essencial" && (
+        {subscription && planSlug !== "essencial" && planSlug !== "preview" && (
           <div className="mt-6">
             <Button
               variant="secondary"

@@ -35,7 +35,8 @@ export function useSubscriptionMe(enabled = true) {
 
 export function useCheckout() {
   return useMutation({
-    mutationFn: (planSlug: Exclude<PlanSlug, "essencial">) => checkout(planSlug),
+    mutationFn: (planSlug: Exclude<PlanSlug, "essencial" | "preview">) =>
+      checkout(planSlug),
     onSuccess: (data) => {
       window.location.href = data.url;
     },

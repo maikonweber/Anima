@@ -1,4 +1,4 @@
-export type PlanSlug = "essencial" | "pleno" | "cuidado";
+export type PlanSlug = "essencial" | "pleno" | "cuidado" | "preview";
 
 export type PlanLimits = {
   diaryEntriesPerMonth: number | null;
@@ -15,6 +15,10 @@ export type SubscriptionSummary = {
   status: "active" | "trialing" | "past_due" | "canceled" | string;
   currentPeriodEnd: string | null;
   stripeConfigured: boolean;
+  /** Paciente com benefícios tipo Pleno via profissional no plano Cuidado */
+  sponsoredByPsychologist?: boolean;
+  /** Resposta em modo demonstração (slug pode ser `preview`) */
+  preview?: boolean;
   usage: {
     period: string;
     diaryEntries: { used: number; limit: number | null };

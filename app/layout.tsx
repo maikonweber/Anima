@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { PreviewModeBanner } from "@/components/PreviewModeBanner";
 import { AuthProvider } from "@/providers/auth-provider";
+import { FeatureFlagsProvider } from "@/providers/feature-flags-provider";
 import { GoogleProvider } from "@/providers/google-oauth-provider";
 import { QueryProvider } from "@/providers/query-provider";
 import { SubscriptionProvider } from "@/providers/subscription-provider";
@@ -40,7 +42,12 @@ export default function RootLayout({
         <GoogleProvider>
           <QueryProvider>
             <AuthProvider>
-              <SubscriptionProvider>{children}</SubscriptionProvider>
+              <FeatureFlagsProvider>
+                <SubscriptionProvider>
+                  <PreviewModeBanner />
+                  {children}
+                </SubscriptionProvider>
+              </FeatureFlagsProvider>
             </AuthProvider>
           </QueryProvider>
         </GoogleProvider>

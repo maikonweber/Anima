@@ -9,12 +9,17 @@ import type { PlanLimitError } from "@/types/subscription";
 interface PaywallModalProps {
   error: PlanLimitError | null;
   onClose: () => void;
+  previewMode?: boolean;
 }
 
-export function PaywallModal({ error, onClose }: PaywallModalProps) {
+export function PaywallModal({
+  error,
+  onClose,
+  previewMode = false,
+}: PaywallModalProps) {
   const router = useRouter();
 
-  if (!error) return null;
+  if (!error || previewMode) return null;
 
   const resetsLabel = formatResetsAt(error.resetsAt);
   const cta = getPaywallCta(error.code);

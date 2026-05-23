@@ -15,7 +15,9 @@ export async function fetchSubscriptionMe() {
   return api<SubscriptionSummary>("/subscription/me", { auth: true });
 }
 
-export async function checkout(planSlug: Exclude<PlanSlug, "essencial">) {
+export async function checkout(
+  planSlug: Exclude<PlanSlug, "essencial" | "preview">,
+) {
   return api<CheckoutResponse>("/subscription/checkout", {
     method: "POST",
     auth: true,
@@ -30,7 +32,9 @@ export async function openBillingPortal() {
   });
 }
 
-export async function subscribe(planSlug: Exclude<PlanSlug, "essencial">) {
+export async function subscribe(
+  planSlug: Exclude<PlanSlug, "essencial" | "preview">,
+) {
   const res = await checkout(planSlug);
   window.location.href = res.url;
 }

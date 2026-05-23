@@ -8,12 +8,16 @@ import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { getCategoryFromEnergy, getCategoryStyle } from "@/lib/energy";
 import { Button } from "@/components/ui/Button";
 import { UsageMeter } from "@/components/subscription/UsageMeter";
+import { hasLimitedHistory } from "@/lib/subscription/plan-highlights";
 import { useSubscription } from "@/providers/subscription-provider";
 
 const PAGE_SIZE = 20;
 
 export default function DiaryListPage() {
-  const { isEssencial, usage } = useSubscription();
+  const { usage, shouldSuggestUpgrade, subscription } = useSubscription();
+  const limits = subscription?.plan.limits;
+  const showHistoryHint =
+    shouldSuggestUpgrade && hasLimitedHistory(limits);
   const [page, setPage] = useState(1);
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
@@ -58,10 +62,11 @@ export default function DiaryListPage() {
         </Link>
       </div>
 
-      {isEssencial && (
+      {showHistoryHint && limits?.historyDays != null && (
         <div className="glass-panel p-4 mb-4 border border-anima-violet/15">
           <p className="text-xs text-foreground/50">
-            No plano Essencial, o histórico mostra os últimos 30 dias.{" "}
+            No plano Essencial, o histórico mostra os últimos {limits.historyDays}{" "}
+            dias.{" "}
             <Link href="/assinatura" className="text-anima-violet hover:underline">
               Histórico completo no Pleno
             </Link>

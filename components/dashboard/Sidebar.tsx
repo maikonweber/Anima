@@ -18,7 +18,7 @@ const NAV_ITEMS = [
 export function Sidebar() {
   const pathname = usePathname();
   const { user, logout } = useAuth();
-  const { subscription, planSlug } = useSubscription();
+  const { subscription, planSlug, shouldSuggestUpgrade } = useSubscription();
   const planLabel = subscription?.plan.nome ?? "Essencial";
 
   return (
@@ -70,7 +70,7 @@ export function Sidebar() {
                 className="text-[10px] text-anima-violet hover:underline mt-0.5 inline-block"
               >
                 {planLabel}
-                {planSlug === "essencial" ? " · Upgrade" : ""}
+                {shouldSuggestUpgrade ? " · Upgrade" : ""}
               </Link>
             </div>
           </div>
