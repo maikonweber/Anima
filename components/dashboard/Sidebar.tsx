@@ -32,7 +32,7 @@ export function Sidebar() {
       {/* Desktop sidebar */}
       <aside className="hidden lg:flex flex-col w-64 h-full border-r border-foreground/[0.06] bg-background/80 backdrop-blur-sm">
         <div className="p-6 pb-4">
-          <AnimaLogo href="/dashboard" size="header" showWordmark />
+          <AnimaLogo href="/dashboard" size="header" />
         </div>
 
         <nav className="flex-1 px-3 py-2 space-y-1">
