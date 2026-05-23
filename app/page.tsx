@@ -10,7 +10,7 @@ const HOW_IT_WORKS = [
   {
     step: "2",
     title: "Receba insights com IA",
-    text: "A SENTIO AI identifica padrões, nuances emocionais e sugestões de autocuidado leve.",
+    text: "A SENTIO AI identifica padrões, emoções ocultas e sugestões de cuidado emocional.",
   },
   {
     step: "3",
@@ -49,13 +49,23 @@ const DIFFERENTIALS = [
   {
     title: "Cuidado contínuo",
     description:
-      "Entre uma sessão e outra, você continua com apoio leve ao autoconhecimento e à organização emocional.",
+      "Entre uma sessão e outra, o paciente continua sendo acompanhado de forma leve e segura.",
   },
   {
     title: "Privacidade e controle",
     description:
-      "Você decide o que registrar, acompanhar e compartilhar — inclusive com profissionais.",
+      "O usuário decide o que registrar, acompanhar e compartilhar.",
   },
+] as const;
+
+const PSYCHOLOGIST_CAPABILITIES = [
+  "Dashboard clínico",
+  "Pré-consulta inteligente",
+  "Timeline terapêutica",
+  "Alertas emocionais preventivos",
+  "Compartilhamento controlado pelo paciente",
+  "Relatórios de evolução",
+  "Insights para acompanhamento longitudinal",
 ] as const;
 
 const PROFESSIONAL_FEATURES = [
@@ -139,8 +149,7 @@ export default function Home() {
         <div className="relative w-12 h-0.5 rounded-full bg-gradient-to-r from-anima-violet to-anima-lilac mb-6" />
         <p className="relative text-base sm:text-lg text-foreground/50 max-w-2xl leading-relaxed mb-4">
           Uma plataforma de acompanhamento emocional contínuo com IA para
-          autoconhecimento, organização das emoções e apoio entre sessões — para
-          quem está em ou fora da terapia.
+          autoconhecimento, prevenção emocional e apoio entre sessões.
         </p>
         <p className="relative text-sm text-foreground/35 max-w-xl leading-relaxed mb-8 italic">
           &ldquo;Entenda suas emoções. Cuide da sua mente.&rdquo;
@@ -171,12 +180,13 @@ export default function Home() {
             EmotiveCare
           </h2>
           <p className="text-sm sm:text-base text-foreground/45 leading-relaxed max-w-2xl mx-auto">
-            Mais que um lugar para anotar sentimentos — um sistema que integra{" "}
+            Uma plataforma de acompanhamento emocional contínuo para pacientes e
+            profissionais, com{" "}
             <strong className="text-foreground/60 font-semibold">
-              inteligência emocional da SENTIO AI
+              SENTIO AI
             </strong>
-            , memória longitudinal e ferramentas para pacientes e profissionais
-            colaborarem com ética e transparência.
+            , memória emocional e insights terapêuticos pensados para complementar
+            o cuidado humano — não para substituí-lo.
           </p>
           <p className="text-xs text-foreground/30 mt-4">
             Produto desenvolvido por MutterCorp.
@@ -225,9 +235,8 @@ export default function Home() {
             </h2>
             <p className="text-sm sm:text-base text-foreground/45 leading-relaxed max-w-3xl mb-8">
               A EmotiveCare ajuda você a entender padrões emocionais, reconhecer
-              possíveis gatilhos, acompanhar sua energia e construir uma rotina de
-              cuidado mais consciente — com IA como apoio, nunca como substituto do
-              vínculo humano ou do acompanhamento profissional.
+              gatilhos, acompanhar sua energia e criar uma rotina de cuidado emocional
+              mais consciente.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {PERSONAL_FEATURES.map((feat) => (
@@ -256,12 +265,21 @@ export default function Home() {
             <h2 className="text-2xl sm:text-3xl font-bold text-foreground/90 mb-4">
               Acompanhamento emocional entre sessões
             </h2>
-            <p className="text-sm sm:text-base text-foreground/45 leading-relaxed max-w-3xl mb-4">
+            <p className="text-sm sm:text-base text-foreground/45 leading-relaxed max-w-3xl mb-6">
               Apoie seus pacientes com uma visão contínua da evolução emocional,
-              padrões que emergem aos poucos e resumos que podem subsidiar suas
-              conversas terapêuticas — sempre com consentimento informado e
-              leitura segura dos dados autorizados.
+              padrões recorrentes, alertas importantes e resumos pré-consulta.
             </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-3xl mb-8">
+              {PSYCHOLOGIST_CAPABILITIES.map((item) => (
+                <div
+                  key={item}
+                  className="flex gap-3 text-sm text-foreground/55 items-start"
+                >
+                  <span className="text-anima-violet mt-0.5">✓</span>
+                  {item}
+                </div>
+              ))}
+            </div>
             <p className="text-sm text-foreground/35 leading-relaxed max-w-3xl">
               O plano{" "}
               <strong className="text-foreground/55 font-semibold">Cuidado</strong>{" "}
@@ -344,7 +362,7 @@ export default function Home() {
           <p className="text-sm sm:text-base text-foreground/45 leading-relaxed">
             A EmotiveCare não substitui acompanhamento psicológico ou médico. A plataforma
             oferece apoio ao autoconhecimento, organização emocional e acompanhamento
-            complementar — com espaço para diálogo ético entre pacientes e profissionais.
+            complementar.
           </p>
         </div>
       </section>
