@@ -17,6 +17,7 @@ import {
 } from "@/components/diary/EmotionPicker";
 import { Button } from "@/components/ui/Button";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
+import { HUMOR_OPTIONS, Select } from "@/components/ui/Select";
 
 export default function EditDiaryPage({
   params,
@@ -189,18 +190,17 @@ export default function EditDiaryPage({
             <label className="text-sm font-medium text-foreground/70">
               Humor
             </label>
-            <select
+            <Select
               value={humor}
               onChange={(e) => setHumor(e.target.value)}
-              className="w-full bg-transparent border border-foreground/[0.08] rounded-xl px-3 py-2 text-sm text-foreground/80"
+              aria-label="Humor"
             >
-              <option value="">Escolher humor</option>
-              <option value="Calmo">Calmo</option>
-              <option value="Tenso">Tenso</option>
-              <option value="Esperançoso">Esperançoso</option>
-              <option value="Sobrecarregado">Sobrecarregado</option>
-              <option value="Confuso">Confuso</option>
-            </select>
+              {HUMOR_OPTIONS.map((opt) => (
+                <option key={opt.value || "empty"} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </Select>
           </div>
 
           <div className="space-y-5">
