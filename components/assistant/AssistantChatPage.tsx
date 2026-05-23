@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { AssistantAmbience } from "@/components/assistant/AssistantAmbience";
 import { LightMarkdown } from "@/components/assistant/LightMarkdown";
 import { Button } from "@/components/ui/Button";
 import {
@@ -17,14 +19,26 @@ import { useAuth } from "@/providers/auth-provider";
 import type { AssistantMessage } from "@/types/assistant";
 
 function TypingDots() {
+  const reduce = useReducedMotion();
   return (
-    <span
-      className="inline-flex gap-1 items-center text-foreground/40"
-      aria-hidden
-    >
-      <span className="animate-bounce h-2 w-2 rounded-full bg-foreground/35 [animation-delay:0ms]" />
-      <span className="animate-bounce h-2 w-2 rounded-full bg-foreground/35 [animation-delay:120ms]" />
-      <span className="animate-bounce h-2 w-2 rounded-full bg-foreground/35 [animation-delay:240ms]" />
+    <span className="inline-flex items-center gap-1.5 text-foreground/40" aria-hidden>
+      {[0, 1, 2].map((i) => (
+        <motion.span
+          key={i}
+          className="h-2 w-2 rounded-full bg-anima-violet/50 dark:bg-anima-lilac/60"
+          animate={
+            reduce
+              ? {}
+              : { y: [0, -3, 0], opacity: [0.55, 1, 0.55] }
+          }
+          transition={{
+            duration: 0.85,
+            repeat: Infinity,
+            delay: i * 0.12,
+            ease: "easeInOut",
+          }}
+        />
+      ))}
     </span>
   );
 }
@@ -52,6 +66,7 @@ export function AssistantChatPage() {
   const hasLimit = limit != null && limit > 0;
   const pct = usagePercent(used, limit);
   const nearLimit = hasLimit ? isNearLimit(used, limit, 0.8) : false;
+  const reduceMotion = useReducedMotion();
 
   const sessions = useMemo(() => {
     const pages = sessionsQuery.data?.pages;
@@ -79,6 +94,13 @@ export function AssistantChatPage() {
     detailQuery.data?.session.titulo ?? sessions.find((s) => s.id === selectedSessionId)?.titulo;
 
   const awaitingReply = sendMutation.isPending;
+
+  /** Tela inicial — sem conversa ativa, sem histórico e sem envio em curso. */
+  const isWelcomeSplash =
+    selectedSessionId == null &&
+    messages.length === 0 &&
+    optimisticSnippet == null &&
+    !awaitingReply;
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({
@@ -243,7 +265,7 @@ export function AssistantChatPage() {
                 <button
                   type="button"
                   onClick={() => handleSelectSession(s.id)}
-                  className={`w-full px-4 py-3.5 text-left text-sm transition-colors active:bg-anima-violet/15 ${
+                  className={`max-w-full rounded-2xl px-4 py-3.5 text-left text-sm transition-colors duration-200 active:bg-anima-violet/15 ${
                     active
                       ? "bg-anima-violet/10 text-anima-violet"
                       : "text-foreground/65 hover:bg-foreground/[0.035]"
@@ -276,26 +298,36 @@ export function AssistantChatPage() {
   }
 
   return (
-    <div className="flex min-h-0 min-w-0 max-w-full flex-1 flex-col overflow-x-hidden lg:flex-row lg:gap-3 lg:rounded-2xl lg:border lg:border-foreground/[0.08] lg:bg-foreground/[0.02]">
+    <div className="relative isolate flex min-h-0 min-w-0 max-w-full flex-1 flex-col overflow-hidden lg:flex-row lg:gap-3 lg:rounded-2xl lg:border lg:border-rose-200/15 lg:bg-foreground/[0.02] lg:shadow-[0_0_0_1px_rgba(244,114,182,0.06),0_20px_50px_-28px_rgba(124,92,191,0.18)] dark:lg:border-rose-400/12 dark:lg:shadow-[0_0_0_1px_rgba(244,114,182,0.09),0_24px_56px_-28px_rgba(0,0,0,0.42)]">
+      <AssistantAmbience />
+
       {/* Overlay drawer (mobile) */}
-      <div
-        className={`fixed inset-0 z-[60] bg-black/50 backdrop-blur-[2px] transition-opacity duration-200 lg:hidden ${
-          mobileSidebarOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
-        }`}
-        aria-hidden={!mobileSidebarOpen}
-      >
-        <button
-          type="button"
-          className="absolute inset-0"
-          tabIndex={-1}
-          onClick={() => setMobileSidebarOpen(false)}
-          aria-label="Fechar lista"
-        />
-      </div>
+      <AnimatePresence>
+        {mobileSidebarOpen ? (
+          <motion.div
+            key="drawer-overlay"
+            className="fixed inset-0 z-[60] lg:hidden"
+            aria-hidden={false}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: reduceMotion ? 0 : 0.2 }}
+          >
+            <div className="absolute inset-0 bg-black/50 backdrop-blur-[3px]" />
+            <button
+              type="button"
+              className="absolute inset-0"
+              tabIndex={-1}
+              onClick={() => setMobileSidebarOpen(false)}
+              aria-label="Fechar lista"
+            />
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
 
       {/* Painel lista de sessões */}
       <aside
-        className={`fixed inset-y-0 left-0 z-[70] flex min-w-0 max-w-[min(100vw,20.5rem)] flex-col overflow-x-hidden border-r border-foreground/[0.08] bg-background pt-[env(safe-area-inset-top)] shadow-xl transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] will-change-transform sm:w-80 sm:max-w-[20rem] lg:relative lg:inset-auto lg:z-auto lg:flex lg:!w-[260px] lg:max-w-none lg:flex-shrink-0 lg:rounded-l-2xl lg:border-r lg:border-foreground/[0.08] lg:bg-background/92 lg:pt-0 lg:shadow-none lg:!translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-[70] flex min-h-0 min-w-0 max-w-[min(100vw,20.5rem)] flex-col overflow-hidden border-r border-rose-100/10 bg-background/85 pt-[env(safe-area-inset-top)] shadow-xl backdrop-blur-md transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] will-change-transform sm:w-80 sm:max-w-[20rem] dark:border-rose-950/25 dark:bg-background/80 lg:relative lg:inset-auto lg:z-[1] lg:!w-[260px] lg:max-w-none lg:flex-shrink-0 lg:rounded-l-[inherit] lg:border-foreground/[0.08] lg:bg-background/90 lg:pt-0 lg:shadow-none lg:backdrop-blur-sm lg:!translate-x-0 ${
           mobileSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         }`}
       >
@@ -303,11 +335,11 @@ export function AssistantChatPage() {
       </aside>
 
       {/* Área principal do chat */}
-      <section className="flex min-h-0 min-w-0 max-w-full flex-1 flex-col overflow-x-hidden overflow-y-hidden lg:rounded-r-2xl lg:bg-transparent">
-        <header className="flex shrink-0 items-center gap-2 border-b border-foreground/[0.06] bg-background/80 px-3 py-2.5 backdrop-blur-sm sm:px-4 lg:bg-transparent lg:px-5 lg:py-4">
+      <section className="relative z-[1] flex min-h-0 min-w-0 max-w-full flex-1 flex-col overflow-hidden lg:rounded-r-[inherit] lg:bg-transparent">
+        <header className="flex shrink-0 items-center gap-2 border-b border-rose-100/12 bg-background/72 px-3 py-2.5 backdrop-blur-md sm:px-4 dark:border-rose-950/20 dark:bg-background/50 lg:border-foreground/[0.06] lg:bg-background/35 lg:px-5 lg:py-4 lg:backdrop-blur-sm">
           <button
             type="button"
-            className="-ml-0.5 flex items-center gap-2 rounded-xl p-2 text-foreground/55 hover:bg-foreground/[0.055] lg:hidden"
+            className="-ml-0.5 flex items-center gap-2 rounded-xl p-2 text-foreground/55 transition-colors duration-200 hover:bg-rose-100/25 active:scale-[0.98] dark:hover:bg-rose-950/25 lg:hidden"
             onClick={() => setMobileSidebarOpen(true)}
             aria-label="Abrir conversas"
           >
@@ -336,7 +368,7 @@ export function AssistantChatPage() {
           {selectedSessionId ? (
             <button
               type="button"
-              className="shrink-0 rounded-xl p-2 text-red-400/95 hover:bg-red-500/10"
+              className="shrink-0 rounded-xl p-2 text-red-400/95 transition-colors duration-200 hover:bg-red-500/10 active:scale-[0.97]"
               onClick={() => {
                 const ok =
                   typeof window !== "undefined" &&
@@ -372,14 +404,19 @@ export function AssistantChatPage() {
         ) : null}
 
         <div
-          className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain px-3 py-3 sm:px-5 sm:py-4 lg:px-8"
+          className="relative z-[1] min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain px-3 py-3 sm:px-5 sm:py-4 lg:px-8"
           aria-live="polite"
           aria-busy={awaitingReply}
         >
           {!selectedSessionId && messages.length === 0 ? (
-            <div className="mx-auto flex max-w-lg flex-col items-center px-2 py-10 text-center sm:py-14">
-              <div className="mb-6 inline-flex rounded-2xl bg-anima-violet/12 px-5 py-2.5 sm:mb-8">
-                <span className="text-xs font-medium text-anima-violet sm:text-sm">
+            <motion.div
+              className="mx-auto flex w-full max-w-lg min-w-0 flex-col items-center px-2 py-10 text-center sm:py-14"
+              initial={reduceMotion ? false : { opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: reduceMotion ? 0 : 0.45, ease: [0.25, 0.46, 0.45, 0.94] }}
+            >
+              <div className="mb-6 inline-flex rounded-2xl bg-gradient-to-r from-rose-100/55 to-anima-lilac/25 px-5 py-2.5 ring-1 ring-rose-200/40 dark:from-rose-950/40 dark:to-anima-violet/20 dark:ring-rose-500/20 sm:mb-8">
+                <span className="text-xs font-medium tracking-tight text-anima-violet dark:text-anima-lilac sm:text-sm">
                   Espaço de apoio emocional
                 </span>
               </div>
@@ -398,8 +435,8 @@ export function AssistantChatPage() {
                   você continua no controle.
                 </p>
               </div>
-              <SparklesIconLarge />
-            </div>
+              <SparklesIconLarge reducedMotion={reduceMotion} />
+            </motion.div>
           ) : detailQuery.isLoading && selectedSessionId ? (
             <p className="py-14 text-center text-sm text-foreground/40">Carregando mensagens…</p>
           ) : messages.length === 0 && selectedSessionId ? (
@@ -408,14 +445,22 @@ export function AssistantChatPage() {
             </p>
           ) : null}
 
-          <ul className="mx-auto flex w-full min-w-0 max-w-3xl flex-col gap-3 pb-1">
+          {!isWelcomeSplash ? (
+            <ul className="relative z-[1] mx-auto flex w-full max-w-3xl min-w-0 flex-col gap-3 pb-1">
               {messages.map((m) => (
-                <li
+                <motion.li
                   key={m.id}
-                  className={`flex min-w-0 max-w-full w-full ${m.role === "user" ? "justify-end" : "justify-start"}`}
+                  layout={false}
+                  className={`flex w-full min-w-0 max-w-full ${m.role === "user" ? "justify-end" : "justify-start"}`}
+                  initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: reduceMotion ? 0 : 0.24,
+                    ease: [0.25, 0.46, 0.45, 0.94],
+                  }}
                 >
                   {m.role === "user" ? (
-                    <div className="min-w-0 max-w-[min(100%,36rem)] rounded-2xl rounded-br-md bg-anima-violet px-[0.85rem] py-2.5 text-[14px] leading-snug text-white shadow-sm">
+                    <div className="min-w-0 max-w-[min(100%,36rem)] rounded-2xl rounded-br-md bg-gradient-to-br from-anima-violet to-anima-indigo px-[0.85rem] py-2.5 text-[14px] leading-snug text-white shadow-md shadow-anima-violet/15 ring-1 ring-white/10">
                       <p className="whitespace-pre-wrap break-words [overflow-wrap:anywhere]">{m.content}</p>
                       <time
                         dateTime={m.criadoEm}
@@ -425,7 +470,7 @@ export function AssistantChatPage() {
                       </time>
                     </div>
                   ) : (
-                    <div className="min-w-0 max-w-[min(100%,38rem)] rounded-2xl rounded-bl-md border border-foreground/[0.08] bg-foreground/[0.034] px-[0.85rem] py-2.5 text-[14px] leading-snug shadow-sm">
+                    <div className="min-w-0 max-w-[min(100%,38rem)] rounded-2xl rounded-bl-md border border-rose-200/25 bg-background/65 px-[0.85rem] py-2.5 text-[14px] leading-snug shadow-sm backdrop-blur-[2px] dark:border-rose-400/15 dark:bg-foreground/[0.06]">
                       <div className="min-w-0">
                         <LightMarkdown text={m.content} />
                       </div>
@@ -437,34 +482,49 @@ export function AssistantChatPage() {
                       </time>
                     </div>
                   )}
-                </li>
+                </motion.li>
               ))}
 
               {optimisticSnippet ? (
-                <li className="flex min-w-0 max-w-full w-full justify-end">
-                  <div className="min-w-0 max-w-[min(100%,36rem)] rounded-2xl rounded-br-md bg-anima-violet px-[0.85rem] py-2.5 text-[14px] text-white opacity-90 shadow-sm">
+                <motion.li
+                  layout={false}
+                  className="flex w-full min-w-0 max-w-full justify-end"
+                  initial={reduceMotion ? false : { opacity: 0, scale: 0.98 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: reduceMotion ? 0 : 0.2 }}
+                >
+                  <div className="min-w-0 max-w-[min(100%,36rem)] rounded-2xl rounded-br-md bg-gradient-to-br from-anima-violet to-anima-indigo px-[0.85rem] py-2.5 text-[14px] text-white opacity-95 shadow-md shadow-anima-violet/15 ring-1 ring-white/10">
                     <p className="whitespace-pre-wrap break-words [overflow-wrap:anywhere]">{optimisticSnippet}</p>
-                    <span className="mt-1.5 block text-right text-[10px] text-white/55">enviando…</span>
+                    <span className="mt-1.5 block text-right text-[10px] text-white/60">enviando…</span>
                   </div>
-                </li>
+                </motion.li>
               ) : null}
 
               {awaitingReply ? (
-                <li key="typing" aria-live="polite" className="flex min-w-0 max-w-full justify-start">
-                  <div className="max-w-full rounded-2xl border border-foreground/[0.07] bg-foreground/[0.038] px-4 py-3 text-sm">
+                <motion.li
+                  layout={false}
+                  key="typing"
+                  aria-live="polite"
+                  className="flex min-w-0 max-w-full justify-start"
+                  initial={reduceMotion ? false : { opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: reduceMotion ? 0 : 0.22 }}
+                >
+                  <div className="max-w-full rounded-2xl border border-rose-200/35 bg-background/55 px-4 py-3 text-sm shadow-sm backdrop-blur-sm dark:border-rose-400/25 dark:bg-foreground/[0.07]">
                     <span className="sr-only">Assistente está digitando</span>
                     <span className="flex items-center gap-2 text-xs text-foreground/50">
                       <TypingDots />
                       digitando…
                     </span>
                   </div>
-                </li>
+                </motion.li>
               ) : null}
           </ul>
+          ) : null}
           <div ref={messagesEndRef} className="h-px shrink-0" aria-hidden />
         </div>
 
-        <footer className="min-w-0 max-w-full shrink-0 border-t border-foreground/[0.06] bg-background/95 px-3 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2.5 backdrop-blur-md sm:px-5 lg:rounded-br-2xl lg:bg-background/80 lg:px-8 lg:pb-5 lg:pt-4 lg:backdrop-blur-sm">
+        <footer className="relative z-[2] min-w-0 max-w-full shrink-0 border-t border-rose-200/20 bg-gradient-to-b from-rose-50/30 to-background px-3 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2.5 backdrop-blur-md dark:border-rose-900/35 dark:from-rose-950/20 dark:to-background sm:px-5 lg:rounded-br-[inherit] lg:border-foreground/[0.07] lg:from-transparent lg:to-background/92 lg:bg-background/88 lg:px-8 lg:pb-5 lg:pt-4">
           <form
             onSubmit={(e) => void handleSubmit(e)}
             className="mx-auto flex w-full min-w-0 max-w-3xl flex-col gap-2 sm:gap-3"
@@ -483,10 +543,10 @@ export function AssistantChatPage() {
                 onChange={(e) => setDraft(e.target.value)}
                 placeholder="Digite sua mensagem…"
                 disabled={awaitingReply}
-                className="box-border max-h-[7.25rem] min-h-[6.5rem] w-full resize-none overflow-x-hidden overflow-y-auto overscroll-contain rounded-xl border border-foreground/[0.11] bg-background px-3 py-2.5 pr-14 text-[15px] leading-snug text-foreground/90 outline-none [-webkit-overflow-scrolling:touch] placeholder:text-foreground/35 focus-visible:border-anima-violet/50 focus-visible:ring-2 focus-visible:ring-anima-violet/20 sm:max-h-[10rem] sm:min-h-[5.5rem] sm:text-[0.9375rem] lg:max-h-[12rem]"
+                className="box-border max-h-[7.25rem] min-h-[6.5rem] w-full resize-none overflow-x-hidden overflow-y-auto overscroll-contain rounded-xl border border-rose-200/25 bg-background/90 px-3 py-2.5 pr-14 text-[15px] leading-snug text-foreground/90 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)] outline-none [-webkit-overflow-scrolling:touch] placeholder:text-foreground/35 transition-[border-color,box-shadow] duration-200 dark:border-rose-400/18 dark:bg-background/80 focus-visible:border-anima-violet/55 focus-visible:ring-2 focus-visible:ring-rose-200/55 focus-visible:ring-offset-0 dark:focus-visible:ring-rose-500/35 sm:max-h-[10rem] sm:min-h-[5.5rem] sm:text-[0.9375rem] lg:max-h-[12rem]"
               />
               <span
-                className="pointer-events-none absolute bottom-2 right-2 rounded-md bg-background/85 px-1.5 py-0.5 text-[10px] tabular-nums text-foreground/38 ring-1 ring-foreground/[0.06] sm:text-[11px]"
+                className="pointer-events-none absolute bottom-2 right-2 rounded-md bg-background/92 px-1.5 py-0.5 text-[10px] tabular-nums text-foreground/42 ring-1 ring-rose-200/30 dark:bg-background/80 dark:ring-rose-500/15 sm:text-[11px]"
                 aria-live="polite"
               >
                 {draft.length}/2000
@@ -529,13 +589,17 @@ export function AssistantChatPage() {
         </footer>
       </section>
 
-      {deleteTarget ? (
-        <ConfirmDeleteModal
-          isDeleting={deleteMutation.isPending}
-          onCancel={() => setDeleteTarget(null)}
-          onConfirm={() => void onDeleteConfirmed()}
-        />
-      ) : null}
+      <AnimatePresence mode="wait">
+        {deleteTarget ? (
+          <ConfirmDeleteModal
+            key={deleteTarget}
+            isDeleting={deleteMutation.isPending}
+            onCancel={() => setDeleteTarget(null)}
+            onConfirm={() => void onDeleteConfirmed()}
+            reducedMotion={reduceMotion}
+          />
+        ) : null}
+      </AnimatePresence>
     </div>
   );
 }
@@ -560,19 +624,36 @@ function ConfirmDeleteModal({
   isDeleting,
   onCancel,
   onConfirm,
+  reducedMotion = false,
 }: {
   isDeleting: boolean;
   onCancel: () => void;
   onConfirm: () => void;
+  reducedMotion?: boolean;
 }) {
+  const instant = reducedMotion;
   return (
-    <div
-      className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/55 backdrop-blur-sm"
+    <motion.div
+      className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/55 backdrop-blur-md"
       role="dialog"
       aria-modal="true"
       aria-labelledby="del-title"
+      initial={instant ? false : { opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={instant ? undefined : { opacity: 0 }}
+      transition={{ duration: instant ? 0 : 0.2 }}
     >
-      <div className="glass-panel max-w-md w-full rounded-2xl p-6 shadow-xl">
+      <motion.div
+        className="glass-panel max-w-md w-full rounded-2xl border border-rose-200/35 p-6 shadow-xl shadow-rose-200/25 dark:border-rose-500/25 dark:shadow-rose-900/20"
+        initial={instant ? false : { opacity: 0, scale: 0.96, y: 10 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={instant ? undefined : { opacity: 0, scale: 0.97, y: 6 }}
+        transition={{
+          duration: instant ? 0 : 0.26,
+          ease: [0.16, 1, 0.3, 1],
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
         <h2 id="del-title" className="text-lg font-semibold text-foreground/90 mb-2">
           Excluir conversa?
         </h2>
@@ -584,7 +665,7 @@ function ConfirmDeleteModal({
             type="button"
             onClick={onCancel}
             disabled={isDeleting}
-            className="px-4 py-2 rounded-xl text-sm text-foreground/60 hover:bg-foreground/[0.05] disabled:opacity-40"
+            className="px-4 py-2 rounded-xl text-sm text-foreground/60 hover:bg-foreground/[0.05] disabled:opacity-40 transition-colors duration-150"
           >
             Cancelar
           </button>
@@ -592,13 +673,13 @@ function ConfirmDeleteModal({
             type="button"
             onClick={onConfirm}
             disabled={isDeleting}
-            className="px-4 py-2 rounded-xl text-sm font-medium bg-red-500 text-white hover:bg-red-600 disabled:opacity-50"
+            className="px-4 py-2 rounded-xl text-sm font-medium bg-red-500 text-white hover:bg-red-600 disabled:opacity-50 transition-colors duration-150"
           >
             {isDeleting ? "Excluindo…" : "Excluir"}
           </button>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -614,12 +695,31 @@ function TrashIcon() {
   );
 }
 
-function SparklesIconLarge() {
+function SparklesIconLarge({ reducedMotion = false }: { reducedMotion?: boolean }) {
   return (
-    <div className="mx-auto mt-8 inline-flex rounded-full bg-anima-violet/12 p-4 sm:mt-10">
-      <svg className="h-9 w-9 text-anima-violet sm:h-10 sm:w-10" fill="currentColor" viewBox="0 0 24 24">
+    <motion.div
+      className="mx-auto mt-8 inline-flex rounded-full bg-gradient-to-br from-anima-violet/15 via-rose-100/35 to-anima-lilac/25 p-4 ring-1 ring-rose-200/35 shadow-sm dark:via-rose-950/30 dark:to-anima-violet/20 dark:ring-rose-500/20 sm:mt-10"
+      initial={reducedMotion ? false : { opacity: 0, scale: 0.92 }}
+      animate={{
+        opacity: 1,
+        scale: reducedMotion ? 1 : [1, 1.028, 1],
+      }}
+      transition={
+        reducedMotion
+          ? { duration: 0.22, ease: "easeOut" }
+          : {
+              opacity: { duration: 0.4, ease: "easeOut" },
+              scale: {
+                duration: 3.2,
+                repeat: Infinity,
+                ease: "easeInOut",
+              },
+            }
+      }
+    >
+      <svg className="h-9 w-9 text-anima-violet sm:h-10 sm:w-10" fill="currentColor" viewBox="0 0 24 24" aria-hidden>
         <path d="M12 3l1.09 5.09L18.18 12l-5.09 3.91L12 21l-1.09-5.09L5.82 12l5.09-3.91L12 3z" />
       </svg>
-    </div>
+    </motion.div>
   );
 }
