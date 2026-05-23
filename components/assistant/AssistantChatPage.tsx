@@ -66,7 +66,7 @@ export function AssistantChatPage() {
   const hasLimit = limit != null && limit > 0;
   const pct = usagePercent(used, limit);
   const nearLimit = hasLimit ? isNearLimit(used, limit, 0.8) : false;
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useReducedMotion() ?? false;
 
   const sessions = useMemo(() => {
     const pages = sessionsQuery.data?.pages;
