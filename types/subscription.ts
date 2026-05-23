@@ -3,7 +3,7 @@ export type PlanSlug = "essencial" | "pleno" | "cuidado" | "preview";
 export type PlanLimits = {
   diaryEntriesPerMonth: number | null;
   aiAnalysesPerMonth: number | null;
-  /** Mensagens do assistente conversacional por mês; `null` = ilimitado */
+  /** Mensagens do assistente conversacional por mês; `null` = sem teto no plano (raro — o chat ainda respeita limites da rota `/assistant/*`) */
   assistantMessagesPerMonth?: number | null;
   historyDays: number | null;
   careInvitesActive: number | null;

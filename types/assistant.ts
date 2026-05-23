@@ -1,3 +1,18 @@
+export type AssistantLimits = {
+  messagesUsedThisMonth: number;
+  messagesLimitThisMonth: number | null;
+  messagesRemainingThisMonth: number | null;
+  messagesUsedInSession: number;
+  messagesLimitPerSession: number;
+  messagesRemainingInSession: number;
+};
+
+export type ConversationGraph = {
+  emotions: string[];
+  topics: string[];
+  turnCount: number;
+};
+
 export type AssistantSession = {
   id: string;
   userId: string;
@@ -12,7 +27,7 @@ export type AssistantMessage = {
   role: "user" | "assistant";
   content: string;
   contextEntryIds: string[] | null;
-  tokensUsed: number | null;
+  tokensUsed?: number | null;
   criadoEm: string;
 };
 
@@ -22,6 +37,8 @@ export type AssistantChatApiResponse = {
     AssistantMessage,
     "id" | "role" | "content" | "contextEntryIds" | "criadoEm"
   >;
+  limits: AssistantLimits;
+  conversationGraph?: ConversationGraph;
 };
 
 export type AssistantSessionListResponse = {
@@ -37,4 +54,7 @@ export type AssistantSessionListResponse = {
 export type AssistantSessionDetailResponse = {
   session: AssistantSession;
   messages: AssistantMessage[];
+  /** Presente quando a API inclui uso da sessão/plano nesta rota — preferível para o UI. */
+  limits?: AssistantLimits | null;
+  conversationGraph?: ConversationGraph | null;
 };

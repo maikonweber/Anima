@@ -12,7 +12,7 @@ const NAV_ITEMS = [
   { href: "/diary", label: "Linha do tempo", icon: ClockIcon },
   {
     href: "/assistente",
-    label: "Assistente AI",
+    label: "Assistente emocional",
     shortLabel: "Assistente",
     icon: AssistantChatIcon,
   },
