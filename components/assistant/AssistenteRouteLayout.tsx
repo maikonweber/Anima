@@ -30,11 +30,11 @@ export function AssistenteRouteLayout({ children }: { children: ReactNode }) {
   if (!user) return null;
 
   return (
-    <div className="flex h-[100dvh] min-h-[100dvh] w-full">
+    <div className="flex h-[100dvh] min-h-0 w-full max-w-[100vw] overflow-x-hidden">
       <Sidebar />
       <main
         id="main-content"
-        className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden pb-[max(4.75rem,calc(env(safe-area-inset-bottom)+5rem))] lg:overflow-y-auto lg:pb-0"
+        className="flex min-h-0 min-w-0 flex-1 flex-col overflow-x-hidden overflow-y-hidden pb-[max(4.75rem,calc(env(safe-area-inset-bottom)+5rem))] lg:overflow-y-auto lg:pb-0"
       >
         {children}
       </main>

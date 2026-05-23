@@ -24,7 +24,7 @@ export function LightMarkdown({ text }: { text: string }) {
     .filter(Boolean);
 
   return (
-    <div className="space-y-2 text-[0.9375rem] leading-relaxed">
+    <div className="min-w-0 max-w-full space-y-2 text-[0.9375rem] leading-relaxed [overflow-wrap:anywhere] break-words">
       {blocks.map((block, bi) => {
         const lines = block.split("\n");
         const isBulletList =
