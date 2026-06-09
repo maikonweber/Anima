@@ -14,6 +14,8 @@ interface PlanCardProps {
   onSubscribe?: (slug: Exclude<PlanSlug, "essencial" | "preview">) => void;
   isLoading?: boolean;
   showUsage?: boolean;
+  /** Quando false, botões de checkout ficam desabilitados (Stripe não configurado) */
+  paymentsEnabled?: boolean;
 }
 
 export function PlanCard({
@@ -22,12 +24,14 @@ export function PlanCard({
   onSubscribe,
   isLoading,
   showUsage,
+  paymentsEnabled = true,
 }: PlanCardProps) {
   if (plan.slug === "preview") return null;
 
   const highlights = buildPlanHighlights(plan.limits);
   const tagline = plan.descricao ?? getPlanTagline(plan.slug);
-  const canCheckout = plan.slug !== "essencial" && plan.stripePriceId;
+  const canCheckout =
+    plan.slug !== "essencial" && !!plan.stripePriceId && paymentsEnabled;
 
   return (
     <article
@@ -94,6 +98,9 @@ function PlanLimitsList({ limits }: { limits: Plan["limits"] }) {
   const items = [
     `Registros/mês: ${formatLimit(limits.diaryEntriesPerMonth)}`,
     `Insights SENTIO AI/mês: ${formatLimit(limits.aiAnalysesPerMonth)}`,
+    limits.assistantMessagesPerMonth != null
+      ? `Assistente/mês: ${formatLimit(limits.assistantMessagesPerMonth)}`
+      : null,
     limits.historyDays != null
       ? `Linha do tempo: últimos ${limits.historyDays} dias`
       : "Linha do tempo: retrospectiva completa",

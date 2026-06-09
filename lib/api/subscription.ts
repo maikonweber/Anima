@@ -1,11 +1,23 @@
-import { api } from "@/lib/api-client";
+import { api, getApiUrl } from "@/lib/api-client";
 import type {
+  CancelResponse,
   CheckoutResponse,
   Plan,
   PlanSlug,
   PortalResponse,
+  SubscriptionConfig,
   SubscriptionSummary,
 } from "@/types/subscription";
+
+export async function fetchSubscriptionConfig(): Promise<SubscriptionConfig> {
+  const res = await fetch(`${getApiUrl()}/subscription/config`, {
+    cache: "no-store",
+  });
+  if (!res.ok) {
+    throw new Error("subscription/config failed");
+  }
+  return res.json() as Promise<SubscriptionConfig>;
+}
 
 export async function fetchPlans() {
   return api<Plan[]>("/subscription/plans");
@@ -27,6 +39,13 @@ export async function checkout(
 
 export async function openBillingPortal() {
   return api<PortalResponse>("/subscription/portal", {
+    method: "POST",
+    auth: true,
+  });
+}
+
+export async function cancelSubscription() {
+  return api<CancelResponse>("/subscription/cancel", {
     method: "POST",
     auth: true,
   });

@@ -7,6 +7,7 @@ import { SkipLink } from "@/components/layout/SkipLink";
 import { GlobalJsonLd } from "@/components/seo/GlobalJsonLd";
 import { AuthProvider } from "@/providers/auth-provider";
 import { FeatureFlagsProvider } from "@/providers/feature-flags-provider";
+import { SubscriptionConfigProvider } from "@/providers/subscription-config-provider";
 import { GoogleProvider } from "@/providers/google-oauth-provider";
 import { QueryProvider } from "@/providers/query-provider";
 import { SubscriptionProvider } from "@/providers/subscription-provider";
@@ -101,10 +102,12 @@ export default function RootLayout({
           <QueryProvider>
             <AuthProvider>
               <FeatureFlagsProvider>
+                <SubscriptionConfigProvider>
                 <SubscriptionProvider>
                   <PreviewModeBanner />
                   {children}
                 </SubscriptionProvider>
+                </SubscriptionConfigProvider>
               </FeatureFlagsProvider>
             </AuthProvider>
           </QueryProvider>

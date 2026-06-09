@@ -60,5 +60,11 @@ export type PlanLimitError = {
   details?: PlanLimitErrorDetails;
 };
 
+export type SubscriptionConfig = {
+  paymentsEnabled: boolean;
+  stripePublishableKey: string | null;
+};
+
 export type CheckoutResponse = { url: string };
 export type PortalResponse = { url: string };
+export type CancelResponse = { message: string };

@@ -2,6 +2,7 @@
 
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
+  cancelSubscription,
   checkout,
   fetchPlans,
   fetchSubscriptionMe,
@@ -48,6 +49,16 @@ export function useBillingPortal() {
     mutationFn: openBillingPortal,
     onSuccess: (data) => {
       window.location.href = data.url;
+    },
+  });
+}
+
+export function useCancelSubscription() {
+  const { refreshUser } = useAuth();
+  return useMutation({
+    mutationFn: cancelSubscription,
+    onSuccess: async () => {
+      await refreshUser();
     },
   });
 }

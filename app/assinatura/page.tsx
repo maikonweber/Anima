@@ -29,8 +29,14 @@ function AssinaturaPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, isLoading: authLoading } = useAuth();
-  const { planSlug, subscription, isPreviewPlan, previewMode } =
-    useSubscription();
+  const {
+    planSlug,
+    subscription,
+    isPreviewPlan,
+    previewMode,
+    canPurchase,
+    paymentsEnabled,
+  } = useSubscription();
   const { data: plans, isLoading, error, refetch } = usePlans();
   const checkout = useCheckout();
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
@@ -96,11 +102,18 @@ function AssinaturaPageContent() {
         </p>
         {(previewMode || isPreviewPlan) && (
           <p className="text-xs text-foreground/45 mb-8 px-3 py-2 rounded-lg bg-amber-500/10 border border-amber-500/20">
-            Modo demonstração ativo — limites exibidos refletem a API; a
-            cobrança premium será habilitada na migração oficial.
+            Modo demonstração ativo — limites exibidos refletem a API.
           </p>
         )}
-        {!(previewMode || isPreviewPlan) && <div className="mb-4" />}
+        {!paymentsEnabled && !(previewMode || isPreviewPlan) && (
+          <p className="text-xs text-foreground/45 mb-8 px-3 py-2 rounded-lg bg-foreground/[0.04] border border-foreground/[0.08]">
+            Pagamentos em configuração — os botões de upgrade ficarão
+            disponíveis em breve.
+          </p>
+        )}
+        {!(previewMode || isPreviewPlan) && paymentsEnabled && (
+          <div className="mb-4" />
+        )}
 
         {error && (
           <ErrorMessage
@@ -142,6 +155,7 @@ function AssinaturaPageContent() {
                   isCurrent={plan.slug === currentSlug}
                   onSubscribe={handleSubscribe}
                   isLoading={checkout.isPending}
+                  paymentsEnabled={canPurchase}
                 />
               </div>
             ))}

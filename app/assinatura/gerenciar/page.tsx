@@ -13,8 +13,12 @@ import { useSubscription } from "@/providers/subscription-provider";
 export default function AssinaturaGerenciarPage() {
   const router = useRouter();
   const { user, isLoading: authLoading } = useAuth();
-  const { shouldSuggestUpgrade, hasPaidSubscription, subscription } =
-    useSubscription();
+  const {
+    shouldSuggestUpgrade,
+    hasPaidSubscription,
+    subscription,
+    canPurchase,
+  } = useSubscription();
   const portal = useBillingPortal();
   const [error, setError] = useState<string | null>(null);
 
@@ -87,9 +91,18 @@ export default function AssinaturaGerenciarPage() {
           </div>
         )}
 
-        <Button onClick={openPortal} isLoading={portal.isPending}>
-          Abrir portal Stripe
+        <Button
+          onClick={openPortal}
+          isLoading={portal.isPending}
+          disabled={!canPurchase}
+        >
+          Gerenciar assinatura
         </Button>
+        {!canPurchase && (
+          <p className="text-xs text-foreground/40 mt-3">
+            Portal de cobrança indisponível no momento.
+          </p>
+        )}
         <p className="text-[10px] text-foreground/30 mt-4">
           Altere cartão, cancele ou atualize sua assinatura no portal seguro do
           Stripe.

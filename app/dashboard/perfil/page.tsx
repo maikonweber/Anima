@@ -101,7 +101,7 @@ export default function PerfilPage() {
             )}
             {(previewMode || isPreviewPlan) && (
               <p className="text-[10px] text-foreground/40">
-                Modo demonstração — migração para planos premium em breve.
+                Modo demonstração ativo.
               </p>
             )}
             {statusLabel && (

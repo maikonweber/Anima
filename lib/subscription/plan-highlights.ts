@@ -33,6 +33,14 @@ export function buildPlanHighlights(limits: PlanLimits): string[] {
     );
   }
 
+  if (limits.assistantMessagesPerMonth === null) {
+    items.push("Assistente conversacional ilimitado");
+  } else if (limits.assistantMessagesPerMonth != null) {
+    items.push(
+      `${formatLimit(limits.assistantMessagesPerMonth)} mensagens do assistente por mês`,
+    );
+  }
+
   if (limits.historyDays === null) {
     items.push("Linha do tempo completa");
   } else {

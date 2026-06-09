@@ -10,12 +10,14 @@ interface PaywallModalProps {
   error: PlanLimitError | null;
   onClose: () => void;
   previewMode?: boolean;
+  canPurchase?: boolean;
 }
 
 export function PaywallModal({
   error,
   onClose,
   previewMode = false,
+  canPurchase = true,
 }: PaywallModalProps) {
   const router = useRouter();
 
@@ -23,7 +25,7 @@ export function PaywallModal({
 
   const nf = normalizedPlanLimitFields(error);
   const resetsLabel = formatResetsAt(nf.resetsAt);
-  const cta = getPaywallCta(error.code);
+  const cta = getPaywallCta(error.code, canPurchase);
 
   const title =
     error.code === "PLAN_LIMIT_ASSISTANT_MESSAGES"
@@ -54,7 +56,7 @@ export function PaywallModal({
           {error.code === "PLAN_LIMIT_OWNER_SHARE"
             ? "Quem registra momentos precisa do plano Pleno para autorizar você a visualizar o dashboard compartilhado."
             : error.code === "PLAN_LIMIT_ACCESSIBLE_PATIENTS"
-              ? "Você atingiu o limite de 25 acompanhamentos no plano Cuidado. Entre em contato para ampliar sua capacidade."
+              ? "Você atingiu o limite de pacientes no plano Cuidado. Entre em contato para ampliar sua capacidade."
               : error.code === "PLAN_LIMIT_ASSISTANT_MESSAGES"
                 ? (() => {
                     const lim = nf.limit;
@@ -113,25 +115,36 @@ export function PaywallModal({
   );
 }
 
-function getPaywallCta(code: string): {
+function getPaywallCta(
+  code: string,
+  canPurchase: boolean,
+): {
   primary?: string;
   primaryHref?: string;
   secondary?: string;
   showPlansLink?: boolean;
 } {
+  if (!canPurchase) {
+    return {
+      primary: "Entendi",
+      secondary: undefined,
+      showPlansLink: false,
+    };
+  }
+
   switch (code) {
     case "PLAN_LIMIT_DIARY_ENTRIES":
     case "PLAN_LIMIT_AI_ANALYSES":
     case "PLAN_LIMIT_CARE_SHARE":
       return {
-        primary: "Assinar Pleno",
+        primary: "Fazer upgrade",
         primaryHref: "/assinatura?plan=pleno",
         secondary: "Fechar",
         showPlansLink: true,
       };
     case "PLAN_LIMIT_CARE_VIEW":
       return {
-        primary: "Assinar Cuidado",
+        primary: "Fazer upgrade",
         primaryHref: "/assinatura?plan=cuidado",
         secondary: "Fechar",
         showPlansLink: true,

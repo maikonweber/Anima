@@ -27,6 +27,13 @@ export function SubscriptionUsagePanel({
         used={usage.aiAnalyses.used}
         limit={usage.aiAnalyses.limit}
       />
+      {usage.assistantMessages && usage.assistantMessages.limit !== null && (
+        <UsageMeter
+          label="Mensagens do assistente"
+          used={usage.assistantMessages.used}
+          limit={usage.assistantMessages.limit}
+        />
+      )}
       {usage.careInvitesActive.limit !== null && (
         <UsageMeter
           label="Compartilhamentos com profissionais"

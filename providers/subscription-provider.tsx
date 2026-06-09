@@ -13,6 +13,7 @@ import { configureApiClient } from "@/lib/api-client";
 import { PaywallModal } from "@/components/subscription/PaywallModal";
 import { useAuth } from "@/providers/auth-provider";
 import { useFeatureFlagsContext } from "@/providers/feature-flags-provider";
+import { useSubscriptionConfigContext } from "@/providers/subscription-config-provider";
 import type { PlanLimitError, PlanSlug, SubscriptionSummary } from "@/types/subscription";
 
 interface SubscriptionContextValue {
@@ -25,6 +26,9 @@ interface SubscriptionContextValue {
   isPreviewPlan: boolean;
   previewMode: boolean;
   sponsoredByPsychologist: boolean;
+  paymentsEnabled: boolean;
+  stripeConfigured: boolean;
+  canPurchase: boolean;
   shouldSuggestUpgrade: boolean;
   canShareDashboard: boolean;
   canViewSharedDashboard: boolean;
@@ -40,6 +44,7 @@ const SubscriptionContext = createContext<SubscriptionContextValue | null>(
 export function SubscriptionProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const { previewMode: featurePreviewMode } = useFeatureFlagsContext();
+  const { paymentsEnabled } = useSubscriptionConfigContext();
   const [paywallError, setPaywallError] = useState<PlanLimitError | null>(null);
 
   const showPaywall = useCallback(
@@ -65,6 +70,8 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
   const limits = subscription?.plan.limits;
   const sponsoredByPsychologist =
     subscription?.sponsoredByPsychologist === true;
+  const stripeConfigured = subscription?.stripeConfigured === true;
+  const canPurchase = paymentsEnabled && stripeConfigured;
   const previewMode =
     featurePreviewMode ||
     subscription?.preview === true ||
@@ -82,10 +89,14 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
       isPreviewPlan,
       previewMode,
       sponsoredByPsychologist,
+      paymentsEnabled,
+      stripeConfigured,
+      canPurchase,
       shouldSuggestUpgrade:
         planSlug === "essencial" &&
         !sponsoredByPsychologist &&
         !previewMode &&
+        canPurchase &&
         !(
           !!subscription?.currentPeriodEnd &&
           (subscription.status === "active" ||
@@ -110,6 +121,9 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
       isPreviewPlan,
       previewMode,
       sponsoredByPsychologist,
+      paymentsEnabled,
+      stripeConfigured,
+      canPurchase,
       showPaywall,
       closePaywall,
     ],
@@ -122,6 +136,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
         error={paywallError}
         onClose={closePaywall}
         previewMode={previewMode}
+        canPurchase={canPurchase}
       />
     </SubscriptionContext.Provider>
   );

@@ -20,9 +20,8 @@ export function PreviewModeBanner() {
             Modo preview
           </span>
           {" — "}
-          você está usando uma versão experimental da EmotiveCare. Os limites podem
-          ser mais amplos que no lançamento; em breve migraremos para os planos
-          premium oficiais.
+          você está usando uma versão experimental da EmotiveCare com limites
+          ampliados para demonstração.
         </p>
         <Link
           href="/assinatura"
