@@ -5,6 +5,7 @@ import {
   buildPlanHighlights,
   getPlanTagline,
 } from "@/lib/subscription/plan-highlights";
+import { planAllowsCheckout } from "@/lib/subscription/checkout";
 import { formatLimit } from "@/lib/subscription/utils";
 import type { Plan, PlanSlug } from "@/types/subscription";
 
@@ -14,8 +15,8 @@ interface PlanCardProps {
   onSubscribe?: (slug: Exclude<PlanSlug, "essencial" | "preview">) => void;
   isLoading?: boolean;
   showUsage?: boolean;
-  /** Quando false, botões de checkout ficam desabilitados (Stripe não configurado) */
-  paymentsEnabled?: boolean;
+  /** Quando false, exibe "Em breve" */
+  checkoutEnabled?: boolean;
 }
 
 export function PlanCard({
@@ -24,14 +25,15 @@ export function PlanCard({
   onSubscribe,
   isLoading,
   showUsage,
-  paymentsEnabled = true,
+  checkoutEnabled = false,
 }: PlanCardProps) {
   if (plan.slug === "preview") return null;
 
   const highlights = buildPlanHighlights(plan.limits);
   const tagline = plan.descricao ?? getPlanTagline(plan.slug);
   const canCheckout =
-    plan.slug !== "essencial" && !!plan.stripePriceId && paymentsEnabled;
+    checkoutEnabled &&
+    planAllowsCheckout(plan.slug, plan.checkoutEnabled);
 
   return (
     <article

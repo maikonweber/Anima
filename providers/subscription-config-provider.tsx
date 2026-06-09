@@ -6,10 +6,12 @@ import {
   useMemo,
   type ReactNode,
 } from "react";
+import { resolveCheckoutEnabled } from "@/lib/subscription/checkout";
 import { useSubscriptionConfig } from "@/hooks/use-subscription-config";
 
 interface SubscriptionConfigContextValue {
   paymentsEnabled: boolean;
+  checkoutEnabled: boolean;
   stripePublishableKey: string | null;
   isLoading: boolean;
 }
@@ -27,10 +29,11 @@ export function SubscriptionConfigProvider({
   const value = useMemo<SubscriptionConfigContextValue>(
     () => ({
       paymentsEnabled: data?.paymentsEnabled ?? false,
+      checkoutEnabled: resolveCheckoutEnabled(data?.checkoutEnabled),
       stripePublishableKey: data?.stripePublishableKey ?? null,
       isLoading,
     }),
-    [data?.paymentsEnabled, data?.stripePublishableKey, isLoading],
+    [data?.paymentsEnabled, data?.checkoutEnabled, data?.stripePublishableKey, isLoading],
   );
 
   return (

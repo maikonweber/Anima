@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "motion/react";
-import { ApiError } from "@/lib/api-client";
+import { getCheckoutErrorMessage } from "@/lib/subscription/checkout";
 import { PlanCard } from "@/components/subscription/PlanCard";
 import { SubscriptionUsagePanel } from "@/components/subscription/SubscriptionUsagePanel";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
@@ -34,8 +34,7 @@ function AssinaturaPageContent() {
     subscription,
     isPreviewPlan,
     previewMode,
-    canPurchase,
-    paymentsEnabled,
+    checkoutEnabled,
   } = useSubscription();
   const { data: plans, isLoading, error, refetch } = usePlans();
   const checkout = useCheckout();
@@ -56,11 +55,7 @@ function AssinaturaPageContent() {
     try {
       await checkout.mutateAsync(slug);
     } catch (err) {
-      setCheckoutError(
-        err instanceof ApiError
-          ? err.message
-          : "Não foi possível iniciar o checkout.",
-      );
+      setCheckoutError(getCheckoutErrorMessage(err));
     }
   }
 
@@ -105,15 +100,6 @@ function AssinaturaPageContent() {
             Modo demonstração ativo — limites exibidos refletem a API.
           </p>
         )}
-        {!paymentsEnabled && !(previewMode || isPreviewPlan) && (
-          <p className="text-xs text-foreground/45 mb-8 px-3 py-2 rounded-lg bg-foreground/[0.04] border border-foreground/[0.08]">
-            Pagamentos em configuração — os botões de upgrade ficarão
-            disponíveis em breve.
-          </p>
-        )}
-        {!(previewMode || isPreviewPlan) && paymentsEnabled && (
-          <div className="mb-4" />
-        )}
 
         {error && (
           <ErrorMessage
@@ -155,7 +141,7 @@ function AssinaturaPageContent() {
                   isCurrent={plan.slug === currentSlug}
                   onSubscribe={handleSubscribe}
                   isLoading={checkout.isPending}
-                  paymentsEnabled={canPurchase}
+                  checkoutEnabled={checkoutEnabled}
                 />
               </div>
             ))}

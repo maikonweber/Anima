@@ -17,7 +17,6 @@ export default function AssinaturaGerenciarPage() {
     shouldSuggestUpgrade,
     hasPaidSubscription,
     subscription,
-    canPurchase,
   } = useSubscription();
   const portal = useBillingPortal();
   const [error, setError] = useState<string | null>(null);
@@ -94,13 +93,13 @@ export default function AssinaturaGerenciarPage() {
         <Button
           onClick={openPortal}
           isLoading={portal.isPending}
-          disabled={!canPurchase}
+          disabled={!hasPaidSubscription}
         >
           Gerenciar assinatura
         </Button>
-        {!canPurchase && (
+        {!hasPaidSubscription && (
           <p className="text-xs text-foreground/40 mt-3">
-            Portal de cobrança indisponível no momento.
+            Nenhuma assinatura paga ativa para gerenciar.
           </p>
         )}
         <p className="text-[10px] text-foreground/30 mt-4">

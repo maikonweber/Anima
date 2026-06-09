@@ -10,14 +10,14 @@ interface PaywallModalProps {
   error: PlanLimitError | null;
   onClose: () => void;
   previewMode?: boolean;
-  canPurchase?: boolean;
+  checkoutEnabled?: boolean;
 }
 
 export function PaywallModal({
   error,
   onClose,
   previewMode = false,
-  canPurchase = true,
+  checkoutEnabled = true,
 }: PaywallModalProps) {
   const router = useRouter();
 
@@ -25,7 +25,7 @@ export function PaywallModal({
 
   const nf = normalizedPlanLimitFields(error);
   const resetsLabel = formatResetsAt(nf.resetsAt);
-  const cta = getPaywallCta(error.code, canPurchase);
+  const cta = getPaywallCta(error.code, checkoutEnabled);
 
   const title =
     error.code === "PLAN_LIMIT_ASSISTANT_MESSAGES"
@@ -117,14 +117,14 @@ export function PaywallModal({
 
 function getPaywallCta(
   code: string,
-  canPurchase: boolean,
+  checkoutEnabled: boolean,
 ): {
   primary?: string;
   primaryHref?: string;
   secondary?: string;
   showPlansLink?: boolean;
 } {
-  if (!canPurchase) {
+  if (!checkoutEnabled) {
     return {
       primary: "Entendi",
       secondary: undefined,

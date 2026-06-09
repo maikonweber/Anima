@@ -16,7 +16,9 @@ export type SubscriptionSummary = {
   plan: { slug: PlanSlug; nome: string; limits: PlanLimits };
   status: "active" | "trialing" | "past_due" | "canceled" | string;
   currentPeriodEnd: string | null;
-  stripeConfigured: boolean;
+  checkoutEnabled?: boolean;
+  /** @deprecated Prefer checkoutEnabled */
+  stripeConfigured?: boolean;
   /** Usuário com benefícios tipo Pleno via profissional no plano Cuidado */
   sponsoredByPsychologist?: boolean;
   /** Resposta em modo demonstração (slug pode ser `preview`) */
@@ -38,6 +40,13 @@ export type Plan = {
   descricao: string | null;
   limits: PlanLimits;
   stripePriceId: string | null;
+  checkoutEnabled?: boolean;
+};
+
+export type SubscriptionConfig = {
+  paymentsEnabled: boolean;
+  checkoutEnabled: boolean;
+  stripePublishableKey: string | null;
 };
 
 export type PlanLimitErrorDetails = {
@@ -58,11 +67,6 @@ export type PlanLimitError = {
   planSlug?: string;
   /** Corpo estruturado retornado pela API em alguns limites */
   details?: PlanLimitErrorDetails;
-};
-
-export type SubscriptionConfig = {
-  paymentsEnabled: boolean;
-  stripePublishableKey: string | null;
 };
 
 export type CheckoutResponse = { url: string };

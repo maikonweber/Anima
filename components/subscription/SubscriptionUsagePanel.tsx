@@ -27,7 +27,7 @@ export function SubscriptionUsagePanel({
         used={usage.aiAnalyses.used}
         limit={usage.aiAnalyses.limit}
       />
-      {usage.assistantMessages && usage.assistantMessages.limit !== null && (
+      {usage.assistantMessages && (
         <UsageMeter
           label="Mensagens do assistente"
           used={usage.assistantMessages.used}
