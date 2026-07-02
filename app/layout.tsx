@@ -3,6 +3,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { PreviewModeBanner } from "@/components/PreviewModeBanner";
+import { TermsGate } from "@/components/terms/TermsGate";
 import { SkipLink } from "@/components/layout/SkipLink";
 import { GlobalJsonLd } from "@/components/seo/GlobalJsonLd";
 import { AuthProvider } from "@/providers/auth-provider";
@@ -106,6 +107,7 @@ export default function RootLayout({
                 <SubscriptionProvider>
                   <PreviewModeBanner />
                   {children}
+                  <TermsGate />
                 </SubscriptionProvider>
                 </SubscriptionConfigProvider>
               </FeatureFlagsProvider>
