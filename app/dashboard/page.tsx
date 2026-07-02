@@ -5,6 +5,7 @@ import { motion } from "motion/react";
 import { useAuth } from "@/providers/auth-provider";
 import { useWeekSummary } from "@/hooks/use-diary";
 import { WeekSummaryChart } from "@/components/diary/WeekSummaryChart";
+import { StreakWidget } from "@/components/insights/StreakWidget";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { Button } from "@/components/ui/Button";
 
@@ -49,6 +50,10 @@ export default function DashboardHome() {
           + Novo momento
         </Link>
       </motion.div>
+
+      <div className="relative mb-6">
+        <StreakWidget />
+      </div>
 
       {error && (
         <div className="relative mb-6">

@@ -11,6 +11,18 @@ const NAV_ITEMS = [
   { href: "/diary/new", label: "Novo registro", icon: PlusIcon },
   { href: "/diary", label: "Linha do tempo", icon: ClockIcon },
   {
+    href: "/dashboard/insights",
+    label: "Insights",
+    shortLabel: "Insights",
+    icon: ChartIcon,
+  },
+  {
+    href: "/dashboard/conquistas",
+    label: "Conquistas",
+    shortLabel: "Conquistas",
+    icon: TrophyNavIcon,
+  },
+  {
     href: "/assistente",
     label: "Assistente emocional",
     shortLabel: "Assistente",
@@ -169,6 +181,42 @@ function ClockIcon({ active }: { active: boolean }) {
         strokeLinecap="round"
         strokeLinejoin="round"
         d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
+      />
+    </svg>
+  );
+}
+
+function ChartIcon({ active }: { active: boolean }) {
+  return (
+    <svg
+      className="w-5 h-5"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={active ? 2.1 : 1.5}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M3.75 3v16.5A1.5 1.5 0 0 0 5.25 21H21M7.5 15.75l3-3 3 3 4.5-5.25"
+      />
+    </svg>
+  );
+}
+
+function TrophyNavIcon({ active }: { active: boolean }) {
+  return (
+    <svg
+      className="w-5 h-5"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={active ? 2.1 : 1.5}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M8 21h8m-4-4v4m-5-17h10v3a5 5 0 0 1-10 0V4Zm10 1h2.5a1.5 1.5 0 0 1 0 5H17m-10 0H4.5a1.5 1.5 0 0 1 0-5H7"
       />
     </svg>
   );

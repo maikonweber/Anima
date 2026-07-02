@@ -3,6 +3,7 @@ import type {
   AssistantChatApiResponse,
   AssistantSessionDetailResponse,
   AssistantSessionListResponse,
+  AssistantSuggestions,
 } from "@/types/assistant";
 
 function buildPaginationQuery(page: number, limit: number): string {
@@ -46,4 +47,8 @@ export async function deleteAssistantSession(sessionId: string) {
     method: "DELETE",
     auth: true,
   });
+}
+
+export async function getAssistantSuggestions() {
+  return api<AssistantSuggestions>("/assistant/suggestions", { auth: true });
 }

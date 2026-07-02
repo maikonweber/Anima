@@ -1,6 +1,12 @@
 "use client";
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+  type QueryClient,
+} from "@tanstack/react-query";
 import {
   analyzeDiaryEntry,
   createDiaryEntry,
@@ -10,6 +16,7 @@ import {
   fetchDiaryEntry,
   fetchEmotions,
   fetchWeekSummary,
+  searchDiaryEntries,
   updateDiaryEntry,
 } from "@/lib/api/diary";
 import type {
@@ -17,11 +24,21 @@ import type {
   DiaryEntriesQuery,
   UpdateDiaryEntry,
 } from "@/lib/types";
+import {
+  ACHIEVEMENTS_QUERY_KEY,
+  STREAK_QUERY_KEY,
+} from "@/hooks/use-insights";
 import { useAuth } from "@/providers/auth-provider";
 
 function useRefreshSubscription() {
   const { refreshUser } = useAuth();
   return refreshUser;
+}
+
+/** Invalida os dados de engajamento (streak/conquistas) após mudanças no diário. */
+function invalidateEngagement(queryClient: QueryClient) {
+  queryClient.invalidateQueries({ queryKey: [STREAK_QUERY_KEY] });
+  queryClient.invalidateQueries({ queryKey: [ACHIEVEMENTS_QUERY_KEY] });
 }
 
 export function useEmotions() {
@@ -57,6 +74,17 @@ export function useDiaryEntry(id: string) {
   });
 }
 
+export function useDiarySearch(q: string, limit = 10) {
+  const { user } = useAuth();
+  const term = q.trim();
+  return useQuery({
+    queryKey: ["diary-search", term, limit],
+    queryFn: () => searchDiaryEntries(term, limit),
+    enabled: !!user && term.length > 0,
+    placeholderData: keepPreviousData,
+  });
+}
+
 export function useDiaryAnalysis(entryId: string, enabled = true) {
   return useQuery({
     queryKey: ["diary-analysis", entryId],
@@ -74,6 +102,7 @@ export function useCreateDiaryEntry() {
     onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ["diary-entries"] });
       queryClient.invalidateQueries({ queryKey: ["week-summary"] });
+      invalidateEngagement(queryClient);
       await refreshUser();
     },
   });
@@ -89,6 +118,7 @@ export function useUpdateDiaryEntry() {
       queryClient.setQueryData(["diary-entry", entry.id], entry);
       queryClient.invalidateQueries({ queryKey: ["diary-entries"] });
       queryClient.invalidateQueries({ queryKey: ["week-summary"] });
+      invalidateEngagement(queryClient);
     },
   });
 }
@@ -103,6 +133,7 @@ export function useDeleteDiaryEntry() {
       queryClient.removeQueries({ queryKey: ["diary-analysis", id] });
       queryClient.invalidateQueries({ queryKey: ["diary-entries"] });
       queryClient.invalidateQueries({ queryKey: ["week-summary"] });
+      invalidateEngagement(queryClient);
     },
   });
 }
@@ -116,6 +147,7 @@ export function useAnalyzeDiaryEntry() {
     onSuccess: async (data, entryId) => {
       queryClient.setQueryData(["diary-analysis", entryId], data);
       queryClient.invalidateQueries({ queryKey: ["week-summary"] });
+      invalidateEngagement(queryClient);
       await refreshUser();
     },
   });

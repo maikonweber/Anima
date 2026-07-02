@@ -58,3 +58,13 @@ export type AssistantSessionDetailResponse = {
   limits?: AssistantLimits | null;
   conversationGraph?: ConversationGraph | null;
 };
+
+export type AssistantSuggestions = {
+  suggestions: string[];
+  baseadoEm: {
+    periodo: { inicio: string; fim: string };
+    quantidadeRegistros: number;
+    tendencia: "SUBINDO" | "DESCENDO" | "ESTAVEL";
+    emocaoPrincipal: string | null;
+  };
+};

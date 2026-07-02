@@ -10,6 +10,7 @@ import type {
   UpdateDiaryEntry,
   WeekSummary,
 } from "@/lib/types";
+import type { DiarySearch } from "@/types/insights";
 
 function buildQuery(params: Record<string, string | number | undefined>): string {
   const search = new URLSearchParams();
@@ -46,6 +47,11 @@ export async function fetchDiaryEntries(query: DiaryEntriesQuery = {}) {
 
 export async function fetchDiaryEntry(id: string) {
   return api<DiaryEntryDetail>(`/diary-entries/${id}`, { auth: true });
+}
+
+export async function searchDiaryEntries(q: string, limit = 10) {
+  const qs = buildQuery({ q, limit });
+  return api<DiarySearch>(`/diary-entries/search${qs}`, { auth: true });
 }
 
 export async function updateDiaryEntry(id: string, data: UpdateDiaryEntry) {
