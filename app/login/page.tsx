@@ -4,7 +4,6 @@ import { Suspense, useState, type FormEvent } from "react";
 import { consumeSessionReuseWarning } from "@/lib/auth/storage";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { GoogleLogin } from "@react-oauth/google";
 import { ApiError } from "@/lib/api-client";
 import { useAuth } from "@/providers/auth-provider";
 import { loginSchema } from "@/lib/validations/auth";
@@ -12,6 +11,7 @@ import { AuthLayout } from "@/components/ui/AuthLayout";
 import { EmailInput } from "@/components/ui/EmailInput";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
+import { GoogleAuthButton } from "@/components/auth/GoogleAuthButton";
 
 function LoginForm() {
   const router = useRouter();
@@ -19,11 +19,10 @@ function LoginForm() {
   const resetSuccess = searchParams.get("reset") === "success";
   const verifiedSuccess = searchParams.get("verified") === "true";
   const redirectTo = searchParams.get("redirect");
-  const { login, googleLogin } = useAuth();
+  const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   // Lê e consome (uma vez) o aviso de reuso de sessão do sessionStorage.
   const [sessionReuseWarning] = useState(() => consumeSessionReuseWarning());
@@ -56,24 +55,6 @@ function LoginForm() {
       );
     } finally {
       setIsLoading(false);
-    }
-  }
-
-  async function handleGoogleSuccess(idToken: string) {
-    setIsGoogleLoading(true);
-    setError(null);
-
-    try {
-      const user = await googleLogin(idToken);
-      router.push(destination(user.emailVerified));
-    } catch (err) {
-      setError(
-        err instanceof ApiError
-          ? err.message
-          : "Não foi possível entrar com Google. Tente novamente.",
-      );
-    } finally {
-      setIsGoogleLoading(false);
     }
   }
 
@@ -144,22 +125,11 @@ function LoginForm() {
         </div>
       </div>
 
-      <div
-        className={`flex justify-center transition-opacity ${isGoogleLoading ? "opacity-50 pointer-events-none" : ""}`}
-      >
-        <GoogleLogin
-          onSuccess={(credentialResponse) => {
-            const idToken = credentialResponse.credential;
-            if (!idToken) return;
-            handleGoogleSuccess(idToken);
-          }}
-          onError={() =>
-            setError("Não foi possível entrar com Google. Tente novamente.")
-          }
-          text="signin_with"
-          useOneTap={false}
-        />
-      </div>
+      <GoogleAuthButton
+        text="signin_with"
+        redirectTo={redirectTo}
+        onError={(msg) => setError(msg || null)}
+      />
 
       <p className="text-center text-xs text-foreground/40 mt-2">
         Ainda não tem conta?{" "}

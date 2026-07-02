@@ -9,6 +9,7 @@ import { AuthLayout } from "@/components/ui/AuthLayout";
 import { EmailInput } from "@/components/ui/EmailInput";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
+import { GoogleAuthButton } from "@/components/auth/GoogleAuthButton";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -58,7 +59,7 @@ export default function RegisterPage() {
   return (
     <AuthLayout
       title="Criar sua conta"
-      subtitle="Comece sua jornada na EmotiveCare com apoio da SENTIO AI — simples e acolhedor"
+      subtitle="Comece sua jornada no Anima, seu segundo cérebro emocional — simples e acolhedor"
     >
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         {error && (
@@ -108,6 +109,17 @@ export default function RegisterPage() {
         <Button type="submit" isLoading={isLoading} className="mt-2">
           Criar conta
         </Button>
+
+        <div className="relative my-1">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-foreground/[0.06]" />
+          </div>
+          <div className="relative flex justify-center text-xs">
+            <span className="bg-background px-3 text-foreground/30">ou</span>
+          </div>
+        </div>
+
+        <GoogleAuthButton text="signup_with" onError={(msg) => setError(msg || null)} />
 
         <p className="text-center text-xs text-foreground/40 mt-2">
           Já tem conta?{" "}
