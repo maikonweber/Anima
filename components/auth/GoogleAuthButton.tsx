@@ -72,7 +72,6 @@ export function GoogleAuthButton({
         useOneTap={false}
         theme="outline"
         shape="pill"
-        locale="pt-BR"
       />
     </div>
   );

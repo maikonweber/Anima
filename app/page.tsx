@@ -218,25 +218,31 @@ export default function Home() {
         <header>
           <nav
             aria-label="Navegação principal do Anima"
-            className="relative z-10 flex items-center justify-between px-6 sm:px-8 py-5 sm:py-6 max-w-6xl mx-auto w-full min-h-[5rem]"
+            className="relative z-10 flex items-center justify-between gap-3 px-4 sm:px-8 py-4 sm:py-6 max-w-6xl mx-auto w-full min-h-[4rem] sm:min-h-[5rem]"
           >
-            <AnimaLogo href="/" size="header" showWordmark />
-            <div className="flex items-center gap-3 sm:gap-4 flex-wrap justify-end">
+            {/* Logo compacto no mobile, completo a partir de sm */}
+            <div className="sm:hidden shrink-0">
+              <AnimaLogo href="/" size="sm" />
+            </div>
+            <div className="hidden sm:block shrink-0">
+              <AnimaLogo href="/" size="header" showWordmark />
+            </div>
+            <div className="flex items-center gap-2 sm:gap-4 justify-end">
               <a
                 href="#como-funciona"
-                className="hidden sm:inline text-sm font-medium text-foreground/50 hover:text-foreground/80 transition-colors"
+                className="hidden md:inline text-sm font-medium text-foreground/50 hover:text-foreground/80 transition-colors"
               >
                 Como funciona
               </a>
               <a
                 href="#segundo-cerebro"
-                className="hidden sm:inline text-sm font-medium text-foreground/50 hover:text-foreground/80 transition-colors"
+                className="hidden md:inline text-sm font-medium text-foreground/50 hover:text-foreground/80 transition-colors"
               >
                 Segundo cérebro
               </a>
               <a
                 href="#planos"
-                className="hidden sm:inline text-sm font-medium text-foreground/50 hover:text-foreground/80 transition-colors"
+                className="hidden md:inline text-sm font-medium text-foreground/50 hover:text-foreground/80 transition-colors"
               >
                 Planos
               </a>
@@ -248,7 +254,7 @@ export default function Home() {
               </Link>
               <Link
                 href="/register"
-                className="px-4 py-2 rounded-full text-sm font-medium text-white transition-all duration-200 hover:shadow-lg hover:shadow-[var(--anima-glow)]"
+                className="shrink-0 whitespace-nowrap px-3.5 sm:px-4 py-2 rounded-full text-sm font-medium text-white transition-all duration-200 hover:shadow-lg hover:shadow-[var(--anima-glow)]"
                 style={{
                   background:
                     "linear-gradient(135deg, var(--anima-violet), var(--anima-indigo))",

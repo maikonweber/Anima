@@ -92,7 +92,7 @@ export function Sidebar() {
 
       {/* Mobile bottom bar */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-foreground/[0.06] bg-background/90 backdrop-blur-lg safe-area-pb">
-        <div className="flex items-center justify-around py-2">
+        <div className="flex items-stretch justify-between px-1 py-2">
           {NAV_ITEMS.map((item) => {
             const isActive =
               pathname === item.href ||
@@ -101,14 +101,14 @@ export function Sidebar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg transition-colors ${
+                className={`flex flex-1 min-w-0 flex-col items-center gap-0.5 px-0.5 py-1.5 rounded-lg transition-colors ${
                   isActive
                     ? "text-anima-violet"
                     : "text-foreground/35 hover:text-foreground/60"
                 }`}
               >
                 <item.icon active={isActive} />
-                <span className="text-[10px] font-medium leading-tight text-center max-w-[3.75rem]">
+                <span className="w-full text-[10px] font-medium leading-tight text-center">
                   {"shortLabel" in item && item.shortLabel ? item.shortLabel : item.label}
                 </span>
               </Link>
