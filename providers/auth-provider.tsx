@@ -102,6 +102,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
+  // reason is accepted for call-site clarity (e.g. "expired") but not needed here.
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleUnauthorized = useCallback((_reason?: UnauthorizedReason) => {
     clearSession();
     if (shouldRedirectToLogin()) {
@@ -214,7 +216,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       proactiveRefreshTimer.current = null;
     }
 
-    const { accessTokenExpiresAt, refreshToken } = state;
+    const accessTokenExpiresAt = state.accessTokenExpiresAt;
+    const refreshToken = state.refreshToken;
     if (!accessTokenExpiresAt || !refreshToken) return;
 
     const delay = accessTokenExpiresAt - Date.now() - PROACTIVE_REFRESH_LEAD_MS;

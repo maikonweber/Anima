@@ -88,7 +88,7 @@ export function mockAnalyzeEmotions(text: string): EmotionalAnalysis {
         description: blend.composite.description,
         energy: blend.composite.energy,
       },
-      insight: generateInsight(blend.composite.name, primaryPair),
+      insight: generateInsight(blend.composite.name),
     };
   }
 
@@ -101,14 +101,11 @@ export function mockAnalyzeEmotions(text: string): EmotionalAnalysis {
       description: singleEmotion.description,
       energy: singleEmotion.energy,
     },
-    insight: generateInsight(singleEmotion.name, [singleEmotion.id]),
+    insight: generateInsight(singleEmotion.name),
   };
 }
 
-function generateInsight(
-  emotionName: string,
-  ids: BaseEmotionId[],
-): string {
+function generateInsight(emotionName: string): string {
   const insights: Record<string, string> = {
     Mágoa:
       "Reconhecer a mágoa é o primeiro passo para transformar dor em compreensão. Permita-se sentir sem julgamento.",

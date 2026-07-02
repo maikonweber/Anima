@@ -39,6 +39,10 @@ export default function DiaryDetailPage({
     if (didAutoAnalyze.current || loadingEntry || !entry || analysis) return;
     didAutoAnalyze.current = true;
     void runAnalyze();
+    // runAnalyze is intentionally omitted: the didAutoAnalyze ref guarantees a
+    // single run, so re-subscribing when the (non-memoized) function identity
+    // changes would be wrong here.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loadingEntry, entry, analysis]);
 
   async function runAnalyze() {
