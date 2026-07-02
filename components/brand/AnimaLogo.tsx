@@ -32,7 +32,7 @@ export function AnimaLogo({
     >
       <Image
         src="/logo.png"
-        alt="EmotiveCare"
+        alt="Anima"
         width={px}
         height={px}
         className="rounded-full shrink-0"
@@ -44,7 +44,7 @@ export function AnimaLogo({
             px >= 64 ? "text-3xl" : px >= 56 ? "text-2xl" : "text-xl"
           }`}
         >
-          EmotiveCare
+          Anima
         </span>
       )}
     </span>
