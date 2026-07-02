@@ -1,20 +1,42 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimaLogo } from "@/components/brand/AnimaLogo";
 import { useAuth } from "@/lib/auth/AuthContext";
 import { useSubscription } from "@/providers/subscription-provider";
 
-const NAV_ITEMS = [
-  { href: "/dashboard", label: "Início", icon: HomeIcon },
-  { href: "/diary/new", label: "Novo registro", icon: PlusIcon },
-  { href: "/diary", label: "Linha do tempo", icon: ClockIcon },
+type NavItem = {
+  href: string;
+  label: string;
+  shortLabel?: string;
+  icon: (props: { active: boolean }) => React.ReactElement;
+  primary?: boolean;
+};
+
+const NAV_ITEMS: NavItem[] = [
+  { href: "/dashboard", label: "Início", icon: HomeIcon, primary: true },
+  {
+    href: "/diary/new",
+    label: "Novo registro",
+    shortLabel: "Registrar",
+    icon: PlusIcon,
+    primary: true,
+  },
+  {
+    href: "/diary",
+    label: "Linha do tempo",
+    shortLabel: "Linha",
+    icon: ClockIcon,
+    primary: true,
+  },
   {
     href: "/dashboard/insights",
     label: "Insights",
     shortLabel: "Insights",
     icon: ChartIcon,
+    primary: true,
   },
   {
     href: "/dashboard/conquistas",
@@ -38,6 +60,19 @@ export function Sidebar() {
   const { user, logout } = useAuth();
   const { subscription, shouldSuggestUpgrade } = useSubscription();
   const planLabel = subscription?.plan.nome ?? "Essencial";
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const primaryItems = NAV_ITEMS.filter((item) => item.primary);
+  const menuItems = NAV_ITEMS.filter((item) => !item.primary);
+
+  const isItemActive = (href: string) =>
+    pathname === href || (href !== "/dashboard" && pathname.startsWith(href));
+
+  const isMenuActive = menuItems.some((item) => isItemActive(item.href));
+
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
 
   return (
     <>
@@ -105,10 +140,8 @@ export function Sidebar() {
       {/* Mobile bottom bar */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-foreground/[0.06] bg-background/90 backdrop-blur-lg safe-area-pb">
         <div className="flex items-stretch justify-between px-1 py-2">
-          {NAV_ITEMS.map((item) => {
-            const isActive =
-              pathname === item.href ||
-              (item.href !== "/dashboard" && pathname.startsWith(item.href));
+          {primaryItems.map((item) => {
+            const isActive = isItemActive(item.href);
             return (
               <Link
                 key={item.href}
@@ -120,14 +153,84 @@ export function Sidebar() {
                 }`}
               >
                 <item.icon active={isActive} />
-                <span className="w-full text-[10px] font-medium leading-tight text-center">
-                  {"shortLabel" in item && item.shortLabel ? item.shortLabel : item.label}
+                <span className="w-full text-[10px] font-medium leading-tight text-center truncate">
+                  {item.shortLabel ?? item.label}
                 </span>
               </Link>
             );
           })}
+
+          <button
+            type="button"
+            onClick={() => setMenuOpen(true)}
+            aria-label="Abrir menu"
+            aria-expanded={menuOpen}
+            className={`flex flex-1 min-w-0 flex-col items-center gap-0.5 px-0.5 py-1.5 rounded-lg transition-colors ${
+              isMenuActive
+                ? "text-anima-violet"
+                : "text-foreground/35 hover:text-foreground/60"
+            }`}
+          >
+            <MenuIcon active={isMenuActive} />
+            <span className="w-full text-[10px] font-medium leading-tight text-center">
+              Menu
+            </span>
+          </button>
         </div>
       </nav>
+
+      {/* Mobile menu sheet */}
+      {menuOpen && (
+        <div
+          className="lg:hidden fixed inset-0 z-[60]"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Menu de navegação"
+        >
+          <button
+            type="button"
+            aria-label="Fechar menu"
+            onClick={() => setMenuOpen(false)}
+            className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"
+          />
+          <div className="absolute bottom-0 left-0 right-0 rounded-t-2xl border-t border-foreground/[0.06] bg-background p-4 pb-8 safe-area-pb shadow-2xl">
+            <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-foreground/15" />
+            <div className="grid grid-cols-3 gap-2">
+              {menuItems.map((item) => {
+                const isActive = isItemActive(item.href);
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMenuOpen(false)}
+                    className={`flex flex-col items-center gap-1.5 rounded-xl p-3 text-center transition-colors ${
+                      isActive
+                        ? "bg-anima-violet/10 text-anima-violet"
+                        : "text-foreground/60 hover:bg-foreground/[0.04]"
+                    }`}
+                  >
+                    <item.icon active={isActive} />
+                    <span className="text-[11px] font-medium leading-tight">
+                      {item.label}
+                    </span>
+                  </Link>
+                );
+              })}
+              <button
+                type="button"
+                onClick={() => {
+                  setMenuOpen(false);
+                  logout();
+                }}
+                className="flex flex-col items-center gap-1.5 rounded-xl p-3 text-center text-foreground/60 transition-colors hover:bg-red-500/5 hover:text-red-400"
+              >
+                <LogoutIcon />
+                <span className="text-[11px] font-medium leading-tight">Sair</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
@@ -298,6 +401,24 @@ function UserIcon({ active }: { active: boolean }) {
         strokeLinecap="round"
         strokeLinejoin="round"
         d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
+      />
+    </svg>
+  );
+}
+
+function MenuIcon({ active }: { active: boolean }) {
+  return (
+    <svg
+      className="w-5 h-5"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={active ? 2.1 : 1.5}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5"
       />
     </svg>
   );
