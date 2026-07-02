@@ -13,12 +13,12 @@ export function organizationSchema() {
     url: SITE_URL,
     brand: {
       "@type": "Brand",
-      name: "Anima",
+      name: "EmotiveCare",
       logo: `${SITE_URL}/logo.png`,
     },
     logo: `${SITE_URL}/logo.png`,
     description:
-      "Ecossistema de produtos de cuidado emocional digital, incluindo o Anima — o diário de energia emocional com IA e segundo cérebro emocional.",
+      "Ecossistema de produtos de cuidado emocional digital, incluindo a plataforma EmotiveCare e a tecnologia SENTIO AI.",
   };
 }
 
@@ -28,7 +28,7 @@ export function websiteSchema() {
     "@type": "WebSite",
     "@id": `${SITE_URL}/#website`,
     url: SITE_URL,
-    name: "Anima",
+    name: "EmotiveCare",
     publisher: {
       "@id": ORG_ID,
     },
@@ -40,7 +40,7 @@ export function softwareSchema() {
   return {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
-    name: "Anima",
+    name: "EmotiveCare",
     applicationCategory: "HealthApplication",
     operatingSystem: "Web",
     creator: {
@@ -48,7 +48,7 @@ export function softwareSchema() {
     },
     screenshot: `${SITE_URL}/logo.png`,
     description:
-      "Anima — diário de energia emocional com IA e segundo cérebro emocional: análise emocional, memória semântica do seu histórico, resumo semanal e assistente emocional seguro. Por MutterCorp.",
+      "Plataforma de acompanhamento emocional contínuo com SENTIO AI: diário inteligente, linha do tempo emocional, insights e dashboards compartilháveis sob consentimento — por MutterCorp.",
   };
 }
 
@@ -60,9 +60,9 @@ export function medicalHomePageSchema(path = "/") {
     "@type": "MedicalWebPage",
     "@id": `${url}#medical-home`,
     url,
-    name: "Anima — Seu segundo cérebro emocional",
+    name: "EmotiveCare — Plataforma de cuidado emocional contínuo",
     description:
-      "Informações institucionais sobre o Anima, um diário de energia emocional com IA voltado ao autoconhecimento e apoio emocional. Não substitui avaliação, diagnóstico ou tratamento clínico.",
+      "Informações institucionais sobre aplicação voltada ao autoconhecimento e apoio emocional. Não substitui avaliação, diagnóstico ou tratamento clínico.",
     isPartOf: { "@type": "WebSite", "@id": `${SITE_URL}/#website` },
     publisher: {
       "@id": ORG_ID,
@@ -89,7 +89,7 @@ export function faqSchema(entries: FaqEntry[]) {
 
 export function blogPostingSchema(
   post: BlogPost,
-  authorName = "Anima · MutterCorp",
+  authorName = "EmotiveCare · MutterCorp",
 ) {
   const url = `${SITE_URL}/blog/${post.slug}`;
   return {

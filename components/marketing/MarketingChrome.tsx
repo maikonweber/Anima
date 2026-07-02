@@ -42,7 +42,8 @@ export function MarketingChrome({ children }: MarketingChromeProps) {
           </Link>
         </div>
         <p>
-          Anima · MutterCorp. Não substitui avaliação clínica especializada.
+          EmotiveCare · MutterCorp · SENTIO AI. Não substitui avaliação clínica
+          especializada.
         </p>
       </footer>
     </div>

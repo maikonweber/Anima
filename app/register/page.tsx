@@ -59,7 +59,7 @@ export default function RegisterPage() {
   return (
     <AuthLayout
       title="Criar sua conta"
-      subtitle="Comece sua jornada no Anima, seu segundo cérebro emocional — simples e acolhedor"
+      subtitle="Comece sua jornada na EmotiveCare, seu segundo cérebro emocional — simples e acolhedor"
     >
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         {error && (

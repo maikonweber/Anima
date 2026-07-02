@@ -12,7 +12,7 @@ const HERO_TAGLINE =
 export const metadata: Metadata = {
   title: "Seu segundo cérebro emocional",
   description:
-    "Anima é um diário de energia emocional com IA que lembra por você: entende o que você sente, conecta seus padrões ao longo do tempo e devolve reflexões personalizadas. Comece grátis.",
+    "A EmotiveCare é um diário de energia emocional com IA que lembra por você: entende o que você sente, conecta seus padrões ao longo do tempo e devolve reflexões personalizadas. Comece grátis.",
   alternates: { canonical: `${SITE_URL}/` },
   keywords: [
     ...DEFAULT_SITE_KEYWORDS,
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     url: SITE_URL,
-    title: "Anima · Seu segundo cérebro emocional",
+    title: "EmotiveCare · Seu segundo cérebro emocional",
     description:
       "Um diário de energia emocional com IA que entende o que você escreve, conecta seus padrões e devolve reflexões feitas para a sua história. Ele sente com você e lembra por você.",
     images: [
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
         url: `${SITE_URL}${OG_IMAGE_PATH}`,
         width: 1200,
         height: 630,
-        alt: "Anima — seu segundo cérebro emocional",
+        alt: "EmotiveCare — seu segundo cérebro emocional",
       },
     ],
     type: "website",
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Anima · Seu segundo cérebro emocional",
+    title: "EmotiveCare · Seu segundo cérebro emocional",
     description:
       "Diário de energia emocional com IA que lembra por você e conecta seus padrões ao longo do tempo.",
   },
@@ -59,7 +59,7 @@ const HOW_IT_WORKS = [
   {
     step: "3",
     title: "O segundo cérebro conecta",
-    text: "Usando memória semântica, o Anima busca em todo o seu histórico os registros parecidos com o que você vive agora — mesmo os de semanas atrás.",
+    text: "Usando memória semântica, a EmotiveCare busca em todo o seu histórico os registros parecidos com o que você vive agora — mesmo os de semanas atrás.",
   },
   {
     step: "4",
@@ -133,7 +133,7 @@ const SECURITY = [
   {
     title: "Não substitui terapia",
     description:
-      "O Anima é uma ferramenta de autoconhecimento e apoio. Ele não faz diagnóstico nem promete cura e, em momentos de sofrimento intenso, sugere buscar ajuda profissional.",
+      "A EmotiveCare é uma ferramenta de autoconhecimento e apoio. Ele não faz diagnóstico nem promete cura e, em momentos de sofrimento intenso, sugere buscar ajuda profissional.",
   },
   {
     title: "Assistente com guardrails",
@@ -189,9 +189,9 @@ const PLANS = [
 
 const FAQ_ENTRIES: FaqEntry[] = [
   {
-    question: "O Anima é terapia?",
+    question: "A EmotiveCare é terapia?",
     answer:
-      "Não. O Anima é uma ferramenta de autoconhecimento e apoio emocional. Ele ajuda você a organizar e entender o que sente, mas não faz diagnóstico, não promete cura e não substitui o acompanhamento de psicólogos(as) ou médicos. Em momentos de sofrimento intenso, ele sugere buscar ajuda profissional.",
+      "Não. A EmotiveCare é uma ferramenta de autoconhecimento e apoio emocional. Ele ajuda você a organizar e entender o que sente, mas não faz diagnóstico, não promete cura e não substitui o acompanhamento de psicólogos(as) ou médicos. Em momentos de sofrimento intenso, ele sugere buscar ajuda profissional.",
   },
   {
     question: "Meus dados estão seguros?",
@@ -201,12 +201,12 @@ const FAQ_ENTRIES: FaqEntry[] = [
   {
     question: "Funciona sem escrever muito?",
     answer:
-      "Funciona. Você pode registrar apenas a sua energia, o humor e algumas tags de emoção em poucos segundos. Quanto mais você escreve, mais ricas ficam as reflexões, mas o Anima não exige textos longos para começar a te ajudar.",
+      "Funciona. Você pode registrar apenas a sua energia, o humor e algumas tags de emoção em poucos segundos. Quanto mais você escreve, mais ricas ficam as reflexões, mas a EmotiveCare não exige textos longos para começar a te ajudar.",
   },
   {
     question: "O que é o segundo cérebro emocional?",
     answer:
-      "É a forma como o Anima guarda e conecta suas emoções por significado, e não apenas por data. Usando busca semântica (embeddings e memória vetorial), ele encontra no seu histórico os momentos parecidos com o que você vive agora e os traz para a conversa — como uma memória emocional que lembra e conecta pontos por você, mesmo os que você já tinha esquecido.",
+      "É a forma como a EmotiveCare guarda e conecta suas emoções por significado, e não apenas por data. Usando busca semântica (embeddings e memória vetorial), ele encontra no seu histórico os momentos parecidos com o que você vive agora e os traz para a conversa — como uma memória emocional que lembra e conecta pontos por você, mesmo os que você já tinha esquecido.",
   },
 ];
 
@@ -217,7 +217,7 @@ export default function Home() {
       <div className="flex flex-col min-h-full">
         <header>
           <nav
-            aria-label="Navegação principal do Anima"
+            aria-label="Navegação principal da EmotiveCare"
             className="relative z-10 flex items-center justify-between gap-3 px-4 sm:px-8 py-4 sm:py-6 max-w-6xl mx-auto w-full min-h-[4rem] sm:min-h-[5rem]"
           >
             {/* Logo compacto no mobile, completo a partir de sm */}
@@ -294,7 +294,7 @@ export default function Home() {
             </h1>
             <div className="relative w-12 h-0.5 rounded-full bg-gradient-to-r from-anima-violet to-anima-lilac mb-6" />
             <p className="relative text-base sm:text-lg text-foreground/50 max-w-2xl leading-relaxed mb-4">
-              O Anima entende o que você escreve, conecta seus padrões ao longo
+              A EmotiveCare entende o que você escreve, conecta seus padrões ao longo
               do tempo e devolve reflexões feitas para a sua história — não
               respostas prontas.
             </p>
@@ -331,7 +331,7 @@ export default function Home() {
           >
             <div className="max-w-5xl mx-auto">
               <h2 className="text-2xl sm:text-3xl font-bold text-foreground/85 text-center mb-3">
-                Como o Anima funciona
+                Como a EmotiveCare funciona
               </h2>
               <p className="text-sm text-foreground/40 text-center max-w-lg mx-auto mb-10">
                 Do registro do momento à reflexão personalizada — em quatro
@@ -367,14 +367,14 @@ export default function Home() {
             />
             <div className="relative max-w-4xl mx-auto text-center">
               <p className="text-xs font-medium uppercase tracking-widest text-anima-violet mb-3">
-                O diferencial do Anima
+                O diferencial da EmotiveCare
               </p>
               <h2 className="text-2xl sm:text-4xl font-bold text-foreground/90 mb-5">
-                Um diário comum esquece. O Anima lembra.
+                Um diário comum esquece. A EmotiveCare lembra.
               </h2>
               <p className="text-sm sm:text-base text-foreground/50 leading-relaxed max-w-2xl mx-auto mb-12">
                 A maioria dos apps guarda seus textos e os deixa soltos, um dia
-                sem falar com o outro. O Anima organiza suas emoções por{" "}
+                sem falar com o outro. A EmotiveCare organiza suas emoções por{" "}
                 <strong className="text-foreground/70 font-semibold">
                   significado
                 </strong>
@@ -399,12 +399,12 @@ export default function Home() {
                   style={{ borderColor: "var(--anima-violet)" }}
                 >
                   <p className="text-xs font-semibold uppercase tracking-wider text-anima-violet mb-3">
-                    Com o Anima
+                    Com a EmotiveCare
                   </p>
                   <p className="text-sm text-foreground/70 leading-relaxed">
                     &ldquo;Há 3 semanas você sentiu algo parecido, também na
                     véspera de uma reunião. Naquele dia, respirar antes de
-                    começar te ajudou.&rdquo; O Anima lembra por você.
+                    começar te ajudou.&rdquo; A EmotiveCare lembra por você.
                   </p>
                 </div>
               </div>
@@ -418,7 +418,7 @@ export default function Home() {
           >
             <div className="max-w-5xl mx-auto">
               <h2 className="text-2xl sm:text-3xl font-bold text-foreground/85 text-center mb-3">
-                Tudo o que o Anima faz por você
+                Tudo o que a EmotiveCare faz por você
               </h2>
               <p className="text-sm text-foreground/40 text-center max-w-2xl mx-auto mb-10">
                 Mais que um diário: um sistema completo de autoconhecimento
@@ -446,7 +446,7 @@ export default function Home() {
           >
             <div className="max-w-5xl mx-auto">
               <h2 className="text-2xl sm:text-3xl font-bold text-foreground/85 text-center mb-10">
-                Para quem é o Anima
+                Para quem é a EmotiveCare
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {AUDIENCES.map((audience) => (
@@ -487,7 +487,7 @@ export default function Home() {
                 Cuidado de verdade começa com segurança
               </h2>
               <p className="text-sm text-foreground/40 text-center max-w-2xl mx-auto mb-10">
-                Transparência sobre o que o Anima é — e o que ele não é.
+                Transparência sobre o que a EmotiveCare é — e o que ele não é.
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 {SECURITY.map((item) => (
@@ -655,7 +655,7 @@ export default function Home() {
           role="contentinfo"
         >
           <p className="text-xs text-foreground/30 max-w-lg mx-auto leading-relaxed px-4 mb-3">
-            <strong className="text-foreground/40 font-semibold">Anima</strong>{" "}
+            <strong className="text-foreground/40 font-semibold">EmotiveCare</strong>{" "}
             · seu segundo cérebro emocional. Uma ferramenta de autoconhecimento e
             apoio — não substitui avaliação, diagnóstico ou tratamento clínico.
             Produto desenvolvido por{" "}
