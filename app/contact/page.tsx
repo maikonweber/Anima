@@ -2,15 +2,15 @@ import type { Metadata } from "next";
 import { MarketingChrome } from "@/components/marketing/MarketingChrome";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbListSchema } from "@/components/seo/schema";
-import { DEFAULT_SITE_KEYWORDS, SITE_URL } from "@/lib/seo/site";
+import { buildMarketingMetadata } from "@/lib/seo/page-metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMarketingMetadata({
   title: "Contato com o time da EmotiveCare",
   description:
     "Canais oficiais de contato MutterCorp e EmotiveCare para suporte, parcerias e imprensa.",
-  alternates: { canonical: `${SITE_URL}/contact` },
-  keywords: [...DEFAULT_SITE_KEYWORDS, "contato", "suporte EmotiveCare"],
-};
+  path: "/contact",
+  keywords: ["contato", "suporte EmotiveCare"],
+});
 
 export default function ContactPage() {
   return (

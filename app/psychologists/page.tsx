@@ -3,15 +3,15 @@ import type { Metadata } from "next";
 import { MarketingChrome } from "@/components/marketing/MarketingChrome";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbListSchema } from "@/components/seo/schema";
-import { DEFAULT_SITE_KEYWORDS, SITE_URL } from "@/lib/seo/site";
+import { buildMarketingMetadata } from "@/lib/seo/page-metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMarketingMetadata({
   title: "Psicólogos — dashboard emocional entre sessões",
   description:
-    "Dashboard emocional inteligente para acompanhamento terapêutico e evolução emocional de pacientes.",
-  alternates: { canonical: `${SITE_URL}/psychologists` },
-  keywords: [...DEFAULT_SITE_KEYWORDS, "psicólogo online", "pré-consulta", "dashboard longitudinal"],
-};
+    "Dashboard emocional inteligente para acompanhamento terapêutico e evolução emocional de pacientes — compartilhado apenas com consentimento.",
+  path: "/psychologists",
+  keywords: ["psicólogo online", "pré-consulta", "dashboard longitudinal"],
+});
 
 export default function PsychologistsPage() {
   return (

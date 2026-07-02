@@ -3,19 +3,15 @@ import type { Metadata } from "next";
 import { MarketingChrome } from "@/components/marketing/MarketingChrome";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbListSchema } from "@/components/seo/schema";
-import { DEFAULT_SITE_KEYWORDS, SITE_URL } from "@/lib/seo/site";
+import { buildMarketingMetadata } from "@/lib/seo/page-metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMarketingMetadata({
   title: "Sobre a EmotiveCare e a tecnologia SENTIO AI",
   description:
     "Conheça a missão por trás da EmotiveCare, da MutterCorp e do motor contextual SENTIO AI para bem-estar emocional longitudinal.",
-  alternates: { canonical: `${SITE_URL}/about` },
-  robots: {
-    index: true,
-    follow: true,
-  },
-  keywords: [...DEFAULT_SITE_KEYWORDS, "bem-estar digital", "MutterCorp", "história da empresa"],
-};
+  path: "/about",
+  keywords: ["bem-estar digital", "MutterCorp", "história da empresa"],
+});
 
 export default function AboutPage() {
   return (

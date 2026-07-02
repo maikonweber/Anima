@@ -2,16 +2,16 @@ import type { Metadata } from "next";
 import { MarketingChrome } from "@/components/marketing/MarketingChrome";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbListSchema, faqSchema } from "@/components/seo/schema";
-import { DEFAULT_SITE_KEYWORDS, SITE_URL } from "@/lib/seo/site";
+import { buildMarketingMetadata } from "@/lib/seo/page-metadata";
 import { faqEntries } from "@/lib/seo/faq";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMarketingMetadata({
   title: "FAQ — EmotiveCare e SENTIO AI",
   description:
     "Respostas claras sobre acompanhamento emocional, compartilhamento com psicólogos, privacidade e uso responsável da SENTIO AI.",
-  alternates: { canonical: `${SITE_URL}/faq` },
-  keywords: [...DEFAULT_SITE_KEYWORDS, "perguntas frequentes"],
-};
+  path: "/faq",
+  keywords: ["perguntas frequentes"],
+});
 
 export default function FaqPage() {
   return (

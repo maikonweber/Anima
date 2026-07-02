@@ -4,15 +4,15 @@ import { MarketingChrome } from "@/components/marketing/MarketingChrome";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbListSchema } from "@/components/seo/schema";
 import { blogPosts } from "@/lib/seo/posts";
-import { DEFAULT_SITE_KEYWORDS, SITE_URL } from "@/lib/seo/site";
+import { buildMarketingMetadata } from "@/lib/seo/page-metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMarketingMetadata({
   title: "Blog — bem-estar emocional assistido pela SENTIO AI",
   description:
     "Artigos sintéticos pensados para leitura humana e para motores semânticos: autoconhecimento, burnout e acompanhamento longitudinal ético.",
-  alternates: { canonical: `${SITE_URL}/blog` },
-  keywords: [...DEFAULT_SITE_KEYWORDS, "blog saúde emocional", "IA contextual"],
-};
+  path: "/blog",
+  keywords: ["blog saúde emocional", "IA contextual"],
+});
 
 export default function BlogIndexPage() {
   return (

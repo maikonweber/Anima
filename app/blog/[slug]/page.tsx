@@ -5,7 +5,7 @@ import { MarketingChrome } from "@/components/marketing/MarketingChrome";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbListSchema, blogPostingSchema } from "@/components/seo/schema";
 import { blogPosts } from "@/lib/seo/posts";
-import { SITE_URL } from "@/lib/seo/site";
+import { OG_IMAGE_PATH, SITE_URL } from "@/lib/seo/site";
 
 export async function generateStaticParams() {
   return blogPosts.map((p) => ({ slug: p.slug }));
@@ -36,13 +36,26 @@ export async function generateMetadata(props: {
       type: "article",
       locale: "pt_BR",
       url,
+      siteName: "EmotiveCare",
+      title: `${post.title} · EmotiveCare`,
+      description: post.description,
       publishedTime: post.datePublished,
       authors: ["MutterCorp · EmotiveCare"],
+      tags: post.keywords,
+      images: [
+        {
+          url: `${SITE_URL}${OG_IMAGE_PATH}`,
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
-      title: post.title,
+      title: `${post.title} · EmotiveCare`,
       description: post.description,
+      images: [`${SITE_URL}${OG_IMAGE_PATH}`],
     },
   };
 }

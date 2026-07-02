@@ -2,7 +2,8 @@
 
 - **Dominio configurável**: defina `NEXT_PUBLIC_SITE_URL` (veja `env.example`) antes do deploy para canônicos corretos, Open Graph absoluto e `app/sitemap.ts`.
 - **Sitemap**: gerado dinamicamente em `/sitemap.xml` via `app/sitemap.ts` (prioritário sobre `next-sitemap` estático).
-- **Robôs públicos**: `public/robots.txt` lista `Disallow` para áreas autenticadas e aponta o sitemap hospedado.
+- **Robôs públicos**: gerado dinamicamente em `/robots.txt` via `app/robots.ts` (usa `NEXT_PUBLIC_SITE_URL` para host e sitemap corretos por ambiente); lista `Disallow` para áreas autenticadas/transacionais.
+- **Metadata de páginas de marketing**: helper `buildMarketingMetadata` em `lib/seo/page-metadata.ts` padroniza título, canônico, keywords e preview social (Open Graph + Twitter) único por página.
 - **Structured data**: scripts JSON-LD em `components/seo/*` (`Organization`, `WebSite`, `SoftwareApplication`, `MedicalWebPage` na home, `FAQPage` em `/faq`, `BlogPosting` + breadcrumbs em `/blog/[slug]`).
 - **Manifest PWA-lite**: `/manifest.webmanifest` via `app/manifest.ts`.
 - **Preview social**: `/opengraph-image` (PNG dinâmica) referenciada pela metadata global; Twitter em `large card`.

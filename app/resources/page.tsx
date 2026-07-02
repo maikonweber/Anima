@@ -3,15 +3,15 @@ import type { Metadata } from "next";
 import { MarketingChrome } from "@/components/marketing/MarketingChrome";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbListSchema } from "@/components/seo/schema";
-import { DEFAULT_SITE_KEYWORDS, SITE_URL } from "@/lib/seo/site";
+import { buildMarketingMetadata } from "@/lib/seo/page-metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMarketingMetadata({
   title: "Recursos sobre saúde emocional e IA responsável",
   description:
     "Guia rápido de recursos externos e internos da EmotiveCare para autoconhecimento, burnout, ansiedade e wellness emocional.",
-  alternates: { canonical: `${SITE_URL}/resources` },
-  keywords: [...DEFAULT_SITE_KEYWORDS, "recursos de saúde mental", "kits de autocuidado"],
-};
+  path: "/resources",
+  keywords: ["recursos de saúde mental", "kits de autocuidado"],
+});
 
 export default function ResourcesPage() {
   return (

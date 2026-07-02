@@ -3,15 +3,15 @@ import type { Metadata } from "next";
 import { MarketingChrome } from "@/components/marketing/MarketingChrome";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbListSchema } from "@/components/seo/schema";
-import { DEFAULT_SITE_KEYWORDS, SITE_URL } from "@/lib/seo/site";
+import { buildMarketingMetadata } from "@/lib/seo/page-metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMarketingMetadata({
   title: "Planos para acompanhamento emocional inteligente",
   description:
-    "Conheça os planos da EmotiveCare para acompanhamento emocional inteligente.",
-  alternates: { canonical: `${SITE_URL}/plans` },
-  keywords: [...DEFAULT_SITE_KEYWORDS, "planos", "pricing saúde emocional", "benefícios digitais"],
-};
+    "Compare os planos Essencial, Pleno e Cuidado da EmotiveCare: volume de registros, insights SENTIO AI, histórico e compartilhamento com profissionais.",
+  path: "/plans",
+  keywords: ["planos", "pricing saúde emocional", "benefícios digitais"],
+});
 
 export default function PlansPage() {
   return (
