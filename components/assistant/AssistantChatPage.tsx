@@ -12,6 +12,7 @@ import {
   useDeleteAssistantSession,
   useSendAssistantMessage,
 } from "@/hooks/use-assistant";
+import { useAssistantSuggestions } from "@/hooks/use-insights";
 import { ApiError } from "@/lib/api-client";
 import { extractApiErrorExtras } from "@/lib/assistant/api-errors";
 import { formatAssistantMessageTime } from "@/lib/assistant/message-time";
@@ -71,6 +72,7 @@ export function AssistantChatPage() {
   const detailQuery = useAssistantSessionDetail(selectedSessionId, !!selectedSessionId);
   const sendMutation = useSendAssistantMessage();
   const deleteMutation = useDeleteAssistantSession();
+  const suggestionsQuery = useAssistantSuggestions(selectedSessionId == null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -213,9 +215,9 @@ export function AssistantChatPage() {
     setMobileSidebarOpen(false);
   };
 
-  const handleSubmit = async (e?: React.FormEvent) => {
+  const handleSubmit = async (e?: React.FormEvent, overrideText?: string) => {
     e?.preventDefault();
-    const text = draft.trim();
+    const text = (overrideText ?? draft).trim();
     setAssistBanner(null);
     if (text.length < 1 || text.length > 2000 || awaitingReply) return;
     if (sendBlockedMonthly || blockedBySessionTurn || isRateLimited) return;
@@ -628,6 +630,28 @@ export function AssistantChatPage() {
                   você continua no controle.
                 </p>
               </div>
+
+              {suggestionsQuery.data?.suggestions?.length ? (
+                <div className="mt-7 flex w-full flex-col items-center gap-2.5">
+                  <p className="text-[10.5px] font-medium uppercase tracking-wide text-foreground/35">
+                    Sugestões para começar
+                  </p>
+                  <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:justify-center">
+                    {suggestionsQuery.data.suggestions.map((s, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        disabled={composerLocked}
+                        onClick={() => void handleSubmit(undefined, s)}
+                        className="max-w-full rounded-2xl border border-rose-200/40 bg-background/60 px-3.5 py-2.5 text-left text-[13px] leading-snug text-foreground/70 shadow-sm transition-colors hover:border-anima-violet/45 hover:bg-anima-violet/[0.06] hover:text-foreground/90 disabled:cursor-not-allowed disabled:opacity-50 dark:border-rose-400/20 dark:bg-foreground/[0.05] sm:max-w-[15rem]"
+                      >
+                        {s}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+
               <SparklesIconLarge reducedMotion={reduceMotion} />
             </motion.div>
           ) : detailQuery.isLoading && selectedSessionId ? (

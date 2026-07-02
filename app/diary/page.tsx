@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { ApiError } from "@/lib/api-client";
 import { useDiaryEntries } from "@/hooks/use-diary";
+import { DiarySearchBar } from "@/components/diary/DiarySearchBar";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { getCategoryFromEnergy, getCategoryStyle } from "@/lib/energy";
 import { Button } from "@/components/ui/Button";
@@ -61,6 +62,8 @@ export default function DiaryListPage() {
           + Novo
         </Link>
       </div>
+
+      <DiarySearchBar />
 
       {showHistoryHint && limits?.historyDays != null && (
         <div className="glass-panel p-4 mb-4 border border-anima-violet/15">
