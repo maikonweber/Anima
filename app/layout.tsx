@@ -34,12 +34,12 @@ const ogImageAbsolute = `${SITE_URL}${OG_IMAGE_PATH}`;
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "EmotiveCare · O futuro do cuidado emocional (SENTIO AI)",
-    template: "%s · EmotiveCare",
+    default: "Anima · Seu segundo cérebro emocional",
+    template: "%s · Anima",
   },
   description:
-    "Plataforma de cuidado emocional contínuo com SENTIO AI por MutterCorp: diário emocional inteligente, acompanhamento longitudinal e dashboards terapêuticos compartilháveis sob consentimento.",
-  applicationName: "EmotiveCare",
+    "Anima é um diário de energia emocional com IA que lembra por você: entende o que você sente, conecta seus padrões ao longo do tempo e devolve reflexões personalizadas baseadas na sua própria história. Por MutterCorp.",
+  applicationName: "Anima",
   authors: [{ name: "MutterCorp", url: SITE_URL }],
   creator: "MutterCorp",
   publisher: "MutterCorp",
@@ -56,17 +56,17 @@ export const metadata: Metadata = {
     type: "website",
     locale: "pt_BR",
     url: SITE_URL,
-    siteName: "EmotiveCare",
-    title: "EmotiveCare — O futuro do cuidado emocional · SENTIO AI",
+    siteName: "Anima",
+    title: "Anima — Seu segundo cérebro emocional",
     description:
-      "Acompanhamento emocional contínuo, memória emocional longitudinal e dashboards terapêuticos com permissão paciente-profissional — powered by SENTIO AI.",
-    images: [{ url: ogImageAbsolute, width: 1200, height: 630, alt: "EmotiveCare · SENTIO AI" }],
+      "Diário de energia emocional com IA que sente com você e lembra por você. Entende o que você escreve, conecta seus padrões e devolve reflexões personalizadas.",
+    images: [{ url: ogImageAbsolute, width: 1200, height: 630, alt: "Anima · Seu segundo cérebro emocional" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "EmotiveCare · SENTIO AI",
+    title: "Anima · Seu segundo cérebro emocional",
     description:
-      "Plataforma de cuidado emocional inteligente e acompanhamento longitudinal para pacientes e profissionais.",
+      "Diário de energia emocional com IA que lembra por você e conecta seus padrões ao longo do tempo.",
     images: [ogImageAbsolute],
   },
   icons: {

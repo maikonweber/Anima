@@ -10,14 +10,17 @@ export function absoluteUrl(path: string): string {
 }
 
 export const DEFAULT_SITE_KEYWORDS: string[] = [
-  "EmotiveCare",
-  "SENTIO AI",
+  "Anima",
+  "segundo cérebro emocional",
+  "diário emocional com IA",
+  "diário de energia emocional",
   "MutterCorp",
   "diário emocional",
   "acompanhamento emocional",
   "saúde emocional",
   "IA emocional",
   "inteligência emocional",
+  "memória emocional",
   "psicologia",
   "terapia online",
   "autoconhecimento",
