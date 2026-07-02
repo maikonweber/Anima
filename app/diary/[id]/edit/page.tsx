@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
+import { use, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ApiError } from "@/lib/api-client";
@@ -19,61 +19,91 @@ import { Button } from "@/components/ui/Button";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { HUMOR_OPTIONS, Select } from "@/components/ui/Select";
 
+type DiaryEntry = NonNullable<ReturnType<typeof useDiaryEntry>["data"]>;
+type EmotionList = NonNullable<ReturnType<typeof useEmotions>["data"]>;
+
 export default function EditDiaryPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
   const { id } = use(params);
-  const router = useRouter();
   const { data: entry, isLoading, error } = useDiaryEntry(id);
   const { data: emotions = [], isLoading: loadingEmotions } = useEmotions();
+
+  if (isLoading) {
+    return (
+      <div className="max-w-2xl mx-auto px-4 py-12 animate-pulse space-y-4">
+        <div className="h-4 w-32 bg-foreground/[0.06] rounded" />
+        <div className="h-64 bg-foreground/[0.06] rounded-2xl" />
+      </div>
+    );
+  }
+
+  if (error || !entry) {
+    const forbidden = error instanceof ApiError && error.status === 403;
+    return (
+      <div className="max-w-2xl mx-auto px-4 py-12">
+        <ErrorMessage
+          message={forbidden ? error.message : "Registro não encontrado."}
+        />
+        <Link href="/diary" className="block mt-4 text-sm text-anima-violet">
+          ← Voltar à linha do tempo
+        </Link>
+      </div>
+    );
+  }
+
+  return (
+    <EditDiaryForm
+      key={entry.id}
+      id={id}
+      entry={entry}
+      emotions={emotions}
+      loadingEmotions={loadingEmotions}
+    />
+  );
+}
+
+function EditDiaryForm({
+  id,
+  entry,
+  emotions,
+  loadingEmotions,
+}: {
+  id: string;
+  entry: DiaryEntry;
+  emotions: EmotionList;
+  loadingEmotions: boolean;
+}) {
+  const router = useRouter();
   const updateEntry = useUpdateDiaryEntry();
 
-  const [texto, setTexto] = useState("");
-  const [humor, setHumor] = useState("");
-  const [ansiedade, setAnsiedade] = useState(50);
-  const [intensidadeEmocional, setIntensidadeEmocional] = useState(50);
-  const [tagsText, setTagsText] = useState("");
-  const [tracking, setTracking] = useState({
-    sono: 50,
-    estresse: 50,
-    socializacao: 50,
-    motivacao: 50,
-    burnout: 50,
-  });
-  const [energia, setEnergia] = useState(50);
-  const [selectedEmotions, setSelectedEmotions] = useState<SelectedEmotion[]>(
-    [],
+  const [texto, setTexto] = useState(entry.texto);
+  const [humor, setHumor] = useState(entry.humor ?? "");
+  const [ansiedade, setAnsiedade] = useState(entry.ansiedadeInformada ?? 50);
+  const [intensidadeEmocional, setIntensidadeEmocional] = useState(
+    entry.intensidadeEmocional ?? 50,
   );
-  const [observacoes, setObservacoes] = useState("");
+  const [tagsText, setTagsText] = useState(
+    entry.tagsEmocionais?.join(", ") ?? "",
+  );
+  const [tracking, setTracking] = useState({
+    sono: entry.tracking?.sono ?? 50,
+    estresse: entry.tracking?.estresse ?? 50,
+    socializacao: entry.tracking?.socializacao ?? 50,
+    motivacao: entry.tracking?.motivacao ?? 50,
+    burnout: entry.tracking?.burnout ?? 50,
+  });
+  const [energia, setEnergia] = useState(entry.energiaInformada);
+  const [selectedEmotions, setSelectedEmotions] = useState<SelectedEmotion[]>(
+    entry.emotions.map((e) => ({
+      emotionId: e.emotionId,
+      intensidade: e.intensidade ?? undefined,
+    })),
+  );
+  const [observacoes, setObservacoes] = useState(entry.observacoes ?? "");
   const [formError, setFormError] = useState<string | null>(null);
-  const [initialized, setInitialized] = useState(false);
-
-  useEffect(() => {
-    if (!entry || initialized) return;
-    setTexto(entry.texto);
-    setHumor(entry.humor ?? "");
-    setAnsiedade(entry.ansiedadeInformada ?? 50);
-    setIntensidadeEmocional(entry.intensidadeEmocional ?? 50);
-    setTagsText(entry.tagsEmocionais?.join(", ") ?? "");
-    setTracking({
-      sono: entry.tracking?.sono ?? 50,
-      estresse: entry.tracking?.estresse ?? 50,
-      socializacao: entry.tracking?.socializacao ?? 50,
-      motivacao: entry.tracking?.motivacao ?? 50,
-      burnout: entry.tracking?.burnout ?? 50,
-    });
-    setEnergia(entry.energiaInformada);
-    setObservacoes(entry.observacoes ?? "");
-    setSelectedEmotions(
-      entry.emotions.map((e) => ({
-        emotionId: e.emotionId,
-        intensidade: e.intensidade ?? undefined,
-      })),
-    );
-    setInitialized(true);
-  }, [entry, initialized]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -124,33 +154,6 @@ export default function EditDiaryPage({
           : "Não foi possível salvar as alterações.",
       );
     }
-  }
-
-  if (isLoading || !initialized) {
-    return (
-      <div className="max-w-2xl mx-auto px-4 py-12 animate-pulse space-y-4">
-        <div className="h-4 w-32 bg-foreground/[0.06] rounded" />
-        <div className="h-64 bg-foreground/[0.06] rounded-2xl" />
-      </div>
-    );
-  }
-
-  if (error || !entry) {
-    const forbidden = error instanceof ApiError && error.status === 403;
-    return (
-      <div className="max-w-2xl mx-auto px-4 py-12">
-        <ErrorMessage
-          message={
-            forbidden
-              ? error.message
-              : "Registro não encontrado."
-          }
-        />
-        <Link href="/diary" className="block mt-4 text-sm text-anima-violet">
-          ← Voltar à linha do tempo
-        </Link>
-      </div>
-    );
   }
 
   return (

@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useState, type FormEvent } from "react";
+import { Suspense, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "motion/react";
@@ -22,22 +22,11 @@ function CareInviteContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
-  const { user, isLoading: authLoading, setSession, logout } = useAuth();
+  const { user, isLoading: authLoading, logout } = useAuth();
   const { data: invite, isLoading, error, refetch } = useInviteByToken(token);
   const acceptMutation = useAcceptInvite();
-  const registerMutation = useRegisterWithInvite();
 
-  const [nome, setNome] = useState("");
-  const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState("");
-  const [formError, setFormError] = useState<string | null>(null);
   const [acceptError, setAcceptError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (invite?.viewerEmail) {
-      setEmail(invite.viewerEmail);
-    }
-  }, [invite?.viewerEmail]);
 
   if (!token) {
     return (
@@ -83,44 +72,6 @@ function CareInviteContent() {
   const accepted = invite.status === "ACEITO";
   const pending = invite.status === "PENDENTE" && !invite.expirado;
   const loginHref = `/login?redirect=${encodeURIComponent(`/care-invite?token=${token}`)}`;
-
-  async function handleRegister(e: FormEvent) {
-    e.preventDefault();
-    setFormError(null);
-
-    const parsed = registerWithInviteSchema.safeParse({ nome, email, senha });
-    if (!parsed.success) {
-      setFormError(parsed.error.issues[0]?.message ?? "Verifique os campos.");
-      return;
-    }
-
-    if (
-      parsed.data.email.toLowerCase() !== invite!.viewerEmail.toLowerCase()
-    ) {
-      setFormError("Use o mesmo e-mail indicado no convite.");
-      return;
-    }
-
-    try {
-      const res = await registerMutation.mutateAsync({
-        ...parsed.data,
-        inviteToken: token!,
-      });
-      setSession({
-        accessToken: res.accessToken,
-        refreshToken: res.refreshToken,
-        accessTokenExpiresIn: res.accessTokenExpiresIn,
-        user: res.user,
-      });
-      router.push("/care/patients");
-    } catch (err) {
-      setFormError(
-        err instanceof ApiError
-          ? err.message
-          : "Não foi possível criar sua conta.",
-      );
-    }
-  }
 
   async function handleAcceptClick() {
     if (!token) return;
@@ -205,43 +156,7 @@ function CareInviteContent() {
               </div>
             </div>
 
-            <form onSubmit={handleRegister} className="flex flex-col gap-3">
-              {formError && (
-                <div className="rounded-lg bg-red-500/10 border border-red-400/20 px-4 py-3 text-sm text-red-400">
-                  {formError}
-                </div>
-              )}
-
-              <Input
-                label="Nome"
-                type="text"
-                value={nome}
-                onChange={(e) => setNome(e.target.value)}
-                required
-              />
-              <Input
-                label="Email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-              <Input
-                label="Senha"
-                type="password"
-                value={senha}
-                onChange={(e) => setSenha(e.target.value)}
-                required
-              />
-
-              <Button
-                type="submit"
-                isLoading={registerMutation.isPending}
-                className="mt-1"
-              >
-                Criar conta e aceitar
-              </Button>
-            </form>
+            <InviteRegisterForm invite={invite} token={token} />
           </>
         )}
 
@@ -289,6 +204,97 @@ function CareInviteContent() {
         )}
       </motion.div>
     </AuthLayout>
+  );
+}
+
+type InviteData = NonNullable<ReturnType<typeof useInviteByToken>["data"]>;
+
+function InviteRegisterForm({
+  invite,
+  token,
+}: {
+  invite: InviteData;
+  token: string;
+}) {
+  const router = useRouter();
+  const { setSession } = useAuth();
+  const registerMutation = useRegisterWithInvite();
+
+  const [nome, setNome] = useState("");
+  const [email, setEmail] = useState(invite.viewerEmail ?? "");
+  const [senha, setSenha] = useState("");
+  const [formError, setFormError] = useState<string | null>(null);
+
+  async function handleRegister(e: FormEvent) {
+    e.preventDefault();
+    setFormError(null);
+
+    const parsed = registerWithInviteSchema.safeParse({ nome, email, senha });
+    if (!parsed.success) {
+      setFormError(parsed.error.issues[0]?.message ?? "Verifique os campos.");
+      return;
+    }
+
+    if (parsed.data.email.toLowerCase() !== invite.viewerEmail.toLowerCase()) {
+      setFormError("Use o mesmo e-mail indicado no convite.");
+      return;
+    }
+
+    try {
+      const res = await registerMutation.mutateAsync({
+        ...parsed.data,
+        inviteToken: token,
+      });
+      setSession({
+        accessToken: res.accessToken,
+        refreshToken: res.refreshToken,
+        accessTokenExpiresIn: res.accessTokenExpiresIn,
+        user: res.user,
+      });
+      router.push("/care/patients");
+    } catch (err) {
+      setFormError(
+        err instanceof ApiError
+          ? err.message
+          : "Não foi possível criar sua conta.",
+      );
+    }
+  }
+
+  return (
+    <form onSubmit={handleRegister} className="flex flex-col gap-3">
+      {formError && (
+        <div className="rounded-lg bg-red-500/10 border border-red-400/20 px-4 py-3 text-sm text-red-400">
+          {formError}
+        </div>
+      )}
+
+      <Input
+        label="Nome"
+        type="text"
+        value={nome}
+        onChange={(e) => setNome(e.target.value)}
+        required
+      />
+      <Input
+        label="Email"
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        required
+      />
+      <Input
+        label="Senha"
+        type="password"
+        value={senha}
+        onChange={(e) => setSenha(e.target.value)}
+        required
+      />
+
+      <Button type="submit" isLoading={registerMutation.isPending} className="mt-1">
+        Criar conta e aceitar
+      </Button>
+    </form>
   );
 }
 

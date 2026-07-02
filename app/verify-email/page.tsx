@@ -14,15 +14,13 @@ function VerifyEmailContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
-  const [status, setStatus] = useState<Status>("loading");
-  const [message, setMessage] = useState("");
+  const [status, setStatus] = useState<Status>(token ? "loading" : "error");
+  const [message, setMessage] = useState(
+    token ? "" : "Link de verificação inválido. Solicite um novo e-mail.",
+  );
 
   useEffect(() => {
-    if (!token) {
-      setStatus("error");
-      setMessage("Link de verificação inválido. Solicite um novo e-mail.");
-      return;
-    }
+    if (!token) return;
 
     verifyEmailApi(token)
       .then(() => {

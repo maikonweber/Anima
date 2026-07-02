@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useState, type FormEvent } from "react";
+import { Suspense, useState, type FormEvent } from "react";
 import { consumeSessionReuseWarning } from "@/lib/auth/storage";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -25,13 +25,8 @@ function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [sessionReuseWarning, setSessionReuseWarning] = useState(false);
-
-  useEffect(() => {
-    if (consumeSessionReuseWarning()) {
-      setSessionReuseWarning(true);
-    }
-  }, []);
+  // Lê e consome (uma vez) o aviso de reuso de sessão do sessionStorage.
+  const [sessionReuseWarning] = useState(() => consumeSessionReuseWarning());
 
   function destination(emailVerified: boolean) {
     if (!emailVerified) return "/aguardando-verificacao";

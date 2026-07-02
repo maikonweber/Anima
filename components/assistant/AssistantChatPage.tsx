@@ -63,6 +63,8 @@ export function AssistantChatPage() {
   /** Limites vindos da última POST bem-sucedida (enquanto GET /sessions/:id atualiza). */
   const [limitsFromSend, setLimitsFromSend] = useState<AssistantLimits | null>(null);
   const [rateLimitedUntilMs, setRateLimitedUntilMs] = useState<number | null>(null);
+  /** Segundos restantes do rate-limit, atualizados pelo intervalo (evita ler Date.now() no render). */
+  const [rateLimitedRemainingSec, setRateLimitedRemainingSec] = useState(0);
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
 
   const sessionsQuery = useAssistantSessionsInfinite();
@@ -90,25 +92,20 @@ export function AssistantChatPage() {
   const blockedBySessionTurn =
     mergedLimits != null && mergedLimits.messagesRemainingInSession === 0;
 
-  const rateLimitedRemainingSec =
-    rateLimitedUntilMs != null && Date.now() < rateLimitedUntilMs
-      ? Math.ceil((rateLimitedUntilMs - Date.now()) / 1000)
-      : 0;
   const isRateLimited = rateLimitedRemainingSec > 0;
 
   /** Sem limites na API (ex.: primeira carga antiga): ainda usar assinatura para o mês. */
   const sendBlockedMonthly = blockedByMonthlyApi || (!mergedLimits && blockedByMonthlySub);
 
   useEffect(() => {
-    setAssistBanner(null);
-  }, [selectedSessionId]);
-
-  useEffect(() => {
     if (rateLimitedUntilMs == null) return;
     const tick = window.setInterval(() => {
-      setRateLimitedUntilMs((until) =>
-        until != null && Date.now() >= until ? null : until,
+      const remaining = Math.max(
+        0,
+        Math.ceil((rateLimitedUntilMs - Date.now()) / 1000),
       );
+      setRateLimitedRemainingSec(remaining);
+      if (remaining <= 0) setRateLimitedUntilMs(null);
     }, 450);
     return () => window.clearInterval(tick);
   }, [rateLimitedUntilMs]);
@@ -161,11 +158,15 @@ export function AssistantChatPage() {
   useEffect(() => {
     const err = detailQuery.error;
     if (err instanceof ApiError && err.status === 404) {
+      // Sincroniza a seleção local com a verdade assíncrona do servidor: a sessão
+      // aberta sumiu (404), então voltamos ao estado de nova conversa e avisamos.
+      /* eslint-disable react-hooks/set-state-in-effect */
       setSelectedSessionId(null);
       setAssistBanner({
         tone: "danger",
         message: "Esta conversa não está mais disponível.",
       });
+      /* eslint-enable react-hooks/set-state-in-effect */
     }
   }, [detailQuery.error]);
 
@@ -196,6 +197,7 @@ export function AssistantChatPage() {
     setLimitsFromSend(null);
     setAssistBanner(null);
     setRateLimitedUntilMs(null);
+    setRateLimitedRemainingSec(0);
     setDraft("");
     setMobileSidebarOpen(false);
     void focusComposer();
@@ -206,6 +208,7 @@ export function AssistantChatPage() {
     setLimitsFromSend(null);
     setAssistBanner(null);
     setRateLimitedUntilMs(null);
+    setRateLimitedRemainingSec(0);
     setOptimisticSnippet(null);
     setMobileSidebarOpen(false);
   };
@@ -279,6 +282,7 @@ export function AssistantChatPage() {
           const sec =
             retryAfterSeconds && retryAfterSeconds > 0 ? Math.min(retryAfterSeconds, 300) : 35;
           setRateLimitedUntilMs(Date.now() + sec * 1000);
+          setRateLimitedRemainingSec(sec);
           setAssistBanner({
             tone: "danger",
             message:
@@ -324,11 +328,10 @@ export function AssistantChatPage() {
     }
   };
 
-  function SessionSidebar() {
-    const totalSessions = sessionsQuery.data?.pages?.[0]?.meta.total ?? sessions.length;
+  const totalSessions = sessionsQuery.data?.pages?.[0]?.meta.total ?? sessions.length;
 
-    return (
-      <div className="flex h-full flex-col min-h-0">
+  const sessionSidebar = (
+    <div className="flex h-full flex-col min-h-0">
         {/* Cabeçalho do drawer (mobile) */}
         <div className="flex shrink-0 items-center justify-between gap-2 border-b border-foreground/[0.06] px-3 py-3 sm:px-4 lg:hidden">
           <span className="text-sm font-semibold text-foreground/85 tracking-tight">Conversas</span>
@@ -402,8 +405,7 @@ export function AssistantChatPage() {
           </div>
         ) : null}
       </div>
-    );
-  }
+  );
 
   return (
     <div className="relative isolate flex min-h-0 min-w-0 max-w-full flex-1 flex-col overflow-hidden lg:flex-row lg:gap-3 lg:rounded-2xl lg:border lg:border-rose-200/15 lg:bg-foreground/[0.02] lg:shadow-[0_0_0_1px_rgba(244,114,182,0.06),0_20px_50px_-28px_rgba(124,92,191,0.18)] dark:lg:border-rose-400/12 dark:lg:shadow-[0_0_0_1px_rgba(244,114,182,0.09),0_24px_56px_-28px_rgba(0,0,0,0.42)]">
@@ -439,7 +441,7 @@ export function AssistantChatPage() {
           mobileSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         }`}
       >
-        <SessionSidebar />
+        {sessionSidebar}
       </aside>
 
       {/* Área principal do chat */}
