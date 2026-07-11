@@ -16,36 +16,100 @@ export const metadata: Metadata = buildMarketingMetadata({
 export default function PsychologistsPage() {
   return (
     <>
-      <JsonLd data={breadcrumbListSchema([
-        { name: "Início", path: "/" },
-        { name: "Psicólogos", path: "/psychologists" },
-      ])} />
+      <JsonLd
+        data={breadcrumbListSchema([
+          { name: "Início", path: "/" },
+          { name: "Psicólogos", path: "/psychologists" },
+        ])}
+      />
       <MarketingChrome>
         <article>
           <h1 className="text-3xl font-bold text-foreground/90 mb-6">
             EmotiveCare para profissionais
           </h1>
           <p className="text-sm text-foreground/55 leading-relaxed mb-6">
-            A EmotiveCare oferece dashboards em modo leitura, alertas estruturais sobre
-            padrões e sugestões pré-consulta que aceleram contextualização quando o
-            paciente convida você conscientemente para acompanhar a jornada.
+            Entre sessões, o contexto emocional do paciente costuma se perder.
+            Com o{" "}
+            <strong className="text-foreground/75 font-semibold">
+              Modo Cuidado
+            </strong>
+            , a EmotiveCare oferece dashboards em modo leitura, tendências de
+            energia e resumos estruturados — somente quando o paciente convida
+            você conscientemente.
           </p>
+
+          <section aria-labelledby="como-funciona-prof" className="mb-10">
+            <h2
+              id="como-funciona-prof"
+              className="text-xl font-semibold text-foreground/82 mb-3"
+            >
+              Como funciona na prática
+            </h2>
+            <ol className="list-decimal ps-6 space-y-2 text-sm text-foreground/55">
+              <li>O paciente registra emoções e energia no diário.</li>
+              <li>Ele envia um convite seguro para o profissional.</li>
+              <li>
+                Você acompanha a evolução em painéis dedicados (somente leitura).
+              </li>
+              <li>
+                O paciente pode pausar ou revogar o acesso a qualquer momento.
+              </li>
+            </ol>
+          </section>
+
           <section aria-labelledby="para-quem-prof" className="mb-10">
-            <h2 id="para-quem-prof" className="text-xl font-semibold text-foreground/82 mb-3">
-              Ideal para...
+            <h2
+              id="para-quem-prof"
+              className="text-xl font-semibold text-foreground/82 mb-3"
+            >
+              Ideal para
             </h2>
             <ul className="list-disc ps-6 text-sm text-foreground/55 space-y-2">
-              <li>Profissionais de psicologia em atendimento continuado;</li>
-              <li>Mentores/as de saúde emocional com protocolos escritos claros;</li>
-              <li>Equipes de clínicas com necessidade moderada de acompanhamento digital.</li>
+              <li>Psicólogos(as) em atendimento continuado;</li>
+              <li>
+                Profissionais que querem enriquecer a pré-consulta com contexto
+                longitudinal;
+              </li>
+              <li>
+                Clínicas que precisam de acompanhamento digital moderado, com
+                consentimento explícito.
+              </li>
             </ul>
           </section>
-          <nav aria-label="Fluxo profissional" className="flex flex-wrap gap-4 font-medium text-anima-violet">
+
+          <section aria-labelledby="limites-eticos" className="mb-10">
+            <h2
+              id="limites-eticos"
+              className="text-xl font-semibold text-foreground/82 mb-3"
+            >
+              Limites éticos
+            </h2>
+            <p className="text-sm text-foreground/55 leading-relaxed">
+              A SENTIO AI sintetiza o que o paciente registrou; a interpretação
+              clínica continua sendo sua. A plataforma não diagnostica, não
+              prescreve e não substitui a escuta. Leia também o artigo{" "}
+              <Link
+                href="/blog/como-profissionais-usam-dashboard-terapeutico"
+                className="text-anima-violet hover:underline"
+              >
+                Como psicólogos usam o dashboard entre sessões
+              </Link>
+              .
+            </p>
+          </section>
+
+          <nav
+            aria-label="Fluxo profissional"
+            className="flex flex-wrap gap-4 font-medium text-anima-violet"
+          >
             <Link href="/register" className="hover:underline">
-              Começar agora como profissional
+              Começar como profissional
             </Link>
             <Link href="/plans" className="hover:underline">
-              Ler planos
+              Ver plano Cuidado
+            </Link>
+            <Link href="/faq" className="hover:underline">
+              FAQ
             </Link>
           </nav>
         </article>

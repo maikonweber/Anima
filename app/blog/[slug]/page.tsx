@@ -3,7 +3,11 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { MarketingChrome } from "@/components/marketing/MarketingChrome";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { breadcrumbListSchema, blogPostingSchema } from "@/components/seo/schema";
+import {
+  breadcrumbListSchema,
+  blogPostingSchema,
+  faqSchema,
+} from "@/components/seo/schema";
 import { blogPosts } from "@/lib/seo/posts";
 import { OG_IMAGE_PATH, SITE_URL } from "@/lib/seo/site";
 
@@ -40,6 +44,7 @@ export async function generateMetadata(props: {
       title: `${post.title} · EmotiveCare`,
       description: post.description,
       publishedTime: post.datePublished,
+      modifiedTime: post.dateModified ?? post.datePublished,
       authors: ["MutterCorp · EmotiveCare"],
       tags: post.keywords,
       images: [
@@ -67,39 +72,98 @@ export default async function BlogSlugPage(props: {
   const post = blogPosts.find((item) => item.slug === params.slug);
   if (!post) notFound();
 
+  const jsonLd = [
+    blogPostingSchema(post),
+    breadcrumbListSchema([
+      { name: "Início", path: "/" },
+      { name: "Blog", path: "/blog" },
+      { name: post.title, path: `/blog/${post.slug}` },
+    ]),
+    ...(post.faq?.length ? [faqSchema(post.faq)] : []),
+  ];
+
   return (
     <>
-      <JsonLd
-        data={[blogPostingSchema(post), breadcrumbListSchema([
-          { name: "Início", path: "/" },
-          { name: "Blog", path: "/blog" },
-          { name: "Artigo atual", path: `/blog/${post.slug}` },
-        ])]}
-      />
+      <JsonLd data={jsonLd} />
       <MarketingChrome>
         <article>
           <p className="text-xs uppercase tracking-[0.2em] text-foreground/40 mb-2">
             Blog · {post.datePublished}
           </p>
-          <h1 className="text-3xl font-bold text-foreground/90 mb-6">{post.title}</h1>
-          <p className="text-lg text-foreground/60 italic mb-8 leading-relaxed">
+          <h1 className="text-3xl font-bold text-foreground/90 mb-6">
+            {post.title}
+          </h1>
+          <p className="text-lg text-foreground/60 italic mb-10 leading-relaxed">
             {post.description}
           </p>
-          <div className="space-y-4 text-sm text-foreground/55 leading-relaxed">
-            <p>
-              A EmotiveCare combina registros conscientes da linha do tempo emocional,
-              dashboards terapêuticos compartilhados sob permissão paciente-profissional
-              e sínteses da SENTIO AI sempre descritivas — nunca prometendo cura garantida nem
-              diagnóstico automático por IA.
-            </p>
-            <p>
-              Se você enfrenta sofrimento persistente ou ideação de automutilação procure
-              imediatamente serviços de emergência especializados e profissionais de saúde
-              mentais próximos a você.
-            </p>
+
+          <div className="space-y-10">
+            {post.sections.map((section) => (
+              <section key={section.heading}>
+                <h2 className="text-xl font-semibold text-foreground/82 mb-3">
+                  {section.heading}
+                </h2>
+                <div className="space-y-4 text-sm text-foreground/55 leading-relaxed">
+                  {section.paragraphs.map((paragraph) => (
+                    <p key={paragraph.slice(0, 48)}>{paragraph}</p>
+                  ))}
+                </div>
+              </section>
+            ))}
           </div>
-          <p className="mt-12 text-xs text-foreground/40">
-            <Link href="/blog" prefetch={false} className="text-anima-violet hover:underline">
+
+          {post.faq && post.faq.length > 0 ? (
+            <section className="mt-12" aria-labelledby="post-faq">
+              <h2
+                id="post-faq"
+                className="text-xl font-semibold text-foreground/82 mb-4"
+              >
+                Perguntas rápidas
+              </h2>
+              <dl className="space-y-4">
+                {post.faq.map((item) => (
+                  <div key={item.question}>
+                    <dt className="text-sm font-semibold text-foreground/75 mb-1">
+                      {item.question}
+                    </dt>
+                    <dd className="text-sm text-foreground/55 leading-relaxed">
+                      {item.answer}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </section>
+          ) : null}
+
+          <nav
+            aria-label="Próximos passos"
+            className="mt-12 flex flex-wrap gap-4 text-sm font-medium text-anima-violet"
+          >
+            <Link href="/plans" className="hover:underline">
+              Ver planos
+            </Link>
+            <Link href="/psychologists" className="hover:underline">
+              Para psicólogos
+            </Link>
+            <Link href="/faq" className="hover:underline">
+              FAQ
+            </Link>
+            <Link href="/register" className="hover:underline">
+              Começar grátis
+            </Link>
+          </nav>
+
+          <p className="mt-10 text-xs text-foreground/40 leading-relaxed">
+            Se você enfrenta sofrimento persistente ou ideação de automutilação,
+            procure imediatamente serviços de emergência e profissionais de saúde
+            mental próximos a você.
+          </p>
+          <p className="mt-6 text-xs text-foreground/40">
+            <Link
+              href="/blog"
+              prefetch={false}
+              className="text-anima-violet hover:underline"
+            >
               Voltar aos artigos
             </Link>
           </p>

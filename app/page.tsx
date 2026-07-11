@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { AnimaLogo } from "@/components/brand/AnimaLogo";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { faqSchema, medicalHomePageSchema } from "@/components/seo/schema";
-import type { FaqEntry } from "@/lib/seo/faq";
+import { faqEntries } from "@/lib/seo/faq";
 import { DEFAULT_SITE_KEYWORDS, OG_IMAGE_PATH, SITE_URL } from "@/lib/seo/site";
 
 const HERO_TAGLINE =
@@ -187,33 +187,10 @@ const PLANS = [
   },
 ] as const;
 
-const FAQ_ENTRIES: FaqEntry[] = [
-  {
-    question: "A EmotiveCare é terapia?",
-    answer:
-      "Não. A EmotiveCare é uma ferramenta de autoconhecimento e apoio emocional. Ele ajuda você a organizar e entender o que sente, mas não faz diagnóstico, não promete cura e não substitui o acompanhamento de psicólogos(as) ou médicos. Em momentos de sofrimento intenso, ele sugere buscar ajuda profissional.",
-  },
-  {
-    question: "Meus dados estão seguros?",
-    answer:
-      "Sim. Seus registros são seus: você decide o que escrever, o que revisar com a IA e o que compartilhar. Tratamos os dados com cuidado e em conformidade com a LGPD, e o compartilhamento com profissionais só acontece quando você autoriza — podendo ser revogado a qualquer momento.",
-  },
-  {
-    question: "Funciona sem escrever muito?",
-    answer:
-      "Funciona. Você pode registrar apenas a sua energia, o humor e algumas tags de emoção em poucos segundos. Quanto mais você escreve, mais ricas ficam as reflexões, mas a EmotiveCare não exige textos longos para começar a te ajudar.",
-  },
-  {
-    question: "O que é o segundo cérebro emocional?",
-    answer:
-      "É a forma como a EmotiveCare guarda e conecta suas emoções por significado, e não apenas por data. Usando busca semântica (embeddings e memória vetorial), ele encontra no seu histórico os momentos parecidos com o que você vive agora e os traz para a conversa — como uma memória emocional que lembra e conecta pontos por você, mesmo os que você já tinha esquecido.",
-  },
-];
-
 export default function Home() {
   return (
     <>
-      <JsonLd data={[medicalHomePageSchema(), faqSchema(FAQ_ENTRIES)]} />
+      <JsonLd data={[medicalHomePageSchema(), faqSchema(faqEntries)]} />
       <div className="flex flex-col min-h-full">
         <header>
           <nav
@@ -599,7 +576,7 @@ export default function Home() {
                 Perguntas frequentes
               </h2>
               <div className="flex flex-col gap-4">
-                {FAQ_ENTRIES.map((entry) => (
+                {faqEntries.map((entry) => (
                   <details
                     key={entry.question}
                     className="glass-panel p-6 group"

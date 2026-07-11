@@ -55,7 +55,7 @@ export default function OGImage() {
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
           <div style={{ fontSize: 26, color: "#d6cdf5" }}>
-            www.emotivecare.com.br
+            emotivecare.com.br
           </div>
           <div
             style={{

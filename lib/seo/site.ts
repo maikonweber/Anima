@@ -1,7 +1,7 @@
 /** URL canonical do ambiente atual (marketing, OG, Schema). */
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
-  "https://www.emotivecare.com.br";
+  "https://emotivecare.com.br";
 
 export function absoluteUrl(path: string): string {
   if (!path || path === "/") return SITE_URL;

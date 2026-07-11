@@ -93,7 +93,7 @@ export function medicalHomePageSchema(path = "/") {
       "@id": ORG_ID,
     },
     inLanguage: "pt-BR",
-    lastReviewed: "2026-05-22",
+    lastReviewed: "2026-07-10",
   };
 }
 
@@ -123,6 +123,7 @@ export function blogPostingSchema(
     headline: post.title,
     description: post.description,
     datePublished: post.datePublished,
+    dateModified: post.dateModified ?? post.datePublished,
     url,
     inLanguage: "pt-BR",
     author: { "@type": "Organization", name: authorName },

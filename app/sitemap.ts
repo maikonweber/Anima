@@ -15,12 +15,13 @@ const PUBLIC_MARKETING_ROUTES = [
   { route: "/blog", changeFrequency: "weekly" as const, priority: 0.76 },
 ];
 
-const LAST_MOD = new Date("2026-05-22T12:00:00.000Z");
+/** lastmod das rotas institucionais — atualizado a cada deploy. */
+const SITE_LAST_MOD = new Date();
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const routes: MetadataRoute.Sitemap = PUBLIC_MARKETING_ROUTES.map((p) => ({
     url: `${SITE_URL}${p.route}`,
-    lastModified: LAST_MOD,
+    lastModified: SITE_LAST_MOD,
     changeFrequency: p.changeFrequency,
     priority: p.priority,
   }));
@@ -28,7 +29,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   for (const post of blogPosts) {
     routes.push({
       url: `${SITE_URL}/blog/${post.slug}`,
-      lastModified: new Date(post.datePublished),
+      lastModified: new Date(post.dateModified ?? post.datePublished),
       changeFrequency: "monthly",
       priority: 0.65,
     });

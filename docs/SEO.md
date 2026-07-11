@@ -1,19 +1,34 @@
 # SEO — EmotiveCare (Next.js App Router)
 
-- **Dominio configurável**: defina `NEXT_PUBLIC_SITE_URL` (veja `env.example`) antes do deploy para canônicos corretos, Open Graph absoluto e `app/sitemap.ts`.
-- **Sitemap**: gerado dinamicamente em `/sitemap.xml` via `app/sitemap.ts` (prioritário sobre `next-sitemap` estático).
-- **Robôs públicos**: gerado dinamicamente em `/robots.txt` via `app/robots.ts` (usa `NEXT_PUBLIC_SITE_URL` para host e sitemap corretos por ambiente); lista `Disallow` para áreas autenticadas/transacionais.
-- **Metadata de páginas de marketing**: helper `buildMarketingMetadata` em `lib/seo/page-metadata.ts` padroniza título, canônico, keywords e preview social (Open Graph + Twitter) único por página.
-- **Structured data**: scripts JSON-LD em `components/seo/*` (`Organization`, `WebSite`, `SoftwareApplication`, `MedicalWebPage` na home, `FAQPage` em `/faq`, `BlogPosting` + breadcrumbs em `/blog/[slug]`).
+**Domínio canônico:** `https://emotivecare.com.br` (apex, sem `www`).
+
+- **Variável de ambiente**: defina `NEXT_PUBLIC_SITE_URL=https://emotivecare.com.br` no deploy (veja `env.example`). Sem isso, canônicos, Open Graph e `app/sitemap.ts` podem divergir do host real.
+- **www → apex**: redirect permanente em `next.config.ts` (`www.emotivecare.com.br` → apex). Confirme também no painel Vercel Domains que o redirect é **301**.
+- **Sitemap**: gerado dinamicamente em `/sitemap.xml` via `app/sitemap.ts` (prioritário sobre `next-sitemap` estático). `lastmod` das rotas institucionais usa a data do build; posts usam `dateModified` / `datePublished`.
+- **Robôs públicos**: `/robots.txt` via `app/robots.ts` — `host` e `sitemap` derivados de `SITE_URL`; `Disallow` para áreas autenticadas/transacionais.
+- **Metadata de marketing**: helper `buildMarketingMetadata` em `lib/seo/page-metadata.ts`.
+- **Structured data**: JSON-LD em `components/seo/*` (`Organization`, `WebSite`, `SoftwareApplication`, `MedicalWebPage` na home, `FAQPage` em `/faq` e home, `BlogPosting` + breadcrumbs em `/blog/[slug]`).
+- **FAQ única**: `lib/seo/faq.ts` alimenta a home e `/faq`.
+- **Blog**: conteúdo em `lib/seo/posts.ts` (seções H2, FAQ curto, CTAs internos).
+- **Redirect de marketing**: `/planos` → `/plans` (permanente).
 - **Manifest PWA-lite**: `/manifest.webmanifest` via `app/manifest.ts`.
-- **Preview social**: `/opengraph-image` (PNG dinâmica) referenciada pela metadata global; Twitter em `large card`.
-- **Biblioteca instalada**: `next-seo` está no projeto caso queira componentes cliente em cenários pontuais; o padrão adotado é a **Metadata API** nativa (recomendação atual do App Router).
+- **Preview social**: `/opengraph-image` (PNG dinâmica); Twitter `summary_large_image`.
+- **Biblioteca**: `next-seo` está instalada para casos pontuais; o padrão é a **Metadata API** nativa do App Router.
 
 Para regenerar algo com **`next-sitemap`**, há `next-sitemap.config.js` (sem gancho automático na build para não conflitar com `app/sitemap.ts`).
 
 ## Analytics e observabilidade (Vercel)
 
-- **`@vercel/analytics`**: componente `<Analytics />` em `app/layout.tsx` — **Web Analytics** no painel Vercel (visitas, páginas, origem básica). Ative **Analytics** no projeto em [Vercel Dashboard → Settings → Analytics](https://vercel.com/docs/analytics) (plano conforme sua conta).
-- **`@vercel/speed-insights`**: componente `<SpeedInsights />` — **Speed Insights** (Core Web Vitals / INP no ambiente de produção na Vercel).
+- **`@vercel/analytics`**: `<Analytics />` em `app/layout.tsx`.
+- **`@vercel/speed-insights`**: `<SpeedInsights />` — Core Web Vitals em produção.
 
 Em `localhost` os scripts costumam não enviar dados; em **Preview** e **Production** na Vercel os dados aparecem após tráfego real.
+
+## Checklist pós-deploy (Search Console)
+
+1. Propriedade do domínio: `emotivecare.com.br` (apex).
+2. Enviar sitemap: `https://emotivecare.com.br/sitemap.xml`.
+3. URL Inspection: home, `/faq`, `/plans`, um post do blog.
+4. Confirmar que canônicos e `og:url` usam o apex (não `www`).
+5. Validar preview social (WhatsApp / LinkedIn / X) com a OG absoluta no apex.
+6. Se LCP sofrer, otimizar `public/logo.png` (~1.3 MB).
