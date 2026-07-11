@@ -1,4 +1,4 @@
-import type { Locale } from "@/lib/seo/i18n";
+import type { Locale } from "@/lib/i18n/config";
 
 export interface BlogFaqItem {
   question: string;

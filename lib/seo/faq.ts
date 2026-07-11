@@ -1,3 +1,6 @@
+import type { Locale } from "@/lib/i18n/config";
+import { faqEntriesEn } from "./faq-en";
+
 /** Perguntas frequentes institucionais (SEO / AI-readable) — fonte única home + /faq. */
 
 export interface FaqEntry {
@@ -42,3 +45,7 @@ export const faqEntries: FaqEntry[] = [
       "Sim. Seus registros são seus: você decide o que escrever, o que revisar com a IA e o que compartilhar. Tratamos os dados com cuidado e em conformidade com a LGPD. Use senhas fortes e busque rede de urgência sempre que precisar de suporte imediato.",
   },
 ];
+
+export function getFaqEntries(locale: Locale): FaqEntry[] {
+  return locale === "en" ? faqEntriesEn : faqEntries;
+}

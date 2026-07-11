@@ -2,28 +2,40 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import type { Locale } from "@/lib/i18n/config";
+import { DEFAULT_LOCALE, localizedPath } from "@/lib/i18n/config";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
 
-const LINKS = [
-  { href: "/about", label: "Sobre" },
-  { href: "/plans", label: "Planos" },
-  { href: "/psychologists", label: "Psicólogos" },
-  { href: "/faq", label: "FAQ" },
-  { href: "/blog", label: "Blog" },
-  { href: "/contact", label: "Contato" },
+const LINK_KEYS = [
+  { path: "/about", key: "about" },
+  { path: "/plans", key: "plans" },
+  { path: "/psychologists", key: "psychologists" },
+  { path: "/faq", key: "faq" },
+  { path: "/blog", key: "blog" },
+  { path: "/contact", key: "contact" },
 ] as const;
 
 /** Navegação institucional: linha única no desktop, menu sanfona no mobile. */
-export function MarketingNav() {
+export function MarketingNav({
+  locale = DEFAULT_LOCALE,
+}: {
+  locale?: Locale;
+}) {
   const [open, setOpen] = useState(false);
+  const nav = getDictionary(locale).nav;
+  const links = LINK_KEYS.map(({ path, key }) => ({
+    href: localizedPath(locale, path),
+    label: nav[key],
+  }));
 
   return (
     <>
       {/* Desktop */}
       <nav
         className="hidden md:flex flex-wrap justify-end gap-x-6 gap-y-2 text-sm font-medium text-foreground/55"
-        aria-label="Links institucionais"
+        aria-label={nav.ariaLabel}
       >
-        {LINKS.map((link) => (
+        {links.map((link) => (
           <Link
             key={link.href}
             className="hover:text-anima-violet transition-colors"
@@ -34,9 +46,9 @@ export function MarketingNav() {
         ))}
         <Link
           className="font-semibold text-anima-violet hover:text-anima-lilac transition-colors"
-          href="/login"
+          href={localizedPath(locale, "/login")}
         >
-          Entrar
+          {nav.login}
         </Link>
       </nav>
 
@@ -46,7 +58,7 @@ export function MarketingNav() {
         className="md:hidden inline-flex items-center justify-center rounded-xl p-2 text-foreground/60 hover:bg-foreground/[0.06] hover:text-foreground/90 transition-colors"
         aria-expanded={open}
         aria-controls="marketing-mobile-menu"
-        aria-label={open ? "Fechar menu" : "Abrir menu"}
+        aria-label={open ? nav.menuClose : nav.menuOpen}
         onClick={() => setOpen((v) => !v)}
       >
         {open ? (
@@ -65,10 +77,10 @@ export function MarketingNav() {
         <nav
           id="marketing-mobile-menu"
           className="md:hidden w-full mt-1"
-          aria-label="Links institucionais"
+          aria-label={nav.ariaLabel}
         >
           <div className="glass-panel flex flex-col divide-y divide-foreground/[0.06] p-2">
-            {LINKS.map((link) => (
+            {links.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
@@ -79,11 +91,11 @@ export function MarketingNav() {
               </Link>
             ))}
             <Link
-              href="/login"
+              href={localizedPath(locale, "/login")}
               onClick={() => setOpen(false)}
               className="rounded-lg px-3 py-3 text-sm font-semibold text-anima-violet hover:bg-anima-violet/5 transition-colors"
             >
-              Entrar
+              {nav.login}
             </Link>
           </div>
         </nav>
