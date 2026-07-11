@@ -6,6 +6,7 @@ export const homeEn = {
     howItWorks: "How it works",
     secondBrain: "Second brain",
     plans: "Plans",
+    blog: "Blog",
     login: "Sign in",
     cta: "Start free",
     languageLabel: "Language",

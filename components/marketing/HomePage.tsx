@@ -84,6 +84,12 @@ export function HomePage({ locale }: { locale: Locale }) {
                 {t.nav.plans}
               </a>
               <Link
+                href={localizedPath(locale, "/blog")}
+                className="hidden md:inline text-sm font-medium text-foreground/50 hover:text-foreground/80 transition-colors"
+              >
+                {t.nav.blog}
+              </Link>
+              <Link
                 href={loginHref}
                 className="text-sm font-medium text-foreground/50 hover:text-foreground/80 transition-colors"
               >

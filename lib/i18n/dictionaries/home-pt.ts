@@ -4,6 +4,7 @@ export const homePt = {
     howItWorks: "Como funciona",
     secondBrain: "Segundo cérebro",
     plans: "Planos",
+    blog: "Blog",
     login: "Entrar",
     cta: "Começar grátis",
     languageLabel: "Idioma",
