@@ -10,13 +10,12 @@ import {
 import { homeEn } from "@/lib/i18n/dictionaries/home-en";
 import { homePt, type HomeDictionary } from "@/lib/i18n/dictionaries/home-pt";
 
-const dictionaries: Record<Locale, HomeDictionary> = {
-  "pt-BR": homePt,
-  en: homeEn,
-};
+function getHomeDictionary(locale: Locale): HomeDictionary {
+  return locale === "en" ? homeEn : homePt;
+}
 
 export function HomePage({ locale }: { locale: Locale }) {
-  const t = dictionaries[locale];
+  const t = getHomeDictionary(locale);
   const homeHref = localizedPath(locale, "/");
   const loginHref = localizedPath(locale, "/login");
   const registerHref = localizedPath(locale, "/register");

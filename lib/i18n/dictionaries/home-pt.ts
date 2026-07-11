@@ -261,7 +261,7 @@ type DeepStringify<T> = T extends string
     : T extends readonly (infer U)[]
       ? DeepStringify<U>[]
       : T extends object
-        ? { [K in keyof T]: DeepStringify<T[K]> }
+        ? { -readonly [K in keyof T]: DeepStringify<T[K]> }
         : T;
 
 export type HomeDictionary = DeepStringify<typeof homePt>;

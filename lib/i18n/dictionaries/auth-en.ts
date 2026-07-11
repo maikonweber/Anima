@@ -1,4 +1,4 @@
-import type { AuthDictionary } from "./auth-pt";
+import type { AuthPageDictionary } from "./auth-pt";
 
 export const authEn = {
   common: {
@@ -61,4 +61,4 @@ export const authEn = {
       sendFailed: "Could not send the request. Please try again.",
     },
   },
-} as const satisfies AuthDictionary;
+} as const satisfies AuthPageDictionary;
