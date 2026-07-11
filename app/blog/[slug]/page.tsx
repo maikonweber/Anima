@@ -2,32 +2,46 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { MarketingChrome } from "@/components/marketing/MarketingChrome";
+import { BlogArticleBody } from "@/components/seo/BlogArticleBody";
+import { BlogLanguageSwitch } from "@/components/seo/BlogLanguageSwitch";
 import { JsonLd } from "@/components/seo/JsonLd";
 import {
   breadcrumbListSchema,
   blogPostingSchema,
   faqSchema,
 } from "@/components/seo/schema";
-import { blogPosts } from "@/lib/seo/posts";
+import { getBlogUi, blogPath, htmlLang, ogLocale } from "@/lib/seo/i18n";
+import { getPostBySlug, getPostsByLocale } from "@/lib/seo/posts";
 import { OG_IMAGE_PATH, SITE_URL } from "@/lib/seo/site";
 
+const LOCALE = "pt-BR" as const;
+
 export async function generateStaticParams() {
-  return blogPosts.map((p) => ({ slug: p.slug }));
+  return getPostsByLocale(LOCALE).map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata(props: {
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const params = await props.params;
-  const post = blogPosts.find((item) => item.slug === params.slug);
-  if (!post) return { title: "Artigo não encontrado" };
+  const ui = getBlogUi(LOCALE);
+  const post = getPostBySlug(params.slug, LOCALE);
+  if (!post) return { title: ui.notFoundTitle };
 
-  const url = `${SITE_URL}/blog/${post.slug}`;
+  const url = `${SITE_URL}${blogPath(LOCALE, post.slug)}`;
+  const enUrl = `${SITE_URL}${blogPath("en", post.slug)}`;
 
   return {
     title: post.title,
     description: post.description,
-    alternates: { canonical: url },
+    alternates: {
+      canonical: url,
+      languages: {
+        "pt-BR": url,
+        en: enUrl,
+        "x-default": url,
+      },
+    },
     robots: { index: true, follow: true },
     keywords: [
       ...(post.keywords ?? []),
@@ -38,7 +52,8 @@ export async function generateMetadata(props: {
     authors: [{ name: "MutterCorp · EmotiveCare" }],
     openGraph: {
       type: "article",
-      locale: "pt_BR",
+      locale: ogLocale(LOCALE),
+      alternateLocale: ["en_US"],
       url,
       siteName: "EmotiveCare",
       title: `${post.title} · EmotiveCare`,
@@ -62,6 +77,9 @@ export async function generateMetadata(props: {
       description: post.description,
       images: [`${SITE_URL}${OG_IMAGE_PATH}`],
     },
+    other: {
+      language: htmlLang(LOCALE),
+    },
   };
 }
 
@@ -69,15 +87,16 @@ export default async function BlogSlugPage(props: {
   params: Promise<{ slug: string }>;
 }) {
   const params = await props.params;
-  const post = blogPosts.find((item) => item.slug === params.slug);
+  const ui = getBlogUi(LOCALE);
+  const post = getPostBySlug(params.slug, LOCALE);
   if (!post) notFound();
 
   const jsonLd = [
-    blogPostingSchema(post),
+    blogPostingSchema(post, undefined, LOCALE),
     breadcrumbListSchema([
       { name: "Início", path: "/" },
-      { name: "Blog", path: "/blog" },
-      { name: post.title, path: `/blog/${post.slug}` },
+      { name: "Blog", path: blogPath(LOCALE) },
+      { name: post.title, path: blogPath(LOCALE, post.slug) },
     ]),
     ...(post.faq?.length ? [faqSchema(post.faq)] : []),
   ];
@@ -86,85 +105,27 @@ export default async function BlogSlugPage(props: {
     <>
       <JsonLd data={jsonLd} />
       <MarketingChrome>
-        <article>
+        <article className="max-w-3xl" lang={htmlLang(LOCALE)}>
+          <BlogLanguageSwitch locale={LOCALE} slug={post.slug} />
           <p className="text-xs uppercase tracking-[0.2em] text-foreground/40 mb-2">
             Blog · {post.datePublished}
           </p>
-          <h1 className="text-3xl font-bold text-foreground/90 mb-6">
+          <h1 className="text-3xl sm:text-4xl font-bold text-foreground/90 mb-6 leading-tight">
             {post.title}
           </h1>
-          <p className="text-lg text-foreground/60 italic mb-10 leading-relaxed">
-            {post.description}
-          </p>
 
-          <div className="space-y-10">
-            {post.sections.map((section) => (
-              <section key={section.heading}>
-                <h2 className="text-xl font-semibold text-foreground/82 mb-3">
-                  {section.heading}
-                </h2>
-                <div className="space-y-4 text-sm text-foreground/55 leading-relaxed">
-                  {section.paragraphs.map((paragraph) => (
-                    <p key={paragraph.slice(0, 48)}>{paragraph}</p>
-                  ))}
-                </div>
-              </section>
-            ))}
-          </div>
-
-          {post.faq && post.faq.length > 0 ? (
-            <section className="mt-12" aria-labelledby="post-faq">
-              <h2
-                id="post-faq"
-                className="text-xl font-semibold text-foreground/82 mb-4"
-              >
-                Perguntas rápidas
-              </h2>
-              <dl className="space-y-4">
-                {post.faq.map((item) => (
-                  <div key={item.question}>
-                    <dt className="text-sm font-semibold text-foreground/75 mb-1">
-                      {item.question}
-                    </dt>
-                    <dd className="text-sm text-foreground/55 leading-relaxed">
-                      {item.answer}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-            </section>
-          ) : null}
-
-          <nav
-            aria-label="Próximos passos"
-            className="mt-12 flex flex-wrap gap-4 text-sm font-medium text-anima-violet"
-          >
-            <Link href="/plans" className="hover:underline">
-              Ver planos
-            </Link>
-            <Link href="/psychologists" className="hover:underline">
-              Para psicólogos
-            </Link>
-            <Link href="/faq" className="hover:underline">
-              FAQ
-            </Link>
-            <Link href="/register" className="hover:underline">
-              Começar grátis
-            </Link>
-          </nav>
+          <BlogArticleBody post={post} locale={LOCALE} />
 
           <p className="mt-10 text-xs text-foreground/40 leading-relaxed">
-            Se você enfrenta sofrimento persistente ou ideação de automutilação,
-            procure imediatamente serviços de emergência e profissionais de saúde
-            mental próximos a você.
+            {ui.crisisNote}
           </p>
           <p className="mt-6 text-xs text-foreground/40">
             <Link
-              href="/blog"
+              href={blogPath(LOCALE)}
               prefetch={false}
               className="text-anima-violet hover:underline"
             >
-              Voltar aos artigos
+              {ui.backToArticles}
             </Link>
           </p>
         </article>

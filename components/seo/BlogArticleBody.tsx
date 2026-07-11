@@ -1,36 +1,54 @@
 import Link from "next/link";
 import type { BlogBlock, BlogPost } from "@/lib/seo/posts/types";
 import { postToc, sectionBlocks } from "@/lib/seo/posts/types";
-import { blogPosts } from "@/lib/seo/posts";
+import { getPostsByLocale, postLocale } from "@/lib/seo/posts";
+import {
+  blogPath,
+  getBlogUi,
+  type Locale,
+} from "@/lib/seo/i18n";
 
-/** Links markdown leves: [rótulo](/caminho) ou [rótulo](https://...). */
+/** Links markdown leves: [rótulo](/caminho) e negrito **texto**. */
 function RichText({ text }: { text: string }) {
-  const parts = text.split(/(\[[^\]]+\]\([^)]+\))/g);
+  const parts = text.split(/(\[[^\]]+\]\([^)]+\)|\*\*[^*]+\*\*)/g);
   return (
     <>
       {parts.map((part, i) => {
-        const m = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
-        if (!m) return <span key={i}>{part}</span>;
-        const [, label, href] = m;
-        const external = href.startsWith("http");
-        if (external) {
+        const link = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+        if (link) {
+          const [, label, href] = link;
+          const external = href.startsWith("http");
+          if (external) {
+            return (
+              <a
+                key={i}
+                href={href}
+                className="text-anima-violet hover:underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {label}
+              </a>
+            );
+          }
           return (
-            <a
+            <Link
               key={i}
               href={href}
               className="text-anima-violet hover:underline"
-              target="_blank"
-              rel="noopener noreferrer"
             >
               {label}
-            </a>
+            </Link>
           );
         }
-        return (
-          <Link key={i} href={href} className="text-anima-violet hover:underline">
-            {label}
-          </Link>
-        );
+        if (part.startsWith("**") && part.endsWith("**") && part.length >= 4) {
+          return (
+            <strong key={i} className="font-semibold text-foreground/75">
+              {part.slice(2, -2)}
+            </strong>
+          );
+        }
+        return <span key={i}>{part}</span>;
       })}
     </>
   );
@@ -81,12 +99,18 @@ function Blocks({ blocks }: { blocks: BlogBlock[] }) {
           );
         }
         return (
-          <div key={i} className="overflow-x-auto rounded-lg border border-foreground/10">
+          <div
+            key={i}
+            className="overflow-x-auto rounded-lg border border-foreground/10"
+          >
             <table className="w-full text-left text-sm">
               <thead className="bg-foreground/[0.03]">
                 <tr>
                   {block.headers.map((h) => (
-                    <th key={h} className="px-3 py-2 font-semibold text-foreground/70">
+                    <th
+                      key={h}
+                      className="px-3 py-2 font-semibold text-foreground/70"
+                    >
                       {h}
                     </th>
                   ))}
@@ -111,10 +135,19 @@ function Blocks({ blocks }: { blocks: BlogBlock[] }) {
   );
 }
 
-export function BlogArticleBody({ post }: { post: BlogPost }) {
+export function BlogArticleBody({
+  post,
+  locale: localeProp,
+}: {
+  post: BlogPost;
+  locale?: Locale;
+}) {
+  const locale = localeProp ?? postLocale(post);
+  const ui = getBlogUi(locale);
+  const catalog = getPostsByLocale(locale);
   const toc = postToc(post);
   const related = (post.relatedSlugs ?? [])
-    .map((slug) => blogPosts.find((p) => p.slug === slug))
+    .map((slug) => catalog.find((p) => p.slug === slug))
     .filter(Boolean);
 
   return (
@@ -135,11 +168,11 @@ export function BlogArticleBody({ post }: { post: BlogPost }) {
 
       {toc.length > 2 ? (
         <nav
-          aria-label="Sumário do artigo"
+          aria-label={ui.tocLabel}
           className="mb-12 rounded-xl border border-foreground/10 bg-foreground/[0.02] p-5"
         >
           <p className="text-xs uppercase tracking-[0.18em] text-foreground/40 mb-3">
-            Neste artigo
+            {ui.inThisArticle}
           </p>
           <ol className="space-y-2 text-sm">
             {toc.map((item, idx) => (
@@ -155,7 +188,7 @@ export function BlogArticleBody({ post }: { post: BlogPost }) {
             {post.faq?.length ? (
               <li>
                 <a href="#faq" className="text-anima-violet hover:underline">
-                  {toc.length + 1}. Perguntas frequentes
+                  {toc.length + 1}. {ui.faq}
                 </a>
               </li>
             ) : null}
@@ -183,7 +216,7 @@ export function BlogArticleBody({ post }: { post: BlogPost }) {
             id="conclusao"
             className="text-xl font-semibold text-foreground/82 mb-4 scroll-mt-24"
           >
-            Conclusão
+            {ui.conclusion}
           </h2>
           <div className="space-y-4 text-sm text-foreground/55 leading-relaxed">
             {post.conclusion.map((p) => (
@@ -201,7 +234,7 @@ export function BlogArticleBody({ post }: { post: BlogPost }) {
             id="faq"
             className="text-xl font-semibold text-foreground/82 mb-4 scroll-mt-24"
           >
-            Perguntas frequentes
+            {ui.faq}
           </h2>
           <dl className="space-y-5">
             {post.faq.map((item) => (
@@ -237,16 +270,16 @@ export function BlogArticleBody({ post }: { post: BlogPost }) {
       ) : null}
 
       {related.length > 0 ? (
-        <nav aria-label="Artigos relacionados" className="mt-10">
+        <nav aria-label={ui.keepReading} className="mt-10">
           <p className="text-xs uppercase tracking-[0.18em] text-foreground/40 mb-3">
-            Continue lendo
+            {ui.keepReading}
           </p>
           <ul className="space-y-2 text-sm">
             {related.map((r) =>
               r ? (
                 <li key={r.slug}>
                   <Link
-                    href={`/blog/${r.slug}`}
+                    href={blogPath(locale, r.slug)}
                     className="text-anima-violet hover:underline"
                   >
                     {r.title}
