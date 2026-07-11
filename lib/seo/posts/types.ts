@@ -1,3 +1,5 @@
+import type { Locale } from "@/lib/seo/i18n";
+
 export interface BlogFaqItem {
   question: string;
   answer: string;
@@ -27,6 +29,8 @@ export interface BlogCta {
 
 export interface BlogPost {
   slug: string;
+  /** Default: pt-BR when omitted (legacy PT posts). */
+  locale?: Locale;
   title: string;
   description: string;
   datePublished: string;

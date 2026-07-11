@@ -6,30 +6,48 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbListSchema } from "@/components/seo/schema";
 import { blogPath, getBlogUi, htmlLang } from "@/lib/seo/i18n";
 import { getPostsByLocale } from "@/lib/seo/posts";
-import { buildMarketingMetadata } from "@/lib/seo/page-metadata";
-import { SITE_URL } from "@/lib/seo/site";
+import { OG_IMAGE_PATH, SITE_URL } from "@/lib/seo/site";
 
-const LOCALE = "pt-BR" as const;
+const LOCALE = "en" as const;
+
+const title = "Blog — emotional well-being with SENTIO AI";
+const description =
+  "Articles written for people and search engines: self-awareness, burnout, and ethical longitudinal follow-up.";
+const canonical = `${SITE_URL}/en/blog`;
+const ogImage = `${SITE_URL}${OG_IMAGE_PATH}`;
 
 export const metadata: Metadata = {
-  ...buildMarketingMetadata({
-    title: "Blog — bem-estar emocional assistido pela SENTIO AI",
-    description:
-      "Artigos sintéticos pensados para leitura humana e para motores semânticos: autoconhecimento, burnout e acompanhamento longitudinal ético.",
-    path: "/blog",
-    keywords: ["blog saúde emocional", "IA contextual"],
-  }),
+  title,
+  description,
   alternates: {
-    canonical: `${SITE_URL}/blog`,
+    canonical,
     languages: {
       "pt-BR": `${SITE_URL}/blog`,
-      en: `${SITE_URL}/en/blog`,
+      en: canonical,
       "x-default": `${SITE_URL}/blog`,
     },
   },
+  robots: { index: true, follow: true },
+  keywords: ["emotional health blog", "contextual AI", "EmotiveCare", "SENTIO AI"],
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    alternateLocale: ["pt_BR"],
+    url: canonical,
+    siteName: "EmotiveCare",
+    title: `${title} · EmotiveCare`,
+    description,
+    images: [{ url: ogImage, width: 1200, height: 630, alt: "EmotiveCare · SENTIO AI" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${title} · EmotiveCare`,
+    description,
+    images: [ogImage],
+  },
 };
 
-export default function BlogIndexPage() {
+export default function EnBlogIndexPage() {
   const ui = getBlogUi(LOCALE);
   const posts = getPostsByLocale(LOCALE);
 
@@ -37,7 +55,7 @@ export default function BlogIndexPage() {
     <>
       <JsonLd
         data={breadcrumbListSchema([
-          { name: "Início", path: "/" },
+          { name: "Home", path: "/" },
           { name: "Blog", path: blogPath(LOCALE) },
         ])}
       />

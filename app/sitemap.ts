@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/seo/site";
-import { blogPosts } from "@/lib/seo/posts";
+import { allBlogPosts, postLocale } from "@/lib/seo/posts";
+import { blogPath } from "@/lib/seo/i18n";
 
 const PUBLIC_MARKETING_ROUTES = [
   { route: "/", changeFrequency: "weekly" as const, priority: 1 },
@@ -13,6 +14,7 @@ const PUBLIC_MARKETING_ROUTES = [
   { route: "/privacy", changeFrequency: "yearly" as const, priority: 0.45 },
   { route: "/terms", changeFrequency: "yearly" as const, priority: 0.45 },
   { route: "/blog", changeFrequency: "weekly" as const, priority: 0.76 },
+  { route: "/en/blog", changeFrequency: "weekly" as const, priority: 0.7 },
 ];
 
 /** lastmod das rotas institucionais — atualizado a cada deploy. */
@@ -26,12 +28,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: p.priority,
   }));
 
-  for (const post of blogPosts) {
+  for (const post of allBlogPosts()) {
+    const locale = postLocale(post);
     routes.push({
-      url: `${SITE_URL}/blog/${post.slug}`,
+      url: `${SITE_URL}${blogPath(locale, post.slug)}`,
       lastModified: new Date(post.dateModified ?? post.datePublished),
       changeFrequency: "monthly",
-      priority: 0.65,
+      priority: locale === "en" ? 0.6 : 0.65,
     });
   }
 

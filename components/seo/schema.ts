@@ -24,7 +24,7 @@ export function organizationSchema() {
       width: 512,
       height: 512,
     },
-    knowsLanguage: ["pt-BR"],
+    knowsLanguage: ["pt-BR", "en"],
     areaServed: { "@type": "Country", name: "Brasil" },
     description:
       "Ecossistema de produtos de cuidado emocional digital, incluindo a plataforma EmotiveCare e a tecnologia SENTIO AI.",
@@ -115,8 +115,10 @@ export function faqSchema(entries: FaqEntry[]) {
 export function blogPostingSchema(
   post: BlogPost,
   authorName = "EmotiveCare · MutterCorp",
+  locale: "pt-BR" | "en" = "pt-BR",
 ) {
-  const url = `${SITE_URL}/blog/${post.slug}`;
+  const path = locale === "en" ? `/en/blog/${post.slug}` : `/blog/${post.slug}`;
+  const url = `${SITE_URL}${path}`;
   return {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -125,7 +127,7 @@ export function blogPostingSchema(
     datePublished: post.datePublished,
     dateModified: post.dateModified ?? post.datePublished,
     url,
-    inLanguage: "pt-BR",
+    inLanguage: locale === "en" ? "en" : "pt-BR",
     author: { "@type": "Organization", name: authorName },
     publisher: { "@id": `${SITE_URL}/#organization` },
   };
