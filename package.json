@@ -2,14 +2,22 @@
   "name": "anima",
   "version": "0.1.0",
   "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "favicons": "node scripts/generate-favicons.mjs"
+    "favicons": "node scripts/generate-favicons.mjs",
+    "postinstall": "node scripts/link-expo-router.cjs",
+    "mobile": "npm run start --workspace=mobile",
+    "shared:typecheck": "npm run typecheck --workspace=@anima/shared"
   },
   "dependencies": {
+    "@anima/shared": "*",
     "@hookform/resolvers": "^5.2.2",
     "@react-oauth/google": "^0.13.5",
     "@tanstack/react-query": "^5.100.10",

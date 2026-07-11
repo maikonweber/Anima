@@ -1,59 +1,19 @@
-import { api, getApiUrl } from "@/lib/api-client";
-import type {
-  CancelResponse,
-  CheckoutResponse,
-  Plan,
-  PlanSlug,
-  PortalResponse,
-  SubscriptionConfig,
-  SubscriptionSummary,
-} from "@/types/subscription";
+export {
+  fetchSubscriptionConfig,
+  fetchPlans,
+  fetchSubscriptionMe,
+  checkout,
+  openBillingPortal,
+  cancelSubscription,
+} from "@anima/shared";
 
-export async function fetchSubscriptionConfig(): Promise<SubscriptionConfig> {
-  const res = await fetch(`${getApiUrl()}/subscription/config`, {
-    cache: "no-store",
-  });
-  if (!res.ok) {
-    throw new Error("subscription/config failed");
-  }
-  return res.json() as Promise<SubscriptionConfig>;
-}
+import { checkout as checkoutShared } from "@anima/shared";
+import type { PlanSlug } from "@/types/subscription";
 
-export async function fetchPlans() {
-  return api<Plan[]>("/subscription/plans");
-}
-
-export async function fetchSubscriptionMe() {
-  return api<SubscriptionSummary>("/subscription/me", { auth: true });
-}
-
-export async function checkout(
-  planSlug: Exclude<PlanSlug, "essencial" | "preview">,
-) {
-  return api<CheckoutResponse>("/subscription/checkout", {
-    method: "POST",
-    auth: true,
-    body: JSON.stringify({ planSlug }),
-  });
-}
-
-export async function openBillingPortal() {
-  return api<PortalResponse>("/subscription/portal", {
-    method: "POST",
-    auth: true,
-  });
-}
-
-export async function cancelSubscription() {
-  return api<CancelResponse>("/subscription/cancel", {
-    method: "POST",
-    auth: true,
-  });
-}
-
+/** Web helper: opens Stripe Checkout in the same tab. */
 export async function subscribe(
   planSlug: Exclude<PlanSlug, "essencial" | "preview">,
 ) {
-  const res = await checkout(planSlug);
+  const res = await checkoutShared(planSlug);
   window.location.href = res.url;
 }

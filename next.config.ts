@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  transpilePackages: ["@anima/shared"],
   images: {
     formats: ["image/avif", "image/webp"],
   },
