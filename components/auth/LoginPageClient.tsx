@@ -17,7 +17,7 @@ import { authEn } from "@/lib/i18n/dictionaries/auth-en";
 import { authPt, type AuthPageDictionary } from "@/lib/i18n/dictionaries/auth-pt";
 
 function getAuthDictionary(locale: Locale): AuthPageDictionary {
-  return locale === "en" ? authEn : authPt;
+  return (locale === "en" ? authEn : authPt) as AuthPageDictionary;
 }
 
 function LoginForm({

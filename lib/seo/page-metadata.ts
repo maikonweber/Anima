@@ -1,4 +1,12 @@
 import type { Metadata } from "next";
+import type { Locale } from "@/lib/i18n/config";
+import {
+  DEFAULT_LOCALE,
+  alternatePath,
+  htmlLang,
+  localizedPath,
+  ogLocale,
+} from "@/lib/i18n/config";
 import {
   DEFAULT_SITE_KEYWORDS,
   OG_IMAGE_PATH,
@@ -13,8 +21,9 @@ export interface MarketingMetadataInput {
   /** Título único da página (sem o sufixo da marca — o template global cuida disso). */
   title: string;
   description: string;
-  /** Caminho relativo à raiz, ex.: "/about". */
+  /** Caminho relativo sem prefixo de idioma, ex.: "/about". */
   path: string;
+  locale?: Locale;
   /** Palavras-chave específicas da página (somadas às padrão do site). */
   keywords?: string[];
   ogType?: "website" | "article";
@@ -22,28 +31,39 @@ export interface MarketingMetadataInput {
 
 /**
  * Gera metadata consistente para páginas públicas de marketing:
- * canônico absoluto, keywords combinadas e preview social (Open Graph + Twitter)
- * exclusivo por página — evitando que todas compartilhem o mesmo título social.
+ * canônico absoluto, hreflang PT↔EN, keywords e preview social.
  */
 export function buildMarketingMetadata({
   title,
   description,
   path,
+  locale = DEFAULT_LOCALE,
   keywords = [],
   ogType = "website",
 }: MarketingMetadataInput): Metadata {
-  const canonical = absoluteUrl(path);
+  const localized = localizedPath(locale, path);
+  const canonical = absoluteUrl(localized);
   const socialTitle = `${title} · ${BRAND}`;
+  const ptUrl = absoluteUrl(localizedPath("pt-BR", path));
+  const enUrl = absoluteUrl(localizedPath("en", path));
 
   return {
     title,
     description,
-    alternates: { canonical },
+    alternates: {
+      canonical,
+      languages: {
+        "pt-BR": ptUrl,
+        en: enUrl,
+        "x-default": ptUrl,
+      },
+    },
     robots: { index: true, follow: true },
     keywords: [...DEFAULT_SITE_KEYWORDS, ...keywords],
     openGraph: {
       type: ogType,
-      locale: "pt_BR",
+      locale: ogLocale(locale),
+      alternateLocale: [locale === "en" ? "pt_BR" : "en_US"],
       url: canonical,
       siteName: BRAND,
       title: socialTitle,
@@ -63,5 +83,13 @@ export function buildMarketingMetadata({
       description,
       images: [OG_IMAGE_ABSOLUTE],
     },
+    other: {
+      language: htmlLang(locale),
+    },
   };
+}
+
+/** @deprecated use alternatePath from lib/i18n/config */
+export function marketingAlternatePath(locale: Locale, path: string): string {
+  return alternatePath(locale, path);
 }

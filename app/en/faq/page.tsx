@@ -7,18 +7,18 @@ import { localizedPath } from "@/lib/i18n/config";
 import { getFaqEntries } from "@/lib/seo/faq";
 import { buildMarketingMetadata } from "@/lib/seo/page-metadata";
 
-const LOCALE = "pt-BR" as const;
+const LOCALE = "en" as const;
 
 export const metadata: Metadata = buildMarketingMetadata({
-  title: "FAQ — EmotiveCare e SENTIO AI",
+  title: "FAQ — EmotiveCare and SENTIO AI",
   description:
-    "Respostas claras sobre acompanhamento emocional, compartilhamento com psicólogos, privacidade e uso responsável da SENTIO AI.",
+    "Clear answers on emotional follow-up, sharing with psychologists, privacy, and responsible use of SENTIO AI.",
   path: "/faq",
   locale: LOCALE,
-  keywords: ["perguntas frequentes"],
+  keywords: ["frequently asked questions"],
 });
 
-export default function FaqPage() {
+export default function EnFaqPage() {
   const dict = getDictionary(LOCALE);
   const entries = getFaqEntries(LOCALE);
   return (

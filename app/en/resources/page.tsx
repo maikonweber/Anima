@@ -1,36 +1,33 @@
 import type { Metadata } from "next";
-import { MarketingChrome } from "@/components/marketing/MarketingChrome";
+import { ResourcesView } from "@/components/marketing/pages/ResourcesView";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbListSchema } from "@/components/seo/schema";
-import { TermsView } from "@/components/terms/TermsView";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { localizedPath } from "@/lib/i18n/config";
 import { buildMarketingMetadata } from "@/lib/seo/page-metadata";
 
-const LOCALE = "pt-BR" as const;
+const LOCALE = "en" as const;
 
 export const metadata: Metadata = buildMarketingMetadata({
-  title: "Termos de uso institucional",
+  title: "Resources on emotional health and responsible AI",
   description:
-    "Termos institucionais resumindo limites de uso clínico, responsabilidades do usuário e da empresa MutterCorp pela EmotiveCare.",
-  path: "/terms",
+    "EmotiveCare articles and guides on emotional journaling, burnout, anxiety, semantic memory, and responsible SENTIO AI use.",
+  path: "/resources",
   locale: LOCALE,
-  keywords: ["termos de uso", "responsabilidade"],
+  keywords: ["mental health resources", "self-care kits", "EmotiveCare blog"],
 });
 
-export default function TermsPage() {
+export default function EnResourcesPage() {
   const dict = getDictionary(LOCALE);
   return (
     <>
       <JsonLd
         data={breadcrumbListSchema([
           { name: dict.common.home, path: localizedPath(LOCALE, "/") },
-          { name: dict.footer.terms, path: localizedPath(LOCALE, "/terms") },
+          { name: dict.footer.resources, path: localizedPath(LOCALE, "/resources") },
         ])}
       />
-      <MarketingChrome locale={LOCALE}>
-        <TermsView locale={LOCALE} />
-      </MarketingChrome>
+      <ResourcesView locale={LOCALE} />
     </>
   );
 }

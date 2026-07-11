@@ -7,18 +7,18 @@ import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { localizedPath } from "@/lib/i18n/config";
 import { buildMarketingMetadata } from "@/lib/seo/page-metadata";
 
-const LOCALE = "pt-BR" as const;
+const LOCALE = "en" as const;
 
 export const metadata: Metadata = buildMarketingMetadata({
-  title: "Termos de uso institucional",
+  title: "Institutional terms of use",
   description:
-    "Termos institucionais resumindo limites de uso clínico, responsabilidades do usuário e da empresa MutterCorp pela EmotiveCare.",
+    "Institutional terms summarizing clinical-use limits and user and MutterCorp responsibilities for EmotiveCare.",
   path: "/terms",
   locale: LOCALE,
-  keywords: ["termos de uso", "responsabilidade"],
+  keywords: ["terms of use", "responsibility"],
 });
 
-export default function TermsPage() {
+export default function EnTermsPage() {
   const dict = getDictionary(LOCALE);
   return (
     <>

@@ -9,7 +9,7 @@
 - **Metadata de marketing**: helper `buildMarketingMetadata` em `lib/seo/page-metadata.ts`.
 - **Structured data**: JSON-LD em `components/seo/*` (`Organization`, `WebSite`, `SoftwareApplication`, `MedicalWebPage` na home, `FAQPage` em `/faq` e home, `BlogPosting` + breadcrumbs em `/blog/[slug]`).
 - **FAQ única**: `lib/seo/faq.ts` alimenta a home e `/faq`.
-- **Blog**: catálogo em `lib/seo/posts/` (PT default em `/blog`; EN em `/en/blog`). Artigos longos com H2/blocos/FAQ/CTA; `hreflang` PT↔EN; sitemap inclui ambos os idiomas.
+- **Blog / i18n**: PT na raiz (`/blog`, `/about`, …); EN sob `/en/...`. Dicionários em `lib/i18n/`. `hreflang` PT↔EN nas páginas de marketing. Sitemap inclui ambos os idiomas.
 - **Redirect de marketing**: `/planos` → `/plans` (permanente).
 - **Manifest PWA-lite**: `/manifest.webmanifest` via `app/manifest.ts`.
 - **Preview social**: `/opengraph-image` (PNG dinâmica); Twitter `summary_large_image`.

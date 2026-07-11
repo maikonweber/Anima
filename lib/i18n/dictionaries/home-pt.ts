@@ -259,7 +259,7 @@ type DeepStringify<T> = T extends string
   : T extends boolean
     ? boolean
     : T extends readonly (infer U)[]
-      ? DeepStringify<U>[]
+      ? readonly DeepStringify<U>[]
       : T extends object
         ? { -readonly [K in keyof T]: DeepStringify<T[K]> }
         : T;

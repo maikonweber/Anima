@@ -3,11 +3,14 @@
 import { useTerms, useTermsStatus } from "@/hooks/use-terms";
 import { useAuth } from "@/providers/auth-provider";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
+import type { Locale } from "@/lib/i18n/config";
+import { DEFAULT_LOCALE } from "@/lib/i18n/config";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
 import type { TermStatusItem, TermsType } from "@/types/terms";
 
-function formatDate(iso: string): string {
+function formatDate(iso: string, locale: Locale): string {
   try {
-    return new Date(iso).toLocaleDateString("pt-BR", {
+    return new Date(iso).toLocaleDateString(locale === "en" ? "en-US" : "pt-BR", {
       day: "2-digit",
       month: "short",
       year: "numeric",
@@ -17,7 +20,8 @@ function formatDate(iso: string): string {
   }
 }
 
-export function TermsView() {
+export function TermsView({ locale = DEFAULT_LOCALE }: { locale?: Locale }) {
+  const t = getDictionary(locale).terms;
   const { user } = useAuth();
   const { data: terms, isLoading, error, refetch } = useTerms();
   const { data: status } = useTermsStatus();
@@ -25,23 +29,36 @@ export function TermsView() {
   const statusByType = new Map<TermsType, TermStatusItem>();
   status?.porTipo.forEach((item) => statusByType.set(item.tipo, item));
 
+  const copy =
+    locale === "en"
+      ? {
+          loadError: "Could not load the terms.",
+          empty: "No terms published at the moment.",
+          version: "Version",
+          acceptedOn: (d: string) => `Accepted on ${d}`,
+          accepted: "Accepted",
+          pending: "Pending",
+        }
+      : {
+          loadError: "Não foi possível carregar os termos.",
+          empty: "Nenhum termo publicado no momento.",
+          version: "Versão",
+          acceptedOn: (d: string) => `Aceito em ${d}`,
+          accepted: "Aceito",
+          pending: "Pendente",
+        };
+
   return (
     <div className="space-y-8">
       <header>
-        <h1 className="text-3xl font-bold text-foreground/90">
-          Termos da ferramenta
-        </h1>
+        <h1 className="text-3xl font-bold text-foreground/90">{t.title}</h1>
         <p className="mt-2 text-sm text-foreground/55 leading-relaxed">
-          Termos de Uso, Compromisso e Responsabilidade da EmotiveCare. Ao usar a
-          plataforma, você concorda com as condições abaixo.
+          {t.intro}
         </p>
       </header>
 
       {error && (
-        <ErrorMessage
-          message="Não foi possível carregar os termos."
-          onRetry={() => refetch()}
-        />
+        <ErrorMessage message={copy.loadError} onRetry={() => refetch()} />
       )}
 
       {isLoading && (
@@ -57,7 +74,7 @@ export function TermsView() {
 
       {!isLoading && !error && (!terms || terms.length === 0) && (
         <div className="rounded-2xl border border-foreground/[0.08] bg-foreground/[0.02] p-8 text-center text-sm text-foreground/50">
-          Nenhum termo publicado no momento.
+          {copy.empty}
         </div>
       )}
 
@@ -74,7 +91,7 @@ export function TermsView() {
                   {term.titulo}
                 </h2>
                 <p className="text-xs text-foreground/35">
-                  Versão {term.versao}
+                  {copy.version} {term.versao}
                 </p>
               </div>
               {user && st && (
@@ -87,9 +104,9 @@ export function TermsView() {
                 >
                   {st.aceito
                     ? st.aceitoEm
-                      ? `Aceito em ${formatDate(st.aceitoEm)}`
-                      : "Aceito"
-                    : "Pendente"}
+                      ? copy.acceptedOn(formatDate(st.aceitoEm, locale))
+                      : copy.accepted
+                    : copy.pending}
                 </span>
               )}
             </div>

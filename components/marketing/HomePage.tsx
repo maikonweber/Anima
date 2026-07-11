@@ -11,7 +11,7 @@ import { homeEn } from "@/lib/i18n/dictionaries/home-en";
 import { homePt, type HomeDictionary } from "@/lib/i18n/dictionaries/home-pt";
 
 function getHomeDictionary(locale: Locale): HomeDictionary {
-  return locale === "en" ? homeEn : homePt;
+  return (locale === "en" ? homeEn : homePt) as HomeDictionary;
 }
 
 export function HomePage({ locale }: { locale: Locale }) {

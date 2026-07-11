@@ -2,8 +2,14 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import type { Locale } from "@/lib/i18n/config";
-import { DEFAULT_LOCALE, localizedPath } from "@/lib/i18n/config";
+import {
+  DEFAULT_LOCALE,
+  alternateLocale,
+  alternatePath,
+  localizedPath,
+} from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 
 const LINK_KEYS = [
@@ -15,6 +21,14 @@ const LINK_KEYS = [
   { path: "/contact", key: "contact" },
 ] as const;
 
+function pathWithoutLocale(pathname: string): string {
+  if (pathname === "/en" || pathname.startsWith("/en/")) {
+    const rest = pathname.slice(3);
+    return rest.length ? rest : "/";
+  }
+  return pathname || "/";
+}
+
 /** Navegação institucional: linha única no desktop, menu sanfona no mobile. */
 export function MarketingNav({
   locale = DEFAULT_LOCALE,
@@ -22,11 +36,38 @@ export function MarketingNav({
   locale?: Locale;
 }) {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname() || "/";
+  const barePath = pathWithoutLocale(pathname);
   const nav = getDictionary(locale).nav;
+  const common = getDictionary(locale).common;
+  const other = alternateLocale(locale);
+  const otherHref = alternatePath(locale, barePath);
+
   const links = LINK_KEYS.map(({ path, key }) => ({
     href: localizedPath(locale, path),
     label: nav[key],
   }));
+
+  const langSwitch = (
+    <span className="inline-flex items-center gap-1.5 text-xs font-medium">
+      <span className="uppercase tracking-[0.14em] text-foreground/40">
+        {common.language}
+      </span>
+      <span className="text-foreground/75" aria-current="page">
+        {locale === "en" ? "EN" : "PT"}
+      </span>
+      <span aria-hidden className="text-foreground/30">
+        ·
+      </span>
+      <Link
+        href={otherHref}
+        hrefLang={other === "en" ? "en" : "pt-BR"}
+        className="text-anima-violet hover:underline"
+      >
+        {other === "en" ? "EN" : "PT"}
+      </Link>
+    </span>
+  );
 
   return (
     <>
@@ -50,6 +91,7 @@ export function MarketingNav({
         >
           {nav.login}
         </Link>
+        {langSwitch}
       </nav>
 
       {/* Botão hambúrguer (mobile) */}
@@ -97,6 +139,7 @@ export function MarketingNav({
             >
               {nav.login}
             </Link>
+            <div className="px-3 py-3">{langSwitch}</div>
           </div>
         </nav>
       ) : null}

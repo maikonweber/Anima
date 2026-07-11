@@ -50,7 +50,11 @@ export const metadata: Metadata = {
   },
   keywords: [...DEFAULT_SITE_KEYWORDS],
   alternates: {
-    languages: { "pt-BR": "/" },
+    languages: {
+      "pt-BR": "/",
+      en: "/en",
+      "x-default": "/",
+    },
   },
   openGraph: {
     type: "website",

@@ -1,36 +1,36 @@
 import type { Metadata } from "next";
-import { MarketingChrome } from "@/components/marketing/MarketingChrome";
+import { PsychologistsView } from "@/components/marketing/pages/PsychologistsView";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbListSchema } from "@/components/seo/schema";
-import { TermsView } from "@/components/terms/TermsView";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { localizedPath } from "@/lib/i18n/config";
 import { buildMarketingMetadata } from "@/lib/seo/page-metadata";
 
-const LOCALE = "pt-BR" as const;
+const LOCALE = "en" as const;
 
 export const metadata: Metadata = buildMarketingMetadata({
-  title: "Termos de uso institucional",
+  title: "Psychologists — emotional dashboard between sessions",
   description:
-    "Termos institucionais resumindo limites de uso clínico, responsabilidades do usuário e da empresa MutterCorp pela EmotiveCare.",
-  path: "/terms",
+    "Intelligent emotional dashboards for therapeutic follow-up and patient progress — shared only with consent.",
+  path: "/psychologists",
   locale: LOCALE,
-  keywords: ["termos de uso", "responsabilidade"],
+  keywords: ["online psychologist", "pre-session", "longitudinal dashboard"],
 });
 
-export default function TermsPage() {
+export default function EnPsychologistsPage() {
   const dict = getDictionary(LOCALE);
   return (
     <>
       <JsonLd
         data={breadcrumbListSchema([
           { name: dict.common.home, path: localizedPath(LOCALE, "/") },
-          { name: dict.footer.terms, path: localizedPath(LOCALE, "/terms") },
+          {
+            name: dict.nav.psychologists,
+            path: localizedPath(LOCALE, "/psychologists"),
+          },
         ])}
       />
-      <MarketingChrome locale={LOCALE}>
-        <TermsView locale={LOCALE} />
-      </MarketingChrome>
+      <PsychologistsView locale={LOCALE} />
     </>
   );
 }
