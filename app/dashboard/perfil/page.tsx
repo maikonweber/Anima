@@ -156,6 +156,23 @@ export default function PerfilPage() {
       )}
 
       <motion.div
+        className="glass-panel p-6 mt-6"
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+      >
+        <h2 className="text-sm font-semibold text-foreground/70 mb-2">
+          Precisa de ajuda?
+        </h2>
+        <p className="text-sm text-foreground/40 mb-4">
+          Envie uma dúvida, reporte um problema ou sugestão para a equipe.
+        </p>
+        <Link href="/suporte">
+          <Button variant="secondary">Suporte e feedback</Button>
+        </Link>
+      </motion.div>
+
+      <motion.div
         className="mt-6"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

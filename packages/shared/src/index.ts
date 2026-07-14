@@ -17,6 +17,7 @@ export * from "./api/insights";
 export * from "./api/subscription";
 export * from "./api/feature-flags";
 export * from "./api/terms";
+export * from "./api/feedback";
 
 export {
   configureTokenStorage,
@@ -72,3 +73,4 @@ export {
 export * from "./validations/auth";
 export * from "./validations/diary";
 export * from "./validations/care";
+export * from "./validations/feedback";

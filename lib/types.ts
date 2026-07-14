@@ -34,4 +34,7 @@ export type {
   SharedDashboard,
   RegisterWithInvitePayload,
   RegisterWithInviteResponse,
+  FeedbackType,
+  FeedbackRequest,
+  FeedbackResponse,
 } from "@anima/shared";
