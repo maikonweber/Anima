@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimaLogo } from "@/components/brand/AnimaLogo";
 import { useAuth } from "@/lib/auth/AuthContext";
-import { useMyOrganizations } from "@/hooks/use-organizations";
 import { useSubscription } from "@/providers/subscription-provider";
 
 type NavItem = {
@@ -14,8 +13,6 @@ type NavItem = {
   shortLabel?: string;
   icon: (props: { active: boolean }) => React.ReactElement;
   primary?: boolean;
-  /** Só para profissionais (plano Cuidado ou membro de clínica) */
-  professionalOnly?: boolean;
 };
 
 const NAV_ITEMS: NavItem[] = [
@@ -59,7 +56,6 @@ const NAV_ITEMS: NavItem[] = [
     label: "Clínicas",
     shortLabel: "Clínicas",
     icon: ClinicIcon,
-    professionalOnly: true,
   },
   { href: "/dashboard/care", label: "Convidar profissional", icon: ShareIcon },
   { href: "/dashboard/consents", label: "Consentimentos", icon: ShieldIcon },
@@ -71,22 +67,12 @@ const NAV_ITEMS: NavItem[] = [
 export function Sidebar() {
   const pathname = usePathname();
   const { user, logout } = useAuth();
-  const { subscription, shouldSuggestUpgrade, isCuidado } = useSubscription();
-  const { data: organizations } = useMyOrganizations();
+  const { subscription, shouldSuggestUpgrade } = useSubscription();
   const planLabel = subscription?.plan.nome ?? "Essencial";
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const isProfessional =
-    isCuidado || (organizations?.length ?? 0) > 0;
-
-  const visibleItems = useMemo(
-    () =>
-      NAV_ITEMS.filter((item) => !item.professionalOnly || isProfessional),
-    [isProfessional],
-  );
-
-  const primaryItems = visibleItems.filter((item) => item.primary);
-  const menuItems = visibleItems.filter((item) => !item.primary);
+  const primaryItems = NAV_ITEMS.filter((item) => item.primary);
+  const menuItems = NAV_ITEMS.filter((item) => !item.primary);
 
   const isItemActive = (href: string) =>
     pathname === href || (href !== "/dashboard" && pathname.startsWith(href));
@@ -106,7 +92,7 @@ export function Sidebar() {
         </div>
 
         <nav className="flex-1 px-3 py-2 space-y-1">
-          {visibleItems.map((item) => {
+          {NAV_ITEMS.map((item) => {
             const isActive =
               pathname === item.href ||
               (item.href !== "/dashboard" && pathname.startsWith(item.href));
