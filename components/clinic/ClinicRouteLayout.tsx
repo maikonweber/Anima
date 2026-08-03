@@ -37,12 +37,12 @@ export function ClinicRouteLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div
-      className={`clinic-shell flex h-full min-h-screen ${dmSans.variable} font-[family-name:var(--font-clinic)]`}
+      className={`clinic-shell flex min-h-dvh ${dmSans.variable} font-[family-name:var(--font-clinic)]`}
     >
       <ClinicSidebar />
       <main
         id="main-content"
-        className="flex-1 overflow-y-auto pb-20 lg:pb-0 clinic-main"
+        className="flex-1 min-w-0 overflow-x-hidden overflow-y-auto clinic-main clinic-main-pad"
       >
         {children}
       </main>

@@ -111,8 +111,8 @@ export function ClinicSidebar() {
       <header className="lg:hidden fixed top-0 inset-x-0 z-40 border-b border-[var(--clinic-border)] bg-[var(--clinic-sidebar)]/95 backdrop-blur-md clinic-safe-top">
         <div className="flex items-center justify-between gap-3 px-3 h-12">
           <Link href="/clinic" className="flex items-center gap-2 min-w-0">
-            <AnimaLogo size="sm" className="!gap-0 [&_img]:!w-7 [&_img]:!h-7" />
-            <div className="min-w-0">
+            <AnimaLogo size="sm" className="scale-75 origin-left" />
+            <div className="min-w-0 -ml-1">
               <p className="text-[11px] font-semibold text-foreground/85 leading-none truncate">
                 EmotiveCare
               </p>

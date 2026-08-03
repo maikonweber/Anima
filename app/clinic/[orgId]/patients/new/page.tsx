@@ -1,12 +1,15 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { motion } from "motion/react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
+import {
+  ClinicPageFrame,
+  ClinicPageHeader,
+} from "@/components/clinic/ClinicPageFrame";
 import { useCreatePatient } from "@/hooks/use-patients";
 import type { PatientStatus } from "@anima/shared";
 import { STATUS_LABELS } from "@/components/clinic/PatientStatusBadge";
@@ -48,29 +51,22 @@ export default function NewPatientPage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
+    <ClinicPageFrame width="narrow">
       <motion.div
-        initial={{ opacity: 0, y: 10 }}
+        initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.35 }}
+        transition={{ duration: 0.3 }}
       >
-        <Link
-          href={`/clinic/${orgId}/patients`}
-          className="text-sm text-foreground/40 hover:text-[var(--clinic-accent)] mb-4 inline-block"
-        >
-          ← Pacientes
-        </Link>
-        <p className="text-[11px] uppercase tracking-[0.16em] text-[var(--clinic-accent)] font-medium mb-2">
-          Cadastro
-        </p>
-        <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground/90 mb-1">
-          Novo paciente
-        </h1>
-        <p className="text-sm text-foreground/40 mb-8">
-          Cadastro operacional do CRM (sem notas clínicas)
-        </p>
+        <ClinicPageHeader
+          eyebrow="Cadastro"
+          title="Novo paciente"
+          description="Cadastro operacional do CRM (sem notas clínicas)"
+        />
 
-        <form onSubmit={handleSubmit} className="rounded-xl border border-[var(--clinic-border)] bg-[var(--clinic-panel)] p-5 space-y-4">
+        <form
+          onSubmit={handleSubmit}
+          className="rounded-xl border border-[var(--clinic-border)] bg-[var(--clinic-panel)] p-3 sm:p-5 space-y-4"
+        >
           <Input
             label="Nome completo"
             value={fullName}
@@ -111,16 +107,16 @@ export default function NewPatientPage() {
               value={operationalNotes}
               onChange={(e) => setOperationalNotes(e.target.value)}
               rows={3}
-              className="w-full rounded-xl px-4 py-3 text-sm bg-foreground/[0.03] border border-foreground/[0.08] text-foreground/90 placeholder:text-foreground/25 focus:outline-none focus:ring-2 focus:ring-anima-violet/30"
+              className="w-full rounded-xl px-4 py-3 text-sm bg-foreground/[0.03] border border-[var(--clinic-border)] text-foreground/90 placeholder:text-foreground/25 focus:outline-none focus:ring-2 focus:ring-[var(--clinic-accent)]/25"
               placeholder="Preferências de horário, contatos etc."
             />
           </div>
           {error && <p className="text-xs text-red-400">{error}</p>}
-          <Button type="submit" isLoading={createPatient.isPending}>
+          <Button type="submit" isLoading={createPatient.isPending} className="!rounded-lg">
             Salvar paciente
           </Button>
         </form>
       </motion.div>
-    </div>
+    </ClinicPageFrame>
   );
 }

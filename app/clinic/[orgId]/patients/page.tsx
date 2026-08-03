@@ -8,6 +8,10 @@ import { Button } from "@/components/ui/Button";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { ClinicPagination } from "@/components/clinic/ClinicPagination";
 import {
+  ClinicPageFrame,
+  ClinicPageHeader,
+} from "@/components/clinic/ClinicPageFrame";
+import {
   PatientStatusBadge,
   STATUS_LABELS,
 } from "@/components/clinic/PatientStatusBadge";
@@ -46,30 +50,24 @@ export default function ClinicPatientsPage() {
   const { data, isLoading, error, refetch } = usePatients(orgId, query);
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
+    <ClinicPageFrame>
       <motion.div
-        initial={{ opacity: 0, y: 10 }}
+        initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.35 }}
+        transition={{ duration: 0.3 }}
       >
-        <div className="flex items-start justify-between gap-4 mb-6">
-          <div>
-            <p className="text-[11px] uppercase tracking-[0.16em] text-[var(--clinic-accent)] font-medium mb-2">
-              CRM clínico
-            </p>
-            <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground/90 mb-1">
-              Pacientes
-            </h1>
-            <p className="text-sm text-foreground/40">
-              Cadastro operacional desta organização — dados isolados por tenant
-            </p>
-          </div>
-          <Link href={`/clinic/${orgId}/patients/new`}>
-            <Button type="button" className="w-auto whitespace-nowrap !rounded-lg">
-              Novo paciente
-            </Button>
-          </Link>
-        </div>
+        <ClinicPageHeader
+          eyebrow="CRM clínico"
+          title="Pacientes"
+          description="Cadastro operacional desta organização — dados isolados por tenant"
+          actions={
+            <Link href={`/clinic/${orgId}/patients/new`}>
+              <Button type="button" className="!rounded-lg !px-3 !py-2 text-xs">
+                Novo paciente
+              </Button>
+            </Link>
+          }
+        />
 
         <div className="rounded-xl border border-[var(--clinic-border)] bg-[var(--clinic-panel)] overflow-hidden">
           <div className="p-3 sm:p-4 border-b border-[var(--clinic-border)] space-y-3">
@@ -119,7 +117,10 @@ export default function ClinicPatientsPage() {
           {isLoading && (
             <div className="divide-y divide-[var(--clinic-border)]">
               {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div key={i} className="h-12 px-4 flex items-center gap-4 animate-pulse">
+                <div
+                  key={i}
+                  className="h-12 px-4 flex items-center gap-4 animate-pulse"
+                >
                   <div className="h-3 w-40 rounded bg-foreground/[0.06]" />
                   <div className="h-3 w-32 rounded bg-foreground/[0.04] hidden sm:block" />
                   <div className="h-3 w-16 rounded bg-foreground/[0.04] ml-auto" />
@@ -129,7 +130,7 @@ export default function ClinicPatientsPage() {
           )}
 
           {!isLoading && !error && data?.items.length === 0 && (
-            <div className="px-4 py-14 text-center">
+            <div className="px-4 py-12 text-center">
               <h3 className="text-base font-semibold text-foreground/70 mb-1">
                 Nenhum paciente encontrado
               </h3>
@@ -153,12 +154,11 @@ export default function ClinicPatientsPage() {
                 <span />
               </div>
               <ul className="divide-y divide-[var(--clinic-border)]">
-                {data.items.map((patient, index) => (
+                {data.items.map((patient) => (
                   <li key={patient.id}>
                     <Link
                       href={`/clinic/${orgId}/patients/${patient.id}`}
-                      className="grid grid-cols-1 sm:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_7.5rem_1.5rem] gap-1 sm:gap-3 items-center px-4 py-2.5 hover:bg-[var(--clinic-row-hover)] transition-colors"
-                      style={{ animationDelay: `${Math.min(index, 12) * 20}ms` }}
+                      className="grid grid-cols-1 sm:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_7.5rem_1.5rem] gap-1 sm:gap-3 items-center px-3 sm:px-4 py-2.5 hover:bg-[var(--clinic-row-hover)] transition-colors"
                     >
                       <div className="min-w-0">
                         <p className="text-sm font-medium text-foreground/85 truncate">
@@ -171,13 +171,8 @@ export default function ClinicPatientsPage() {
                       <p className="hidden sm:block text-xs text-foreground/45 truncate">
                         {patient.email || patient.phone || "—"}
                       </p>
-                      <div className="flex items-center gap-2 sm:block">
+                      <div>
                         <PatientStatusBadge status={patient.status} />
-                        {patient.phone && patient.email && (
-                          <span className="sm:hidden text-[10px] text-foreground/30 truncate">
-                            {patient.phone}
-                          </span>
-                        )}
                       </div>
                       <span className="hidden sm:block text-foreground/25 text-sm text-right">
                         →
@@ -190,7 +185,7 @@ export default function ClinicPatientsPage() {
           )}
 
           {data && !error && (
-            <div className="px-4 pb-4">
+            <div className="px-3 sm:px-4 pb-4">
               <ClinicPagination
                 page={data.page}
                 totalPages={Math.max(data.totalPages, 1)}
@@ -202,7 +197,7 @@ export default function ClinicPatientsPage() {
           )}
         </div>
       </motion.div>
-    </div>
+    </ClinicPageFrame>
   );
 }
 

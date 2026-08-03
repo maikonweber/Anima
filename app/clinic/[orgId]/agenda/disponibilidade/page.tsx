@@ -1,7 +1,6 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import Link from "next/link";
 import { useParams } from "next/navigation";
 import { motion } from "motion/react";
 import { Button } from "@/components/ui/Button";
@@ -12,6 +11,10 @@ import {
   DAY_LABELS,
   MODALITY_LABELS,
 } from "@/components/clinic/AppointmentStatusBadge";
+import {
+  ClinicPageFrame,
+  ClinicPageHeader,
+} from "@/components/clinic/ClinicPageFrame";
 import {
   useAvailabilities,
   useCreateAvailability,
@@ -52,26 +55,22 @@ export default function AvailabilityPage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+    <ClinicPageFrame width="narrow">
       <motion.div
-        initial={{ opacity: 0, y: 12 }}
+        initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
+        transition={{ duration: 0.3 }}
       >
-        <Link
-          href={`/clinic/${orgId}/agenda`}
-          className="text-sm text-foreground/40 hover:text-anima-violet mb-4 inline-block"
-        >
-          ← Agenda
-        </Link>
-        <h1 className="text-2xl sm:text-3xl font-bold text-foreground/90 mb-1">
-          Disponibilidade
-        </h1>
-        <p className="text-sm text-foreground/40 mb-8">
-          Grade semanal recorrente do profissional
-        </p>
+        <ClinicPageHeader
+          eyebrow="Agenda"
+          title="Disponibilidade"
+          description="Grade semanal recorrente do profissional"
+        />
 
-        <form onSubmit={handleCreate} className="glass-panel p-5 space-y-4 mb-8">
+        <form
+          onSubmit={handleCreate}
+          className="rounded-xl border border-[var(--clinic-border)] bg-[var(--clinic-panel)] p-3 sm:p-5 space-y-4 mb-5"
+        >
           <div>
             <label className="block text-sm font-medium text-foreground/60 mb-1.5">
               Dia da semana
@@ -131,7 +130,11 @@ export default function AvailabilityPage() {
             </Select>
           </div>
           {formError && <p className="text-xs text-red-400">{formError}</p>}
-          <Button type="submit" isLoading={createAvailability.isPending}>
+          <Button
+            type="submit"
+            isLoading={createAvailability.isPending}
+            className="!rounded-lg"
+          >
             Adicionar horário
           </Button>
         </form>
@@ -144,24 +147,23 @@ export default function AvailabilityPage() {
         )}
 
         {isLoading && (
-          <div className="space-y-3">
+          <div className="rounded-xl border border-[var(--clinic-border)] divide-y divide-[var(--clinic-border)]">
             {[1, 2].map((i) => (
-              <div
-                key={i}
-                className="h-16 rounded-2xl bg-foreground/[0.06] animate-pulse"
-              />
+              <div key={i} className="h-12 px-4 animate-pulse flex items-center">
+                <div className="h-3 w-40 rounded bg-foreground/[0.06]" />
+              </div>
             ))}
           </div>
         )}
 
-        <ul className="space-y-3">
+        <ul className="rounded-xl border border-[var(--clinic-border)] bg-[var(--clinic-panel)] divide-y divide-[var(--clinic-border)] overflow-hidden">
           {data?.map((item) => (
             <li
               key={item.id}
-              className="glass-panel p-4 flex items-center justify-between gap-3"
+              className="px-3 sm:px-4 py-3 flex items-center justify-between gap-3"
             >
-              <div>
-                <p className="text-sm font-semibold text-foreground/85">
+              <div className="min-w-0">
+                <p className="text-sm font-medium text-foreground/85 truncate">
                   {DAY_LABELS[item.dayOfWeek]} · {item.startTime.slice(0, 5)}–
                   {item.endTime.slice(0, 5)}
                 </p>
@@ -174,7 +176,7 @@ export default function AvailabilityPage() {
               <Button
                 type="button"
                 variant="ghost"
-                className="w-auto"
+                className="w-auto !px-2 !py-1.5 text-xs shrink-0"
                 isLoading={deleteAvailability.isPending}
                 onClick={() => deleteAvailability.mutate(item.id)}
               >
@@ -185,11 +187,11 @@ export default function AvailabilityPage() {
         </ul>
 
         {!isLoading && data?.length === 0 && (
-          <div className="glass-panel p-8 text-center text-sm text-foreground/40">
+          <div className="rounded-xl border border-[var(--clinic-border)] bg-[var(--clinic-panel)] px-4 py-8 text-center text-sm text-foreground/40">
             Nenhuma disponibilidade cadastrada.
           </div>
         )}
       </motion.div>
-    </div>
+    </ClinicPageFrame>
   );
 }

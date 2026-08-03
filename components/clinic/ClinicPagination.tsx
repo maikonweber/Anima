@@ -28,11 +28,11 @@ export function ClinicPagination({
           ? "Nenhum registro"
           : `Mostrando ${from}–${to} de ${total}`}
       </p>
-      <div className="flex items-center gap-1.5">
+      <div className="flex items-center gap-1.5 overflow-x-auto max-w-full pb-0.5">
         <Button
           type="button"
           variant="secondary"
-          className="w-auto !px-3 !py-2 text-xs"
+          className="w-auto !px-3 !py-2 text-xs shrink-0"
           disabled={page <= 1}
           onClick={() => onPageChange(page - 1)}
         >
@@ -52,7 +52,7 @@ export function ClinicPagination({
                 key={item}
                 type="button"
                 onClick={() => onPageChange(item)}
-                className={`min-w-8 h-8 rounded-lg text-xs font-medium transition-colors ${
+                className={`min-w-8 h-8 rounded-lg text-xs font-medium transition-colors shrink-0 ${
                   item === page
                     ? "bg-[var(--clinic-accent-soft)] text-[var(--clinic-accent)]"
                     : "text-foreground/45 hover:bg-foreground/[0.04] hover:text-foreground/70"
@@ -66,7 +66,7 @@ export function ClinicPagination({
         <Button
           type="button"
           variant="secondary"
-          className="w-auto !px-3 !py-2 text-xs"
+          className="w-auto !px-3 !py-2 text-xs shrink-0"
           disabled={page >= totalPages || totalPages === 0}
           onClick={() => onPageChange(page + 1)}
         >
