@@ -9,3 +9,4 @@ export * from "./patients";
 export * from "./agenda";
 export * from "./consents";
 export * from "./clinical-notes";
+export * from "./teleconsult";

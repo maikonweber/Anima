@@ -2,7 +2,7 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { motion } from "motion/react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -16,23 +16,27 @@ import {
   toLocalInputValue,
 } from "@/components/clinic/AppointmentStatusBadge";
 import { useAppointment, useUpdateAppointment } from "@/hooks/use-agenda";
+import { useCreateTeleconsult } from "@/hooks/use-teleconsult";
 import { usePatient } from "@/hooks/use-patients";
 import type { AppointmentStatus } from "@anima/shared";
 
 export default function AppointmentDetailPage() {
   const params = useParams<{ orgId: string; appointmentId: string }>();
+  const router = useRouter();
   const { orgId, appointmentId } = params;
   const { data, isLoading, error, refetch } = useAppointment(
     orgId,
     appointmentId,
   );
   const updateAppointment = useUpdateAppointment(orgId, appointmentId);
+  const createTeleconsult = useCreateTeleconsult(orgId);
   const patientQuery = usePatient(orgId, data?.patientId ?? "");
 
   const [startsAt, setStartsAt] = useState("");
   const [endsAt, setEndsAt] = useState("");
   const [cancelReason, setCancelReason] = useState("");
   const [actionError, setActionError] = useState<string | null>(null);
+  const [teleRoomCode, setTeleRoomCode] = useState<string | null>(null);
 
   useEffect(() => {
     if (!data) return;
@@ -61,11 +65,32 @@ export default function AppointmentDetailPage() {
     });
   }
 
+  async function handleOpenTeleconsult() {
+    setActionError(null);
+    try {
+      const session = await createTeleconsult.mutateAsync(appointmentId);
+      setTeleRoomCode(session.roomCode);
+      router.push(`/clinic/${orgId}/teleconsulta/${session.id}`);
+    } catch (err) {
+      setActionError(
+        err instanceof Error
+          ? err.message
+          : "Falha ao abrir teleconsulta. Verifique modalidade ONLINE/HÍBRIDO e consentimento TELECONSULTA.",
+      );
+    }
+  }
+
   const canManage =
     data &&
     (data.status === "AGENDADA" ||
       data.status === "CONFIRMADA" ||
       data.status === "REMARCADA");
+
+  const canTeleconsult =
+    data &&
+    (data.modality === "ONLINE" || data.modality === "HIBRIDO") &&
+    data.status !== "CANCELADA" &&
+    data.status !== "CONCLUIDA";
 
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
@@ -130,7 +155,31 @@ export default function AppointmentDetailPage() {
                   {data.cancelReason}
                 </p>
               )}
+              {teleRoomCode && (
+                <p>
+                  <span className="text-foreground/40">Código teleconsulta:</span>{" "}
+                  <span className="font-mono text-foreground/80">
+                    {teleRoomCode}
+                  </span>
+                </p>
+              )}
             </div>
+
+            {canTeleconsult && (
+              <div className="mb-6 flex flex-wrap items-center gap-3">
+                <Button
+                  type="button"
+                  className="w-auto"
+                  isLoading={createTeleconsult.isPending}
+                  onClick={() => void handleOpenTeleconsult()}
+                >
+                  Abrir teleconsulta
+                </Button>
+                <p className="text-xs text-foreground/40">
+                  Paciente entra em /teleconsulta com o código da sala.
+                </p>
+              </div>
+            )}
 
             {canManage && (
               <div className="space-y-4">
