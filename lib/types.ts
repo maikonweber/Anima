@@ -48,4 +48,10 @@ export type {
   AppointmentStatus,
   ProfessionalAvailability,
   PaginatedAppointments,
+  ConsentPurpose,
+  ConsentStatus,
+  ConsentPurposeDefinition,
+  PatientConsent,
+  PatientConsentStatus,
+  ConsentExportRequest,
 } from "@anima/shared";

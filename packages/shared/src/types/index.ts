@@ -7,3 +7,4 @@ export * from "./feedback";
 export * from "./organizations";
 export * from "./patients";
 export * from "./agenda";
+export * from "./consents";
