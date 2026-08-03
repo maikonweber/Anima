@@ -48,25 +48,29 @@ export default function ClinicHomePage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
       <motion.div
-        initial={{ opacity: 0, y: 12 }}
+        initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
+        transition={{ duration: 0.35 }}
       >
         <div className="flex items-start justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-foreground/90 mb-1">
+            <p className="text-[11px] uppercase tracking-[0.16em] text-[var(--clinic-accent)] font-medium mb-2">
+              Área profissional
+            </p>
+            <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground/90 mb-1">
               Clínicas
             </h1>
-            <p className="text-sm text-foreground/40">
-              Gestão multi-tenant EmotiveCare — CRM e equipe por organização
+            <p className="text-sm text-foreground/40 max-w-lg">
+              Produto separado do app do paciente — CRM, agenda e equipe por
+              organização, só para profissionais de saúde.
             </p>
           </div>
           <Button
             type="button"
             variant="secondary"
-            className="w-auto whitespace-nowrap"
+            className="w-auto whitespace-nowrap !rounded-lg"
             onClick={() => setShowForm((v) => !v)}
           >
             {showForm ? "Cancelar" : "Nova clínica"}
@@ -76,7 +80,7 @@ export default function ClinicHomePage() {
         {showForm && (
           <form
             onSubmit={handleCreate}
-            className="glass-panel p-5 mb-6 space-y-4"
+            className="rounded-xl border border-[var(--clinic-border)] bg-[var(--clinic-panel)] p-5 mb-6 space-y-4"
           >
             <Input
               label="Nome da clínica"
@@ -85,7 +89,7 @@ export default function ClinicHomePage() {
               placeholder="Ex.: Clínica Aurora"
               error={formError ?? undefined}
             />
-            <Button type="submit" isLoading={createOrg.isPending}>
+            <Button type="submit" isLoading={createOrg.isPending} className="!rounded-lg">
               Criar e abrir CRM
             </Button>
           </form>
@@ -99,18 +103,17 @@ export default function ClinicHomePage() {
         )}
 
         {isLoading && (
-          <div className="space-y-3">
-            {[1, 2].map((i) => (
-              <div
-                key={i}
-                className="h-24 rounded-2xl bg-foreground/[0.06] animate-pulse"
-              />
+          <div className="rounded-xl border border-[var(--clinic-border)] bg-[var(--clinic-panel)] divide-y divide-[var(--clinic-border)]">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-14 px-4 flex items-center animate-pulse">
+                <div className="h-3 w-48 rounded bg-foreground/[0.06]" />
+              </div>
             ))}
           </div>
         )}
 
         {!isLoading && !error && (!data || data.length === 0) && (
-          <div className="glass-panel p-10 text-center">
+          <div className="rounded-xl border border-[var(--clinic-border)] bg-[var(--clinic-panel)] px-4 py-14 text-center">
             <h3 className="text-base font-semibold text-foreground/70 mb-2">
               Nenhuma clínica ainda
             </h3>
@@ -120,7 +123,7 @@ export default function ClinicHomePage() {
             </p>
             <Button
               type="button"
-              className="w-auto mx-auto"
+              className="w-auto mx-auto !rounded-lg"
               onClick={() => setShowForm(true)}
             >
               Criar clínica
@@ -128,16 +131,16 @@ export default function ClinicHomePage() {
           </div>
         )}
 
-        <ul className="space-y-3">
-          {data?.map(({ organization, membership }) => (
-            <li key={organization.id}>
-              <Link
-                href={`/clinic/${organization.id}`}
-                className="block glass-panel p-5 hover:scale-[1.01] transition-transform duration-200"
-              >
-                <div className="flex items-center justify-between gap-3">
-                  <div>
-                    <p className="text-base font-semibold text-foreground/85">
+        {data && data.length > 0 && (
+          <ul className="rounded-xl border border-[var(--clinic-border)] bg-[var(--clinic-panel)] divide-y divide-[var(--clinic-border)] overflow-hidden">
+            {data.map(({ organization, membership }) => (
+              <li key={organization.id}>
+                <Link
+                  href={`/clinic/${organization.id}`}
+                  className="flex items-center justify-between gap-3 px-4 py-3.5 hover:bg-[var(--clinic-row-hover)] transition-colors"
+                >
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-foreground/85 truncate">
                       {organization.name}
                     </p>
                     <p className="text-xs text-foreground/40 mt-0.5">
@@ -145,12 +148,14 @@ export default function ClinicHomePage() {
                       {organization.timezone}
                     </p>
                   </div>
-                  <span className="text-anima-violet text-sm">Abrir →</span>
-                </div>
-              </Link>
-            </li>
-          ))}
-        </ul>
+                  <span className="text-[var(--clinic-accent)] text-xs font-medium shrink-0">
+                    Abrir →
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
       </motion.div>
     </div>
   );

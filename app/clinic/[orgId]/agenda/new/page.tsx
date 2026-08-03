@@ -6,6 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 import { motion } from "motion/react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { Select } from "@/components/ui/Select";
 import { useCreateAppointment } from "@/hooks/use-agenda";
 import { usePatients } from "@/hooks/use-patients";
 import type { AppointmentModality } from "@anima/shared";
@@ -105,10 +106,9 @@ export default function NewAppointmentPage() {
             <label className="block text-sm font-medium text-foreground/60 mb-1.5">
               Paciente
             </label>
-            <select
+            <Select
               value={patientId}
               onChange={(e) => setPatientId(e.target.value)}
-              className="w-full rounded-xl px-4 py-3 text-sm bg-foreground/[0.03] border border-foreground/[0.08] text-foreground/90"
               required
             >
               <option value="">Selecione...</option>
@@ -118,7 +118,7 @@ export default function NewAppointmentPage() {
                   {patient.status !== "ATIVO" ? ` (${patient.status})` : ""}
                 </option>
               ))}
-            </select>
+            </Select>
             {patientOptions.length === 0 && (
               <p className="mt-2 text-xs text-foreground/40">
                 Nenhum paciente no CRM.{" "}
@@ -151,12 +151,11 @@ export default function NewAppointmentPage() {
             <label className="block text-sm font-medium text-foreground/60 mb-1.5">
               Modalidade
             </label>
-            <select
+            <Select
               value={modality}
               onChange={(e) =>
                 setModality(e.target.value as AppointmentModality)
               }
-              className="w-full rounded-xl px-4 py-3 text-sm bg-foreground/[0.03] border border-foreground/[0.08] text-foreground/90"
             >
               {(Object.keys(MODALITY_LABELS) as AppointmentModality[]).map(
                 (key) => (
@@ -165,7 +164,7 @@ export default function NewAppointmentPage() {
                   </option>
                 ),
               )}
-            </select>
+            </Select>
           </div>
 
           <Input

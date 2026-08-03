@@ -6,6 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 import { motion } from "motion/react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { Select } from "@/components/ui/Select";
 import { useCreatePatient } from "@/hooks/use-patients";
 import type { PatientStatus } from "@anima/shared";
 import { STATUS_LABELS } from "@/components/clinic/PatientStatusBadge";
@@ -47,26 +48,29 @@ export default function NewPatientPage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+    <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
       <motion.div
-        initial={{ opacity: 0, y: 12 }}
+        initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
+        transition={{ duration: 0.35 }}
       >
         <Link
           href={`/clinic/${orgId}/patients`}
-          className="text-sm text-foreground/40 hover:text-anima-violet mb-4 inline-block"
+          className="text-sm text-foreground/40 hover:text-[var(--clinic-accent)] mb-4 inline-block"
         >
           ← Pacientes
         </Link>
-        <h1 className="text-2xl sm:text-3xl font-bold text-foreground/90 mb-1">
+        <p className="text-[11px] uppercase tracking-[0.16em] text-[var(--clinic-accent)] font-medium mb-2">
+          Cadastro
+        </p>
+        <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground/90 mb-1">
           Novo paciente
         </h1>
         <p className="text-sm text-foreground/40 mb-8">
           Cadastro operacional do CRM (sem notas clínicas)
         </p>
 
-        <form onSubmit={handleSubmit} className="glass-panel p-5 space-y-4">
+        <form onSubmit={handleSubmit} className="rounded-xl border border-[var(--clinic-border)] bg-[var(--clinic-panel)] p-5 space-y-4">
           <Input
             label="Nome completo"
             value={fullName}
@@ -88,17 +92,16 @@ export default function NewPatientPage() {
             <label className="block text-sm font-medium text-foreground/60 mb-1.5">
               Status inicial
             </label>
-            <select
+            <Select
               value={status}
               onChange={(e) => setStatus(e.target.value as PatientStatus)}
-              className="w-full rounded-xl px-4 py-3 text-sm bg-foreground/[0.03] border border-foreground/[0.08] text-foreground/90"
             >
               {(Object.keys(STATUS_LABELS) as PatientStatus[]).map((key) => (
                 <option key={key} value={key}>
                   {STATUS_LABELS[key]}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
           <div>
             <label className="block text-sm font-medium text-foreground/60 mb-1.5">

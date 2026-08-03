@@ -7,6 +7,7 @@ import { motion } from "motion/react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
+import { Select } from "@/components/ui/Select";
 import {
   DAY_LABELS,
   MODALITY_LABELS,
@@ -75,17 +76,16 @@ export default function AvailabilityPage() {
             <label className="block text-sm font-medium text-foreground/60 mb-1.5">
               Dia da semana
             </label>
-            <select
+            <Select
               value={dayOfWeek}
               onChange={(e) => setDayOfWeek(Number(e.target.value))}
-              className="w-full rounded-xl px-4 py-3 text-sm bg-foreground/[0.03] border border-foreground/[0.08] text-foreground/90"
             >
               {DAY_LABELS.map((label, index) => (
                 <option key={label} value={index}>
                   {label}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <Input
@@ -115,12 +115,11 @@ export default function AvailabilityPage() {
             <label className="block text-sm font-medium text-foreground/60 mb-1.5">
               Modalidade
             </label>
-            <select
+            <Select
               value={modality}
               onChange={(e) =>
                 setModality(e.target.value as AppointmentModality)
               }
-              className="w-full rounded-xl px-4 py-3 text-sm bg-foreground/[0.03] border border-foreground/[0.08] text-foreground/90"
             >
               {(Object.keys(MODALITY_LABELS) as AppointmentModality[]).map(
                 (key) => (
@@ -129,7 +128,7 @@ export default function AvailabilityPage() {
                   </option>
                 ),
               )}
-            </select>
+            </Select>
           </div>
           {formError && <p className="text-xs text-red-400">{formError}</p>}
           <Button type="submit" isLoading={createAvailability.isPending}>

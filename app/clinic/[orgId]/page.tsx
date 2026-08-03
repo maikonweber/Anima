@@ -7,6 +7,7 @@ import { motion } from "motion/react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
+import { Select } from "@/components/ui/Select";
 import {
   useCreateOrganizationInvite,
   useOrganization,
@@ -48,19 +49,12 @@ export default function ClinicOrgHomePage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
       <motion.div
-        initial={{ opacity: 0, y: 12 }}
+        initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
+        transition={{ duration: 0.35 }}
       >
-        <Link
-          href="/clinic"
-          className="text-sm text-foreground/40 hover:text-anima-violet mb-4 inline-block"
-        >
-          ← Minhas clínicas
-        </Link>
-
         {error && (
           <ErrorMessage
             message="Não foi possível carregar a clínica."
@@ -69,12 +63,15 @@ export default function ClinicOrgHomePage() {
         )}
 
         {isLoading && (
-          <div className="h-28 rounded-2xl bg-foreground/[0.06] animate-pulse mb-6" />
+          <div className="h-28 rounded-xl bg-foreground/[0.06] animate-pulse mb-6" />
         )}
 
         {org && (
           <>
-            <h1 className="text-2xl sm:text-3xl font-bold text-foreground/90 mb-1">
+            <p className="text-[11px] uppercase tracking-[0.16em] text-[var(--clinic-accent)] font-medium mb-2">
+              Organização
+            </p>
+            <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground/90 mb-1">
               {org.name}
             </h1>
             <p className="text-sm text-foreground/40 mb-8">
@@ -84,7 +81,7 @@ export default function ClinicOrgHomePage() {
             <div className="grid gap-3 sm:grid-cols-2 mb-8">
               <Link
                 href={`/clinic/${orgId}/patients`}
-                className="glass-panel p-5 hover:scale-[1.01] transition-transform"
+                className="rounded-xl border border-[var(--clinic-border)] bg-[var(--clinic-panel)] p-5 hover:bg-[var(--clinic-row-hover)] transition-colors"
               >
                 <p className="font-semibold text-foreground/85">CRM de pacientes</p>
                 <p className="text-xs text-foreground/40 mt-1">
@@ -93,7 +90,7 @@ export default function ClinicOrgHomePage() {
               </Link>
               <Link
                 href={`/clinic/${orgId}/agenda`}
-                className="glass-panel p-5 hover:scale-[1.01] transition-transform"
+                className="rounded-xl border border-[var(--clinic-border)] bg-[var(--clinic-panel)] p-5 hover:bg-[var(--clinic-row-hover)] transition-colors"
               >
                 <p className="font-semibold text-foreground/85">Agenda</p>
                 <p className="text-xs text-foreground/40 mt-1">
@@ -102,7 +99,7 @@ export default function ClinicOrgHomePage() {
               </Link>
               <Link
                 href={`/clinic/${orgId}/patients/new`}
-                className="glass-panel p-5 hover:scale-[1.01] transition-transform"
+                className="rounded-xl border border-[var(--clinic-border)] bg-[var(--clinic-panel)] p-5 hover:bg-[var(--clinic-row-hover)] transition-colors"
               >
                 <p className="font-semibold text-foreground/85">Novo paciente</p>
                 <p className="text-xs text-foreground/40 mt-1">
@@ -111,7 +108,7 @@ export default function ClinicOrgHomePage() {
               </Link>
               <Link
                 href={`/clinic/${orgId}/agenda/new`}
-                className="glass-panel p-5 hover:scale-[1.01] transition-transform"
+                className="rounded-xl border border-[var(--clinic-border)] bg-[var(--clinic-panel)] p-5 hover:bg-[var(--clinic-row-hover)] transition-colors"
               >
                 <p className="font-semibold text-foreground/85">Nova sessão</p>
                 <p className="text-xs text-foreground/40 mt-1">
@@ -120,7 +117,7 @@ export default function ClinicOrgHomePage() {
               </Link>
             </div>
 
-            <section className="glass-panel p-5 space-y-4">
+            <section className="rounded-xl border border-[var(--clinic-border)] bg-[var(--clinic-panel)] p-5 space-y-4">
               <h2 className="text-base font-semibold text-foreground/80">
                 Convidar equipe
               </h2>
@@ -137,32 +134,31 @@ export default function ClinicOrgHomePage() {
                   <label className="block text-sm font-medium text-foreground/60 mb-1.5">
                     Papel
                   </label>
-                  <select
+                  <Select
                     value={role}
                     onChange={(e) =>
                       setRole(e.target.value as OrganizationRole)
                     }
-                    className="w-full rounded-xl px-4 py-3 text-sm bg-foreground/[0.03] border border-foreground/[0.08] text-foreground/90"
                   >
                     {INVITE_ROLES.map((r) => (
                       <option key={r} value={r}>
                         {r}
                       </option>
                     ))}
-                  </select>
+                  </Select>
                 </div>
                 {inviteOk && (
                   <p className="text-xs text-emerald-600 dark:text-emerald-400">
                     {inviteOk}
                   </p>
                 )}
-                <Button type="submit" isLoading={createInvite.isPending}>
+                <Button type="submit" isLoading={createInvite.isPending} className="!rounded-lg">
                   Enviar convite
                 </Button>
               </form>
 
               {invites.data && invites.data.length > 0 && (
-                <ul className="divide-y divide-foreground/[0.06] pt-2">
+                <ul className="divide-y divide-[var(--clinic-border)] pt-2">
                   {invites.data.slice(0, 8).map((invite) => (
                     <li
                       key={invite.id}

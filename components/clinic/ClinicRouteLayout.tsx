@@ -1,9 +1,16 @@
 "use client";
 
 import { useEffect } from "react";
+import { DM_Sans } from "next/font/google";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth/AuthContext";
-import { Sidebar } from "@/components/dashboard/Sidebar";
+import { ClinicSidebar } from "@/components/clinic/ClinicSidebar";
+
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-clinic",
+});
 
 export function ClinicRouteLayout({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
@@ -17,10 +24,10 @@ export function ClinicRouteLayout({ children }: { children: React.ReactNode }) {
 
   if (isLoading) {
     return (
-      <div className="min-h-full flex items-center justify-center">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 rounded-full border-2 border-anima-violet/30 border-t-anima-violet animate-spin" />
-          <p className="text-sm text-foreground/40">Carregando...</p>
+      <div className={`clinic-shell min-h-full flex items-center justify-center ${dmSans.variable}`}>
+        <div className="flex flex-col items-center gap-3 font-[family-name:var(--font-clinic)]">
+          <div className="w-10 h-10 rounded-full border-2 border-[var(--clinic-accent)]/30 border-t-[var(--clinic-accent)] animate-spin" />
+          <p className="text-sm text-foreground/40">Carregando clínicas...</p>
         </div>
       </div>
     );
@@ -29,9 +36,14 @@ export function ClinicRouteLayout({ children }: { children: React.ReactNode }) {
   if (!user) return null;
 
   return (
-    <div className="flex h-full min-h-screen">
-      <Sidebar />
-      <main id="main-content" className="flex-1 overflow-y-auto pb-20 lg:pb-0">
+    <div
+      className={`clinic-shell flex h-full min-h-screen ${dmSans.variable} font-[family-name:var(--font-clinic)]`}
+    >
+      <ClinicSidebar />
+      <main
+        id="main-content"
+        className="flex-1 overflow-y-auto pb-20 lg:pb-0 clinic-main"
+      >
         {children}
       </main>
     </div>

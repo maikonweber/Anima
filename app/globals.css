@@ -48,6 +48,59 @@
   }
 }
 
+/* EmotiveCare Clínicas — produto B2B separado do app do paciente */
+.clinic-shell {
+  --background: #f3f6f5;
+  --foreground: #12202a;
+  --clinic-accent: #0f766e;
+  --clinic-accent-soft: rgba(15, 118, 110, 0.12);
+  --clinic-sidebar: #eef3f2;
+  --clinic-panel: #ffffff;
+  --clinic-border: rgba(18, 32, 42, 0.08);
+  --clinic-row-hover: rgba(15, 118, 110, 0.06);
+  --anima-violet: #0f766e;
+  --anima-indigo: #115e59;
+  --anima-lilac: #5eead4;
+  --anima-surface-glass: rgba(255, 255, 255, 0.85);
+  --anima-border-glass: rgba(18, 32, 42, 0.08);
+  --anima-glow: rgba(15, 118, 110, 0.2);
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.clinic-shell .clinic-main {
+  background:
+    radial-gradient(ellipse 80% 50% at 100% -10%, rgba(15, 118, 110, 0.08), transparent 55%),
+    radial-gradient(ellipse 60% 40% at 0% 100%, rgba(17, 94, 89, 0.05), transparent 50%),
+    var(--background);
+}
+
+@media (prefers-color-scheme: dark) {
+  .clinic-shell {
+    --background: #0a1113;
+    --foreground: #e8eef0;
+    --clinic-accent: #2dd4bf;
+    --clinic-accent-soft: rgba(45, 212, 191, 0.12);
+    --clinic-sidebar: #0d1518;
+    --clinic-panel: #111a1d;
+    --clinic-border: rgba(232, 238, 240, 0.08);
+    --clinic-row-hover: rgba(45, 212, 191, 0.08);
+    --anima-violet: #2dd4bf;
+    --anima-indigo: #14b8a6;
+    --anima-lilac: #99f6e4;
+    --anima-surface-glass: rgba(255, 255, 255, 0.04);
+    --anima-border-glass: rgba(255, 255, 255, 0.08);
+    --anima-glow: rgba(45, 212, 191, 0.25);
+  }
+
+  .clinic-shell .clinic-main {
+    background:
+      radial-gradient(ellipse 80% 50% at 100% -10%, rgba(45, 212, 191, 0.07), transparent 55%),
+      radial-gradient(ellipse 60% 40% at 0% 100%, rgba(20, 184, 166, 0.04), transparent 50%),
+      var(--background);
+  }
+}
+
 body {
   background: var(--background);
   color: var(--foreground);

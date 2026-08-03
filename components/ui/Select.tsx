@@ -3,7 +3,7 @@
 import { forwardRef, type SelectHTMLAttributes } from "react";
 
 export const selectClassName =
-  "anima-select w-full rounded-xl px-3 py-2.5 text-sm cursor-pointer " +
+  "anima-select w-full rounded-xl px-4 py-3 text-sm cursor-pointer " +
   "bg-foreground/[0.03] border border-foreground/[0.08] " +
   "text-foreground/90 " +
   "focus:outline-none focus:ring-2 focus:ring-anima-violet/30 focus:border-anima-violet/40 " +

@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import { motion } from "motion/react";
 import { Button } from "@/components/ui/Button";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
+import { Select } from "@/components/ui/Select";
 import {
   PatientStatusBadge,
   STATUS_LABELS,
@@ -101,12 +102,11 @@ export default function PatientDetailPage() {
               <h2 className="text-base font-semibold text-foreground/80">
                 Alterar status do funil
               </h2>
-              <select
+              <Select
                 value={status}
                 onChange={(e) =>
                   setStatus(e.target.value as PatientStatus | "")
                 }
-                className="w-full rounded-xl px-4 py-3 text-sm bg-foreground/[0.03] border border-foreground/[0.08] text-foreground/90"
               >
                 <option value="">Selecione...</option>
                 {(Object.keys(STATUS_LABELS) as PatientStatus[])
@@ -116,7 +116,7 @@ export default function PatientDetailPage() {
                       {STATUS_LABELS[key]}
                     </option>
                   ))}
-              </select>
+              </Select>
               <textarea
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
