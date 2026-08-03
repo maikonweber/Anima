@@ -188,8 +188,8 @@ export const homeEn = {
         price: "R$ 9.99/mo",
         tagline: "The second brain in your pocket.",
         features: [
-          "Everything in Essential, without monthly caps on entries, AI, and assistant",
-          "Assistant with semantic memory of your history",
+          "Everything in Essential, without monthly caps on entries and AI",
+          "Up to 500 assistant interactions per month",
           "Sleep, stress, socialization, and burnout tracking",
           "Share dashboard with 1 trusted professional",
         ],

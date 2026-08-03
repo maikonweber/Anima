@@ -77,8 +77,8 @@ export const en: MarketingDictionary = {
         name: "Pleno",
         tagline: "R$ 9.99/mo — a second brain in your pocket.",
         points: [
-          "Everything in Essential, without monthly caps (journal, AI, and assistant)",
-          "Assistant with semantic memory of your history",
+          "Everything in Essential, without monthly caps on journal and AI",
+          "Up to 500 assistant interactions per month",
           "Tracking for sleep, stress, socialization, and burnout",
           "Share dashboard with 1 trusted professional",
         ],

@@ -184,8 +184,8 @@ export const homePt = {
         price: "R$ 9,99/mês",
         tagline: "O segundo cérebro no seu bolso.",
         features: [
-          "Tudo do Essencial, sem limites mensais de registro, IA e assistente",
-          "Assistente com memória semântica do seu histórico",
+          "Tudo do Essencial, sem limites mensais de registro e IA",
+          "Até 500 interações do assistente por mês",
           "Tracking de sono, estresse, socialização e burnout",
           "Compartilhar dashboard com 1 profissional de confiança",
         ],

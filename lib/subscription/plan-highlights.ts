@@ -3,9 +3,9 @@ import type { PlanLimits, PlanSlug } from "@/types/subscription";
 
 const PLAN_TAGLINES: Record<PlanSlug, string> = {
   essencial: "Para começar a se entender — diário e SENTIO AI no seu ritmo.",
-  pleno: "Segundo cérebro completo e ilimitado: memória, tracking e compartilhar com 1 profissional — R$ 9,99/mês.",
+  pleno: "Segundo cérebro completo: memória, tracking, 500 interações do assistente/mês e 1 profissional — R$ 9,99.",
   cuidado:
-    "Para profissionais no app: dashboards ilimitados de pacientes que te convidam (leitura).",
+    "Para profissionais no app: dashboards ilimitados por convite e 500 interações do assistente/mês.",
   preview: "Modo demonstração — limites ampliados durante o período experimental",
 };
 
