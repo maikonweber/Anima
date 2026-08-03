@@ -54,4 +54,7 @@ export type {
   PatientConsent,
   PatientConsentStatus,
   ConsentExportRequest,
+  ClinicalNote,
+  ClinicalNoteStatus,
+  ClinicalNoteAddendum,
 } from "@anima/shared";

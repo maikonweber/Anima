@@ -12,6 +12,7 @@ import {
   STATUS_LABELS,
 } from "@/components/clinic/PatientStatusBadge";
 import { PatientConsentsPanel } from "@/components/clinic/PatientConsentsPanel";
+import { PatientClinicalNotesPanel } from "@/components/clinic/PatientClinicalNotesPanel";
 import { usePatient, useUpdatePatientStatus } from "@/hooks/use-patients";
 import type { PatientStatus } from "@anima/shared";
 
@@ -134,6 +135,8 @@ export default function PatientDetailPage() {
             </form>
 
             <PatientConsentsPanel orgId={orgId} patientId={patientId} />
+
+            <PatientClinicalNotesPanel orgId={orgId} patientId={patientId} />
 
             {data.contacts.length > 0 && (
               <section className="mb-6">

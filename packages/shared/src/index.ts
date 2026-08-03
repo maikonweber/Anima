@@ -22,6 +22,7 @@ export * from "./api/organizations";
 export * from "./api/patients";
 export * from "./api/agenda";
 export * from "./api/consents";
+export * from "./api/clinical-notes";
 
 export {
   configureTokenStorage,
