@@ -2,10 +2,10 @@ import { formatLimit } from "@/lib/subscription/utils";
 import type { PlanLimits, PlanSlug } from "@/types/subscription";
 
 const PLAN_TAGLINES: Record<PlanSlug, string> = {
-  essencial: "Para começar sua jornada emocional.",
-  pleno: "Para quem deseja acompanhamento contínuo e insights avançados.",
+  essencial: "Para começar a se entender — diário e SENTIO AI no seu ritmo.",
+  pleno: "Segundo cérebro completo: memória, tracking e compartilhar com 1 profissional.",
   cuidado:
-    "Para profissionais que acompanham pacientes com mais contexto.",
+    "Para profissionais no app: acompanhe até 99 pacientes que te convidam (leitura).",
   preview: "Modo demonstração — limites ampliados durante o período experimental",
 };
 
@@ -60,16 +60,16 @@ export function buildPlanHighlights(limits: PlanLimits): string[] {
 
   if (limits.accessiblePatients != null) {
     items.push(
-      `Até ${limits.accessiblePatients} dashboards de pacientes autorizados`,
+      `Até ${limits.accessiblePatients} dashboards Cuidado (leitura, por convite)`,
     );
   }
 
   if (limits.canShareDashboard && !items.some((i) => i.toLowerCase().includes("compartilh"))) {
-    items.push("Convidar profissionais para dashboard em leitura");
+    items.push("Convidar 1 profissional para dashboard em leitura (Pleno)");
   }
 
   if (limits.canViewSharedDashboard) {
-    items.push("Visualizar dashboards compartilhados por pacientes");
+    items.push("Visualizar dashboards de pacientes no plano Cuidado");
   }
 
   return items;

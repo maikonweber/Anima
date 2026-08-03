@@ -275,7 +275,7 @@ export function HomePage({ locale }: { locale: Locale }) {
               <h2 className="text-2xl sm:text-3xl font-bold text-foreground/85 text-center mb-10">
                 {t.audiences.title}
               </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {t.audiences.items.map((audience) => (
                   <div key={audience.title} className="glass-panel p-8">
                     <p className="text-xs font-medium uppercase tracking-widest text-anima-violet mb-3">

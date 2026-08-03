@@ -12,37 +12,37 @@ export const faqEntries: FaqEntry[] = [
   {
     question: "A EmotiveCare é terapia?",
     answer:
-      "Não. A EmotiveCare é uma ferramenta de autoconhecimento e apoio emocional. Ela ajuda você a organizar e entender o que sente, mas não faz diagnóstico, não promete cura e não substitui o acompanhamento de psicólogos(as) ou médicos. Em momentos de sofrimento intenso, sugere buscar ajuda profissional.",
+      "Não. É autoconhecimento e apoio emocional. Não diagnostica, não promete cura e não substitui psicólogo(a) ou médico. Em sofrimento intenso, orienta a buscar ajuda profissional.",
   },
   {
-    question: "A plataforma faz diagnóstico automático?",
+    question: "Qual a diferença entre Pleno, Cuidado e Clínicas?",
     answer:
-      "Não. Os insights são reflexões sobre padrões e energia que você relata — ou que um profissional vê com contexto autorizado. Não há avaliação clínica automática.",
+      "Pleno é o plano completo do app para a pessoa (memória, tracking, compartilhar com 1 profissional). Cuidado é o plano do profissional no app para acompanhar pacientes que o convidam. EmotiveCare Clínicas é outro produto: CRM, agenda, teleconsulta e prontuário da organização — separado do diário pessoal.",
+  },
+  {
+    question: "O que é EmotiveCare Clínicas?",
+    answer:
+      "É a suíte para profissionais e clínicas: pacientes do tenant, agenda, disponibilidade, teleconsulta, notas clínicas, consentimentos, lembretes, plano de cuidado e sínteses de IA com revisão humana. Não substitui o julgamento clínico.",
   },
   {
     question: "Como funciona a SENTIO AI?",
     answer:
-      "A SENTIO AI é o motor contextual da EmotiveCare. Ela sintetiza padrões, tendências semanais e sugestões de autocuidado a partir dos dados que você opta por registrar — sempre sem prometer diagnóstico automático nem substituir julgamento clínico.",
+      "Ela sintetiza padrões e sugestões de autocuidado a partir do que você registra — ou, em Clínicas, gera sínteses que o profissional revisa antes de integrar ao prontuário. Sem diagnóstico automático.",
   },
   {
     question: "O que é o segundo cérebro emocional?",
     answer:
-      "É a forma como a EmotiveCare guarda e conecta suas emoções por significado, e não apenas por data. Usando busca semântica (embeddings e memória vetorial), encontra no seu histórico os momentos parecidos com o que você vive agora e os traz para a conversa — como uma memória emocional que lembra e conecta pontos por você.",
-  },
-  {
-    question: "Funciona sem escrever muito?",
-    answer:
-      "Sim. Você pode registrar apenas a energia, o humor e algumas tags de emoção em poucos segundos. Quanto mais você escreve, mais ricas ficam as reflexões, mas a EmotiveCare não exige textos longos para começar.",
+      "É a forma como a EmotiveCare conecta emoções por significado, não só por data. Com busca semântica, encontra no histórico momentos parecidos com o agora e os traz para a conversa.",
   },
   {
     question: "Posso compartilhar registros com meu(a) psicólogo(a)?",
     answer:
-      "Sim. Quando quiser, você convida profissionais de confiança para visualizar dashboards em modo somente leitura, conforme o plano. O paciente pode pausar ou revogar o acesso a qualquer momento.",
+      "Sim. No app, você convida profissionais (planos Pleno/Cuidado). Em Clínicas, o consentimento é por propósito e o paciente controla o que liberar. Dá para pausar ou revogar a qualquer momento.",
   },
   {
     question: "Meus dados estão seguros?",
     answer:
-      "Sim. Seus registros são seus: você decide o que escrever, o que revisar com a IA e o que compartilhar. Tratamos os dados com cuidado e em conformidade com a LGPD. Use senhas fortes e busque rede de urgência sempre que precisar de suporte imediato.",
+      "Sim. Você decide o que escrever, o que a IA analisa e o que compartilhar. Tratamos dados sob LGPD. Em urgência emocional, priorize redes de apoio e serviços de emergência.",
   },
 ];
 

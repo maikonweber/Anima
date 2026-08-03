@@ -2,6 +2,7 @@ export type NavDictionary = {
   about: string;
   plans: string;
   psychologists: string;
+  clinics: string;
   faq: string;
   blog: string;
   contact: string;
@@ -113,7 +114,25 @@ export type PsychologistsDictionary = {
   ctaRegister: string;
   ctaPlans: string;
   ctaFaq: string;
+  ctaClinics: string;
   flowNavAria: string;
+};
+
+export type ClinicsDictionary = {
+  title: string;
+  eyebrow: string;
+  intro: string;
+  splitTitle: string;
+  splitBody: string;
+  modulesTitle: string;
+  modules: Array<{ title: string; text: string }>;
+  forWhomTitle: string;
+  forWhom: string[];
+  ethicsTitle: string;
+  ethicsBody: string;
+  ctaOpen: string;
+  ctaPlans: string;
+  ctaPsych: string;
 };
 
 export type ExternalResource = {
@@ -193,6 +212,7 @@ export type MarketingDictionary = {
   contact: ContactDictionary;
   privacy: PrivacyDictionary;
   psychologists: PsychologistsDictionary;
+  clinics: ClinicsDictionary;
   resources: ResourcesDictionary;
   terms: TermsDictionary;
   auth: AuthDictionary;

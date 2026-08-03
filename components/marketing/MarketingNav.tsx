@@ -16,6 +16,7 @@ const LINK_KEYS = [
   { path: "/about", key: "about" },
   { path: "/plans", key: "plans" },
   { path: "/psychologists", key: "psychologists" },
+  { path: "/clinicas", key: "clinics" },
   { path: "/faq", key: "faq" },
   { path: "/blog", key: "blog" },
   { path: "/contact", key: "contact" },

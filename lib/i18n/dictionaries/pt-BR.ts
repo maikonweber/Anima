@@ -4,7 +4,8 @@ export const ptBR: MarketingDictionary = {
   nav: {
     about: "Sobre",
     plans: "Planos",
-    psychologists: "Psicólogos",
+    psychologists: "Cuidado",
+    clinics: "Clínicas",
     faq: "FAQ",
     blog: "Blog",
     contact: "Contato",
@@ -37,19 +38,19 @@ export const ptBR: MarketingDictionary = {
     introAfter: ", com domínio público em",
     missionTitle: "Missão",
     missionBody:
-      "Oferecer um segundo cérebro emocional: um diário que não só guarda textos, mas conecta significados, devolve reflexões honestas e respeita o limite entre apoio digital e cuidado clínico humano.",
+      "Oferecer um segundo cérebro emocional para a pessoa — e, em EmotiveCare Clínicas, uma operação segura para a clínica. Diário com significado, vínculos com consentimento e ferramentas que respeitam o limite entre apoio digital e cuidado clínico humano.",
     sentioTitle: "SENTIO AI e MutterCorp",
     sentioBefore: "A",
     sentioBrand: "SENTIO AI",
     sentioAfter:
-      "desenvolve reflexões contextualizadas a partir das informações que você opta por registrar — com busca semântica no histórico e guardrails linguísticos. A MutterCorp agrupa esse ecossistema com privacidade (LGPD) e comunicação responsável sobre saúde emocional.",
+      "desenvolve reflexões contextualizadas a partir do que você registra — e, em Clínicas, rascunhos de síntese que o profissional revisa. A MutterCorp mantém privacidade (LGPD) e comunicação responsável sobre saúde emocional.",
     whatWeDoTitle: "O que fazemos",
     whatWeDo: [
-      "Diário de energia emocional guiado por IA contextual.",
-      "Linha do tempo com memória longitudinal e resumos semanais.",
-      "Assistente focado em emoções, humor, energia e autocuidado.",
-      "Painéis compartilháveis apenas com consentimento do paciente.",
-      "Ferramentas de autoconhecimento — não tratamento automatizado.",
+      "App EmotiveCare: diário, SENTIO AI, resumos e assistente com memória (Pleno).",
+      "Plano Cuidado: dashboards em leitura para profissionais convidados pelo paciente.",
+      "EmotiveCare Clínicas: CRM, agenda, teleconsulta, prontuário e consentimentos por organização.",
+      "Plano de cuidado, lembretes e sínteses revisáveis na operação clínica.",
+      "Ferramentas de apoio — nunca tratamento automatizado nem diagnóstico por IA.",
     ],
     whatWeDontTitle: "O que não fazemos",
     whatWeDontBody:
@@ -61,14 +62,14 @@ export const ptBR: MarketingDictionary = {
   plans: {
     title: "Planos EmotiveCare",
     intro:
-      "Escolha o nível de acompanhamento que faz sentido agora. Você sempre controla o que registrar, quando pedir insights da SENTIO AI e quem pode ver informações compartilhadas. Limites e preços atualizados aparecem na área autenticada, com checkout seguro.",
+      "Essencial e Pleno são do app da pessoa. Cuidado é o plano do profissional no app (acompanhamento por convite). A operação da clínica — CRM, agenda, teleconsulta — fica em EmotiveCare Clínicas, produto separado. Você controla o que registrar, o que a SENTIO AI analisa e o que compartilhar.",
     plans: [
       {
         name: "Essencial",
         tagline: "Para começar a se entender.",
         points: [
           "Diário de energia emocional (texto, energia 0–100, humor e tags)",
-          "Análise emocional com SENTIO AI por registro",
+          "Análise com SENTIO AI por registro",
           "Resumo semanal da jornada emocional",
         ],
       },
@@ -76,30 +77,30 @@ export const ptBR: MarketingDictionary = {
         name: "Pleno",
         tagline: "O segundo cérebro no seu bolso.",
         points: [
-          "Tudo do Essencial",
-          "Assistente emocional com memória semântica do histórico",
+          "Tudo do Essencial, sem teto mensal de registros",
+          "Assistente com memória semântica do seu histórico",
           "Tracking de sono, estresse, socialização e burnout",
-          "Compartilhamento com um profissional de confiança",
+          "Compartilhar dashboard com 1 profissional de confiança",
         ],
       },
       {
         name: "Cuidado",
-        tagline: "Para psicólogos e acompanhamento clínico.",
+        tagline: "Para quem acompanha entre sessões.",
         points: [
-          "Modo Cuidado com convites controlados pelo paciente",
-          "Dashboards em modo leitura entre sessões",
-          "Contexto longitudinal para enriquecer a escuta — sem substituí-la",
+          "Até 99 dashboards de pacientes que autorizam o acesso",
+          "Contexto emocional em leitura entre consultas",
+          "Pacientes vinculados herdam benefícios equivalentes ao Pleno",
         ],
       },
     ],
-    controlTitle: "Controle, privacidade e IA responsável",
+    controlTitle: "Controle, privacidade e dois produtos",
     controlBody:
-      "Nenhum plano transforma a EmotiveCare em terapia ou diagnóstico automático. A SENTIO AI descreve padrões a partir do que você registra; o compartilhamento com profissionais só ocorre com o seu consentimento e pode ser revogado.",
-    controlFaqBefore: "Dúvidas frequentes estão na",
+      "Nenhum plano transforma a EmotiveCare em terapia ou diagnóstico automático. O app (Essencial/Pleno/Cuidado) e EmotiveCare Clínicas são superfícies diferentes: um cuida da jornada da pessoa; o outro opera a clínica com papéis, auditoria e consentimento por propósito.",
+    controlFaqBefore: "Dúvidas na",
     controlFaqLink: "FAQ",
-    controlFaqMid: ". Profissionais encontram o fluxo de convites em",
-    controlPsychLink: "EmotiveCare para psicólogos",
-    controlAfter: ".",
+    controlFaqMid: ". Acompanhamento por convite em",
+    controlPsychLink: "plano Cuidado",
+    controlAfter: "; operação da clínica em EmotiveCare Clínicas.",
     ctaRegister: "Começar agora",
     ctaLogin: "Já sou usuário · Entrar",
     ctaBlog: "Ler o blog",
@@ -134,35 +135,84 @@ export const ptBR: MarketingDictionary = {
       "Documentação contratual detalhada pode ser atualizada assim que o time jurídico publicar políticas versionadas.",
   },
   psychologists: {
-    title: "EmotiveCare para profissionais",
+    title: "Plano Cuidado — entre sessões",
     introBefore:
-      "Entre sessões, o contexto emocional do paciente costuma se perder. Com o",
-    introMode: "Modo Cuidado",
+      "Entre uma consulta e outra, o contexto emocional do paciente some. Com o",
+    introMode: "plano Cuidado",
     introAfter:
-      ", a EmotiveCare oferece dashboards em modo leitura, tendências de energia e resumos estruturados — somente quando o paciente convida você conscientemente.",
+      ", o profissional acompanha dashboards em leitura — só quando o paciente convida. Não é o prontuário da clínica: isso fica em EmotiveCare Clínicas.",
     howTitle: "Como funciona na prática",
     howSteps: [
-      "O paciente registra emoções e energia no diário.",
-      "Ele envia um convite seguro para o profissional.",
-      "Você acompanha a evolução em painéis dedicados (somente leitura).",
-      "O paciente pode pausar ou revogar o acesso a qualquer momento.",
+      "O paciente registra emoções e energia no app EmotiveCare.",
+      "Com Pleno (ou benefício herdado), ele envia um convite seguro.",
+      "Você, no plano Cuidado, vê evolução e tendências em leitura.",
+      "O paciente pausa ou revoga o acesso quando quiser.",
     ],
     idealTitle: "Ideal para",
     idealItems: [
       "Psicólogos(as) em atendimento continuado;",
       "Profissionais que querem enriquecer a pré-consulta com contexto longitudinal;",
-      "Clínicas que precisam de acompanhamento digital moderado, com consentimento explícito.",
+      "Quem precisa de acompanhamento digital leve, sem operar CRM ou agenda da clínica.",
     ],
     ethicsTitle: "Limites éticos",
     ethicsBefore:
-      "A SENTIO AI sintetiza o que o paciente registrou; a interpretação clínica continua sendo sua. A plataforma não diagnostica, não prescreve e não substitui a escuta. Leia também o artigo",
+      "A SENTIO AI sintetiza o que o paciente registrou; a interpretação clínica continua sendo sua. A plataforma não diagnostica, não prescreve e não substitui a escuta. Para CRM, agenda e teleconsulta use EmotiveCare Clínicas. Leia também",
     ethicsLink: "Como psicólogos usam o dashboard entre sessões",
     ethicsAfter: ".",
     ethicsArticleSlug: "como-profissionais-usam-dashboard-terapeutico",
     ctaRegister: "Começar como profissional",
     ctaPlans: "Ver plano Cuidado",
     ctaFaq: "FAQ",
-    flowNavAria: "Fluxo profissional",
+    ctaClinics: "Conhecer Clínicas",
+    flowNavAria: "Fluxo profissional Cuidado",
+  },
+  clinics: {
+    eyebrow: "Produto para profissionais de saúde",
+    title: "EmotiveCare Clínicas",
+    intro:
+      "A suíte operacional da clínica: pacientes do tenant, agenda, teleconsulta, prontuário e consentimentos — separada do diário pessoal do app EmotiveCare.",
+    splitTitle: "Clínicas ≠ Cuidado ≠ Pleno",
+    splitBody:
+      "Pleno é a jornada completa da pessoa no app. Cuidado é o plano do profissional para dashboards por convite. Clínicas é multi-tenant: CRM, papéis, auditoria e fluxos clínicos da organização.",
+    modulesTitle: "O que já está no produto",
+    modules: [
+      {
+        title: "CRM de pacientes",
+        text: "Cadastro, funil (lead → ativo → alta), contatos e histórico de status por organização.",
+      },
+      {
+        title: "Agenda e disponibilidade",
+        text: "Sessões, confirmação, remarcação e grade semanal do profissional.",
+      },
+      {
+        title: "Teleconsulta",
+        text: "Sala autenticada com join por código — alinhada à sessão agendada.",
+      },
+      {
+        title: "Prontuário e sínteses",
+        text: "Notas clínicas com assinatura/adendo e sínteses SENTIO AI revisáveis antes de entrar no prontuário.",
+      },
+      {
+        title: "Consentimentos e diário",
+        text: "Consentimento por propósito; diário do app só entra na clínica com autorização — inclusive por registro.",
+      },
+      {
+        title: "Plano de cuidado e lembretes",
+        text: "Itens liberados ao paciente, próximas sessões e lembretes de medicação/atividade in-app.",
+      },
+    ],
+    forWhomTitle: "Para quem",
+    forWhom: [
+      "Clínicas e consultórios multi-profissional",
+      "Psicólogos(as) que precisam de operação além do dashboard entre sessões",
+      "Equipes com secretaria, admin e DPO em papéis distintos",
+    ],
+    ethicsTitle: "Ética e responsabilidade",
+    ethicsBody:
+      "Clínicas organiza o trabalho clínico; não substitui julgamento profissional. Sínteses de IA exigem revisão humana. Consentimento e auditoria acompanham o acesso a dados sensíveis.",
+    ctaOpen: "Abrir Clínicas",
+    ctaPlans: "Ver planos do app",
+    ctaPsych: "Plano Cuidado",
   },
   resources: {
     title: "Recursos",

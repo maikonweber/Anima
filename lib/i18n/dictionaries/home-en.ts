@@ -65,68 +65,78 @@ export const homeEn = {
       "“Three weeks ago you felt something similar, also the night before a meeting. That day, breathing before you started helped.” EmotiveCare remembers for you.",
   },
   features: {
-    title: "Everything EmotiveCare does for you",
+    title: "Two products under one brand",
     subtitle:
-      "More than a journal: a complete system for emotional self-awareness.",
+      "EmotiveCare supports the person’s emotional journey. EmotiveCare Clinics runs the professional and clinic operation.",
     items: [
       {
         title: "Emotional energy journal",
         description:
-          "Free text plus energy level (0–100), mood, anxiety, emotional intensity, and emotion tags. Simple to log, rich to follow.",
+          "Log in minutes: free text, energy 0–100, mood, and emotions. Simple to use, rich to follow over time.",
       },
       {
-        title: "AI emotional analysis",
+        title: "SENTIO AI at your pace",
         description:
-          "Each entry reveals calculated energy, detected emotions, the hidden emotion, the compound emotion, the need and desire of the moment — with a concrete action and an empathetic summary.",
+          "Each entry becomes a contextual reflection — patterns, needs, and a concrete action — without automatic diagnosis or miracle-cure language.",
       },
       {
-        title: "Emotional second brain (RAG)",
+        title: "Emotional second brain (Pleno)",
         description:
-          "Semantic search with vector memory across your full history. In every conversation, the assistant brings the entries that truly matter to what you feel now.",
+          "Semantic memory of your history: the assistant brings moments like now and connects dots you had already forgotten.",
       },
       {
-        title: "Safe emotional assistant",
+        title: "Pleno plan — full journey",
         description:
-          "Focused only on emotions, mood, energy, anxiety, relationships, and self-care — with protection layers (guardrails) and a suggestion to seek professional help in intense distress. Not a generic ChatGPT.",
+          "Unlimited journal, sleep/stress/burnout tracking, memory-backed assistant, and the right to share your dashboard with one trusted professional.",
       },
       {
-        title: "Weekly summary",
+        title: "Cuidado plan — between sessions",
         description:
-          "Your average energy, the week’s trend (rising, stable, or falling), the most frequent emotions, and the main needs of the period.",
+          "For professionals: follow up to 99 patients who invite you to see emotional progress in read-only mode — pause and revoke anytime.",
       },
       {
-        title: "Well-being tracking",
+        title: "EmotiveCare Clinics — operations",
         description:
-          "Follow sleep, stress, socialization, motivation, and burnout over time and see how each one influences your energy.",
+          "A separate product for clinics: patient CRM, scheduling, availability, teleconsult, clinical notes, consents, reminders, care plans, and human-reviewed AI syntheses.",
       },
       {
-        title: "Care Mode (for psychologists)",
+        title: "Consent and privacy",
         description:
-          "Invites to follow patients who choose to share their progress — continuous support between sessions.",
+          "You decide what to log, what AI analyzes, and what a professional may see — by purpose, by entry, always under LGPD.",
       },
     ],
   },
   audiences: {
-    title: "Who EmotiveCare is for",
+    title: "Three ways to use EmotiveCare",
     items: [
       {
-        eyebrow: "For you",
-        title: "For people who want to understand themselves better",
-        text: "People seeking to understand their own emotions, reduce anxiety and burnout, and build self-awareness at their own pace — without judgment and without rush.",
+        eyebrow: "Patient app · Pleno",
+        title: "For people who want to understand themselves",
+        text: "Start on Essential and move to Pleno when you want continuous memory, full tracking, and a professional watching along — only if you authorize it.",
         bullets: [
-          "A journal that returns meaning, not just stored text",
-          "Reflections based on your story, not canned answers",
-          "Light tracking of your energy, sleep, and stress",
+          "Journal + SENTIO AI without turning emotion into a diagnosis",
+          "Pleno: second brain, tracking, and safe sharing",
+          "Reminders and care-plan items released by a professional when linked",
         ],
       },
       {
-        eyebrow: "For psychologists",
-        title: "For people who care for others",
-        text: "Professionals who want to follow patients between sessions. With Care Mode, you receive invites to accompany those who choose to share their own progress.",
+        eyebrow: "Cuidado plan",
+        title: "For those who follow between sessions",
+        text: "Cuidado is the professional plan inside the EmotiveCare app: read-only dashboards for patients who invite you — continuous context, not the clinic chart.",
         bullets: [
-          "Secure invites controlled by the patient",
-          "Continuous context to enrich listening",
-          "Complements clinical practice — never replaces it",
+          "Up to 99 patient dashboards authorized by the patient",
+          "Emotional trends between appointments",
+          "Complements clinical listening — never replaces it",
+        ],
+      },
+      {
+        eyebrow: "EmotiveCare Clinics",
+        title: "For those who run the clinic",
+        text: "Clinics is the B2B product: multi-tenant CRM, agenda, teleconsult, and notes with roles and audit. Separate from the personal journal — built for the care team.",
+        bullets: [
+          "CRM, funnel, and contacts per organization",
+          "Scheduling, availability, and teleconsult",
+          "Clinical notes, consents, reminders, care plans, and human-reviewed syntheses",
         ],
       },
     ],
@@ -153,12 +163,13 @@ export const homeEn = {
     ],
   },
   plans: {
-    title: "Plans for every stage",
-    subtitle: "Start free and upgrade when it makes sense for you.",
+    title: "EmotiveCare app plans",
+    subtitle:
+      "Essential and Pleno are for the person. Cuidado is for the professional in the app. Clinic operations live in EmotiveCare Clinics — a separate product.",
     highlightedBadge: "Most complete",
-    detailsBefore: "You can find details and pricing for each plan on the",
+    detailsBefore: "Details and pricing on the",
     detailsLink: "Plans",
-    detailsAfter: " page.",
+    detailsAfter: " page. For CRM, scheduling, and teleconsult, see EmotiveCare Clinics.",
     items: [
       {
         name: "Essential",
@@ -166,35 +177,35 @@ export const homeEn = {
         tagline: "To start understanding yourself.",
         features: [
           "Emotional energy journal",
-          "AI emotional analysis",
-          "Weekly summary",
+          "SENTIO AI analysis per entry",
+          "Weekly journey summary",
         ],
         cta: "Start free",
         highlighted: false,
       },
       {
-        name: "Full",
+        name: "Pleno",
         price: "Subscription",
         tagline: "The second brain in your pocket.",
         features: [
-          "Everything in Essential",
-          "Emotional assistant with memory of your history (RAG)",
-          "Full sleep, stress, and burnout tracking",
-          "Sharing with a trusted professional",
+          "Everything in Essential, without monthly entry caps",
+          "Assistant with semantic memory of your history",
+          "Sleep, stress, socialization, and burnout tracking",
+          "Share dashboard with 1 trusted professional",
         ],
-        cta: "I want Full",
+        cta: "I want Pleno",
         highlighted: true,
       },
       {
-        name: "Care",
-        price: "For psychologists",
-        tagline: "Follow your patients.",
+        name: "Cuidado",
+        price: "For professionals",
+        tagline: "Follow those who invite you.",
         features: [
-          "Care Mode with patient invites",
-          "Continuous follow-up between sessions",
-          "Dashboards dedicated to the professional",
+          "Up to 99 authorized patient dashboards",
+          "Emotional context between sessions (read-only)",
+          "Linked patients inherit Pleno benefits",
         ],
-        cta: "I am a psychologist",
+        cta: "I am a professional",
         highlighted: false,
       },
     ],
@@ -205,49 +216,44 @@ export const homeEn = {
       {
         question: "Is EmotiveCare therapy?",
         answer:
-          "No. EmotiveCare is a self-awareness and emotional support tool. It helps you organize and understand what you feel, but it does not diagnose, does not promise a cure, and does not replace care from psychologists or physicians. In moments of intense distress, it suggests seeking professional help.",
+          "No. It is self-awareness and emotional support. It does not diagnose, does not promise a cure, and does not replace a psychologist or physician. In intense distress, it points you to professional help.",
       },
       {
-        question: "Does the platform make automatic diagnoses?",
+        question: "What is the difference between Pleno, Cuidado, and Clinics?",
         answer:
-          "No. Insights are reflections on patterns and energy you report — or that a professional sees with authorized context. There is no automatic clinical assessment.",
+          "Pleno is the full person plan in the app (memory, tracking, share with 1 professional). Cuidado is the professional plan in the app to follow patients who invite you. EmotiveCare Clinics is another product: organization CRM, scheduling, teleconsult, and clinical notes — separate from the personal journal.",
+      },
+      {
+        question: "What is EmotiveCare Clinics?",
+        answer:
+          "The suite for professionals and clinics: tenant patients, agenda, availability, teleconsult, clinical notes, consents, reminders, care plans, and AI syntheses with human review. It does not replace clinical judgment.",
       },
       {
         question: "How does SENTIO AI work?",
         answer:
-          "SENTIO AI is EmotiveCare’s contextual engine. It synthesizes patterns, weekly trends, and self-care suggestions from the data you choose to log — always without promising automatic diagnosis or replacing clinical judgment.",
-      },
-      {
-        question: "What is the emotional second brain?",
-        answer:
-          "It is how EmotiveCare stores and connects your emotions by meaning, not only by date. Using semantic search (embeddings and vector memory), it finds moments in your history similar to what you are living now and brings them into the conversation — like an emotional memory that remembers and connects dots for you.",
-      },
-      {
-        question: "Does it work without writing much?",
-        answer:
-          "Yes. You can log only energy, mood, and a few emotion tags in seconds. The more you write, the richer the reflections become, but EmotiveCare does not require long texts to get started.",
+          "It synthesizes patterns and self-care suggestions from what you log — or, in Clinics, drafts syntheses that professionals review before charting. No automatic diagnosis.",
       },
       {
         question: "Can I share entries with my psychologist?",
         answer:
-          "Yes. When you want, you invite trusted professionals to view read-only dashboards, depending on the plan. The patient can pause or revoke access at any time.",
+          "Yes. In the app you invite professionals (Pleno/Cuidado). In Clinics, consent is purpose-based and the patient controls what to release. Pause or revoke anytime.",
       },
       {
         question: "Is my data safe?",
         answer:
-          "Yes. Your entries are yours: you decide what to write, what to review with AI, and what to share. We treat data carefully and in line with LGPD. Use strong passwords and seek emergency support whenever you need immediate help.",
+          "Yes. You decide what to write, what AI analyzes, and what to share. We treat data under LGPD. In emotional emergencies, prioritize support networks and emergency services.",
       },
     ],
   },
   finalCta: {
     title: "Start understanding yourself better today",
-    bodyPrefix: "Free to start.",
+    bodyPrefix: "Free on Essential. Move to Pleno when it makes sense.",
     cta: "Start free",
     loginLink: "I already have an account — sign in →",
   },
   footer: {
     brandBlurb:
-      "your emotional second brain. A self-awareness and support tool — it does not replace clinical assessment, diagnosis, or treatment. Product developed by",
+      "supports the person’s emotional journey; Clinics runs the clinic. Self-awareness and support — they do not replace clinical assessment, diagnosis, or treatment. Built by",
     tagline: "It feels with you and remembers for you.",
     quickLinksAria: "Footer quick links",
     about: "About",

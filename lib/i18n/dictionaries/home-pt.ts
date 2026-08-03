@@ -61,68 +61,78 @@ export const homePt = {
       "“Há 3 semanas você sentiu algo parecido, também na véspera de uma reunião. Naquele dia, respirar antes de começar te ajudou.” A EmotiveCare lembra por você.",
   },
   features: {
-    title: "Tudo o que a EmotiveCare faz por você",
+    title: "Dois mundos sob a mesma marca",
     subtitle:
-      "Mais que um diário: um sistema completo de autoconhecimento emocional.",
+      "EmotiveCare cuida da jornada emocional da pessoa. EmotiveCare Clínicas organiza a operação do profissional e da clínica.",
     items: [
       {
         title: "Diário de energia emocional",
         description:
-          "Texto livre + nível de energia (0–100), humor, ansiedade, intensidade emocional e tags de emoções. Simples de registrar, rico de acompanhar.",
+          "Registre em minutos: texto livre, energia 0–100, humor e emoções. Simples de usar, rico para acompanhar ao longo do tempo.",
       },
       {
-        title: "Análise emocional por IA",
+        title: "SENTIO AI no seu ritmo",
         description:
-          "Cada registro revela a energia calculada, as emoções detectadas, a emoção oculta, a emoção composta, a necessidade e o desejo do momento — com uma ação concreta e um resumo empático.",
+          "Cada registro vira reflexão contextual — padrões, necessidades e uma ação concreta — sem diagnóstico automático e sem linguagem de cura milagrosa.",
       },
       {
-        title: "Segundo cérebro emocional (RAG)",
+        title: "Segundo cérebro emocional (Pleno)",
         description:
-          "Busca semântica com memória vetorial em todo o seu histórico. A cada conversa, o assistente traz os registros realmente relevantes ao que você sente agora.",
+          "Memória semântica do seu histórico: o assistente traz momentos parecidos com o agora e conecta pontos que você já tinha esquecido.",
       },
       {
-        title: "Assistente emocional seguro",
+        title: "Plano Pleno — jornada completa",
         description:
-          "Focado só em emoções, humor, energia, ansiedade, relacionamentos e autocuidado — com camadas de proteção (guardrails) e sugestão de ajuda profissional em sofrimento intenso. Não é um ChatGPT genérico.",
+          "Diário ilimitado, tracking de sono, estresse e burnout, assistente com memória e o direito de compartilhar seu dashboard com um profissional de confiança.",
       },
       {
-        title: "Resumo semanal",
+        title: "Plano Cuidado — entre sessões",
         description:
-          "Sua energia média, a tendência da semana (subindo, estável ou descendo), as emoções mais frequentes e as principais necessidades do período.",
+          "Para profissionais: acompanhe até 99 pacientes que convidam você a ver a evolução emocional em leitura — com pausa e revogação a qualquer momento.",
       },
       {
-        title: "Tracking de bem-estar",
+        title: "EmotiveCare Clínicas — operação",
         description:
-          "Acompanhe sono, estresse, socialização, motivação e burnout ao longo do tempo e enxergue como cada um influencia sua energia.",
+          "Produto separado para clínicas: CRM de pacientes, agenda, disponibilidade, teleconsulta, prontuário, consentimentos, lembretes, plano de cuidado e sínteses revisáveis.",
       },
       {
-        title: "Modo Cuidado (para psicólogos)",
+        title: "Consentimento e privacidade",
         description:
-          "Convites para acompanhar pacientes que escolhem compartilhar sua evolução — apoio contínuo entre uma sessão e outra.",
+          "Você decide o que registrar, o que a IA analisa e o que um profissional pode ver — por propósito, por registro e sempre sob LGPD.",
       },
     ],
   },
   audiences: {
-    title: "Para quem é a EmotiveCare",
+    title: "Três formas de usar a EmotiveCare",
     items: [
       {
-        eyebrow: "Para você",
+        eyebrow: "App do paciente · Pleno",
         title: "Para quem quer se entender melhor",
-        text: "Pessoas que buscam compreender as próprias emoções, reduzir ansiedade e burnout e construir autoconhecimento no seu próprio ritmo — sem julgamento e sem pressa.",
+        text: "Comece no Essencial e evolua para o Pleno quando quiser memória contínua, tracking completo e um profissional acompanhando — só se você autorizar.",
         bullets: [
-          "Um diário que devolve significado, não só armazena texto",
-          "Reflexões baseadas na sua história, não em respostas prontas",
-          "Acompanhamento leve da sua energia, sono e estresse",
+          "Diário + SENTIO AI sem transformar emoção em diagnóstico",
+          "Pleno: segundo cérebro, tracking e compartilhamento seguro",
+          "Lembretes e plano de cuidado liberados pelo profissional, quando houver vínculo",
         ],
       },
       {
-        eyebrow: "Para psicólogos",
-        title: "Para quem cuida de outras pessoas",
-        text: "Profissionais que querem acompanhar pacientes entre as sessões. Com o Modo Cuidado, você recebe convites para acompanhar quem escolhe compartilhar a própria evolução.",
+        eyebrow: "Plano Cuidado",
+        title: "Para quem acompanha entre sessões",
+        text: "O Cuidado é o plano do profissional no app EmotiveCare: dashboards em leitura dos pacientes que convidam você — contexto contínuo, sem virar prontuário da clínica.",
         bullets: [
-          "Convites seguros e controlados pelo paciente",
-          "Contexto contínuo para enriquecer a escuta",
-          "Complementa a prática clínica — nunca a substitui",
+          "Até 99 acompanhamentos autorizados pelo paciente",
+          "Evolução emocional e tendências entre consultas",
+          "Complementa a escuta clínica — não a substitui",
+        ],
+      },
+      {
+        eyebrow: "EmotiveCare Clínicas",
+        title: "Para quem opera a clínica",
+        text: "Clínicas é o produto B2B: multi-tenant, CRM, agenda, teleconsulta e prontuário com papéis e auditoria. Separado do diário pessoal — pensado para a equipe de saúde.",
+        bullets: [
+          "CRM, funil e contatos por organização",
+          "Agenda, disponibilidade e teleconsulta",
+          "Notas clínicas, consentimentos, lembretes, plano de cuidado e sínteses com revisão humana",
         ],
       },
     ],
@@ -149,12 +159,13 @@ export const homePt = {
     ],
   },
   plans: {
-    title: "Planos para cada momento",
-    subtitle: "Comece grátis e evolua quando fizer sentido para você.",
+    title: "Planos do app EmotiveCare",
+    subtitle:
+      "Essencial e Pleno são para a pessoa. Cuidado é para o profissional no app. A operação da clínica fica em EmotiveCare Clínicas — produto à parte.",
     highlightedBadge: "Mais completo",
-    detailsBefore: "Você encontra os detalhes e valores de cada plano na página de",
+    detailsBefore: "Detalhes e valores na página de",
     detailsLink: "Planos",
-    detailsAfter: ".",
+    detailsAfter: ". Para CRM, agenda e teleconsulta, conheça EmotiveCare Clínicas.",
     items: [
       {
         name: "Essencial",
@@ -162,8 +173,8 @@ export const homePt = {
         tagline: "Para começar a se entender.",
         features: [
           "Diário de energia emocional",
-          "Análise emocional por IA",
-          "Resumo semanal",
+          "Análise SENTIO AI por registro",
+          "Resumo semanal da jornada",
         ],
         cta: "Começar grátis",
         highlighted: false,
@@ -173,24 +184,24 @@ export const homePt = {
         price: "Assinatura",
         tagline: "O segundo cérebro no seu bolso.",
         features: [
-          "Tudo do Essencial",
-          "Assistente emocional com memória do seu histórico (RAG)",
-          "Tracking completo de sono, estresse e burnout",
-          "Compartilhamento com um profissional de confiança",
+          "Tudo do Essencial, sem limites mensais de registro",
+          "Assistente com memória semântica do seu histórico",
+          "Tracking de sono, estresse, socialização e burnout",
+          "Compartilhar dashboard com 1 profissional de confiança",
         ],
         cta: "Quero o Pleno",
         highlighted: true,
       },
       {
         name: "Cuidado",
-        price: "Para psicólogos",
-        tagline: "Acompanhe seus pacientes.",
+        price: "Para profissionais",
+        tagline: "Acompanhe quem te convida.",
         features: [
-          "Modo Cuidado com convites para pacientes",
-          "Acompanhamento contínuo entre sessões",
-          "Dashboards dedicados ao profissional",
+          "Até 99 dashboards de pacientes autorizados",
+          "Contexto emocional entre sessões (leitura)",
+          "Pacientes vinculados herdam benefícios do Pleno",
         ],
-        cta: "Sou psicólogo(a)",
+        cta: "Sou profissional",
         highlighted: false,
       },
     ],
@@ -201,49 +212,44 @@ export const homePt = {
       {
         question: "A EmotiveCare é terapia?",
         answer:
-          "Não. A EmotiveCare é uma ferramenta de autoconhecimento e apoio emocional. Ela ajuda você a organizar e entender o que sente, mas não faz diagnóstico, não promete cura e não substitui o acompanhamento de psicólogos(as) ou médicos. Em momentos de sofrimento intenso, sugere buscar ajuda profissional.",
+          "Não. É autoconhecimento e apoio emocional. Não diagnostica, não promete cura e não substitui psicólogo(a) ou médico. Em sofrimento intenso, orienta a buscar ajuda profissional.",
       },
       {
-        question: "A plataforma faz diagnóstico automático?",
+        question: "Qual a diferença entre Pleno, Cuidado e Clínicas?",
         answer:
-          "Não. Os insights são reflexões sobre padrões e energia que você relata — ou que um profissional vê com contexto autorizado. Não há avaliação clínica automática.",
+          "Pleno é o plano completo do app para a pessoa (memória, tracking, compartilhar com 1 profissional). Cuidado é o plano do profissional no app para acompanhar pacientes que o convidam. EmotiveCare Clínicas é outro produto: CRM, agenda, teleconsulta e prontuário da organização — separado do diário pessoal.",
+      },
+      {
+        question: "O que é EmotiveCare Clínicas?",
+        answer:
+          "É a suíte para profissionais e clínicas: pacientes do tenant, agenda, disponibilidade, teleconsulta, notas clínicas, consentimentos, lembretes, plano de cuidado e sínteses de IA com revisão humana. Não substitui o julgamento clínico.",
       },
       {
         question: "Como funciona a SENTIO AI?",
         answer:
-          "A SENTIO AI é o motor contextual da EmotiveCare. Ela sintetiza padrões, tendências semanais e sugestões de autocuidado a partir dos dados que você opta por registrar — sempre sem prometer diagnóstico automático nem substituir julgamento clínico.",
-      },
-      {
-        question: "O que é o segundo cérebro emocional?",
-        answer:
-          "É a forma como a EmotiveCare guarda e conecta suas emoções por significado, e não apenas por data. Usando busca semântica (embeddings e memória vetorial), encontra no seu histórico os momentos parecidos com o que você vive agora e os traz para a conversa — como uma memória emocional que lembra e conecta pontos por você.",
-      },
-      {
-        question: "Funciona sem escrever muito?",
-        answer:
-          "Sim. Você pode registrar apenas a energia, o humor e algumas tags de emoção em poucos segundos. Quanto mais você escreve, mais ricas ficam as reflexões, mas a EmotiveCare não exige textos longos para começar.",
+          "Ela sintetiza padrões e sugestões de autocuidado a partir do que você registra — ou, em Clínicas, gera sínteses que o profissional revisa antes de integrar ao prontuário. Sem diagnóstico automático.",
       },
       {
         question: "Posso compartilhar registros com meu(a) psicólogo(a)?",
         answer:
-          "Sim. Quando quiser, você convida profissionais de confiança para visualizar dashboards em modo somente leitura, conforme o plano. O paciente pode pausar ou revogar o acesso a qualquer momento.",
+          "Sim. No app, você convida profissionais (planos Pleno/Cuidado). Em Clínicas, o consentimento é por propósito e o paciente controla o que liberar. Dá para pausar ou revogar a qualquer momento.",
       },
       {
         question: "Meus dados estão seguros?",
         answer:
-          "Sim. Seus registros são seus: você decide o que escrever, o que revisar com a IA e o que compartilhar. Tratamos os dados com cuidado e em conformidade com a LGPD. Use senhas fortes e busque rede de urgência sempre que precisar de suporte imediato.",
+          "Sim. Você decide o que escrever, o que a IA analisa e o que compartilhar. Tratamos dados sob LGPD. Em urgência emocional, priorize redes de apoio e serviços de emergência.",
       },
     ],
   },
   finalCta: {
     title: "Comece a se entender melhor hoje",
-    bodyPrefix: "Grátis para começar.",
+    bodyPrefix: "Grátis no Essencial. Evolua para o Pleno quando fizer sentido.",
     cta: "Começar grátis",
     loginLink: "Já tenho conta — entrar →",
   },
   footer: {
     brandBlurb:
-      "seu segundo cérebro emocional. Uma ferramenta de autoconhecimento e apoio — não substitui avaliação, diagnóstico ou tratamento clínico. Produto desenvolvido por",
+      "cuida da jornada emocional da pessoa; Clínicas opera a clínica. Autoconhecimento e apoio — não substituem avaliação, diagnóstico ou tratamento. Desenvolvido por",
     tagline: "Ele sente com você e lembra por você.",
     quickLinksAria: "Links rápidos do rodapé",
     about: "Sobre",

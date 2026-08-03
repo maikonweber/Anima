@@ -1,28 +1,28 @@
 import type { Metadata } from "next";
-import { PsychologistsView } from "@/components/marketing/pages/PsychologistsView";
+import { ClinicsView } from "@/components/marketing/pages/ClinicsView";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbListSchema } from "@/components/seo/schema";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { localizedPath } from "@/lib/i18n/config";
 import { buildMarketingMetadata } from "@/lib/seo/page-metadata";
 
-const LOCALE = "pt-BR" as const;
+const LOCALE = "en" as const;
 
 export const metadata: Metadata = buildMarketingMetadata({
-  title: "Plano Cuidado — acompanhamento entre sessões",
+  title: "EmotiveCare Clinics — CRM, scheduling, teleconsult",
   description:
-    "Plano Cuidado para profissionais: dashboards em leitura dos pacientes que convidam você. Para CRM, agenda e teleconsulta, conheça EmotiveCare Clínicas.",
-  path: "/psychologists",
+    "B2B product separate from the patient app: patient CRM, agenda, teleconsult, clinical notes, consents, reminders, care plans, and human-reviewed AI syntheses.",
+  path: "/clinicas",
   locale: LOCALE,
   keywords: [
-    "plano cuidado",
-    "dashboard emocional",
-    "acompanhamento entre sessões",
-    "psicólogo digital",
+    "clinic software",
+    "psychology CRM",
+    "teleconsult scheduling",
+    "clinical consent",
   ],
 });
 
-export default function PsychologistsPage() {
+export default function ClinicsEnPage() {
   const dict = getDictionary(LOCALE);
   return (
     <>
@@ -30,12 +30,12 @@ export default function PsychologistsPage() {
         data={breadcrumbListSchema([
           { name: dict.common.home, path: localizedPath(LOCALE, "/") },
           {
-            name: dict.nav.psychologists,
-            path: localizedPath(LOCALE, "/psychologists"),
+            name: dict.nav.clinics,
+            path: localizedPath(LOCALE, "/clinicas"),
           },
         ])}
       />
-      <PsychologistsView locale={LOCALE} />
+      <ClinicsView locale={LOCALE} />
     </>
   );
 }

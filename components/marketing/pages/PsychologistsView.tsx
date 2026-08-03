@@ -87,6 +87,12 @@ export function PsychologistsView({ locale }: { locale: Locale }) {
           >
             {t.ctaFaq}
           </Link>
+          <Link
+            href={localizedPath(locale, "/clinicas")}
+            className="hover:underline"
+          >
+            {t.ctaClinics}
+          </Link>
         </nav>
       </article>
     </MarketingChrome>

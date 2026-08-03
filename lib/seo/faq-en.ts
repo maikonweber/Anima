@@ -5,36 +5,36 @@ export const faqEntriesEn: FaqEntry[] = [
   {
     question: "Is EmotiveCare therapy?",
     answer:
-      "No. EmotiveCare is a self-awareness and emotional support tool. It helps you organize and understand what you feel, but it does not diagnose, promise a cure, or replace care from psychologists or physicians. In moments of intense distress, it suggests seeking professional help.",
+      "No. It is self-awareness and emotional support. It does not diagnose, does not promise a cure, and does not replace a psychologist or physician. In intense distress, it points you to professional help.",
   },
   {
-    question: "Does the platform make automatic diagnoses?",
+    question: "What is the difference between Pleno, Cuidado, and Clinics?",
     answer:
-      "No. Insights are reflections on patterns and energy you report — or that a professional sees with authorized context. There is no automatic clinical assessment.",
+      "Pleno is the full person plan in the app (memory, tracking, share with 1 professional). Cuidado is the professional plan in the app to follow patients who invite you. EmotiveCare Clinics is another product: organization CRM, scheduling, teleconsult, and clinical notes — separate from the personal journal.",
+  },
+  {
+    question: "What is EmotiveCare Clinics?",
+    answer:
+      "The suite for professionals and clinics: tenant patients, agenda, availability, teleconsult, clinical notes, consents, reminders, care plans, and AI syntheses with human review. It does not replace clinical judgment.",
   },
   {
     question: "How does SENTIO AI work?",
     answer:
-      "SENTIO AI is EmotiveCare’s contextual engine. It synthesizes patterns, weekly trends, and self-care suggestions from the data you choose to record — always without promising automatic diagnosis or replacing clinical judgment.",
+      "It synthesizes patterns and self-care suggestions from what you log — or, in Clinics, drafts syntheses that professionals review before charting. No automatic diagnosis.",
   },
   {
-    question: "What is the second emotional brain?",
+    question: "What is the emotional second brain?",
     answer:
-      "It is how EmotiveCare stores and connects your emotions by meaning, not only by date. Using semantic search (embeddings and vector memory), it finds moments in your history similar to what you are living now and brings them into the conversation — like an emotional memory that remembers and connects the dots for you.",
-  },
-  {
-    question: "Does it work without writing much?",
-    answer:
-      "Yes. You can log just energy, mood, and a few emotion tags in a few seconds. The more you write, the richer the reflections become, but EmotiveCare does not require long texts to get started.",
+      "It is how EmotiveCare connects emotions by meaning, not only by date. With semantic search, it finds moments in your history similar to now and brings them into the conversation.",
   },
   {
     question: "Can I share records with my psychologist?",
     answer:
-      "Yes. When you want, you invite trusted professionals to view dashboards in read-only mode, according to your plan. The patient can pause or revoke access at any time.",
+      "Yes. In the app you invite professionals (Pleno/Cuidado). In Clinics, consent is purpose-based and the patient controls what to release. Pause or revoke anytime.",
   },
   {
     question: "Is my data secure?",
     answer:
-      "Yes. Your records are yours: you decide what to write, what to review with AI, and what to share. We treat data carefully and in line with LGPD. Use strong passwords and seek emergency networks whenever you need immediate support.",
+      "Yes. You decide what to write, what AI analyzes, and what to share. We treat data under LGPD. In emotional emergencies, prioritize support networks and emergency services.",
   },
 ];
