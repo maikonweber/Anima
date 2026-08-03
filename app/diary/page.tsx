@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ApiError } from "@/lib/api-client";
 import { useDiaryEntries } from "@/hooks/use-diary";
 import { DiarySearchBar } from "@/components/diary/DiarySearchBar";
+import { DiaryVisibilityBadge } from "@/components/diary/DiaryVisibilityToggle";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { getCategoryFromEnergy, getCategoryStyle } from "@/lib/energy";
 import { Button } from "@/components/ui/Button";
@@ -177,11 +178,14 @@ export default function DiaryListPage() {
                   <span className="text-xs text-foreground/35">
                     {formatShortDate(entry.dataRegistro ?? entry.criadoEm)}
                   </span>
-                  <span
-                    className={`text-[10px] font-medium px-2 py-0.5 rounded-full border ${style.bg}`}
-                  >
-                    {entry.energiaInformada} — {style.label}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <DiaryVisibilityBadge visibility={entry.visibility} />
+                    <span
+                      className={`text-[10px] font-medium px-2 py-0.5 rounded-full border ${style.bg}`}
+                    >
+                      {entry.energiaInformada} — {style.label}
+                    </span>
+                  </div>
                 </div>
                 <p className="text-sm text-foreground/70 line-clamp-2">
                   {entry.texto}

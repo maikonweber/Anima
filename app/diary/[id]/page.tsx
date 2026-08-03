@@ -11,6 +11,7 @@ import {
   useDiaryEntry,
 } from "@/hooks/use-diary";
 import { AnalysisCard } from "@/components/analysis/AnalysisCard";
+import { DiaryVisibilityBadge } from "@/components/diary/DiaryVisibilityToggle";
 import { Button } from "@/components/ui/Button";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { getCategoryFromEnergy, getCategoryStyle } from "@/lib/energy";
@@ -140,9 +141,12 @@ export default function DiaryDetailPage({
       )}
 
       <header className="mt-4 mb-8">
-        <p className="text-xs text-foreground/35 mb-2">
-          {formatDate(entry.dataRegistro ?? entry.criadoEm)}
-        </p>
+        <div className="flex items-center gap-2 mb-2">
+          <p className="text-xs text-foreground/35">
+            {formatDate(entry.dataRegistro ?? entry.criadoEm)}
+          </p>
+          <DiaryVisibilityBadge visibility={entry.visibility} />
+        </div>
         <div className="glass-panel p-5 mb-4">
           <p className="text-sm text-foreground/80 leading-relaxed whitespace-pre-wrap">
             {entry.texto}

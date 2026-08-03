@@ -61,6 +61,8 @@ export interface EmotionalTracking {
   burnout?: number;
 }
 
+export type DiaryEntryVisibility = "PRIVADO" | "COMPARTILHADO";
+
 export interface DiaryEntry {
   id: string;
   userId: string;
@@ -71,6 +73,7 @@ export interface DiaryEntry {
   tagsEmocionais?: string[];
   tracking?: EmotionalTracking;
   energiaInformada: number;
+  visibility: DiaryEntryVisibility;
   observacoes: string | null;
   dataRegistro: string;
   criadoEm: string;
@@ -92,6 +95,7 @@ export interface CreateDiaryEntry {
   energiaInformada: number;
   emotions: DiaryEmotion[];
   observacoes?: string;
+  visibility?: DiaryEntryVisibility;
   dataRegistro?: string;
 }
 
@@ -105,6 +109,7 @@ export interface UpdateDiaryEntry {
   energiaInformada?: number;
   emotions?: DiaryEmotion[];
   observacoes?: string | null;
+  visibility?: DiaryEntryVisibility;
   dataRegistro?: string;
 }
 
@@ -116,6 +121,7 @@ export interface DiaryEntriesQuery {
   limit?: number;
   from?: string;
   to?: string;
+  visibility?: DiaryEntryVisibility;
 }
 
 export interface PaginatedMeta {
@@ -227,6 +233,7 @@ export interface SharedDiaryEntry {
   tagsEmocionais?: string[];
   tracking?: EmotionalTracking;
   energiaInformada: number;
+  visibility?: DiaryEntryVisibility;
   dataRegistro: string;
   observacoes: string | null;
   criadoEm: string;

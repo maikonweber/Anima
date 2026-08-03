@@ -15,8 +15,10 @@ import {
   EmotionPicker,
   type SelectedEmotion,
 } from "@/components/diary/EmotionPicker";
+import { DiaryVisibilityToggle } from "@/components/diary/DiaryVisibilityToggle";
 import { Button } from "@/components/ui/Button";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
+import type { DiaryEntryVisibility } from "@anima/shared";
 
 type DiaryEntry = NonNullable<ReturnType<typeof useDiaryEntry>["data"]>;
 type EmotionList = NonNullable<ReturnType<typeof useEmotions>["data"]>;
@@ -87,6 +89,9 @@ function EditDiaryForm({
     })),
   );
   const [observacoes, setObservacoes] = useState(entry.observacoes ?? "");
+  const [visibility, setVisibility] = useState<DiaryEntryVisibility>(
+    entry.visibility ?? "PRIVADO",
+  );
   const [formError, setFormError] = useState<string | null>(null);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -98,6 +103,7 @@ function EditDiaryForm({
       energiaInformada: energia,
       emotions: selectedEmotions,
       observacoes: observacoes || undefined,
+      visibility,
     });
 
     if (!parsed.success) {
@@ -113,6 +119,7 @@ function EditDiaryForm({
           energiaInformada: parsed.data.energiaInformada,
           emotions: parsed.data.emotions,
           observacoes: parsed.data.observacoes ?? null,
+          visibility: parsed.data.visibility,
         },
       });
       router.push(`/diary/${id}`);
@@ -190,6 +197,12 @@ function EditDiaryForm({
             className="w-full bg-transparent text-foreground/80 text-sm resize-none focus:outline-none"
           />
         </div>
+
+        <DiaryVisibilityToggle
+          value={visibility}
+          onChange={setVisibility}
+          disabled={updateEntry.isPending}
+        />
 
         <Button type="submit" isLoading={updateEntry.isPending}>
           Salvar alterações

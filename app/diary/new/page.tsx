@@ -8,11 +8,15 @@ import { diaryEntrySchema } from "@/lib/validations/diary";
 import { useCreateDiaryEntry, useEmotions } from "@/hooks/use-diary";
 import { EnergySlider } from "@/components/diary/EnergySlider";
 import { EmotionPicker, type SelectedEmotion } from "@/components/diary/EmotionPicker";
+import {
+  DiaryVisibilityToggle,
+} from "@/components/diary/DiaryVisibilityToggle";
 import { Button } from "@/components/ui/Button";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { UsageMeter } from "@/components/subscription/UsageMeter";
 import { useSubscription } from "@/providers/subscription-provider";
 import { isNearLimit } from "@/lib/subscription/utils";
+import type { DiaryEntryVisibility } from "@anima/shared";
 
 export default function NewDiaryPage() {
   const router = useRouter();
@@ -24,6 +28,8 @@ export default function NewDiaryPage() {
   const [energia, setEnergia] = useState(50);
   const [selectedEmotions, setSelectedEmotions] = useState<SelectedEmotion[]>([]);
   const [observacoes, setObservacoes] = useState("");
+  const [visibility, setVisibility] =
+    useState<DiaryEntryVisibility>("PRIVADO");
   const [formError, setFormError] = useState<string | null>(null);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -35,6 +41,7 @@ export default function NewDiaryPage() {
       energiaInformada: energia,
       emotions: selectedEmotions,
       observacoes: observacoes || undefined,
+      visibility,
     });
 
     if (!parsed.success) {
@@ -48,6 +55,7 @@ export default function NewDiaryPage() {
         energiaInformada: parsed.data.energiaInformada,
         emotions: parsed.data.emotions,
         observacoes: parsed.data.observacoes,
+        visibility: parsed.data.visibility,
       });
       router.push(`/diary/${entry.id}`);
     } catch (err) {
@@ -155,6 +163,12 @@ export default function NewDiaryPage() {
             className="w-full bg-transparent text-foreground/80 placeholder:text-foreground/25 text-sm resize-none focus:outline-none"
           />
         </div>
+
+        <DiaryVisibilityToggle
+          value={visibility}
+          onChange={setVisibility}
+          disabled={createEntry.isPending}
+        />
 
         <Button type="submit" isLoading={createEntry.isPending}>
           Salvar e gerar insights

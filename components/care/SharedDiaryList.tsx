@@ -12,7 +12,8 @@ export function SharedDiaryList({ entries }: SharedDiaryListProps) {
     return (
       <div className="glass-panel p-10 text-center">
         <p className="text-sm text-foreground/50">
-          Ainda não há momentos disponíveis para visualização autorizada neste período.
+          Ainda não há momentos compartilhados disponíveis. O autor escolhe por
+          registro o que fica privado ou compartilhado.
         </p>
       </div>
     );
