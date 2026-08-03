@@ -44,4 +44,8 @@ export type {
   PatientStatus,
   PatientDetail,
   PaginatedPatients,
+  Appointment,
+  AppointmentStatus,
+  ProfessionalAvailability,
+  PaginatedAppointments,
 } from "@anima/shared";

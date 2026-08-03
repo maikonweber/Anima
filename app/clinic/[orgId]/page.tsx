@@ -92,12 +92,30 @@ export default function ClinicOrgHomePage() {
                 </p>
               </Link>
               <Link
+                href={`/clinic/${orgId}/agenda`}
+                className="glass-panel p-5 hover:scale-[1.01] transition-transform"
+              >
+                <p className="font-semibold text-foreground/85">Agenda</p>
+                <p className="text-xs text-foreground/40 mt-1">
+                  Sessões, confirmação e disponibilidade
+                </p>
+              </Link>
+              <Link
                 href={`/clinic/${orgId}/patients/new`}
                 className="glass-panel p-5 hover:scale-[1.01] transition-transform"
               >
                 <p className="font-semibold text-foreground/85">Novo paciente</p>
                 <p className="text-xs text-foreground/40 mt-1">
                   Abrir ficha no CRM
+                </p>
+              </Link>
+              <Link
+                href={`/clinic/${orgId}/agenda/new`}
+                className="glass-panel p-5 hover:scale-[1.01] transition-transform"
+              >
+                <p className="font-semibold text-foreground/85">Nova sessão</p>
+                <p className="text-xs text-foreground/40 mt-1">
+                  Agendar atendimento
                 </p>
               </Link>
             </div>

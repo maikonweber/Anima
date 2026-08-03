@@ -20,6 +20,7 @@ export * from "./api/terms";
 export * from "./api/feedback";
 export * from "./api/organizations";
 export * from "./api/patients";
+export * from "./api/agenda";
 
 export {
   configureTokenStorage,
