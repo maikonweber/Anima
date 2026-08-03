@@ -11,3 +11,4 @@ export * from "./consents";
 export * from "./clinical-notes";
 export * from "./teleconsult";
 export * from "./reminders";
+export * from "./care-plans";
