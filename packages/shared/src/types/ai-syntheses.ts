@@ -7,7 +7,7 @@ export type AiSynthesisStatus =
 export type AiSynthesisSourceKind = "DIARIO" | "SESSAO" | "MISTO";
 
 export type AiSynthesisSourceRef = {
-  type: "diary_entry" | "appointment";
+  type: "diary_entry" | "appointment" | "clinical_knowledge";
   id: string;
 };
 

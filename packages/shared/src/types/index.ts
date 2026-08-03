@@ -13,3 +13,4 @@ export * from "./teleconsult";
 export * from "./reminders";
 export * from "./care-plans";
 export * from "./ai-syntheses";
+export * from "./clinical-knowledge";

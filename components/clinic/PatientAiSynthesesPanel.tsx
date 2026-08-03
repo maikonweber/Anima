@@ -284,6 +284,11 @@ export function PatientAiSynthesesPanel({ orgId, patientId }: Props) {
                         {SOURCE_LABEL[item.sourceKind]} ·{" "}
                         {STATUS_LABEL[item.status]} ·{" "}
                         {new Date(item.criadoEm).toLocaleString("pt-BR")}
+                        {item.sources.some(
+                          (s) => s.type === "clinical_knowledge",
+                        )
+                          ? ` · ${item.sources.filter((s) => s.type === "clinical_knowledge").length} fonte(s) curada(s)`
+                          : ""}
                       </p>
                     </div>
                   </div>
