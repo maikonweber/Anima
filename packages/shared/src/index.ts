@@ -29,6 +29,7 @@ export * from "./api/reminders";
 export * from "./api/care-plans";
 export * from "./api/ai-syntheses";
 export * from "./api/clinical-knowledge";
+export * from "./api/clinical-alerts";
 
 export {
   configureTokenStorage,

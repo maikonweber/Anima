@@ -17,6 +17,7 @@ import {
   useOrganization,
   useOrganizationInvites,
 } from "@/hooks/use-organizations";
+import { useClinicDashboard } from "@/hooks/use-clinical-alerts";
 import type { OrganizationRole } from "@anima/shared";
 
 const INVITE_ROLES: Array<{ value: OrganizationRole; label: string }> = [
@@ -39,14 +40,14 @@ const QUICK_ACTIONS = (orgId: string) =>
       subtitle: "Sessões, confirmação e disponibilidade",
     },
     {
-      href: `/clinic/${orgId}/patients/new`,
-      title: "Novo paciente",
-      subtitle: "Abrir ficha no CRM",
+      href: `/clinic/${orgId}/alertas`,
+      title: "Alertas pendentes",
+      subtitle: "Revisão humana (RF-072)",
     },
     {
-      href: `/clinic/${orgId}/agenda/new`,
-      title: "Nova sessão",
-      subtitle: "Agendar atendimento",
+      href: `/clinic/${orgId}/conhecimento`,
+      title: "Conhecimento clínico",
+      subtitle: "Base curada para sínteses",
     },
   ] as const;
 
@@ -54,6 +55,7 @@ export default function ClinicOrgHomePage() {
   const params = useParams<{ orgId: string }>();
   const orgId = params.orgId;
   const { data: org, isLoading, error, refetch } = useOrganization(orgId);
+  const dashboard = useClinicDashboard(orgId);
   const invites = useOrganizationInvites(orgId);
   const createInvite = useCreateOrganizationInvite(orgId);
   const [email, setEmail] = useState("");
@@ -119,6 +121,96 @@ export default function ClinicOrgHomePage() {
                 </>
               }
             />
+
+            {dashboard.data && (
+              <section className="grid gap-3 sm:grid-cols-3 mb-5">
+                <Link
+                  href={`/clinic/${orgId}/agenda`}
+                  className="rounded-xl border border-[var(--clinic-border)] bg-[var(--clinic-panel)] px-4 py-3 hover:bg-[var(--clinic-row-hover)] transition-colors"
+                >
+                  <p className="text-[11px] uppercase tracking-wider text-foreground/35">
+                    Hoje
+                  </p>
+                  <p className="text-2xl font-semibold text-foreground/85 mt-1">
+                    {dashboard.data.today.total}
+                  </p>
+                  <p className="text-xs text-foreground/40 mt-1">
+                    sessão(ões) na agenda
+                  </p>
+                </Link>
+                <Link
+                  href={`/clinic/${orgId}/alertas`}
+                  className="rounded-xl border border-[var(--clinic-border)] bg-[var(--clinic-panel)] px-4 py-3 hover:bg-[var(--clinic-row-hover)] transition-colors"
+                >
+                  <p className="text-[11px] uppercase tracking-wider text-foreground/35">
+                    Alertas
+                  </p>
+                  <p className="text-2xl font-semibold text-foreground/85 mt-1">
+                    {dashboard.data.pendingAlerts.count}
+                  </p>
+                  <p className="text-xs text-foreground/40 mt-1">
+                    pendentes de revisão
+                  </p>
+                </Link>
+                <div className="rounded-xl border border-[var(--clinic-border)] bg-[var(--clinic-panel)] px-4 py-3">
+                  <p className="text-[11px] uppercase tracking-wider text-foreground/35">
+                    Sínteses IA
+                  </p>
+                  <p className="text-2xl font-semibold text-foreground/85 mt-1">
+                    {dashboard.data.pendingSyntheses.count}
+                  </p>
+                  <p className="text-xs text-foreground/40 mt-1">
+                    aguardando aprovação
+                  </p>
+                </div>
+              </section>
+            )}
+
+            {dashboard.data && dashboard.data.today.appointments.length > 0 && (
+              <section className="rounded-xl border border-[var(--clinic-border)] bg-[var(--clinic-panel)] overflow-hidden mb-5">
+                <div className="px-3 sm:px-4 py-2.5 border-b border-[var(--clinic-border)] flex items-center justify-between">
+                  <h2 className="text-xs font-semibold uppercase tracking-wider text-foreground/40">
+                    Agenda de hoje
+                  </h2>
+                  <Link
+                    href={`/clinic/${orgId}/agenda`}
+                    className="text-[11px] text-[var(--clinic-accent)]"
+                  >
+                    Ver tudo
+                  </Link>
+                </div>
+                <ul className="divide-y divide-[var(--clinic-border)]">
+                  {dashboard.data.today.appointments.map((appt) => (
+                    <li key={appt.id}>
+                      <Link
+                        href={`/clinic/${orgId}/agenda/${appt.id}`}
+                        className="flex items-center justify-between gap-3 px-3 sm:px-4 py-3 hover:bg-[var(--clinic-row-hover)] transition-colors"
+                      >
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium text-foreground/85">
+                            {new Date(appt.startsAt).toLocaleTimeString("pt-BR", {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}{" "}
+                            · {appt.modality}
+                          </p>
+                          <p className="text-xs text-foreground/40 mt-0.5">
+                            {appt.status}
+                          </p>
+                        </div>
+                        <span className="text-[var(--clinic-accent)] text-sm">→</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+
+            {dashboard.data?.disclaimer && (
+              <p className="text-[11px] text-foreground/35 mb-5 leading-relaxed">
+                {dashboard.data.disclaimer}
+              </p>
+            )}
 
             <section className="rounded-xl border border-[var(--clinic-border)] bg-[var(--clinic-panel)] overflow-hidden mb-5">
               <div className="px-3 sm:px-4 py-2.5 border-b border-[var(--clinic-border)]">
