@@ -166,6 +166,37 @@ export default function ClinicOrgHomePage() {
               </section>
             )}
 
+            {dashboard.data &&
+              dashboard.data.pendingSyntheses.items.length > 0 && (
+              <section className="rounded-xl border border-[var(--clinic-border)] bg-[var(--clinic-panel)] overflow-hidden mb-5">
+                <div className="px-3 sm:px-4 py-2.5 border-b border-[var(--clinic-border)]">
+                  <h2 className="text-xs font-semibold uppercase tracking-wider text-foreground/40">
+                    Sínteses para revisar
+                  </h2>
+                </div>
+                <ul className="divide-y divide-[var(--clinic-border)]">
+                  {dashboard.data.pendingSyntheses.items.map((item) => (
+                    <li key={item.id}>
+                      <Link
+                        href={`/clinic/${orgId}/patients/${item.patientId}#ia`}
+                        className="flex items-center justify-between gap-3 px-3 sm:px-4 py-3 hover:bg-[var(--clinic-row-hover)] transition-colors"
+                      >
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium text-foreground/85 truncate">
+                            {item.title || "Síntese sem título"}
+                          </p>
+                          <p className="text-xs text-foreground/40 mt-0.5">
+                            {new Date(item.criadoEm).toLocaleString("pt-BR")}
+                          </p>
+                        </div>
+                        <span className="text-[var(--clinic-accent)] text-sm">→</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+
             {dashboard.data && dashboard.data.today.appointments.length > 0 && (
               <section className="rounded-xl border border-[var(--clinic-border)] bg-[var(--clinic-panel)] overflow-hidden mb-5">
                 <div className="px-3 sm:px-4 py-2.5 border-b border-[var(--clinic-border)] flex items-center justify-between">

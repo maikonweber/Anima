@@ -209,7 +209,9 @@ export function PatientClinicalAlertsPanel({ orgId, patientId }: Props) {
                       <Button
                         type="button"
                         isLoading={approve.isPending}
-                        onClick={() => approve.mutate(item.id)}
+                        onClick={() =>
+                          approve.mutate({ alertId: item.id })
+                        }
                       >
                         Aprovar
                       </Button>

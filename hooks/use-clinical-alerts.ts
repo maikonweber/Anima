@@ -91,15 +91,24 @@ export function useUpdateClinicalAlert(orgId: string, patientId: string) {
   });
 }
 
-export function useApproveClinicalAlert(orgId: string, patientId: string) {
+export function useApproveClinicalAlert(orgId: string, patientId?: string) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (alertId: string) =>
-      approveClinicalAlert(orgId, patientId, alertId),
-    onSuccess: () => {
-      void queryClient.invalidateQueries({
-        queryKey: ["clinical-alerts", orgId, patientId],
-      });
+    mutationFn: ({
+      alertId,
+      patientId: pid,
+    }: {
+      alertId: string;
+      patientId?: string;
+    }) =>
+      approveClinicalAlert(orgId, pid ?? patientId ?? "", alertId),
+    onSuccess: (_data, vars) => {
+      const pid = vars.patientId ?? patientId;
+      if (pid) {
+        void queryClient.invalidateQueries({
+          queryKey: ["clinical-alerts", orgId, pid],
+        });
+      }
       void queryClient.invalidateQueries({
         queryKey: ["clinical-alerts-org", orgId],
       });
@@ -110,20 +119,26 @@ export function useApproveClinicalAlert(orgId: string, patientId: string) {
   });
 }
 
-export function useRejectClinicalAlert(orgId: string, patientId: string) {
+export function useRejectClinicalAlert(orgId: string, patientId?: string) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({
       alertId,
       reason,
+      patientId: pid,
     }: {
       alertId: string;
       reason?: string;
-    }) => rejectClinicalAlert(orgId, patientId, alertId, reason),
-    onSuccess: () => {
-      void queryClient.invalidateQueries({
-        queryKey: ["clinical-alerts", orgId, patientId],
-      });
+      patientId?: string;
+    }) =>
+      rejectClinicalAlert(orgId, pid ?? patientId ?? "", alertId, reason),
+    onSuccess: (_data, vars) => {
+      const pid = vars.patientId ?? patientId;
+      if (pid) {
+        void queryClient.invalidateQueries({
+          queryKey: ["clinical-alerts", orgId, pid],
+        });
+      }
       void queryClient.invalidateQueries({
         queryKey: ["clinical-alerts-org", orgId],
       });
