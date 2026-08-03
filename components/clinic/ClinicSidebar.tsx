@@ -88,14 +88,50 @@ export function ClinicSidebar() {
   const isItemActive = (item: NavItem) =>
     item.match ? item.match(pathname) : pathname.startsWith(item.href);
 
+  const isMenuActive = topNav.some(
+    (item) => isItemActive(item) && !primaryMobile.some((p) => p.href === item.href),
+  );
+
   useEffect(() => {
     setMenuOpen(false);
   }, [pathname]);
 
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMenuOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [menuOpen]);
+
   return (
     <>
-      <aside className="hidden lg:flex flex-col w-64 h-full border-r border-[var(--clinic-border)] bg-[var(--clinic-sidebar)]">
-        <div className="p-5 pb-3">
+      {/* Mobile top bar */}
+      <header className="lg:hidden fixed top-0 inset-x-0 z-40 border-b border-[var(--clinic-border)] bg-[var(--clinic-sidebar)]/95 backdrop-blur-md clinic-safe-top">
+        <div className="flex items-center justify-between gap-3 px-3 h-12">
+          <Link href="/clinic" className="flex items-center gap-2 min-w-0">
+            <AnimaLogo size="sm" className="!gap-0 [&_img]:!w-7 [&_img]:!h-7" />
+            <div className="min-w-0">
+              <p className="text-[11px] font-semibold text-foreground/85 leading-none truncate">
+                EmotiveCare
+              </p>
+              <p className="text-[9px] uppercase tracking-[0.12em] text-[var(--clinic-accent)] mt-0.5">
+                Clínicas
+              </p>
+            </div>
+          </Link>
+          {orgQuery.data ? (
+            <p className="text-[11px] text-foreground/45 truncate max-w-[42%] text-right">
+              {orgQuery.data.name}
+            </p>
+          ) : null}
+        </div>
+      </header>
+
+      {/* Desktop sidebar */}
+      <aside className="hidden lg:flex flex-col w-60 xl:w-64 shrink-0 h-dvh sticky top-0 border-r border-[var(--clinic-border)] bg-[var(--clinic-sidebar)]">
+        <div className="p-4 pb-3">
           <Link href="/clinic" className="flex items-center gap-2.5 group">
             <AnimaLogo size="sm" />
             <div className="min-w-0">
@@ -110,7 +146,7 @@ export function ClinicSidebar() {
         </div>
 
         {orgId && orgQuery.data && (
-          <div className="mx-3 mb-3 rounded-lg border border-[var(--clinic-border)] bg-[var(--clinic-panel)] px-3 py-2.5">
+          <div className="mx-3 mb-3 rounded-lg border border-[var(--clinic-border)] bg-[var(--clinic-panel)] px-3 py-2">
             <p className="text-[10px] uppercase tracking-wider text-foreground/35 mb-0.5">
               Organização
             </p>
@@ -120,32 +156,32 @@ export function ClinicSidebar() {
           </div>
         )}
 
-        <nav className="flex-1 px-3 py-1 space-y-0.5">
+        <nav className="flex-1 px-2.5 py-1 space-y-0.5 overflow-y-auto">
           {topNav.map((item) => {
             const active = isItemActive(item);
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm font-medium transition-colors border-l-2 ${
                   active
-                    ? "bg-[var(--clinic-accent-soft)] text-[var(--clinic-accent)]"
-                    : "text-foreground/50 hover:text-foreground/80 hover:bg-foreground/[0.03]"
+                    ? "bg-[var(--clinic-accent-soft)] text-[var(--clinic-accent)] border-[var(--clinic-accent)]"
+                    : "text-foreground/50 hover:text-foreground/80 hover:bg-foreground/[0.03] border-transparent"
                 }`}
               >
                 <item.icon active={active} />
-                {item.label}
+                <span className="truncate">{item.label}</span>
               </Link>
             );
           })}
         </nav>
 
-        <div className="p-4 border-t border-[var(--clinic-border)] space-y-2">
+        <div className="p-3 border-t border-[var(--clinic-border)] space-y-2">
           <p className="px-1 text-[10px] text-foreground/30 leading-relaxed">
             Produto para profissionais de saúde — separado do app do paciente.
           </p>
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-[var(--clinic-accent-soft)] flex items-center justify-center">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-8 h-8 rounded-full bg-[var(--clinic-accent-soft)] flex items-center justify-center shrink-0">
               <span className="text-xs font-semibold text-[var(--clinic-accent)]">
                 {user?.nome?.charAt(0) ?? "U"}
               </span>
@@ -159,19 +195,28 @@ export function ClinicSidebar() {
               </p>
             </div>
           </div>
-          <button
-            type="button"
-            onClick={logout}
-            className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-foreground/40 hover:text-red-400 hover:bg-red-500/5 transition-colors"
-          >
-            <LogoutIcon />
-            Sair
-          </button>
+          <div className="flex gap-1">
+            <Link
+              href="/dashboard"
+              className="flex-1 text-center px-2 py-2 rounded-lg text-[11px] font-medium text-foreground/40 hover:text-foreground/70 hover:bg-foreground/[0.03]"
+            >
+              App paciente
+            </Link>
+            <button
+              type="button"
+              onClick={logout}
+              className="flex-1 flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg text-[11px] font-medium text-foreground/40 hover:text-red-400 hover:bg-red-500/5 transition-colors"
+            >
+              <LogoutIcon />
+              Sair
+            </button>
+          </div>
         </div>
       </aside>
 
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-[var(--clinic-border)] bg-[var(--clinic-sidebar)]/95 backdrop-blur-lg safe-area-pb">
-        <div className="flex items-stretch justify-between px-1 py-2">
+      {/* Mobile bottom nav */}
+      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-50 border-t border-[var(--clinic-border)] bg-[var(--clinic-sidebar)]/95 backdrop-blur-lg clinic-safe-pb">
+        <div className="flex items-stretch justify-between px-1 py-1.5">
           {primaryMobile.map((item) => {
             const active = isItemActive(item);
             return (
@@ -195,9 +240,14 @@ export function ClinicSidebar() {
             type="button"
             onClick={() => setMenuOpen(true)}
             aria-label="Abrir menu"
-            className="flex flex-1 min-w-0 flex-col items-center gap-0.5 px-0.5 py-1.5 rounded-lg text-foreground/35 hover:text-foreground/60"
+            aria-expanded={menuOpen}
+            className={`flex flex-1 min-w-0 flex-col items-center gap-0.5 px-0.5 py-1.5 rounded-lg transition-colors ${
+              isMenuActive || menuOpen
+                ? "text-[var(--clinic-accent)]"
+                : "text-foreground/35 hover:text-foreground/60"
+            }`}
           >
-            <MenuIcon active={false} />
+            <MenuIcon active={isMenuActive || menuOpen} />
             <span className="w-full text-[10px] font-medium leading-tight text-center">
               Mais
             </span>
@@ -218,8 +268,13 @@ export function ClinicSidebar() {
             onClick={() => setMenuOpen(false)}
             className="absolute inset-0 bg-black/45"
           />
-          <div className="absolute bottom-0 left-0 right-0 rounded-t-2xl border-t border-[var(--clinic-border)] bg-[var(--clinic-sidebar)] p-4 pb-8 safe-area-pb">
+          <div className="absolute bottom-0 inset-x-0 rounded-t-2xl border-t border-[var(--clinic-border)] bg-[var(--clinic-sidebar)] p-4 clinic-safe-pb shadow-2xl max-h-[85dvh] overflow-y-auto">
             <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-foreground/15" />
+            {orgQuery.data ? (
+              <p className="text-xs text-foreground/40 mb-3 px-1 truncate">
+                {orgQuery.data.name}
+              </p>
+            ) : null}
             <div className="grid grid-cols-2 gap-2 mb-3">
               {topNav.map((item) => {
                 const active = isItemActive(item);
@@ -235,11 +290,18 @@ export function ClinicSidebar() {
                     }`}
                   >
                     <item.icon active={active} />
-                    {item.label}
+                    <span className="truncate">{item.label}</span>
                   </Link>
                 );
               })}
             </div>
+            <Link
+              href="/dashboard"
+              onClick={() => setMenuOpen(false)}
+              className="block w-full rounded-xl px-3 py-3 text-sm text-foreground/50 hover:bg-foreground/[0.04] mb-1"
+            >
+              Voltar ao app do paciente
+            </Link>
             <button
               type="button"
               onClick={() => {
@@ -259,7 +321,7 @@ export function ClinicSidebar() {
 
 function HomeIcon({ active }: { active: boolean }) {
   return (
-    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={active ? 2 : 1.5}>
+    <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={active ? 2 : 1.5}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955a1.126 1.126 0 011.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
     </svg>
   );
@@ -267,7 +329,7 @@ function HomeIcon({ active }: { active: boolean }) {
 
 function PatientsIcon({ active }: { active: boolean }) {
   return (
-    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={active ? 2 : 1.5}>
+    <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={active ? 2 : 1.5}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
     </svg>
   );
@@ -275,7 +337,7 @@ function PatientsIcon({ active }: { active: boolean }) {
 
 function CalendarIcon({ active }: { active: boolean }) {
   return (
-    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={active ? 2 : 1.5}>
+    <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={active ? 2 : 1.5}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
     </svg>
   );
@@ -283,7 +345,7 @@ function CalendarIcon({ active }: { active: boolean }) {
 
 function ClockIcon({ active }: { active: boolean }) {
   return (
-    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={active ? 2 : 1.5}>
+    <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={active ? 2 : 1.5}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
     </svg>
   );
@@ -291,7 +353,7 @@ function ClockIcon({ active }: { active: boolean }) {
 
 function BuildingIcon({ active }: { active: boolean }) {
   return (
-    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={active ? 2 : 1.5}>
+    <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={active ? 2 : 1.5}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 21h19.5M3.75 21V8.25A2.25 2.25 0 016 6h4.5a2.25 2.25 0 012.25 2.25V21m0 0V9.75A2.25 2.25 0 0115 7.5h3a2.25 2.25 0 012.25 2.25V21M9 10.5h.008v.008H9V10.5zm0 3h.008v.008H9V13.5zm0 3h.008v.008H9V16.5zm4.5-6h.008v.008H13.5V10.5zm0 3h.008v.008H13.5V13.5zm0 3h.008v.008H13.5V16.5z" />
     </svg>
   );
@@ -299,7 +361,7 @@ function BuildingIcon({ active }: { active: boolean }) {
 
 function MenuIcon({ active }: { active: boolean }) {
   return (
-    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={active ? 2.1 : 1.5}>
+    <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={active ? 2.1 : 1.5}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5" />
     </svg>
   );
@@ -307,7 +369,7 @@ function MenuIcon({ active }: { active: boolean }) {
 
 function LogoutIcon() {
   return (
-    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
     </svg>
   );
