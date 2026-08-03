@@ -5,7 +5,8 @@ export type ConsentPurpose =
   | "TELECONSULTA"
   | "IA_ASSISTIVA"
   | "PESQUISA_QUALIDADE"
-  | "DASHBOARD_PROFISSIONAL";
+  | "DASHBOARD_PROFISSIONAL"
+  | "LEMBRETES";
 
 export type ConsentStatus =
   | "PENDENTE"

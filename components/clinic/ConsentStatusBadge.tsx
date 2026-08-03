@@ -22,6 +22,7 @@ export const CONSENT_PURPOSE_LABELS: Record<ConsentPurpose, string> = {
   IA_ASSISTIVA: "IA assistiva",
   PESQUISA_QUALIDADE: "Pesquisa e qualidade",
   DASHBOARD_PROFISSIONAL: "Dashboard profissional",
+  LEMBRETES: "Lembretes e adesão",
 };
 
 export const CONSENT_CHANNEL_LABELS = {
