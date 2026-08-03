@@ -92,7 +92,7 @@ export const homeEn = {
       {
         title: "Cuidado plan — between sessions",
         description:
-          "For professionals: follow up to 99 patients who invite you to see emotional progress in read-only mode — pause and revoke anytime.",
+          "For professionals: follow unlimited patients who invite you to see emotional progress in read-only mode — pause and revoke anytime.",
       },
       {
         title: "EmotiveCare Clinics — operations",
@@ -124,7 +124,7 @@ export const homeEn = {
         title: "For those who follow between sessions",
         text: "Cuidado is the professional plan inside the EmotiveCare app: read-only dashboards for patients who invite you — continuous context, not the clinic chart.",
         bullets: [
-          "Up to 99 patient dashboards authorized by the patient",
+          "Unlimited patient dashboards authorized by the patient",
           "Emotional trends between appointments",
           "Complements clinical listening — never replaces it",
         ],
@@ -188,7 +188,7 @@ export const homeEn = {
         price: "R$ 9.99/mo",
         tagline: "The second brain in your pocket.",
         features: [
-          "Everything in Essential, without monthly entry caps",
+          "Everything in Essential, without monthly caps on entries, AI, and assistant",
           "Assistant with semantic memory of your history",
           "Sleep, stress, socialization, and burnout tracking",
           "Share dashboard with 1 trusted professional",
@@ -201,7 +201,7 @@ export const homeEn = {
         price: "For professionals",
         tagline: "Follow those who invite you.",
         features: [
-          "Up to 99 authorized patient dashboards",
+          "Unlimited authorized patient dashboards",
           "Emotional context between sessions (read-only)",
           "Linked patients inherit Pleno benefits",
         ],

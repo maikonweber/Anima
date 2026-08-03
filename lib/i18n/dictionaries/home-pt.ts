@@ -88,7 +88,7 @@ export const homePt = {
       {
         title: "Plano Cuidado — entre sessões",
         description:
-          "Para profissionais: acompanhe até 99 pacientes que convidam você a ver a evolução emocional em leitura — com pausa e revogação a qualquer momento.",
+          "Para profissionais: acompanhe sem teto de pacientes que convidam você a ver a evolução emocional em leitura — com pausa e revogação a qualquer momento.",
       },
       {
         title: "EmotiveCare Clínicas — operação",
@@ -120,7 +120,7 @@ export const homePt = {
         title: "Para quem acompanha entre sessões",
         text: "O Cuidado é o plano do profissional no app EmotiveCare: dashboards em leitura dos pacientes que convidam você — contexto contínuo, sem virar prontuário da clínica.",
         bullets: [
-          "Até 99 acompanhamentos autorizados pelo paciente",
+          "Acompanhamentos ilimitados autorizados pelo paciente",
           "Evolução emocional e tendências entre consultas",
           "Complementa a escuta clínica — não a substitui",
         ],
@@ -184,7 +184,7 @@ export const homePt = {
         price: "R$ 9,99/mês",
         tagline: "O segundo cérebro no seu bolso.",
         features: [
-          "Tudo do Essencial, sem limites mensais de registro",
+          "Tudo do Essencial, sem limites mensais de registro, IA e assistente",
           "Assistente com memória semântica do seu histórico",
           "Tracking de sono, estresse, socialização e burnout",
           "Compartilhar dashboard com 1 profissional de confiança",
@@ -197,7 +197,7 @@ export const homePt = {
         price: "Para profissionais",
         tagline: "Acompanhe quem te convida.",
         features: [
-          "Até 99 dashboards de pacientes autorizados",
+          "Dashboards ilimitados de pacientes autorizados",
           "Contexto emocional entre sessões (leitura)",
           "Pacientes vinculados herdam benefícios do Pleno",
         ],

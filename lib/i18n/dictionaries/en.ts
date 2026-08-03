@@ -77,7 +77,7 @@ export const en: MarketingDictionary = {
         name: "Pleno",
         tagline: "R$ 9.99/mo — a second brain in your pocket.",
         points: [
-          "Everything in Essential, without monthly entry caps",
+          "Everything in Essential, without monthly caps (journal, AI, and assistant)",
           "Assistant with semantic memory of your history",
           "Tracking for sleep, stress, socialization, and burnout",
           "Share dashboard with 1 trusted professional",
@@ -87,7 +87,7 @@ export const en: MarketingDictionary = {
         name: "Cuidado",
         tagline: "For those who follow between sessions.",
         points: [
-          "Up to 99 patient dashboards authorized by the patient",
+          "Unlimited patient dashboards authorized by the patient",
           "Emotional context in read-only mode between appointments",
           "Linked patients inherit Pleno-equivalent benefits",
         ],

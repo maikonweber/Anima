@@ -77,7 +77,7 @@ export const ptBR: MarketingDictionary = {
         name: "Pleno",
         tagline: "R$ 9,99/mês — o segundo cérebro no seu bolso.",
         points: [
-          "Tudo do Essencial, sem teto mensal de registros",
+          "Tudo do Essencial, sem teto mensal (diário, IA e assistente)",
           "Assistente com memória semântica do seu histórico",
           "Tracking de sono, estresse, socialização e burnout",
           "Compartilhar dashboard com 1 profissional de confiança",
@@ -87,7 +87,7 @@ export const ptBR: MarketingDictionary = {
         name: "Cuidado",
         tagline: "Para quem acompanha entre sessões.",
         points: [
-          "Até 99 dashboards de pacientes que autorizam o acesso",
+          "Dashboards ilimitados de pacientes que autorizam o acesso",
           "Contexto emocional em leitura entre consultas",
           "Pacientes vinculados herdam benefícios equivalentes ao Pleno",
         ],
