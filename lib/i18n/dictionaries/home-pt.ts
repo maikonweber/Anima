@@ -181,7 +181,7 @@ export const homePt = {
       },
       {
         name: "Pleno",
-        price: "Assinatura",
+        price: "R$ 9,99/mês",
         tagline: "O segundo cérebro no seu bolso.",
         features: [
           "Tudo do Essencial, sem limites mensais de registro",

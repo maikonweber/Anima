@@ -75,7 +75,7 @@ export const ptBR: MarketingDictionary = {
       },
       {
         name: "Pleno",
-        tagline: "O segundo cérebro no seu bolso.",
+        tagline: "R$ 9,99/mês — o segundo cérebro no seu bolso.",
         points: [
           "Tudo do Essencial, sem teto mensal de registros",
           "Assistente com memória semântica do seu histórico",

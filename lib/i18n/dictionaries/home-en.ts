@@ -185,7 +185,7 @@ export const homeEn = {
       },
       {
         name: "Pleno",
-        price: "Subscription",
+        price: "R$ 9.99/mo",
         tagline: "The second brain in your pocket.",
         features: [
           "Everything in Essential, without monthly entry caps",

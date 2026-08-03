@@ -75,7 +75,7 @@ export const en: MarketingDictionary = {
       },
       {
         name: "Pleno",
-        tagline: "A second brain in your pocket.",
+        tagline: "R$ 9.99/mo — a second brain in your pocket.",
         points: [
           "Everything in Essential, without monthly entry caps",
           "Assistant with semantic memory of your history",
