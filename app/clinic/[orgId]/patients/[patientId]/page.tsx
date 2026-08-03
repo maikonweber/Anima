@@ -16,6 +16,7 @@ import { PatientClinicalNotesPanel } from "@/components/clinic/PatientClinicalNo
 import { PatientDiaryPanel } from "@/components/clinic/PatientDiaryPanel";
 import { PatientRemindersPanel } from "@/components/clinic/PatientRemindersPanel";
 import { PatientCarePlanPanel } from "@/components/clinic/PatientCarePlanPanel";
+import { PatientAiSynthesesPanel } from "@/components/clinic/PatientAiSynthesesPanel";
 import { usePatient, useUpdatePatientStatus } from "@/hooks/use-patients";
 import type { PatientStatus } from "@anima/shared";
 
@@ -144,6 +145,8 @@ export default function PatientDetailPage() {
             <PatientRemindersPanel orgId={orgId} patientId={patientId} />
 
             <PatientCarePlanPanel orgId={orgId} patientId={patientId} />
+
+            <PatientAiSynthesesPanel orgId={orgId} patientId={patientId} />
 
             <PatientClinicalNotesPanel orgId={orgId} patientId={patientId} />
 

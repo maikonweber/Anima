@@ -27,6 +27,7 @@ export * from "./api/patient-diary";
 export * from "./api/teleconsult";
 export * from "./api/reminders";
 export * from "./api/care-plans";
+export * from "./api/ai-syntheses";
 
 export {
   configureTokenStorage,
