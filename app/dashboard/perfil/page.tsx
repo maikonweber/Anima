@@ -73,6 +73,14 @@ export default function PerfilPage() {
               {user?.email}
             </span>
           </div>
+          <div className="pt-2">
+            <Link
+              href="/dashboard/consents"
+              className="text-sm text-anima-violet hover:text-anima-lilac transition-colors"
+            >
+              Gerenciar consentimentos com clínicas →
+            </Link>
+          </div>
         </div>
       </motion.div>
 

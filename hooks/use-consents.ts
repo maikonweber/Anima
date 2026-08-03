@@ -2,6 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+  getMyConsentStatus,
   getPatientConsentStatus,
   grantConsent,
   listConsentExports,
@@ -21,16 +22,31 @@ import { useAuth } from "@/providers/auth-provider";
 function invalidatePatientConsents(
   queryClient: ReturnType<typeof useQueryClient>,
   orgId: string,
-  patientId: string,
+  patientId?: string,
 ) {
   void queryClient.invalidateQueries({
-    queryKey: ["consents", orgId, patientId],
+    queryKey: ["consent-status-me", orgId],
   });
-  void queryClient.invalidateQueries({
-    queryKey: ["consent-status", orgId, patientId],
-  });
-  void queryClient.invalidateQueries({
-    queryKey: ["consent-exports", orgId, patientId],
+  if (patientId) {
+    void queryClient.invalidateQueries({
+      queryKey: ["consents", orgId, patientId],
+    });
+    void queryClient.invalidateQueries({
+      queryKey: ["consent-status", orgId, patientId],
+    });
+    void queryClient.invalidateQueries({
+      queryKey: ["consent-exports", orgId, patientId],
+    });
+  }
+}
+
+export function useMyConsentStatus(orgId: string) {
+  const { user } = useAuth();
+  return useQuery({
+    queryKey: ["consent-status-me", orgId],
+    queryFn: () => getMyConsentStatus(orgId),
+    enabled: !!user && !!orgId,
+    retry: false,
   });
 }
 
@@ -79,7 +95,8 @@ export function useGrantConsent(orgId: string, patientId: string) {
   return useMutation({
     mutationFn: (payload: GrantConsentPayload) =>
       grantConsent(orgId, patientId, payload),
-    onSuccess: () => invalidatePatientConsents(queryClient, orgId, patientId),
+    onSuccess: () =>
+      invalidatePatientConsents(queryClient, orgId, patientId),
   });
 }
 
@@ -93,7 +110,8 @@ export function useRevokeConsent(orgId: string, patientId: string) {
       consentId: string;
       payload?: RevokeConsentPayload;
     }) => revokeConsent(orgId, consentId, payload),
-    onSuccess: () => invalidatePatientConsents(queryClient, orgId, patientId),
+    onSuccess: () =>
+      invalidatePatientConsents(queryClient, orgId, patientId),
   });
 }
 
@@ -102,6 +120,7 @@ export function useRequestConsentExport(orgId: string, patientId: string) {
   return useMutation({
     mutationFn: (payload?: RequestConsentExportPayload) =>
       requestConsentExport(orgId, patientId, payload),
-    onSuccess: () => invalidatePatientConsents(queryClient, orgId, patientId),
+    onSuccess: () =>
+      invalidatePatientConsents(queryClient, orgId, patientId),
   });
 }

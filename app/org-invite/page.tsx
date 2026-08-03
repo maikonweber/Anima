@@ -58,6 +58,10 @@ function OrgInviteContent() {
   async function handleAccept() {
     try {
       const result = await acceptInvite.mutateAsync(token!);
+      if (invite.role === "PATIENT") {
+        router.push("/dashboard/consents");
+        return;
+      }
       router.push(`/clinic/${result.organization.id}`);
     } catch {
       // surfaced via mutation error below
