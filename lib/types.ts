@@ -37,4 +37,11 @@ export type {
   FeedbackType,
   FeedbackRequest,
   FeedbackResponse,
+  Organization,
+  OrganizationRole,
+  MyOrganization,
+  Patient,
+  PatientStatus,
+  PatientDetail,
+  PaginatedPatients,
 } from "@anima/shared";
