@@ -25,8 +25,9 @@ import {
   usePatientConsentStatus,
 } from "@/hooks/use-consents";
 import { useMyOrganizations } from "@/hooks/use-organizations";
-import { useCreateTeleconsult } from "@/hooks/use-teleconsult";
+import { useCreateTeleconsult, useTeleconsultByAppointment } from "@/hooks/use-teleconsult";
 import { usePatient } from "@/hooks/use-patients";
+import { TeleconsultPatientLinkPanel } from "@/components/clinic/TeleconsultPatientLinkPanel";
 import type { AppointmentStatus } from "@anima/shared";
 
 export default function AppointmentDetailPage() {
@@ -56,7 +57,18 @@ export default function AppointmentDetailPage() {
   const [endsAt, setEndsAt] = useState("");
   const [cancelReason, setCancelReason] = useState("");
   const [actionError, setActionError] = useState<string | null>(null);
-  const [teleRoomCode, setTeleRoomCode] = useState<string | null>(null);
+
+  const canTeleconsult =
+    data &&
+    (data.modality === "ONLINE" || data.modality === "HIBRIDO") &&
+    data.status !== "CANCELADA" &&
+    data.status !== "CONCLUIDA";
+
+  const existingTeleconsult = useTeleconsultByAppointment(
+    orgId,
+    appointmentId,
+    !!canTeleconsult,
+  );
 
   useEffect(() => {
     if (!data) return;
@@ -89,7 +101,6 @@ export default function AppointmentDetailPage() {
     setActionError(null);
     try {
       const session = await createTeleconsult.mutateAsync(appointmentId);
-      setTeleRoomCode(session.roomCode);
       router.push(`/clinic/${orgId}/teleconsulta/${session.id}`);
     } catch (err) {
       setActionError(
@@ -130,12 +141,6 @@ export default function AppointmentDetailPage() {
   const showComplete = allowedNext.includes("CONCLUIDA");
   const showNoShow = allowedNext.includes("NO_SHOW");
   const hasStatusActions = showConfirm || showComplete || showNoShow;
-
-  const canTeleconsult =
-    data &&
-    (data.modality === "ONLINE" || data.modality === "HIBRIDO") &&
-    data.status !== "CANCELADA" &&
-    data.status !== "CONCLUIDA";
 
   const teleconsultConsent = consentStatus.data?.porFinalidade.find(
     (item) => item.purpose === "TELECONSULTA",
@@ -206,11 +211,11 @@ export default function AppointmentDetailPage() {
                   {data.cancelReason}
                 </p>
               )}
-              {teleRoomCode && (
+              {existingTeleconsult.data && (
                 <p>
                   <span className="text-foreground/40">Código teleconsulta:</span>{" "}
                   <span className="font-mono text-foreground/80">
-                    {teleRoomCode}
+                    {existingTeleconsult.data.roomCode}
                   </span>
                 </p>
               )}
@@ -269,19 +274,38 @@ export default function AppointmentDetailPage() {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-3">
-                  <Button
-                    type="button"
-                    className="w-auto"
-                    disabled={!hasTeleconsultConsent}
-                    isLoading={createTeleconsult.isPending}
-                    onClick={() => void handleOpenTeleconsult()}
-                  >
-                    Abrir teleconsulta
-                  </Button>
-                  <p className="text-xs text-foreground/40">
-                    Paciente entra em /teleconsulta com o código da sala.
-                  </p>
+                  {existingTeleconsult.data ? (
+                    <Link
+                      href={`/clinic/${orgId}/teleconsulta/${existingTeleconsult.data.id}`}
+                      className="inline-flex"
+                    >
+                      <Button type="button" className="w-auto">
+                        Entrar na teleconsulta
+                      </Button>
+                    </Link>
+                  ) : (
+                    <Button
+                      type="button"
+                      className="w-auto"
+                      disabled={!hasTeleconsultConsent}
+                      isLoading={createTeleconsult.isPending}
+                      onClick={() => void handleOpenTeleconsult()}
+                    >
+                      Abrir teleconsulta
+                    </Button>
+                  )}
                 </div>
+
+                {existingTeleconsult.data && data.patientId && (
+                  <div className="glass-panel p-4">
+                    <TeleconsultPatientLinkPanel
+                      orgId={orgId}
+                      patientId={data.patientId}
+                      roomCode={existingTeleconsult.data.roomCode}
+                      patientJoinUrl={existingTeleconsult.data.patientJoinUrl}
+                    />
+                  </div>
+                )}
               </div>
             )}
 

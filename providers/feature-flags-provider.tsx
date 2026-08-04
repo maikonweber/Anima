@@ -10,6 +10,9 @@ import { useFeatureFlags } from "@/hooks/use-feature-flags";
 
 interface FeatureFlagsContextValue {
   previewMode: boolean;
+  teleconsultTranscription: boolean;
+  teleconsultMultimodal: boolean;
+  teleconsultRecording: boolean;
   isLoading: boolean;
 }
 
@@ -23,9 +26,18 @@ export function FeatureFlagsProvider({ children }: { children: ReactNode }) {
   const value = useMemo<FeatureFlagsContextValue>(
     () => ({
       previewMode: data?.previewMode ?? false,
+      teleconsultTranscription: data?.teleconsultTranscription ?? false,
+      teleconsultMultimodal: data?.teleconsultMultimodal ?? false,
+      teleconsultRecording: data?.teleconsultRecording ?? false,
       isLoading,
     }),
-    [data?.previewMode, isLoading],
+    [
+      data?.previewMode,
+      data?.teleconsultTranscription,
+      data?.teleconsultMultimodal,
+      data?.teleconsultRecording,
+      isLoading,
+    ],
   );
 
   return (

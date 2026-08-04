@@ -2,6 +2,9 @@ import { getApiUrl } from "../api-client";
 
 export type FeatureFlags = {
   previewMode: boolean;
+  teleconsultTranscription: boolean;
+  teleconsultMultimodal: boolean;
+  teleconsultRecording: boolean;
 };
 
 export async function fetchFeatureFlags(): Promise<FeatureFlags> {

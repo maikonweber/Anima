@@ -9,12 +9,45 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 type UseUserMediaOptions = {
   preferEnvironmentCamera?: boolean;
+  /** Se false, só solicita mídia após checkPermission() (gesto do usuário). */
+  autoStart?: boolean;
 };
 
+function describeMediaError(err: unknown): string {
+  if (typeof window !== "undefined" && !window.isSecureContext) {
+    return "Câmera e microfone só funcionam em conexão segura (HTTPS).";
+  }
+  if (typeof navigator !== "undefined" && !navigator.mediaDevices?.getUserMedia) {
+    return "Seu navegador não suporta acesso à câmera e ao microfone.";
+  }
+  if (err instanceof DOMException) {
+    switch (err.name) {
+      case "NotAllowedError":
+        return "Permissão negada. Clique em «Permitir acesso» e aceite no navegador, ou libere câmera e microfone nas configurações do site.";
+      case "NotFoundError":
+        return "Nenhuma câmera ou microfone encontrado. Conecte um dispositivo e tente novamente.";
+      case "NotReadableError":
+        return "Câmera ou microfone em uso por outro aplicativo. Feche outros programas e tente novamente.";
+      case "OverconstrainedError":
+        return "Não foi possível usar os dispositivos de mídia solicitados.";
+      case "SecurityError":
+        return "Acesso à mídia bloqueado por política de segurança do navegador.";
+      default:
+        return err.message || "Não foi possível acessar câmera e microfone.";
+    }
+  }
+  return err instanceof Error
+    ? err.message
+    : "Não foi possível acessar câmera e microfone.";
+}
+
 export function useUserMedia(options: UseUserMediaOptions = {}) {
+  const { autoStart = false } = options;
   const [activeStream, setActiveStream] = useState<MediaStream | undefined>();
-  const [ready, setReady] = useState(false);
+  const [ready, setReady] = useState(!autoStart);
   const [accessGranted, setAccessGranted] = useState(false);
+  const [requesting, setRequesting] = useState(false);
+  const [mediaError, setMediaError] = useState<string | null>(null);
   const [muted, setMuted] = useState(false);
   const [videoOff, setVideoOff] = useState(false);
   const [audioDevices, setAudioDevices] = useState<MediaDeviceInfo[]>([]);
@@ -32,36 +65,85 @@ export function useUserMedia(options: UseUserMediaOptions = {}) {
     setOutputDevices(devices.filter((d) => d.kind === "audiooutput"));
   }, []);
 
+  const applyStream = useCallback(
+    async (stream: MediaStream) => {
+      streamRef.current?.getTracks().forEach((t) => t.stop());
+      streamRef.current = stream;
+      stream.getAudioTracks().forEach((t) => {
+        t.enabled = true;
+      });
+      stream.getVideoTracks().forEach((t) => {
+        t.enabled = true;
+      });
+      setActiveStream(stream);
+      setAccessGranted(true);
+      setReady(true);
+      setMediaError(null);
+      const audioTrack = stream.getAudioTracks()[0];
+      const videoTrack = stream.getVideoTracks()[0];
+      setSelectedAudioDevice(audioTrack?.getSettings().deviceId);
+      setSelectedVideoDevice(videoTrack?.getSettings().deviceId);
+      if (!videoTrack) {
+        setVideoOff(true);
+      }
+      await refreshDevices();
+    },
+    [refreshDevices],
+  );
+
   const start = useCallback(async () => {
+    if (!navigator.mediaDevices?.getUserMedia) {
+      throw new DOMException(
+        "MediaDevices API indisponível",
+        "NotSupportedError",
+      );
+    }
+
     const videoConstraint: boolean | MediaTrackConstraints =
       options.preferEnvironmentCamera
         ? { facingMode: { ideal: "environment" } }
         : true;
 
-    const stream = await navigator.mediaDevices.getUserMedia({
-      audio: true,
-      video: videoConstraint,
-    });
-    streamRef.current = stream;
-    setActiveStream(stream);
-    setAccessGranted(true);
-    setReady(true);
-    const audioTrack = stream.getAudioTracks()[0];
-    const videoTrack = stream.getVideoTracks()[0];
-    setSelectedAudioDevice(audioTrack?.getSettings().deviceId);
-    setSelectedVideoDevice(videoTrack?.getSettings().deviceId);
-    await refreshDevices();
-  }, [options.preferEnvironmentCamera, refreshDevices]);
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+        video: videoConstraint,
+      });
+      await applyStream(stream);
+      return stream;
+    } catch (err) {
+      if (
+        err instanceof DOMException &&
+        (err.name === "NotFoundError" || err.name === "OverconstrainedError")
+      ) {
+        const audioOnly = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+          video: false,
+        });
+        await applyStream(audioOnly);
+        return audioOnly;
+      }
+      throw err;
+    }
+  }, [applyStream, options.preferEnvironmentCamera]);
 
   useEffect(() => {
-    void start().catch(() => {
+    if (!autoStart) return;
+    void start().catch((err) => {
       setReady(true);
       setAccessGranted(false);
+      setMediaError(describeMediaError(err));
     });
     return () => {
       streamRef.current?.getTracks().forEach((t) => t.stop());
     };
-  }, [start]);
+  }, [autoStart, start]);
+
+  useEffect(() => {
+    return () => {
+      streamRef.current?.getTracks().forEach((t) => t.stop());
+    };
+  }, []);
 
   const toggleMute = useCallback(() => {
     const next = !muted;
@@ -107,11 +189,18 @@ export function useUserMedia(options: UseUserMediaOptions = {}) {
   }, []);
 
   const checkPermission = useCallback(async () => {
+    setRequesting(true);
+    setMediaError(null);
     try {
       await start();
       return { video: true, audio: true };
-    } catch {
+    } catch (err) {
+      setAccessGranted(false);
+      setReady(true);
+      setMediaError(describeMediaError(err));
       return { video: false, audio: false };
+    } finally {
+      setRequesting(false);
     }
   }, [start]);
 
@@ -119,6 +208,8 @@ export function useUserMedia(options: UseUserMediaOptions = {}) {
     activeStream,
     ready,
     accessGranted,
+    requesting,
+    mediaError,
     muted,
     videoOff,
     audioDevices,

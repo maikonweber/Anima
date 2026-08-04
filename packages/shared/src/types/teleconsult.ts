@@ -12,6 +12,7 @@ export type TeleconsultSession = {
   patientId: string;
   professionalUserId: string;
   roomCode: string;
+  patientJoinUrl: string;
   status: TeleconsultSessionStatus;
   createdByUserId: string | null;
   startedAt: string | null;

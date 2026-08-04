@@ -5,18 +5,21 @@ import { type ButtonHTMLAttributes } from "react";
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "secondary" | "ghost";
   isLoading?: boolean;
+  /** Largura total do container (padrão em formulários). */
+  fullWidth?: boolean;
 }
 
 export function Button({
   variant = "primary",
   isLoading = false,
+  fullWidth = true,
   children,
   className = "",
   disabled,
   ...props
 }: ButtonProps) {
   const base =
-    "relative w-full rounded-xl px-5 py-3 text-sm font-medium transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-anima-violet/30";
+    `relative ${fullWidth ? "w-full" : "w-auto"} rounded-xl px-5 py-3 text-sm font-medium transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-anima-violet/30`;
 
   const variants = {
     primary:

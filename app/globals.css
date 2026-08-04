@@ -266,23 +266,31 @@ body {
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
 
-/* Native select: closed field + dropdown list follow app theme */
+/* Native select: OS dropdowns (esp. Windows) render light — keep option text dark */
 select.anima-select {
   color-scheme: light;
 }
 
 select.anima-select option {
-  background-color: var(--background);
-  color: var(--foreground);
+  background-color: #ffffff;
+  color: #0f1c24;
+}
+
+select.anima-select option:disabled {
+  color: rgba(15, 28, 36, 0.45);
 }
 
 .dark select.anima-select {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 .dark select.anima-select option {
-  background-color: #0b1214;
-  color: #ededed;
+  background-color: #ffffff;
+  color: #0f1c24;
+}
+
+.dark select.anima-select option:disabled {
+  color: rgba(15, 28, 36, 0.45);
 }
 
 /* Glass panel utility */
@@ -295,6 +303,55 @@ select.anima-select option {
   box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.06),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.clinic-shell .glass-panel {
+  background: var(--clinic-panel);
+  border: 1px solid var(--clinic-border);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: 0 1px 2px rgba(15, 28, 36, 0.04);
+}
+
+/* Teleconsulta — layout mobile-first (sala + chat) */
+.teleconsult-page {
+  width: 100%;
+}
+
+.teleconsult-room-grid {
+  min-height: 0;
+}
+
+.teleconsult-chat {
+  min-height: min(280px, 42vh);
+}
+
+@media (min-width: 1024px) {
+  .teleconsult-chat {
+    min-height: min(480px, 72vh);
+  }
+}
+
+.teleconsult-chat-messages {
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.teleconsult-controls .relative {
+  min-width: 0;
+}
+
+.teleconsult-room-main video {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.clinic-shell .teleconsult-controls button {
+  border-color: var(--clinic-border-strong) !important;
+}
+
+.clinic-shell .teleconsult-chat-input:focus {
+  border-color: rgba(13, 115, 119, 0.45);
+  --tw-ring-color: rgba(13, 115, 119, 0.22);
 }
 
 /* Emotion glow utility */

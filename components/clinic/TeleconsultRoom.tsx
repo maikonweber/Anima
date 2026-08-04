@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/Button";
+import { selectClassName } from "@/components/ui/Select";
 import { TeleconsultChat } from "@/components/clinic/TeleconsultChat";
 import { SessionIntelligencePanel } from "@/components/clinic/SessionIntelligencePanel";
 import { TeleconsultRecordingsPanel } from "@/components/clinic/TeleconsultRecordingsPanel";
@@ -14,8 +15,10 @@ import {
   postTeleconsultSignal,
   pullTeleconsultSignals,
 } from "@/lib/api/teleconsult";
+import { TeleconsultPatientLinkPanel } from "@/components/clinic/TeleconsultPatientLinkPanel";
 import type { TeleconsultSession } from "@anima/shared";
 import { useAuth } from "@/providers/auth-provider";
+import { useFeatureFlagsContext } from "@/providers/feature-flags-provider";
 
 const ICE_SERVERS: RTCIceServer[] = [
   { urls: "stun:stun.l.google.com:19302" },
@@ -36,12 +39,18 @@ export function TeleconsultRoom({
   onEnded,
 }: Props) {
   const { user } = useAuth();
+  const {
+    teleconsultTranscription,
+    teleconsultMultimodal,
+    teleconsultRecording,
+  } = useFeatureFlagsContext();
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const pcRef = useRef<RTCPeerConnection | null>(null);
   const lastSignalId = useRef<string | undefined>(undefined);
   const makingOffer = useRef(false);
   const pollStopped = useRef(false);
+  const pendingIceRef = useRef<RTCIceCandidateInit[]>([]);
   const [remoteReady, setRemoteReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [ending, setEnding] = useState(false);
@@ -59,6 +68,8 @@ export function TeleconsultRoom({
     activeStream,
     ready,
     accessGranted,
+    requesting,
+    mediaError,
     muted,
     videoOff,
     audioDevices,
@@ -68,7 +79,7 @@ export function TeleconsultRoom({
     switchInput,
     stopAllStreaming,
     checkPermission,
-  } = useUserMedia();
+  } = useUserMedia({ autoStart: false });
 
   const [multimodalOn, setMultimodalOn] = useState(false);
   const multimodal = useMultimodalAssistive({
@@ -78,7 +89,7 @@ export function TeleconsultRoom({
     videoEl: localVideoRef.current,
     muted,
     videoOff,
-    enabled: multimodalOn && isInitiator && !ended,
+    enabled: multimodalOn && isInitiator && !ended && teleconsultMultimodal,
   });
   const recording = useTeleconsultRecording({
     orgId: session.organizationId,
@@ -88,11 +99,40 @@ export function TeleconsultRoom({
     remoteVideo: remoteVideoRef.current,
   });
 
+  const attachStreamToVideo = useCallback(
+    (el: HTMLVideoElement | null, stream: MediaStream | null) => {
+      if (!el || !stream) return;
+      if (el.srcObject !== stream) {
+        el.srcObject = stream;
+      }
+      void el.play().catch(() => {
+        /* autoplay bloqueado — usuário pode interagir com os controles */
+      });
+    },
+    [],
+  );
+
+  const bindLocalVideo = useCallback(
+    (el: HTMLVideoElement | null) => {
+      localVideoRef.current = el;
+      attachStreamToVideo(el, activeStream ?? null);
+    },
+    [activeStream, attachStreamToVideo],
+  );
+
+  const bindRemoteVideo = useCallback(
+    (el: HTMLVideoElement | null) => {
+      remoteVideoRef.current = el;
+      if (el?.srcObject) {
+        void el.play().catch(() => {});
+      }
+    },
+    [],
+  );
+
   useEffect(() => {
-    if (localVideoRef.current && activeStream) {
-      localVideoRef.current.srcObject = activeStream;
-    }
-  }, [activeStream]);
+    attachStreamToVideo(localVideoRef.current, activeStream ?? null);
+  }, [activeStream, attachStreamToVideo]);
 
   useEffect(() => {
     if (multimodalOn && isInitiator && !ended && activeStream) {
@@ -104,15 +144,53 @@ export function TeleconsultRoom({
     // eslint-disable-next-line react-hooks/exhaustive-deps -- evita loop pelo objeto multimodal
   }, [multimodalOn, isInitiator, ended, activeStream]);
 
+  const flushPendingIce = useCallback(async (pc: RTCPeerConnection) => {
+    if (!pc.remoteDescription) return;
+    const pending = [...pendingIceRef.current];
+    pendingIceRef.current = [];
+    for (const candidate of pending) {
+      try {
+        await pc.addIceCandidate(candidate);
+      } catch {
+        // candidato expirado ou duplicado
+      }
+    }
+  }, []);
+
+  const addIceCandidateSafe = useCallback(
+    async (pc: RTCPeerConnection, candidate: RTCIceCandidateInit) => {
+      if (!pc.remoteDescription) {
+        pendingIceRef.current.push(candidate);
+        return;
+      }
+      try {
+        await pc.addIceCandidate(candidate);
+      } catch {
+        // candidato fora de ordem — tenta enfileirar
+        pendingIceRef.current.push(candidate);
+      }
+    },
+    [],
+  );
+
   const ensurePeer = useCallback(() => {
     if (pcRef.current) return pcRef.current;
     const pc = new RTCPeerConnection({ iceServers: ICE_SERVERS });
     pcRef.current = pc;
 
     pc.ontrack = (event) => {
-      if (remoteVideoRef.current) {
-        remoteVideoRef.current.srcObject = event.streams[0];
-        setRemoteReady(true);
+      const stream = event.streams[0];
+      if (!stream || !remoteVideoRef.current) return;
+      remoteVideoRef.current.srcObject = stream;
+      void remoteVideoRef.current.play().catch(() => {});
+      setRemoteReady(true);
+    };
+
+    pc.onconnectionstatechange = () => {
+      if (pc.connectionState === "failed") {
+        setError(
+          "Conexão de vídeo falhou. Verifique a rede ou peça ao paciente para recarregar o link.",
+        );
       }
     };
 
@@ -121,6 +199,12 @@ export function TeleconsultRoom({
       void postTeleconsultSignal(session.organizationId, session.id, {
         type: "ice",
         payload: event.candidate.toJSON(),
+      }).catch((err: unknown) => {
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Falha ao enviar sinal de conexão",
+        );
       });
     };
 
@@ -155,6 +239,7 @@ export function TeleconsultRoom({
           type: "offer",
           payload: offer,
         });
+        setError(null);
       } catch (err) {
         setError(
           err instanceof Error ? err.message : "Falha ao criar oferta WebRTC",
@@ -179,6 +264,45 @@ export function TeleconsultRoom({
     session.organizationId,
   ]);
 
+  // Reenvia oferta enquanto o paciente ainda não conectou (entrou depois).
+  useEffect(() => {
+    if (!isInitiator || ended || remoteReady || !activeStream) return;
+    const interval = window.setInterval(() => {
+      if (makingOffer.current || remoteReady) return;
+      const pc = pcRef.current;
+      if (!pc) return;
+      if (
+        pc.signalingState !== "stable" &&
+        pc.signalingState !== "have-local-offer"
+      ) {
+        return;
+      }
+      void (async () => {
+        try {
+          makingOffer.current = true;
+          const offer = await pc.createOffer();
+          await pc.setLocalDescription(offer);
+          await postTeleconsultSignal(session.organizationId, session.id, {
+            type: "offer",
+            payload: offer,
+          });
+        } catch {
+          // próximo ciclo tenta de novo
+        } finally {
+          makingOffer.current = false;
+        }
+      })();
+    }, 8000);
+    return () => window.clearInterval(interval);
+  }, [
+    activeStream,
+    ended,
+    isInitiator,
+    remoteReady,
+    session.id,
+    session.organizationId,
+  ]);
+
   useEffect(() => {
     if (ended) return;
     pollStopped.current = false;
@@ -196,29 +320,40 @@ export function TeleconsultRoom({
             if (msg.fromUserId === user?.id) continue;
             const pc = ensurePeer();
             if (msg.type === "offer" && !isInitiator) {
-              await pc.setRemoteDescription(
-                msg.payload as RTCSessionDescriptionInit,
-              );
-              const answer = await pc.createAnswer();
-              await pc.setLocalDescription(answer);
-              await postTeleconsultSignal(session.organizationId, session.id, {
-                type: "answer",
-                payload: answer,
-              });
-            } else if (msg.type === "answer" && isInitiator) {
-              await pc.setRemoteDescription(
-                msg.payload as RTCSessionDescriptionInit,
-              );
-            } else if (msg.type === "ice") {
-              try {
-                await pc.addIceCandidate(msg.payload as RTCIceCandidateInit);
-              } catch {
-                // ignore late candidates
+              if (pc.signalingState === "stable") {
+                await pc.setRemoteDescription(
+                  msg.payload as RTCSessionDescriptionInit,
+                );
+                const answer = await pc.createAnswer();
+                await pc.setLocalDescription(answer);
+                await postTeleconsultSignal(session.organizationId, session.id, {
+                  type: "answer",
+                  payload: answer,
+                });
+                await flushPendingIce(pc);
+                setError(null);
               }
+            } else if (msg.type === "answer" && isInitiator) {
+              if (!pc.remoteDescription) {
+                await pc.setRemoteDescription(
+                  msg.payload as RTCSessionDescriptionInit,
+                );
+                await flushPendingIce(pc);
+                setError(null);
+              }
+            } else if (msg.type === "ice") {
+              await addIceCandidateSafe(
+                pc,
+                msg.payload as RTCIceCandidateInit,
+              );
             }
           }
-        } catch {
-          // keep polling
+        } catch (err) {
+          setError(
+            err instanceof Error
+              ? err.message
+              : "Falha na conexão com o servidor de sinais",
+          );
         }
         await new Promise((r) => setTimeout(r, 1200));
       }
@@ -229,8 +364,10 @@ export function TeleconsultRoom({
       pollStopped.current = true;
     };
   }, [
+    addIceCandidateSafe,
     ended,
     ensurePeer,
+    flushPendingIce,
     isInitiator,
     session.id,
     session.organizationId,
@@ -282,10 +419,12 @@ export function TeleconsultRoom({
   if (showBriefing) {
     return (
       <div className="space-y-4">
-        <TeleconsultRecordingsPanel
-          orgId={session.organizationId}
-          sessionId={session.id}
-        />
+        {teleconsultRecording && (
+          <TeleconsultRecordingsPanel
+            orgId={session.organizationId}
+            sessionId={session.id}
+          />
+        )}
         <SessionIntelligencePanel
           orgId={session.organizationId}
           sessionId={session.id}
@@ -303,10 +442,12 @@ export function TeleconsultRoom({
         <p className="text-[11px] text-foreground/35">
           Código da sala: <code>{session.roomCode}</code> · status ENCERRADA
         </p>
-        <TeleconsultRecordingsPanel
-          orgId={session.organizationId}
-          sessionId={session.id}
-        />
+        {teleconsultRecording && (
+          <TeleconsultRecordingsPanel
+            orgId={session.organizationId}
+            sessionId={session.id}
+          />
+        )}
       </div>
     );
   }
@@ -317,7 +458,18 @@ export function TeleconsultRoom({
         <p className="text-sm text-foreground/60">
           Permita acesso à câmera e ao microfone para entrar na teleconsulta.
         </p>
-        <Button type="button" onClick={() => void checkPermission()}>
+        {typeof window !== "undefined" && !window.isSecureContext && (
+          <p className="text-xs text-amber-500/90">
+            Esta página precisa ser aberta via HTTPS para usar câmera e
+            microfone.
+          </p>
+        )}
+        {mediaError && <p className="text-xs text-red-400">{mediaError}</p>}
+        <Button
+          type="button"
+          isLoading={requesting}
+          onClick={() => void checkPermission()}
+        >
           Permitir acesso
         </Button>
       </div>
@@ -325,17 +477,32 @@ export function TeleconsultRoom({
   }
 
   return (
-    <div className="space-y-4">
-      <div className="grid gap-3 lg:grid-cols-[1fr_280px]">
-        <div className="space-y-3">
-          <div className="grid gap-3 sm:grid-cols-2">
+    <div className="teleconsult-room space-y-4">
+      {isInitiator && !remoteReady && (
+        <div className="glass-panel p-4">
+          <p className="text-xs text-foreground/50 mb-3">
+            O paciente ainda não entrou. Envie o link:
+          </p>
+          <TeleconsultPatientLinkPanel
+            orgId={session.organizationId}
+            patientId={session.patientId}
+            roomCode={session.roomCode}
+            patientJoinUrl={session.patientJoinUrl}
+            compact
+          />
+        </div>
+      )}
+
+      <div className="teleconsult-room-grid grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(260px,300px)] lg:items-stretch">
+        <div className="teleconsult-room-main space-y-3 min-w-0">
+          <div className="grid gap-3 grid-cols-1 sm:grid-cols-2">
             <div className="relative aspect-video rounded-2xl overflow-hidden bg-foreground/10">
               <video
-                ref={localVideoRef}
+                ref={bindLocalVideo}
                 autoPlay
                 playsInline
                 muted
-                className="h-full w-full object-cover"
+                className="h-full w-full object-cover scale-x-[-1]"
               />
               <span className="absolute left-3 bottom-3 text-[11px] px-2 py-0.5 rounded-md bg-black/50 text-white">
                 Você
@@ -343,7 +510,7 @@ export function TeleconsultRoom({
             </div>
             <div className="relative aspect-video rounded-2xl overflow-hidden bg-foreground/10">
               <video
-                ref={remoteVideoRef}
+                ref={bindRemoteVideo}
                 autoPlay
                 playsInline
                 className="h-full w-full object-cover"
@@ -351,20 +518,39 @@ export function TeleconsultRoom({
               <span className="absolute left-3 bottom-3 text-[11px] px-2 py-0.5 rounded-md bg-black/50 text-white">
                 {remoteReady ? "Remoto" : "Aguardando participante…"}
               </span>
+              {!remoteReady && isInitiator && (
+                <span className="absolute right-3 top-3 text-[10px] px-2 py-0.5 rounded-md bg-black/50 text-white/80 max-w-[70%] text-right">
+                  Envie o link ao paciente e aguarde ele entrar
+                </span>
+              )}
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-2">
-            <Button type="button" variant="secondary" onClick={toggleMute}>
+          <div className="teleconsult-controls grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3">
+            <Button
+              type="button"
+              variant="secondary"
+              fullWidth={false}
+              className="!w-full !py-2.5 !px-3 text-xs sm:text-sm"
+              onClick={toggleMute}
+            >
               {muted ? "Ativar microfone" : "Mute"}
             </Button>
-            <Button type="button" variant="secondary" onClick={toggleVideo}>
+            <Button
+              type="button"
+              variant="secondary"
+              fullWidth={false}
+              className="!w-full !py-2.5 !px-3 text-xs sm:text-sm"
+              onClick={toggleVideo}
+            >
               {videoOff ? "Ligar vídeo" : "Desligar vídeo"}
             </Button>
-            {isInitiator && asr.supported && (
+            {isInitiator && teleconsultTranscription && asr.supported && (
               <Button
                 type="button"
                 variant="secondary"
+                fullWidth={false}
+                className="!w-full !py-2.5 !px-3 text-xs sm:text-sm"
                 onClick={() =>
                   void (asr.active ? asr.stop() : asr.start())
                 }
@@ -372,19 +558,23 @@ export function TeleconsultRoom({
                 {asr.active ? "Parar transcrição" : "Transcrever"}
               </Button>
             )}
-            {isInitiator && multimodal.supported && (
+            {isInitiator && teleconsultMultimodal && multimodal.supported && (
               <Button
                 type="button"
                 variant="secondary"
+                fullWidth={false}
+                className="!w-full !py-2.5 !px-3 text-xs sm:text-sm"
                 onClick={() => setMultimodalOn((v) => !v)}
               >
                 {multimodalOn ? "Parar sinais" : "Sinais assistivos"}
               </Button>
             )}
-            {isInitiator && recording.supported && (
+            {isInitiator && teleconsultRecording && recording.supported && (
               <Button
                 type="button"
                 variant="secondary"
+                fullWidth={false}
+                className="!w-full !py-2.5 !px-3 text-xs sm:text-sm"
                 isLoading={recording.uploading}
                 onClick={() => {
                   if (recording.active) {
@@ -402,8 +592,9 @@ export function TeleconsultRoom({
             )}
             <Button
               type="button"
-              variant="ghost"
-              className="text-red-500"
+              variant="secondary"
+              fullWidth={false}
+              className="!w-full !py-2.5 !px-3 text-xs sm:text-sm !text-red-600 dark:!text-red-400 !border-red-500/25 hover:!bg-red-500/10"
               isLoading={ending}
               onClick={() => void handleEnd()}
             >
@@ -446,10 +637,10 @@ export function TeleconsultRoom({
           )}
 
           {(videoDevices.length > 1 || audioDevices.length > 1) && (
-            <div className="grid gap-2 sm:grid-cols-2">
+            <div className="grid gap-2 grid-cols-1 sm:grid-cols-2">
               {videoDevices.length > 0 && (
                 <select
-                  className="rounded-xl px-3 py-2 text-sm bg-foreground/[0.03] border border-foreground/[0.08]"
+                  className={`${selectClassName} !px-3 !py-2.5`}
                   onChange={(e) => void switchInput(e.target.value, "video")}
                   defaultValue=""
                 >
@@ -465,7 +656,7 @@ export function TeleconsultRoom({
               )}
               {audioDevices.length > 0 && (
                 <select
-                  className="rounded-xl px-3 py-2 text-sm bg-foreground/[0.03] border border-foreground/[0.08]"
+                  className={`${selectClassName} !px-3 !py-2.5`}
                   onChange={(e) => void switchInput(e.target.value, "audio")}
                   defaultValue=""
                 >
@@ -486,6 +677,7 @@ export function TeleconsultRoom({
         <TeleconsultChat
           orgId={session.organizationId}
           sessionId={session.id}
+          className="lg:h-full lg:min-h-[min(480px,72vh)]"
         />
       </div>
 

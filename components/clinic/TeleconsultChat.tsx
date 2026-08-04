@@ -13,9 +13,15 @@ type Props = {
   orgId: string;
   sessionId: string;
   disabled?: boolean;
+  className?: string;
 };
 
-export function TeleconsultChat({ orgId, sessionId, disabled }: Props) {
+export function TeleconsultChat({
+  orgId,
+  sessionId,
+  disabled,
+  className = "",
+}: Props) {
   const { user } = useAuth();
   const [messages, setMessages] = useState<TeleconsultMessage[]>([]);
   const [body, setBody] = useState("");
@@ -82,13 +88,16 @@ export function TeleconsultChat({ orgId, sessionId, disabled }: Props) {
   }
 
   return (
-    <div className="glass-panel flex flex-col h-72 sm:h-80">
-      <div className="px-3 py-2 border-b border-foreground/[0.06]">
-        <p className="text-xs font-medium text-foreground/70">Chat da sessão</p>
+    <div
+      className={`teleconsult-chat glass-panel flex flex-col min-h-0 min-w-0 ${className}`}
+    >
+      <div className="shrink-0 px-3 py-2.5 border-b border-foreground/[0.06]">
+        <p className="text-xs font-semibold text-foreground/70">Chat da sessão</p>
       </div>
-      <div className="flex-1 overflow-y-auto px-3 py-2 space-y-2">
+
+      <div className="teleconsult-chat-messages flex-1 min-h-0 overflow-y-auto px-3 py-2 space-y-2">
         {messages.length === 0 && (
-          <p className="text-[11px] text-foreground/35">
+          <p className="text-[11px] text-foreground/35 py-1">
             Nenhuma mensagem ainda.
           </p>
         )}
@@ -97,10 +106,10 @@ export function TeleconsultChat({ orgId, sessionId, disabled }: Props) {
           return (
             <div
               key={m.id}
-              className={`text-sm max-w-[85%] rounded-xl px-3 py-1.5 ${
+              className={`text-sm max-w-[88%] rounded-2xl px-3 py-2 leading-snug break-words ${
                 mine
-                  ? "ml-auto bg-anima-violet/20 text-foreground/85"
-                  : "bg-foreground/[0.05] text-foreground/75"
+                  ? "ml-auto bg-anima-violet/18 text-foreground/90"
+                  : "mr-auto bg-foreground/[0.05] text-foreground/80"
               }`}
             >
               {m.deleted ? (
@@ -113,23 +122,33 @@ export function TeleconsultChat({ orgId, sessionId, disabled }: Props) {
         })}
         <div ref={bottomRef} />
       </div>
+
       <form
         onSubmit={(e) => void handleSend(e)}
-        className="p-2 border-t border-foreground/[0.06] flex gap-2"
+        className="shrink-0 p-2 sm:p-3 border-t border-foreground/[0.06] flex flex-col sm:flex-row gap-2"
       >
         <input
           value={body}
           onChange={(e) => setBody(e.target.value)}
           disabled={disabled || sending}
           placeholder={disabled ? "Sessão encerrada" : "Mensagem…"}
-          className="flex-1 rounded-xl px-3 py-2 text-sm bg-foreground/[0.03] border border-foreground/[0.08]"
+          className="teleconsult-chat-input min-w-0 flex-1 rounded-xl px-3 py-2.5 text-sm bg-foreground/[0.03] border border-foreground/[0.08] focus:outline-none focus:ring-2 focus:ring-anima-violet/25"
           maxLength={4000}
         />
-        <Button type="submit" isLoading={sending} disabled={disabled}>
+        <Button
+          type="submit"
+          fullWidth={false}
+          isLoading={sending}
+          disabled={disabled}
+          className="!py-2.5 !px-4 shrink-0 sm:min-w-[5.5rem]"
+        >
           Enviar
         </Button>
       </form>
-      {error && <p className="px-3 pb-2 text-xs text-red-400">{error}</p>}
+
+      {error && (
+        <p className="shrink-0 px-3 pb-2 text-xs text-red-400">{error}</p>
+      )}
     </div>
   );
 }
