@@ -3,7 +3,7 @@
 import { forwardRef, useState, type InputHTMLAttributes } from "react";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
-  label: string;
+  label?: string;
   error?: string;
 }
 
@@ -15,13 +15,16 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 
     return (
       <div className="w-full">
-        <label className="block text-sm font-medium text-foreground/60 mb-1.5">
-          {label}
-        </label>
+        {label ? (
+          <label className="block text-sm font-medium text-foreground/60 mb-1.5">
+            {label}
+          </label>
+        ) : null}
         <div className="relative">
           <input
             ref={ref}
             type={inputType}
+            aria-label={label || props["aria-label"] || props.placeholder}
             className={`
               w-full rounded-xl px-4 py-3 text-sm
               bg-foreground/[0.03] border border-foreground/[0.08]

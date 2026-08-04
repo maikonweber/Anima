@@ -25,7 +25,7 @@ export function TeleconsultRoom({ session, isInitiator }: Props) {
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const pcRef = useRef<RTCPeerConnection | null>(null);
-  const lastSignalId = useRef<string | undefined>();
+  const lastSignalId = useRef<string | undefined>(undefined);
   const makingOffer = useRef(false);
   const [remoteReady, setRemoteReady] = useState(false);
   const [error, setError] = useState<string | null>(null);

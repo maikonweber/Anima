@@ -22,7 +22,7 @@ export function useUserMedia(options: UseUserMediaOptions = {}) {
   const [outputDevices, setOutputDevices] = useState<MediaDeviceInfo[]>([]);
   const [selectedAudioDevice, setSelectedAudioDevice] = useState<string>();
   const [selectedVideoDevice, setSelectedVideoDevice] = useState<string>();
-  const streamRef = useRef<MediaStream | undefined>();
+  const streamRef = useRef<MediaStream | undefined>(undefined);
 
   const refreshDevices = useCallback(async () => {
     if (!navigator.mediaDevices?.enumerateDevices) return;
@@ -33,9 +33,10 @@ export function useUserMedia(options: UseUserMediaOptions = {}) {
   }, []);
 
   const start = useCallback(async () => {
-    const videoConstraint: MediaTrackConstraints = options.preferEnvironmentCamera
-      ? { facingMode: { ideal: "environment" } }
-      : true;
+    const videoConstraint: boolean | MediaTrackConstraints =
+      options.preferEnvironmentCamera
+        ? { facingMode: { ideal: "environment" } }
+        : true;
 
     const stream = await navigator.mediaDevices.getUserMedia({
       audio: true,
