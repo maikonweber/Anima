@@ -19,3 +19,4 @@ export * from "./crisis-resources";
 export * from "./whatsapp";
 export * from "./marketing";
 export * from "./home-testimonials";
+export * from "./clinic-trial-invites";

@@ -10,6 +10,7 @@ import { PatientRorschachLoader } from "@/components/patient/PatientRorschachLoa
 const NAV = [
   { href: "/admin", label: "Início" },
   { href: "/admin/vendas", label: "Playbook de vendas" },
+  { href: "/admin/trials", label: "Trials clínica" },
   { href: "/admin/depoimentos", label: "Depoimentos" },
 ] as const;
 

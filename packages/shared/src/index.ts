@@ -34,6 +34,7 @@ export * from "./api/crisis-resources";
 export * from "./api/whatsapp";
 export * from "./api/marketing";
 export * from "./api/home-testimonials";
+export * from "./api/clinic-trial-invites";
 
 export {
   configureTokenStorage,
@@ -91,3 +92,4 @@ export * from "./validations/diary";
 export * from "./validations/care";
 export * from "./validations/feedback";
 export * from "./validations/marketing";
+export * from "./validations/clinic-trial-invites";

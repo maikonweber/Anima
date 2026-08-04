@@ -9,6 +9,13 @@ const CARDS = [
     tag: "Comercial",
   },
   {
+    href: "/admin/trials",
+    title: "Trial clínica — 1 mês",
+    description:
+      "Gere links de trial Cuidado (30 dias) para demos e vendas. Copie para WhatsApp ou envie por e-mail.",
+    tag: "Comercial",
+  },
+  {
     href: "/admin/depoimentos",
     title: "Depoimentos da home",
     description:
