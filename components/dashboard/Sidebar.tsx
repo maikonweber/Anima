@@ -61,6 +61,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/dashboard/consents", label: "Consentimentos", icon: ShieldIcon },
   { href: "/dashboard/lembretes", label: "Lembretes", icon: BellIcon },
   { href: "/dashboard/plano", label: "Plano de cuidado", icon: PlanIcon },
+  { href: "/dashboard/recursos", label: "Apoio / crise", icon: LifeBuoyIcon },
   { href: "/suporte", label: "Suporte", icon: SupportIcon },
   { href: "/dashboard/perfil", label: "Perfil", icon: UserIcon },
 ];
@@ -501,6 +502,24 @@ function PlanIcon({ active }: { active: boolean }) {
         strokeLinecap="round"
         strokeLinejoin="round"
         d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+      />
+    </svg>
+  );
+}
+
+function LifeBuoyIcon({ active }: { active: boolean }) {
+  return (
+    <svg
+      className="w-5 h-5"
+      fill={active ? "currentColor" : "none"}
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={active ? 0 : 1.5}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M12 9v.01M12 12a3 3 0 100-6 3 3 0 000 6zm0 0a9 9 0 109 9 9 9 0 00-9-9zm0 0a9 9 0 01-9 9 9 9 0 019-9zm7.5-4.5l-2.12 2.12M6.62 17.38l-2.12 2.12m0-12.76l2.12 2.12m10.64 10.64l2.12 2.12"
       />
     </svg>
   );

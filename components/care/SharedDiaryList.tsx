@@ -51,6 +51,26 @@ export function SharedDiaryList({ entries }: SharedDiaryListProps) {
                   Ansiedade: {entry.ansiedadeInformada}%
                 </span>
               )}
+              {typeof entry.tracking?.sono === "number" && (
+                <span className="rounded-full border border-foreground/[0.08] px-2 py-1">
+                  Sono: {entry.tracking.sono}
+                </span>
+              )}
+              {typeof entry.tracking?.estresse === "number" && (
+                <span className="rounded-full border border-foreground/[0.08] px-2 py-1">
+                  Estresse: {entry.tracking.estresse}
+                </span>
+              )}
+              {typeof entry.tracking?.socializacao === "number" && (
+                <span className="rounded-full border border-foreground/[0.08] px-2 py-1">
+                  Social: {entry.tracking.socializacao}
+                </span>
+              )}
+              {typeof entry.tracking?.burnout === "number" && (
+                <span className="rounded-full border border-foreground/[0.08] px-2 py-1">
+                  Burnout: {entry.tracking.burnout}
+                </span>
+              )}
               {entry.tagsEmocionais?.slice(0, 3).map((tag) => (
                 <span
                   key={tag}

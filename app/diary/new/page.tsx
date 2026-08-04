@@ -11,12 +11,28 @@ import { EmotionPicker, type SelectedEmotion } from "@/components/diary/EmotionP
 import {
   DiaryVisibilityToggle,
 } from "@/components/diary/DiaryVisibilityToggle";
+import {
+  CheckInMetricsFields,
+  toCheckInPayload,
+  type CheckInMetricsValue,
+} from "@/components/diary/CheckInMetricsFields";
 import { Button } from "@/components/ui/Button";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { UsageMeter } from "@/components/subscription/UsageMeter";
 import { useSubscription } from "@/providers/subscription-provider";
 import { isNearLimit } from "@/lib/subscription/utils";
 import type { DiaryEntryVisibility } from "@anima/shared";
+
+const DEFAULT_CHECK_IN: CheckInMetricsValue = {
+  ansiedadeInformada: 50,
+  tracking: {
+    sono: 50,
+    estresse: 50,
+    socializacao: 50,
+    motivacao: 50,
+    burnout: 50,
+  },
+};
 
 export default function NewDiaryPage() {
   const router = useRouter();
@@ -28,6 +44,7 @@ export default function NewDiaryPage() {
   const [energia, setEnergia] = useState(50);
   const [selectedEmotions, setSelectedEmotions] = useState<SelectedEmotion[]>([]);
   const [observacoes, setObservacoes] = useState("");
+  const [checkIn, setCheckIn] = useState<CheckInMetricsValue>(DEFAULT_CHECK_IN);
   const [visibility, setVisibility] =
     useState<DiaryEntryVisibility>("PRIVADO");
   const [formError, setFormError] = useState<string | null>(null);
@@ -36,12 +53,14 @@ export default function NewDiaryPage() {
     e.preventDefault();
     setFormError(null);
 
+    const metrics = toCheckInPayload(checkIn);
     const parsed = diaryEntrySchema.safeParse({
       texto,
       energiaInformada: energia,
       emotions: selectedEmotions,
       observacoes: observacoes || undefined,
       visibility,
+      ...metrics,
     });
 
     if (!parsed.success) {
@@ -56,6 +75,10 @@ export default function NewDiaryPage() {
         emotions: parsed.data.emotions,
         observacoes: parsed.data.observacoes,
         visibility: parsed.data.visibility,
+        humor: parsed.data.humor,
+        ansiedadeInformada: parsed.data.ansiedadeInformada,
+        tagsEmocionais: parsed.data.tagsEmocionais,
+        tracking: parsed.data.tracking,
       });
       router.push(`/diary/${entry.id}`);
     } catch (err) {
@@ -148,6 +171,12 @@ export default function NewDiaryPage() {
           onChange={setSelectedEmotions}
           disabled={createEntry.isPending}
           isLoading={loadingEmotions}
+        />
+
+        <CheckInMetricsFields
+          value={checkIn}
+          onChange={setCheckIn}
+          disabled={createEntry.isPending}
         />
 
         <div className="glass-panel p-5 space-y-2">

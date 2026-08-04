@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { motion } from "motion/react";
@@ -15,7 +15,16 @@ import {
   localInputToIso,
   toLocalInputValue,
 } from "@/components/clinic/AppointmentStatusBadge";
+import {
+  CONSENT_STATUS_LABELS,
+  ConsentStatusBadge,
+} from "@/components/clinic/ConsentStatusBadge";
 import { useAppointment, useUpdateAppointment } from "@/hooks/use-agenda";
+import {
+  useGrantConsent,
+  usePatientConsentStatus,
+} from "@/hooks/use-consents";
+import { useMyOrganizations } from "@/hooks/use-organizations";
 import { useCreateTeleconsult } from "@/hooks/use-teleconsult";
 import { usePatient } from "@/hooks/use-patients";
 import type { AppointmentStatus } from "@anima/shared";
@@ -31,6 +40,17 @@ export default function AppointmentDetailPage() {
   const updateAppointment = useUpdateAppointment(orgId, appointmentId);
   const createTeleconsult = useCreateTeleconsult(orgId);
   const patientQuery = usePatient(orgId, data?.patientId ?? "");
+  const { data: orgs } = useMyOrganizations();
+  const role = useMemo(
+    () =>
+      orgs?.find((item) => item.organization.id === orgId)?.membership.role,
+    [orgs, orgId],
+  );
+  const consentStatus = usePatientConsentStatus(
+    orgId,
+    data?.patientId ?? "",
+  );
+  const grantConsent = useGrantConsent(orgId, data?.patientId ?? "");
 
   const [startsAt, setStartsAt] = useState("");
   const [endsAt, setEndsAt] = useState("");
@@ -80,6 +100,23 @@ export default function AppointmentDetailPage() {
     }
   }
 
+  async function handleGrantTeleconsultConsent() {
+    setActionError(null);
+    try {
+      await grantConsent.mutateAsync({
+        purpose: "TELECONSULTA",
+        channel: "PAPER",
+        note: "Registrado na agenda para liberar teleconsulta",
+      });
+    } catch (err) {
+      setActionError(
+        err instanceof Error
+          ? err.message
+          : "Falha ao registrar consentimento TELECONSULTA.",
+      );
+    }
+  }
+
   const canManage =
     data &&
     (data.status === "AGENDADA" ||
@@ -91,6 +128,12 @@ export default function AppointmentDetailPage() {
     (data.modality === "ONLINE" || data.modality === "HIBRIDO") &&
     data.status !== "CANCELADA" &&
     data.status !== "CONCLUIDA";
+
+  const teleconsultConsent = consentStatus.data?.porFinalidade.find(
+    (item) => item.purpose === "TELECONSULTA",
+  );
+  const hasTeleconsultConsent = teleconsultConsent?.status === "CONCEDIDO";
+  const canGrantTeleconsult = role === "CLINIC_ADMIN";
 
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
@@ -166,18 +209,71 @@ export default function AppointmentDetailPage() {
             </div>
 
             {canTeleconsult && (
-              <div className="mb-6 flex flex-wrap items-center gap-3">
-                <Button
-                  type="button"
-                  className="w-auto"
-                  isLoading={createTeleconsult.isPending}
-                  onClick={() => void handleOpenTeleconsult()}
-                >
-                  Abrir teleconsulta
-                </Button>
-                <p className="text-xs text-foreground/40">
-                  Paciente entra em /teleconsulta com o código da sala.
-                </p>
+              <div className="mb-6 space-y-3">
+                <div className="glass-panel p-4 space-y-2">
+                  <div className="flex flex-wrap items-center gap-2 text-sm">
+                    <span className="text-foreground/50">
+                      Consentimento teleconsulta:
+                    </span>
+                    {consentStatus.isLoading ? (
+                      <span className="text-foreground/35">carregando…</span>
+                    ) : teleconsultConsent ? (
+                      <ConsentStatusBadge status={teleconsultConsent.status} />
+                    ) : (
+                      <span className="text-foreground/45">indisponível</span>
+                    )}
+                  </div>
+                  {!hasTeleconsultConsent && (
+                    <p className="text-xs text-foreground/45 leading-relaxed">
+                      É obrigatório ter consentimento{" "}
+                      <span className="font-medium text-foreground/70">
+                        TELECONSULTA
+                      </span>{" "}
+                      ativo (
+                      {teleconsultConsent
+                        ? CONSENT_STATUS_LABELS[teleconsultConsent.status]
+                        : "ausente"}
+                      ). O paciente concede no app ou o admin registra
+                      papel/verbal.
+                    </p>
+                  )}
+                  <div className="flex flex-wrap gap-2 pt-1">
+                    {!hasTeleconsultConsent && canGrantTeleconsult && (
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        className="w-auto"
+                        isLoading={grantConsent.isPending}
+                        onClick={() => void handleGrantTeleconsultConsent()}
+                      >
+                        Registrar consentimento (papel)
+                      </Button>
+                    )}
+                    {data.patientId && (
+                      <Link
+                        href={`/clinic/${orgId}/patients/${data.patientId}`}
+                        className="inline-flex items-center text-xs text-anima-violet hover:underline px-1"
+                      >
+                        Ver consentimentos do paciente
+                      </Link>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-3">
+                  <Button
+                    type="button"
+                    className="w-auto"
+                    disabled={!hasTeleconsultConsent}
+                    isLoading={createTeleconsult.isPending}
+                    onClick={() => void handleOpenTeleconsult()}
+                  >
+                    Abrir teleconsulta
+                  </Button>
+                  <p className="text-xs text-foreground/40">
+                    Paciente entra em /teleconsulta com o código da sala.
+                  </p>
+                </div>
               </div>
             )}
 

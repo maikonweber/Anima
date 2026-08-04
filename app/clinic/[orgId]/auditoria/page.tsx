@@ -23,6 +23,7 @@ const ACTION_FILTERS: { label: string; value: string }[] = [
   { label: "Teleconsulta", value: "teleconsult." },
   { label: "Sínteses", value: "ai_synthesis." },
   { label: "Alertas", value: "clinical_alert." },
+  { label: "Crise", value: "crisis_resource." },
   { label: "Governança", value: "organization." },
 ];
 

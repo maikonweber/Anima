@@ -1,3 +1,5 @@
+import type { OrganizationRole } from "./organizations";
+
 export type ClinicalAlertStatus =
   | "PENDENTE_REVISAO"
   | "APROVADA"
@@ -49,7 +51,15 @@ export type UpdateClinicalAlertPayload = Partial<{
 }>;
 
 export type ClinicDashboardOverview = {
-  today: {
+  role: OrganizationRole;
+  capabilities: {
+    clinicalQueues: boolean;
+    invites: boolean;
+    audit: boolean;
+    crm: boolean;
+    agenda: boolean;
+  };
+  today?: {
     appointments: Array<{
       id: string;
       patientId: string | null;
@@ -60,16 +70,27 @@ export type ClinicDashboardOverview = {
     }>;
     total: number;
   };
-  pendingAlerts: {
+  pendingAlerts?: {
     count: number;
     items: ClinicalAlert[];
   };
-  pendingSyntheses: {
+  pendingSyntheses?: {
     count: number;
     items: Array<{
       id: string;
       patientId: string;
       title: string | null;
+      criadoEm: string;
+    }>;
+  };
+  patientsSummary?: { total: number };
+  caseloadCount?: number;
+  auditSummary?: {
+    recentCount: number;
+    items: Array<{
+      id: string;
+      action: string;
+      targetType: string | null;
       criadoEm: string;
     }>;
   };

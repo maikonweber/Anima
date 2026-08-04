@@ -33,6 +33,12 @@ export function ClinicSidebar() {
   );
   const canViewAudit =
     membershipRole === "CLINIC_ADMIN" || membershipRole === "DPO";
+  const canClinical =
+    membershipRole === "CLINIC_ADMIN" || membershipRole === "PROFESSIONAL";
+  const canOpsCrm =
+    membershipRole === "CLINIC_ADMIN" ||
+    membershipRole === "PROFESSIONAL" ||
+    membershipRole === "SECRETARY";
 
   const orgNav: NavItem[] = useMemo(() => {
     if (!orgId) return [];
@@ -45,43 +51,58 @@ export function ClinicSidebar() {
         match: (p) => p === base,
         icon: HomeIcon,
       },
-      {
-        href: `${base}/patients`,
-        label: "Pacientes",
-        shortLabel: "CRM",
-        match: (p) => p.startsWith(`${base}/patients`),
-        icon: PatientsIcon,
-      },
-      {
-        href: `${base}/agenda`,
-        label: "Agenda",
-        shortLabel: "Agenda",
-        match: (p) =>
-          p.startsWith(`${base}/agenda`) && !p.includes("/disponibilidade"),
-        icon: CalendarIcon,
-      },
-      {
-        href: `${base}/agenda/disponibilidade`,
-        label: "Disponibilidade",
-        shortLabel: "Horários",
-        match: (p) => p.includes("/disponibilidade"),
-        icon: ClockIcon,
-      },
-      {
-        href: `${base}/conhecimento`,
-        label: "Conhecimento",
-        shortLabel: "RAG",
-        match: (p) => p.startsWith(`${base}/conhecimento`),
-        icon: BookIcon,
-      },
-      {
-        href: `${base}/alertas`,
-        label: "Alertas",
-        shortLabel: "Alertas",
-        match: (p) => p.startsWith(`${base}/alertas`),
-        icon: AlertIcon,
-      },
     ];
+    if (canOpsCrm) {
+      items.push(
+        {
+          href: `${base}/patients`,
+          label: "Pacientes",
+          shortLabel: "CRM",
+          match: (p) => p.startsWith(`${base}/patients`),
+          icon: PatientsIcon,
+        },
+        {
+          href: `${base}/agenda`,
+          label: "Agenda",
+          shortLabel: "Agenda",
+          match: (p) =>
+            p.startsWith(`${base}/agenda`) && !p.includes("/disponibilidade"),
+          icon: CalendarIcon,
+        },
+        {
+          href: `${base}/agenda/disponibilidade`,
+          label: "Disponibilidade",
+          shortLabel: "Horários",
+          match: (p) => p.includes("/disponibilidade"),
+          icon: ClockIcon,
+        },
+      );
+    }
+    if (canClinical) {
+      items.push(
+        {
+          href: `${base}/conhecimento`,
+          label: "Conhecimento",
+          shortLabel: "RAG",
+          match: (p) => p.startsWith(`${base}/conhecimento`),
+          icon: BookIcon,
+        },
+        {
+          href: `${base}/alertas`,
+          label: "Alertas",
+          shortLabel: "Alertas",
+          match: (p) => p.startsWith(`${base}/alertas`),
+          icon: AlertIcon,
+        },
+        {
+          href: `${base}/crise`,
+          label: "Recursos de crise",
+          shortLabel: "Crise",
+          match: (p) => p.startsWith(`${base}/crise`),
+          icon: CrisisIcon,
+        },
+      );
+    }
     if (canViewAudit) {
       items.push({
         href: `${base}/auditoria`,
@@ -92,7 +113,7 @@ export function ClinicSidebar() {
       });
     }
     return items;
-  }, [orgId, canViewAudit]);
+  }, [orgId, canViewAudit, canClinical, canOpsCrm]);
 
   const topNav: NavItem[] = useMemo(
     () => [
@@ -406,6 +427,14 @@ function AuditIcon({ active }: { active: boolean }) {
   return (
     <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={active ? 2 : 1.5}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+    </svg>
+  );
+}
+
+function CrisisIcon({ active }: { active: boolean }) {
+  return (
+    <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={active ? 2 : 1.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
     </svg>
   );
 }

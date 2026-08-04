@@ -15,3 +15,4 @@ export * from "./care-plans";
 export * from "./ai-syntheses";
 export * from "./clinical-knowledge";
 export * from "./clinical-alerts";
+export * from "./crisis-resources";
