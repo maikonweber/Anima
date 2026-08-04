@@ -3,9 +3,9 @@ import { HomePage } from "@/components/marketing/HomePage";
 import { DEFAULT_SITE_KEYWORDS, OG_IMAGE_PATH, SITE_URL } from "@/lib/seo/site";
 
 export const metadata: Metadata = {
-  title: "Seu segundo cérebro emocional",
+  title: "EmotiveCare — pessoas, Cuidado e Clínicas",
   description:
-    "A EmotiveCare é um diário de energia emocional com IA que lembra por você: entende o que você sente, conecta seus padrões ao longo do tempo e devolve reflexões personalizadas. Comece grátis.",
+    "Segundo cérebro emocional no app (Essencial/Pleno), plano Cuidado entre sessões e EmotiveCare Clínicas para CRM, agenda e teleconsulta. Comece grátis.",
   alternates: {
     canonical: `${SITE_URL}/`,
     languages: {
@@ -16,22 +16,23 @@ export const metadata: Metadata = {
   },
   keywords: [
     ...DEFAULT_SITE_KEYWORDS,
+    "emotivecare clínicas",
     "segundo cérebro emocional",
-    "diário emocional com IA",
-    "diário de energia emocional",
-    "memória emocional",
+    "plano pleno",
+    "plano cuidado",
+    "teleconsulta clínica",
   ],
   openGraph: {
     url: SITE_URL,
-    title: "EmotiveCare · Seu segundo cérebro emocional",
+    title: "EmotiveCare — memória emocional e operação clínica",
     description:
-      "Um diário de energia emocional com IA que entende o que você escreve, conecta seus padrões e devolve reflexões feitas para a sua história. Ele sente com você e lembra por você.",
+      "App da pessoa com SENTIO AI, plano Cuidado para profissionais e EmotiveCare Clínicas para a operação da clínica.",
     images: [
       {
         url: `${SITE_URL}${OG_IMAGE_PATH}`,
         width: 1200,
         height: 630,
-        alt: "EmotiveCare — seu segundo cérebro emocional",
+        alt: "EmotiveCare — pessoas e clínicas",
       },
     ],
     type: "website",
@@ -40,9 +41,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "EmotiveCare · Seu segundo cérebro emocional",
+    title: "EmotiveCare — pessoas, Cuidado e Clínicas",
     description:
-      "Diário de energia emocional com IA que lembra por você e conecta seus padrões ao longo do tempo.",
+      "Segundo cérebro emocional, acompanhamento entre sessões e suíte B2B para clínicas.",
   },
 };
 

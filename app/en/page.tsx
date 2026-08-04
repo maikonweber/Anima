@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { HomePage } from "@/components/marketing/HomePage";
 import { OG_IMAGE_PATH, SITE_URL } from "@/lib/seo/site";
 
-const title = "Your emotional second brain";
+const title = "People, Cuidado, and Clinics";
 const description =
-  "EmotiveCare is an emotional energy journal with AI that remembers for you: it understands what you feel, connects your patterns over time, and returns personalized reflections. Start free.";
+  "Emotional second brain in the person app (Essential/Pleno), Cuidado between sessions, and EmotiveCare Clinics for CRM, scheduling, and teleconsult. Start free.";
 const canonical = `${SITE_URL}/en`;
 const ogImage = `${SITE_URL}${OG_IMAGE_PATH}`;
 
@@ -22,22 +22,22 @@ export const metadata: Metadata = {
   keywords: [
     "EmotiveCare",
     "SENTIO AI",
+    "EmotiveCare Clinics",
     "emotional second brain",
-    "emotional energy journal",
-    "AI emotional journal",
-    "emotional memory",
+    "Pleno plan",
+    "Cuidado plan",
   ],
   openGraph: {
     url: canonical,
     title: `EmotiveCare · ${title}`,
     description:
-      "An emotional energy journal with AI that understands what you write, connects your patterns, and returns reflections made for your story. It feels with you and remembers for you.",
+      "Person app with SENTIO AI, Cuidado for professionals, and EmotiveCare Clinics for clinic operations.",
     images: [
       {
         url: ogImage,
         width: 1200,
         height: 630,
-        alt: "EmotiveCare — your emotional second brain",
+        alt: "EmotiveCare — people and clinics",
       },
     ],
     type: "website",
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: `EmotiveCare · ${title}`,
     description:
-      "Emotional energy journal with AI that remembers for you and connects your patterns over time.",
+      "Emotional memory for people and secure operations for clinics.",
   },
 };
 
