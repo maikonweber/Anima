@@ -85,13 +85,13 @@ export default function AgendaPage() {
                 <Button
                   type="button"
                   variant="secondary"
-                  className="!rounded-lg !px-3 !py-2 text-xs"
+                  className="!rounded-lg !px-3.5 !py-2.5 text-sm clinic-btn-secondary"
                 >
                   Disponibilidade
                 </Button>
               </Link>
               <Link href={`/clinic/${orgId}/agenda/new`}>
-                <Button type="button" className="!rounded-lg !px-3 !py-2 text-xs">
+                <Button type="button" className="!rounded-lg !px-3.5 !py-2.5 text-sm clinic-btn-primary">
                   Nova sessão
                 </Button>
               </Link>

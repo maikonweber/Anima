@@ -6,4 +6,5 @@ export {
   listOrganizationInvites,
   getOrganizationInviteByToken,
   acceptOrganizationInvite,
+  listOrganizationAuditLogs,
 } from "@anima/shared";

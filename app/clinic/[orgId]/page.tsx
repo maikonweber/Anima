@@ -108,13 +108,16 @@ export default function ClinicOrgHomePage() {
                     <Button
                       type="button"
                       variant="secondary"
-                      className="!rounded-lg !px-3 !py-2 text-xs"
+                      className="!rounded-lg !px-3.5 !py-2.5 text-sm clinic-btn-secondary"
                     >
                       Novo paciente
                     </Button>
                   </Link>
                   <Link href={`/clinic/${orgId}/agenda/new`}>
-                    <Button type="button" className="!rounded-lg !px-3 !py-2 text-xs">
+                    <Button
+                      type="button"
+                      className="!rounded-lg !px-3.5 !py-2.5 text-sm clinic-btn-primary"
+                    >
                       Nova sessão
                     </Button>
                   </Link>
@@ -123,43 +126,43 @@ export default function ClinicOrgHomePage() {
             />
 
             {dashboard.data && (
-              <section className="grid gap-3 sm:grid-cols-3 mb-5">
+              <section className="grid gap-3 sm:grid-cols-3 mb-6">
                 <Link
                   href={`/clinic/${orgId}/agenda`}
-                  className="rounded-xl border border-[var(--clinic-border)] bg-[var(--clinic-panel)] px-4 py-3 hover:bg-[var(--clinic-row-hover)] transition-colors"
+                  className="rounded-2xl border border-[var(--clinic-border)] bg-[var(--clinic-panel)] px-4 py-4 shadow-[0_1px_2px_rgba(15,28,36,0.03)] hover:border-[rgba(13,115,119,0.28)] hover:shadow-[0_4px_16px_rgba(13,115,119,0.08)] transition-all"
                 >
-                  <p className="text-[11px] uppercase tracking-wider text-foreground/35">
+                  <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--clinic-subtle)] font-semibold">
                     Hoje
                   </p>
-                  <p className="text-2xl font-semibold text-foreground/85 mt-1">
+                  <p className="text-3xl font-semibold text-foreground mt-1.5 tracking-tight">
                     {dashboard.data.today.total}
                   </p>
-                  <p className="text-xs text-foreground/40 mt-1">
+                  <p className="text-xs text-[var(--clinic-muted)] mt-1">
                     sessão(ões) na agenda
                   </p>
                 </Link>
                 <Link
                   href={`/clinic/${orgId}/alertas`}
-                  className="rounded-xl border border-[var(--clinic-border)] bg-[var(--clinic-panel)] px-4 py-3 hover:bg-[var(--clinic-row-hover)] transition-colors"
+                  className="rounded-2xl border border-[var(--clinic-border)] bg-[var(--clinic-panel)] px-4 py-4 shadow-[0_1px_2px_rgba(15,28,36,0.03)] hover:border-[rgba(13,115,119,0.28)] hover:shadow-[0_4px_16px_rgba(13,115,119,0.08)] transition-all"
                 >
-                  <p className="text-[11px] uppercase tracking-wider text-foreground/35">
+                  <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--clinic-subtle)] font-semibold">
                     Alertas
                   </p>
-                  <p className="text-2xl font-semibold text-foreground/85 mt-1">
+                  <p className="text-3xl font-semibold text-foreground mt-1.5 tracking-tight">
                     {dashboard.data.pendingAlerts.count}
                   </p>
-                  <p className="text-xs text-foreground/40 mt-1">
+                  <p className="text-xs text-[var(--clinic-muted)] mt-1">
                     pendentes de revisão
                   </p>
                 </Link>
-                <div className="rounded-xl border border-[var(--clinic-border)] bg-[var(--clinic-panel)] px-4 py-3">
-                  <p className="text-[11px] uppercase tracking-wider text-foreground/35">
+                <div className="rounded-2xl border border-[var(--clinic-border)] bg-[var(--clinic-panel)] px-4 py-4 shadow-[0_1px_2px_rgba(15,28,36,0.03)]">
+                  <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--clinic-subtle)] font-semibold">
                     Sínteses IA
                   </p>
-                  <p className="text-2xl font-semibold text-foreground/85 mt-1">
+                  <p className="text-3xl font-semibold text-foreground mt-1.5 tracking-tight">
                     {dashboard.data.pendingSyntheses.count}
                   </p>
-                  <p className="text-xs text-foreground/40 mt-1">
+                  <p className="text-xs text-[var(--clinic-muted)] mt-1">
                     aguardando aprovação
                   </p>
                 </div>
@@ -313,7 +316,7 @@ export default function ClinicOrgHomePage() {
                 <Button
                   type="submit"
                   isLoading={createInvite.isPending}
-                  className="!rounded-lg sm:!w-auto"
+                  className="!rounded-lg sm:!w-auto clinic-btn-primary"
                 >
                   Enviar convite
                 </Button>

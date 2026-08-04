@@ -4,8 +4,10 @@ import type {
   AcceptOrganizationInviteResponse,
   CreateOrganizationInvitePayload,
   CreateOrganizationPayload,
+  ListOrganizationAuditLogsParams,
   MyOrganization,
   Organization,
+  OrganizationAuditLog,
   OrganizationInvite,
 } from "../types/organizations";
 
@@ -67,5 +69,19 @@ export async function acceptOrganizationInvite(
       auth: true,
       body: JSON.stringify(payload),
     },
+  );
+}
+
+export async function listOrganizationAuditLogs(
+  orgId: string,
+  params: ListOrganizationAuditLogsParams = {},
+) {
+  const search = new URLSearchParams();
+  if (params.limit != null) search.set("limit", String(params.limit));
+  if (params.action) search.set("action", params.action);
+  const qs = search.toString();
+  return api<OrganizationAuditLog[]>(
+    `/organizations/${encodeURIComponent(orgId)}/audit-logs${qs ? `?${qs}` : ""}`,
+    { auth: true },
   );
 }

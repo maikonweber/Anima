@@ -8,11 +8,13 @@ import {
   getOrganization,
   getOrganizationInviteByToken,
   listMyOrganizations,
+  listOrganizationAuditLogs,
   listOrganizationInvites,
 } from "@/lib/api/organizations";
 import type {
   CreateOrganizationInvitePayload,
   CreateOrganizationPayload,
+  ListOrganizationAuditLogsParams,
 } from "@anima/shared";
 import { useAuth } from "@/providers/auth-provider";
 
@@ -83,5 +85,18 @@ export function useAcceptOrganizationInvite() {
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["organizations"] });
     },
+  });
+}
+
+export function useOrganizationAuditLogs(
+  orgId: string,
+  params: ListOrganizationAuditLogsParams = {},
+  enabled = true,
+) {
+  const { user } = useAuth();
+  return useQuery({
+    queryKey: ["organizations", orgId, "audit-logs", params],
+    queryFn: () => listOrganizationAuditLogs(orgId, params),
+    enabled: !!user && !!orgId && enabled,
   });
 }

@@ -38,6 +38,7 @@ export function ClinicRouteLayout({ children }: { children: React.ReactNode }) {
   return (
     <div
       className={`clinic-shell flex min-h-dvh ${dmSans.variable} font-[family-name:var(--font-clinic)]`}
+      style={{ colorScheme: "light" }}
     >
       <ClinicSidebar />
       <main

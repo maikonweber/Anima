@@ -48,31 +48,39 @@
   }
 }
 
-/* EmotiveCare Clínicas — produto B2B separado do app do paciente */
+/* EmotiveCare Clínicas — produto B2B (tema claro clínico, independente do OS) */
 .clinic-shell {
-  --background: #f3f6f5;
-  --foreground: #12202a;
-  --clinic-accent: #0f766e;
-  --clinic-accent-soft: rgba(15, 118, 110, 0.12);
-  --clinic-sidebar: #eef3f2;
+  color-scheme: light;
+  --background: #f0f5f3;
+  --foreground: #0f1c24;
+  --clinic-accent: #0d7377;
+  --clinic-accent-hover: #095c5f;
+  --clinic-accent-soft: rgba(13, 115, 119, 0.1);
+  --clinic-accent-muted: #14919b;
+  --clinic-sidebar: #e4eeeb;
+  --clinic-sidebar-edge: rgba(15, 28, 36, 0.06);
   --clinic-panel: #ffffff;
-  --clinic-border: rgba(18, 32, 42, 0.08);
-  --clinic-row-hover: rgba(15, 118, 110, 0.06);
-  --anima-violet: #0f766e;
-  --anima-indigo: #115e59;
+  --clinic-panel-elevated: #ffffff;
+  --clinic-border: rgba(15, 28, 36, 0.09);
+  --clinic-border-strong: rgba(15, 28, 36, 0.14);
+  --clinic-row-hover: rgba(13, 115, 119, 0.06);
+  --clinic-muted: rgba(15, 28, 36, 0.52);
+  --clinic-subtle: rgba(15, 28, 36, 0.38);
+  --anima-violet: #0d7377;
+  --anima-indigo: #095c5f;
   --anima-lilac: #5eead4;
-  --anima-surface-glass: rgba(255, 255, 255, 0.85);
-  --anima-border-glass: rgba(18, 32, 42, 0.08);
-  --anima-glow: rgba(15, 118, 110, 0.2);
+  --anima-surface-glass: rgba(255, 255, 255, 0.9);
+  --anima-border-glass: rgba(15, 28, 36, 0.08);
+  --anima-glow: rgba(13, 115, 119, 0.18);
   background: var(--background);
   color: var(--foreground);
 }
 
 .clinic-shell .clinic-main {
   background:
-    radial-gradient(ellipse 80% 50% at 100% -10%, rgba(15, 118, 110, 0.08), transparent 55%),
-    radial-gradient(ellipse 60% 40% at 0% 100%, rgba(17, 94, 89, 0.05), transparent 50%),
-    var(--background);
+    radial-gradient(ellipse 70% 45% at 92% -8%, rgba(13, 115, 119, 0.11), transparent 55%),
+    radial-gradient(ellipse 50% 35% at 0% 95%, rgba(20, 145, 155, 0.07), transparent 50%),
+    linear-gradient(180deg, #f4f8f6 0%, var(--background) 40%);
 }
 
 .clinic-shell .clinic-main-pad {
@@ -87,6 +95,29 @@
   }
 }
 
+/* CTAs do produto clínicas — contraste alto no tema claro */
+.clinic-shell .clinic-btn-primary {
+  background: var(--clinic-accent) !important;
+  background-image: none !important;
+  color: #fff !important;
+  box-shadow: 0 1px 2px rgba(13, 115, 119, 0.25), 0 4px 14px rgba(13, 115, 119, 0.18);
+}
+.clinic-shell .clinic-btn-primary:hover:not(:disabled) {
+  background: var(--clinic-accent-hover) !important;
+  box-shadow: 0 2px 8px rgba(13, 115, 119, 0.28);
+}
+.clinic-shell .clinic-btn-secondary {
+  background: #fff !important;
+  color: var(--foreground) !important;
+  border: 1px solid var(--clinic-border-strong) !important;
+  box-shadow: 0 1px 2px rgba(15, 28, 36, 0.04);
+}
+.clinic-shell .clinic-btn-secondary:hover:not(:disabled) {
+  background: var(--clinic-accent-soft) !important;
+  border-color: rgba(13, 115, 119, 0.28) !important;
+  color: var(--clinic-accent) !important;
+}
+
 .clinic-safe-top {
   padding-top: env(safe-area-inset-top, 0px);
 }
@@ -97,32 +128,6 @@
 
 .safe-area-pb {
   padding-bottom: env(safe-area-inset-bottom, 0px);
-}
-
-@media (prefers-color-scheme: dark) {
-  .clinic-shell {
-    --background: #0a1113;
-    --foreground: #e8eef0;
-    --clinic-accent: #2dd4bf;
-    --clinic-accent-soft: rgba(45, 212, 191, 0.12);
-    --clinic-sidebar: #0d1518;
-    --clinic-panel: #111a1d;
-    --clinic-border: rgba(232, 238, 240, 0.08);
-    --clinic-row-hover: rgba(45, 212, 191, 0.08);
-    --anima-violet: #2dd4bf;
-    --anima-indigo: #14b8a6;
-    --anima-lilac: #99f6e4;
-    --anima-surface-glass: rgba(255, 255, 255, 0.04);
-    --anima-border-glass: rgba(255, 255, 255, 0.08);
-    --anima-glow: rgba(45, 212, 191, 0.25);
-  }
-
-  .clinic-shell .clinic-main {
-    background:
-      radial-gradient(ellipse 80% 50% at 100% -10%, rgba(45, 212, 191, 0.07), transparent 55%),
-      radial-gradient(ellipse 60% 40% at 0% 100%, rgba(20, 184, 166, 0.04), transparent 50%),
-      var(--background);
-  }
 }
 
 body {

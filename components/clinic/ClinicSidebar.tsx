@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { AnimaLogo } from "@/components/brand/AnimaLogo";
 import { useAuth } from "@/lib/auth/AuthContext";
-import { useOrganization } from "@/hooks/use-organizations";
+import { useMyOrganizations, useOrganization } from "@/hooks/use-organizations";
 
 type NavItem = {
   href: string;
@@ -21,12 +21,23 @@ export function ClinicSidebar() {
   const orgId = typeof params.orgId === "string" ? params.orgId : undefined;
   const { user, logout } = useAuth();
   const orgQuery = useOrganization(orgId ?? "");
+  const { data: orgs } = useMyOrganizations();
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const membershipRole = useMemo(
+    () =>
+      orgId
+        ? orgs?.find((item) => item.organization.id === orgId)?.membership.role
+        : undefined,
+    [orgs, orgId],
+  );
+  const canViewAudit =
+    membershipRole === "CLINIC_ADMIN" || membershipRole === "DPO";
 
   const orgNav: NavItem[] = useMemo(() => {
     if (!orgId) return [];
     const base = `/clinic/${orgId}`;
-    return [
+    const items: NavItem[] = [
       {
         href: base,
         label: "Visão geral",
@@ -71,7 +82,17 @@ export function ClinicSidebar() {
         icon: AlertIcon,
       },
     ];
-  }, [orgId]);
+    if (canViewAudit) {
+      items.push({
+        href: `${base}/auditoria`,
+        label: "Auditoria",
+        shortLabel: "Audit",
+        match: (p) => p.startsWith(`${base}/auditoria`),
+        icon: AuditIcon,
+      });
+    }
+    return items;
+  }, [orgId, canViewAudit]);
 
   const topNav: NavItem[] = useMemo(
     () => [
@@ -122,21 +143,21 @@ export function ClinicSidebar() {
   return (
     <>
       {/* Mobile top bar */}
-      <header className="lg:hidden fixed top-0 inset-x-0 z-40 border-b border-[var(--clinic-border)] bg-[var(--clinic-sidebar)]/95 backdrop-blur-md clinic-safe-top">
+      <header className="lg:hidden fixed top-0 inset-x-0 z-40 border-b border-[var(--clinic-sidebar-edge)] bg-[var(--clinic-sidebar)]/95 backdrop-blur-md clinic-safe-top">
         <div className="flex items-center justify-between gap-3 px-3 h-12">
           <Link href="/clinic" className="flex items-center gap-2 min-w-0">
             <AnimaLogo size="sm" className="scale-75 origin-left" />
             <div className="min-w-0 -ml-1">
-              <p className="text-[11px] font-semibold text-foreground/85 leading-none truncate">
+              <p className="text-[11px] font-semibold text-foreground leading-none truncate">
                 EmotiveCare
               </p>
-              <p className="text-[9px] uppercase tracking-[0.12em] text-[var(--clinic-accent)] mt-0.5">
+              <p className="text-[9px] uppercase tracking-[0.14em] text-[var(--clinic-accent)] font-semibold mt-0.5">
                 Clínicas
               </p>
             </div>
           </Link>
           {orgQuery.data ? (
-            <p className="text-[11px] text-foreground/45 truncate max-w-[42%] text-right">
+            <p className="text-[11px] text-[var(--clinic-muted)] truncate max-w-[42%] text-right font-medium">
               {orgQuery.data.name}
             </p>
           ) : null}
@@ -144,15 +165,15 @@ export function ClinicSidebar() {
       </header>
 
       {/* Desktop sidebar */}
-      <aside className="hidden lg:flex flex-col w-60 xl:w-64 shrink-0 h-dvh sticky top-0 border-r border-[var(--clinic-border)] bg-[var(--clinic-sidebar)]">
-        <div className="p-4 pb-3">
+      <aside className="hidden lg:flex flex-col w-60 xl:w-64 shrink-0 h-dvh sticky top-0 border-r border-[var(--clinic-sidebar-edge)] bg-[var(--clinic-sidebar)]">
+        <div className="p-4 pb-4">
           <Link href="/clinic" className="flex items-center gap-2.5 group">
             <AnimaLogo size="sm" />
             <div className="min-w-0">
-              <p className="text-[13px] font-semibold tracking-tight text-foreground/90 leading-tight group-hover:text-[var(--clinic-accent)] transition-colors">
+              <p className="text-[13px] font-semibold tracking-tight text-foreground leading-tight group-hover:text-[var(--clinic-accent)] transition-colors">
                 EmotiveCare
               </p>
-              <p className="text-[10px] uppercase tracking-[0.14em] text-[var(--clinic-accent)] font-medium">
+              <p className="text-[10px] uppercase tracking-[0.16em] text-[var(--clinic-accent)] font-semibold mt-0.5">
                 Clínicas
               </p>
             </div>
@@ -160,11 +181,11 @@ export function ClinicSidebar() {
         </div>
 
         {orgId && orgQuery.data && (
-          <div className="mx-3 mb-3 rounded-lg border border-[var(--clinic-border)] bg-[var(--clinic-panel)] px-3 py-2">
-            <p className="text-[10px] uppercase tracking-wider text-foreground/35 mb-0.5">
+          <div className="mx-3 mb-3 rounded-xl border border-[var(--clinic-border)] bg-[var(--clinic-panel)] px-3 py-2.5 shadow-[0_1px_2px_rgba(15,28,36,0.03)]">
+            <p className="text-[10px] uppercase tracking-[0.12em] text-[var(--clinic-subtle)] mb-0.5 font-medium">
               Organização
             </p>
-            <p className="text-sm font-medium text-foreground/85 truncate">
+            <p className="text-sm font-semibold text-foreground truncate">
               {orgQuery.data.name}
             </p>
           </div>
@@ -177,10 +198,10 @@ export function ClinicSidebar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm font-medium transition-colors border-l-2 ${
+                className={`flex items-center gap-2.5 px-2.5 py-2.5 rounded-xl text-sm font-medium transition-colors ${
                   active
-                    ? "bg-[var(--clinic-accent-soft)] text-[var(--clinic-accent)] border-[var(--clinic-accent)]"
-                    : "text-foreground/50 hover:text-foreground/80 hover:bg-foreground/[0.03] border-transparent"
+                    ? "bg-[var(--clinic-panel)] text-[var(--clinic-accent)] shadow-[0_1px_3px_rgba(15,28,36,0.06)] ring-1 ring-[var(--clinic-border)]"
+                    : "text-[var(--clinic-muted)] hover:text-foreground hover:bg-white/50"
                 }`}
               >
                 <item.icon active={active} />
@@ -190,36 +211,36 @@ export function ClinicSidebar() {
           })}
         </nav>
 
-        <div className="p-3 border-t border-[var(--clinic-border)] space-y-2">
-          <p className="px-1 text-[10px] text-foreground/30 leading-relaxed">
+        <div className="p-3 border-t border-[var(--clinic-sidebar-edge)] space-y-2.5">
+          <p className="px-1 text-[10px] text-[var(--clinic-subtle)] leading-relaxed">
             Produto para profissionais de saúde — separado do app do paciente.
           </p>
-          <div className="flex items-center gap-2.5 min-w-0">
+          <div className="flex items-center gap-2.5 min-w-0 rounded-xl bg-white/60 px-2.5 py-2">
             <div className="w-8 h-8 rounded-full bg-[var(--clinic-accent-soft)] flex items-center justify-center shrink-0">
               <span className="text-xs font-semibold text-[var(--clinic-accent)]">
                 {user?.nome?.charAt(0) ?? "U"}
               </span>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-foreground/70 truncate">
+              <p className="text-sm font-semibold text-foreground truncate">
                 {user?.nome}
               </p>
-              <p className="text-[10px] text-foreground/35 truncate">
+              <p className="text-[10px] text-[var(--clinic-subtle)] truncate">
                 {user?.email}
               </p>
             </div>
           </div>
-          <div className="flex gap-1">
+          <div className="flex gap-1.5">
             <Link
               href="/dashboard"
-              className="flex-1 text-center px-2 py-2 rounded-lg text-[11px] font-medium text-foreground/40 hover:text-foreground/70 hover:bg-foreground/[0.03]"
+              className="flex-1 text-center px-2 py-2 rounded-lg text-[11px] font-medium text-[var(--clinic-muted)] hover:text-foreground hover:bg-white/70 transition-colors"
             >
               App paciente
             </Link>
             <button
               type="button"
               onClick={logout}
-              className="flex-1 flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg text-[11px] font-medium text-foreground/40 hover:text-red-400 hover:bg-red-500/5 transition-colors"
+              className="flex-1 flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg text-[11px] font-medium text-[var(--clinic-muted)] hover:text-red-600 hover:bg-red-50 transition-colors"
             >
               <LogoutIcon />
               Sair
@@ -229,7 +250,7 @@ export function ClinicSidebar() {
       </aside>
 
       {/* Mobile bottom nav */}
-      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-50 border-t border-[var(--clinic-border)] bg-[var(--clinic-sidebar)]/95 backdrop-blur-lg clinic-safe-pb">
+      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-50 border-t border-[var(--clinic-sidebar-edge)] bg-[var(--clinic-sidebar)]/95 backdrop-blur-lg clinic-safe-pb">
         <div className="flex items-stretch justify-between px-1 py-1.5">
           {primaryMobile.map((item) => {
             const active = isItemActive(item);
@@ -240,7 +261,7 @@ export function ClinicSidebar() {
                 className={`flex flex-1 min-w-0 flex-col items-center gap-0.5 px-0.5 py-1.5 rounded-lg transition-colors ${
                   active
                     ? "text-[var(--clinic-accent)]"
-                    : "text-foreground/35 hover:text-foreground/60"
+                    : "text-[var(--clinic-subtle)] hover:text-[var(--clinic-muted)]"
                 }`}
               >
                 <item.icon active={active} />
@@ -258,7 +279,7 @@ export function ClinicSidebar() {
             className={`flex flex-1 min-w-0 flex-col items-center gap-0.5 px-0.5 py-1.5 rounded-lg transition-colors ${
               isMenuActive || menuOpen
                 ? "text-[var(--clinic-accent)]"
-                : "text-foreground/35 hover:text-foreground/60"
+                : "text-[var(--clinic-subtle)] hover:text-[var(--clinic-muted)]"
             }`}
           >
             <MenuIcon active={isMenuActive || menuOpen} />
@@ -280,12 +301,12 @@ export function ClinicSidebar() {
             type="button"
             aria-label="Fechar menu"
             onClick={() => setMenuOpen(false)}
-            className="absolute inset-0 bg-black/45"
+            className="absolute inset-0 bg-black/35"
           />
-          <div className="absolute bottom-0 inset-x-0 rounded-t-2xl border-t border-[var(--clinic-border)] bg-[var(--clinic-sidebar)] p-4 clinic-safe-pb shadow-2xl max-h-[85dvh] overflow-y-auto">
-            <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-foreground/15" />
+          <div className="absolute bottom-0 inset-x-0 rounded-t-2xl border-t border-[var(--clinic-border)] bg-[var(--clinic-panel)] p-4 clinic-safe-pb shadow-2xl max-h-[85dvh] overflow-y-auto">
+            <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-foreground/12" />
             {orgQuery.data ? (
-              <p className="text-xs text-foreground/40 mb-3 px-1 truncate">
+              <p className="text-xs text-[var(--clinic-muted)] mb-3 px-1 truncate font-medium">
                 {orgQuery.data.name}
               </p>
             ) : null}
@@ -297,10 +318,10 @@ export function ClinicSidebar() {
                     key={item.href}
                     href={item.href}
                     onClick={() => setMenuOpen(false)}
-                    className={`flex items-center gap-2 rounded-xl px-3 py-3 text-sm transition-colors ${
+                    className={`flex items-center gap-2 rounded-xl px-3 py-3 text-sm font-medium transition-colors ${
                       active
                         ? "bg-[var(--clinic-accent-soft)] text-[var(--clinic-accent)]"
-                        : "text-foreground/65 hover:bg-foreground/[0.04]"
+                        : "text-foreground/70 hover:bg-[var(--clinic-row-hover)]"
                     }`}
                   >
                     <item.icon active={active} />
@@ -312,7 +333,7 @@ export function ClinicSidebar() {
             <Link
               href="/dashboard"
               onClick={() => setMenuOpen(false)}
-              className="block w-full rounded-xl px-3 py-3 text-sm text-foreground/50 hover:bg-foreground/[0.04] mb-1"
+              className="block w-full rounded-xl px-3 py-3 text-sm text-[var(--clinic-muted)] hover:bg-[var(--clinic-row-hover)] mb-1"
             >
               Voltar ao app do paciente
             </Link>
@@ -322,7 +343,7 @@ export function ClinicSidebar() {
                 setMenuOpen(false);
                 logout();
               }}
-              className="w-full rounded-xl px-3 py-3 text-sm text-foreground/50 hover:text-red-400 hover:bg-red-500/5"
+              className="w-full rounded-xl px-3 py-3 text-sm text-[var(--clinic-muted)] hover:text-red-600 hover:bg-red-50"
             >
               Sair
             </button>
@@ -377,6 +398,14 @@ function AlertIcon({ active }: { active: boolean }) {
   return (
     <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={active ? 2 : 1.5}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+    </svg>
+  );
+}
+
+function AuditIcon({ active }: { active: boolean }) {
+  return (
+    <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={active ? 2 : 1.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
     </svg>
   );
 }

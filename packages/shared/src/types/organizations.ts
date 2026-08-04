@@ -27,6 +27,23 @@ export type MyOrganization = {
   membership: OrganizationMembershipSummary;
 };
 
+export type OrganizationAuditLog = {
+  id: string;
+  organizationId: string;
+  actorUserId: string | null;
+  action: string;
+  targetType: string | null;
+  targetId: string | null;
+  metadata: Record<string, unknown>;
+  criadoEm: string;
+};
+
+export type ListOrganizationAuditLogsParams = {
+  limit?: number;
+  /** Prefixo de ação, ex.: `consent.`, `clinical_note.` */
+  action?: string;
+};
+
 export type CreateOrganizationPayload = {
   name: string;
   timezone?: string;

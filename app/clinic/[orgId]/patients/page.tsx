@@ -62,7 +62,7 @@ export default function ClinicPatientsPage() {
           description="Cadastro operacional desta organização — dados isolados por tenant"
           actions={
             <Link href={`/clinic/${orgId}/patients/new`}>
-              <Button type="button" className="!rounded-lg !px-3 !py-2 text-xs">
+              <Button type="button" className="!rounded-lg !px-3.5 !py-2.5 text-sm clinic-btn-primary">
                 Novo paciente
               </Button>
             </Link>
