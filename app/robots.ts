@@ -2,15 +2,20 @@ import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/seo/site";
 
 /**
- * robots.txt dinâmico (App Router) — usa `NEXT_PUBLIC_SITE_URL` para host e
- * sitemap corretos em cada ambiente. Bloqueia áreas autenticadas/transacionais.
+ * robots.txt dinâmico — aponta sitemap canônico e bloqueia apps autenticados.
+ * Áreas públicas (/, /clinicas, /plans, /psychologists, /faq, /blog…) ficam indexáveis.
  */
 const DISALLOW = [
   "/api/",
   "/dashboard/",
   "/diary/",
   "/care/",
+  "/clinic/",
+  "/teleconsulta/",
   "/assinatura/",
+  "/assistente/",
+  "/suporte/",
+  "/org-invite",
   "/login",
   "/register",
   "/forgot-password",
@@ -18,8 +23,6 @@ const DISALLOW = [
   "/verify-email",
   "/aguardando-verificacao",
   "/care-invite",
-  "/assistente",
-  // Rotas reservadas (checklist de segurança)
   "/admin/",
   "/settings/",
   "/auth/",
@@ -29,11 +32,28 @@ const DISALLOW = [
 
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: {
-      userAgent: "*",
-      allow: "/",
-      disallow: DISALLOW,
-    },
+    rules: [
+      {
+        userAgent: "*",
+        allow: "/",
+        disallow: DISALLOW,
+      },
+      {
+        userAgent: "GPTBot",
+        allow: ["/", "/clinicas", "/plans", "/psychologists", "/faq", "/about", "/blog"],
+        disallow: DISALLOW,
+      },
+      {
+        userAgent: "Google-Extended",
+        allow: ["/", "/clinicas", "/plans", "/psychologists", "/faq", "/about", "/blog"],
+        disallow: DISALLOW,
+      },
+      {
+        userAgent: "PerplexityBot",
+        allow: ["/", "/clinicas", "/plans", "/psychologists", "/faq", "/about", "/blog"],
+        disallow: DISALLOW,
+      },
+    ],
     sitemap: `${SITE_URL}/sitemap.xml`,
     host: SITE_URL,
   };
