@@ -16,11 +16,6 @@ import {
   type SelectedEmotion,
 } from "@/components/diary/EmotionPicker";
 import { DiaryVisibilityToggle } from "@/components/diary/DiaryVisibilityToggle";
-import {
-  CheckInMetricsFields,
-  toCheckInPayload,
-  type CheckInMetricsValue,
-} from "@/components/diary/CheckInMetricsFields";
 import { Button } from "@/components/ui/Button";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { useSubscription } from "@/providers/subscription-provider";
@@ -96,18 +91,6 @@ function EditDiaryForm({
     })),
   );
   const [observacoes, setObservacoes] = useState(entry.observacoes ?? "");
-  const [checkIn, setCheckIn] = useState<CheckInMetricsValue>({
-    humor: entry.humor,
-    ansiedadeInformada: entry.ansiedadeInformada ?? 50,
-    tagsEmocionais: entry.tagsEmocionais,
-    tracking: {
-      sono: entry.tracking?.sono ?? 50,
-      estresse: entry.tracking?.estresse ?? 50,
-      socializacao: entry.tracking?.socializacao ?? 50,
-      motivacao: entry.tracking?.motivacao ?? 50,
-      burnout: entry.tracking?.burnout ?? 50,
-    },
-  });
   const [visibility, setVisibility] = useState<DiaryEntryVisibility>(
     entry.visibility ?? "PRIVADO",
   );
@@ -117,14 +100,12 @@ function EditDiaryForm({
     e.preventDefault();
     setFormError(null);
 
-    const metrics = toCheckInPayload(checkIn);
     const parsed = diaryEntrySchema.safeParse({
       texto,
       energiaInformada: energia,
       emotions: selectedEmotions,
       observacoes: observacoes || undefined,
       visibility,
-      ...metrics,
     });
 
     if (!parsed.success) {
@@ -141,10 +122,6 @@ function EditDiaryForm({
           emotions: parsed.data.emotions,
           observacoes: parsed.data.observacoes ?? null,
           visibility: parsed.data.visibility,
-          humor: parsed.data.humor,
-          ansiedadeInformada: parsed.data.ansiedadeInformada,
-          tagsEmocionais: parsed.data.tagsEmocionais,
-          tracking: parsed.data.tracking,
         },
       });
       router.push(`/diary/${id}`);
@@ -158,7 +135,7 @@ function EditDiaryForm({
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+    <div className="max-w-2xl w-full min-w-0 mx-auto px-4 sm:px-6 py-8 sm:py-12">
       <Link
         href={`/diary/${id}`}
         className="text-xs text-foreground/40 hover:text-anima-violet transition-colors"
@@ -206,12 +183,6 @@ function EditDiaryForm({
             isLoading={loadingEmotions}
           />
         </div>
-
-        <CheckInMetricsFields
-          value={checkIn}
-          onChange={setCheckIn}
-          disabled={updateEntry.isPending}
-        />
 
         <div className="glass-panel p-5 space-y-2">
           <label

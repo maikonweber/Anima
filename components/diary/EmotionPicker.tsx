@@ -73,7 +73,7 @@ export function EmotionPicker({
   }
 
   return (
-    <div className="space-y-4">
+    <div className="min-w-0 space-y-4">
       <p className="text-sm font-medium text-foreground/70">
         Emoções que você sente
       </p>
@@ -221,8 +221,8 @@ function EmotionPickerIntensity({
 }) {
   const color = emotion.cor ?? "#7c5cbf";
   return (
-    <div className="flex items-center gap-3">
-      <span className="text-sm text-foreground/60 w-28 shrink-0 capitalize">
+    <div className="flex min-w-0 items-center gap-3">
+      <span className="text-sm text-foreground/60 w-28 shrink-0 capitalize truncate">
         {emotion.nome}
       </span>
       <input
@@ -233,7 +233,7 @@ function EmotionPickerIntensity({
         value={intensidade}
         onChange={(e) => onChange(Number(e.target.value))}
         disabled={disabled}
-        className="flex-1 h-1.5 rounded-full appearance-none cursor-pointer"
+        className="min-w-0 flex-1 max-w-full h-1.5 rounded-full appearance-none cursor-pointer"
         style={{
           background: `linear-gradient(to right, ${color} ${(intensidade / 5) * 100}%, var(--anima-border-glass) ${(intensidade / 5) * 100}%)`,
         }}

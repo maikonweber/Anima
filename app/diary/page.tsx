@@ -46,7 +46,7 @@ export default function DiaryListPage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+    <div className="max-w-2xl w-full min-w-0 mx-auto px-4 sm:px-6 py-8 sm:py-12">
       <div className="flex items-start justify-between gap-4 mb-8">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-foreground/90 mb-1">

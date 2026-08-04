@@ -115,9 +115,9 @@ export function Sidebar() {
 
   return (
     <>
-      <aside className="hidden lg:flex flex-col w-64 h-full border-r border-foreground/[0.06] bg-[var(--patient-sidebar,#e8eef4)]">
-        <div className="p-6 pb-4 flex items-start justify-between gap-2">
-          <AnimaLogo href={localizedHref(homeHref)} size="header" />
+      <aside className="hidden lg:flex flex-col w-64 shrink-0 h-dvh sticky top-0 overflow-hidden border-r border-foreground/[0.06] bg-[var(--patient-sidebar,#e8eef4)]">
+        <div className="p-5 pb-4 flex items-center justify-between gap-2 min-w-0">
+          <AnimaLogo href={localizedHref(homeHref)} size="sm" className="min-w-0" />
           <LanguageSwitcher variant="pills" className="shrink-0" />
         </div>
 

@@ -11,28 +11,12 @@ import { EmotionPicker, type SelectedEmotion } from "@/components/diary/EmotionP
 import {
   DiaryVisibilityToggle,
 } from "@/components/diary/DiaryVisibilityToggle";
-import {
-  CheckInMetricsFields,
-  toCheckInPayload,
-  type CheckInMetricsValue,
-} from "@/components/diary/CheckInMetricsFields";
 import { Button } from "@/components/ui/Button";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { UsageMeter } from "@/components/subscription/UsageMeter";
 import { useSubscription } from "@/providers/subscription-provider";
 import { isNearLimit } from "@/lib/subscription/utils";
 import type { DiaryEntryVisibility } from "@anima/shared";
-
-const DEFAULT_CHECK_IN: CheckInMetricsValue = {
-  ansiedadeInformada: 50,
-  tracking: {
-    sono: 50,
-    estresse: 50,
-    socializacao: 50,
-    motivacao: 50,
-    burnout: 50,
-  },
-};
 
 export default function NewDiaryPage() {
   const router = useRouter();
@@ -44,7 +28,6 @@ export default function NewDiaryPage() {
   const [energia, setEnergia] = useState(50);
   const [selectedEmotions, setSelectedEmotions] = useState<SelectedEmotion[]>([]);
   const [observacoes, setObservacoes] = useState("");
-  const [checkIn, setCheckIn] = useState<CheckInMetricsValue>(DEFAULT_CHECK_IN);
   const [visibility, setVisibility] =
     useState<DiaryEntryVisibility>("PRIVADO");
   const [formError, setFormError] = useState<string | null>(null);
@@ -53,14 +36,12 @@ export default function NewDiaryPage() {
     e.preventDefault();
     setFormError(null);
 
-    const metrics = toCheckInPayload(checkIn);
     const parsed = diaryEntrySchema.safeParse({
       texto,
       energiaInformada: energia,
       emotions: selectedEmotions,
       observacoes: observacoes || undefined,
       visibility,
-      ...metrics,
     });
 
     if (!parsed.success) {
@@ -75,10 +56,6 @@ export default function NewDiaryPage() {
         emotions: parsed.data.emotions,
         observacoes: parsed.data.observacoes,
         visibility: parsed.data.visibility,
-        humor: parsed.data.humor,
-        ansiedadeInformada: parsed.data.ansiedadeInformada,
-        tagsEmocionais: parsed.data.tagsEmocionais,
-        tracking: parsed.data.tracking,
       });
       router.push(`/diary/${entry.id}`);
     } catch (err) {
@@ -92,7 +69,7 @@ export default function NewDiaryPage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+    <div className="max-w-2xl w-full min-w-0 mx-auto px-4 sm:px-6 py-8 sm:py-12">
       <div className="mb-8">
         <Link
           href="/dashboard"
@@ -139,7 +116,7 @@ export default function NewDiaryPage() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="min-w-0 space-y-6">
         {formError && <ErrorMessage message={formError} />}
 
         <div className="glass-panel p-5 space-y-2">
@@ -173,12 +150,6 @@ export default function NewDiaryPage() {
           isLoading={loadingEmotions}
         />
 
-        <CheckInMetricsFields
-          value={checkIn}
-          onChange={setCheckIn}
-          disabled={createEntry.isPending}
-        />
-
         <div className="glass-panel p-5 space-y-2">
           <label htmlFor="observacoes" className="text-sm font-medium text-foreground/70">
             Observações (opcional)
@@ -210,7 +181,7 @@ export default function NewDiaryPage() {
 
 function NewDiaryEmotionPickerSection(props: React.ComponentProps<typeof EmotionPicker>) {
   return (
-    <div className="glass-panel p-5">
+    <div className="glass-panel min-w-0 p-5">
       <EmotionPicker {...props} />
     </div>
   );

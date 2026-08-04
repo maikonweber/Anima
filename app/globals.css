@@ -60,6 +60,16 @@
   color-scheme: light;
 }
 
+.dark .patient-shell {
+  --background: #f3f5f8;
+  --foreground: #152028;
+}
+
+.dark .clinic-shell {
+  --background: #f0f5f3;
+  --foreground: #0f1c24;
+}
+
 /* EmotiveCare paciente — app pessoal (care blue, alinhado ao marketing) */
 .patient-shell {
   color-scheme: light;
@@ -97,6 +107,12 @@
   border: 1px solid var(--patient-border);
   box-shadow: 0 1px 2px rgba(21, 32, 40, 0.04);
   backdrop-filter: none;
+}
+
+/* Range inputs have a huge intrinsic min-width in some engines; keep the patient shell from overflowing. */
+.patient-shell input[type="range"] {
+  min-width: 0;
+  max-width: 100%;
 }
 
 /* EmotiveCare Clínicas — produto B2B (tema claro clínico, independente do OS) */

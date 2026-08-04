@@ -13,12 +13,12 @@ export function EnergySlider({ value, onChange, disabled }: EnergySliderProps) {
   const { label, color, bg } = getCategoryStyle(category);
 
   return (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between gap-3">
+    <div className="min-w-0 space-y-3">
+      <div className="flex items-center justify-between gap-3 min-w-0">
         <label htmlFor="energia-slider" className="text-sm font-medium text-foreground/70">
           Energia emocional
         </label>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0">
           <span className="text-lg font-bold tabular-nums" style={{ color }} aria-live="polite">
             {value}
           </span>
@@ -38,7 +38,7 @@ export function EnergySlider({ value, onChange, disabled }: EnergySliderProps) {
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
         disabled={disabled}
-        className="w-full h-2 rounded-full appearance-none cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-anima-violet/40 disabled:opacity-50"
+        className="block w-full min-w-0 max-w-full h-2 rounded-full appearance-none cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-anima-violet/40 disabled:opacity-50"
         style={{
           background: `linear-gradient(to right, ${color} ${value}%, var(--anima-border-glass) ${value}%)`,
         }}

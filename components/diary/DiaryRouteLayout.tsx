@@ -52,13 +52,13 @@ export function DiaryRouteLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div
-      className={`patient-shell flex h-full min-h-screen ${dmSans.variable} font-[family-name:var(--font-patient)]`}
+      className={`patient-shell flex min-h-dvh w-full max-w-[100vw] overflow-x-hidden ${dmSans.variable} font-[family-name:var(--font-patient)]`}
       style={{ colorScheme: "light" }}
     >
       <Sidebar />
       <main
         id="main-content"
-        className="flex-1 overflow-y-auto pb-20 lg:pb-0 patient-main"
+        className="min-w-0 flex-1 overflow-x-hidden overflow-y-auto pb-20 lg:pb-0 patient-main"
       >
         {children}
       </main>
