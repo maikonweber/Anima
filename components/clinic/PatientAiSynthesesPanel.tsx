@@ -37,6 +37,7 @@ const SOURCE_LABEL: Record<AiSynthesisSourceKind, string> = {
   DIARIO: "Diário",
   SESSAO: "Sessão",
   MISTO: "Misto",
+  POS_CONSULTA: "Pós-consulta",
 };
 
 export function PatientAiSynthesesPanel({ orgId, patientId }: Props) {
@@ -208,8 +209,11 @@ export function PatientAiSynthesesPanel({ orgId, patientId }: Props) {
             <option value="DIARIO">Diário compartilhado</option>
             <option value="SESSAO">Sessão / agenda</option>
             <option value="MISTO">Misto (diário + sessão)</option>
+            <option value="POS_CONSULTA">Pós-consulta</option>
           </Select>
-          {(sourceKind === "SESSAO" || sourceKind === "MISTO") && (
+          {(sourceKind === "SESSAO" ||
+            sourceKind === "MISTO" ||
+            sourceKind === "POS_CONSULTA") && (
             <Select
               value={appointmentId}
               onChange={(e) => setAppointmentId(e.target.value)}
