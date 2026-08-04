@@ -6,6 +6,7 @@ export const en: MarketingDictionary = {
     plans: "Plans",
     psychologists: "Cuidado",
     clinics: "Clinics",
+    clinicApp: "Open Clinics",
     faq: "FAQ",
     blog: "Blog",
     contact: "Contact",

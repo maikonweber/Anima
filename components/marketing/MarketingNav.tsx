@@ -30,7 +30,7 @@ function pathWithoutLocale(pathname: string): string {
   return pathname || "/";
 }
 
-/** Navegação institucional: linha única no desktop, menu sanfona no mobile. */
+/** Navegação institucional alinhada ao rebrand. */
 export function MarketingNav({
   locale = DEFAULT_LOCALE,
 }: {
@@ -47,47 +47,68 @@ export function MarketingNav({
   const links = LINK_KEYS.map(({ path, key }) => ({
     href: localizedPath(locale, path),
     label: nav[key],
+    accent:
+      key === "clinics"
+        ? "clinic"
+        : key === "psychologists"
+          ? "care"
+          : "default",
   }));
 
   const langSwitch = (
     <span className="inline-flex items-center gap-1.5 text-xs font-medium">
-      <span className="uppercase tracking-[0.14em] text-foreground/40">
+      <span className="uppercase tracking-[0.14em] text-[var(--home-subtle)]">
         {common.language}
       </span>
-      <span className="text-foreground/75" aria-current="page">
+      <span className="text-[var(--home-ink)]" aria-current="page">
         {locale === "en" ? "EN" : "PT"}
       </span>
-      <span aria-hidden className="text-foreground/30">
+      <span aria-hidden className="text-[var(--home-line)]">
         ·
       </span>
       <Link
         href={otherHref}
         hrefLang={other === "en" ? "en" : "pt-BR"}
-        className="text-anima-violet hover:underline"
+        className="text-[var(--home-accent)] hover:underline"
       >
         {other === "en" ? "EN" : "PT"}
       </Link>
     </span>
   );
 
+  const linkClass = (accent: string) => {
+    if (accent === "clinic") {
+      return "hover:text-[var(--home-clinic)] transition-colors";
+    }
+    if (accent === "care") {
+      return "hover:text-[var(--home-care)] transition-colors";
+    }
+    return "hover:text-[var(--home-accent)] transition-colors";
+  };
+
   return (
     <>
-      {/* Desktop */}
       <nav
-        className="hidden md:flex flex-wrap justify-end gap-x-6 gap-y-2 text-sm font-medium text-foreground/55"
+        className="hidden md:flex flex-wrap justify-end gap-x-5 gap-y-2 text-sm font-medium text-[var(--home-muted)]"
         aria-label={nav.ariaLabel}
       >
         {links.map((link) => (
           <Link
             key={link.href}
-            className="hover:text-anima-violet transition-colors"
+            className={linkClass(link.accent)}
             href={link.href}
           >
             {link.label}
           </Link>
         ))}
         <Link
-          className="font-semibold text-anima-violet hover:text-anima-lilac transition-colors"
+          className="text-[var(--home-clinic)] hover:underline"
+          href="/clinic"
+        >
+          {nav.clinicApp}
+        </Link>
+        <Link
+          className="font-semibold text-[var(--home-accent)] hover:underline"
           href={localizedPath(locale, "/login")}
         >
           {nav.login}
@@ -95,10 +116,9 @@ export function MarketingNav({
         {langSwitch}
       </nav>
 
-      {/* Botão hambúrguer (mobile) */}
       <button
         type="button"
-        className="md:hidden inline-flex items-center justify-center rounded-xl p-2 text-foreground/60 hover:bg-foreground/[0.06] hover:text-foreground/90 transition-colors"
+        className="md:hidden inline-flex items-center justify-center rounded-xl p-2 text-[var(--home-muted)] hover:bg-[var(--home-surface)] hover:text-[var(--home-ink)] transition-colors"
         aria-expanded={open}
         aria-controls="marketing-mobile-menu"
         aria-label={open ? nav.menuClose : nav.menuOpen}
@@ -115,28 +135,34 @@ export function MarketingNav({
         )}
       </button>
 
-      {/* Painel do menu (mobile) */}
       {open ? (
         <nav
           id="marketing-mobile-menu"
           className="md:hidden w-full mt-1"
           aria-label={nav.ariaLabel}
         >
-          <div className="glass-panel flex flex-col divide-y divide-foreground/[0.06] p-2">
+          <div className="rounded-2xl border border-[var(--home-line)] bg-[var(--home-panel)] flex flex-col divide-y divide-[var(--home-line)] p-2 shadow-sm">
             {links.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 onClick={() => setOpen(false)}
-                className="rounded-lg px-3 py-3 text-sm font-medium text-foreground/70 hover:bg-foreground/[0.04] hover:text-anima-violet transition-colors"
+                className={`rounded-lg px-3 py-3 text-sm font-medium text-[var(--home-muted)] hover:bg-[var(--home-surface)] ${linkClass(link.accent)}`}
               >
                 {link.label}
               </Link>
             ))}
             <Link
+              href="/clinic"
+              onClick={() => setOpen(false)}
+              className="rounded-lg px-3 py-3 text-sm font-medium text-[var(--home-clinic)] hover:bg-[var(--home-clinic-soft)]"
+            >
+              {nav.clinicApp}
+            </Link>
+            <Link
               href={localizedPath(locale, "/login")}
               onClick={() => setOpen(false)}
-              className="rounded-lg px-3 py-3 text-sm font-semibold text-anima-violet hover:bg-anima-violet/5 transition-colors"
+              className="rounded-lg px-3 py-3 text-sm font-semibold text-[var(--home-accent)] hover:bg-[var(--home-surface)]"
             >
               {nav.login}
             </Link>

@@ -3,6 +3,7 @@ export type NavDictionary = {
   plans: string;
   psychologists: string;
   clinics: string;
+  clinicApp: string;
   faq: string;
   blog: string;
   contact: string;

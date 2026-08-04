@@ -10,76 +10,69 @@ export function ClinicsView({ locale }: { locale: Locale }) {
   return (
     <MarketingChrome locale={locale}>
       <article>
-        <p className="text-[11px] uppercase tracking-[0.16em] text-anima-violet font-medium mb-3">
-          {t.eyebrow}
-        </p>
-        <h1 className="text-3xl font-bold text-foreground/90 mb-4">{t.title}</h1>
-        <p className="text-sm text-foreground/55 leading-relaxed mb-8 max-w-3xl">
+        <p className="mkt-eyebrow mkt-eyebrow-clinic mb-3">{t.eyebrow}</p>
+        <h1 className="text-3xl sm:text-4xl mb-4">{t.title}</h1>
+        <p className="text-sm sm:text-base leading-relaxed mb-8 max-w-3xl">
           {t.intro}
         </p>
 
-        <section className="mb-10 rounded-2xl border border-foreground/[0.08] bg-foreground/[0.02] p-5 sm:p-6">
-          <h2 className="text-lg font-semibold text-foreground/85 mb-2">
-            {t.splitTitle}
-          </h2>
-          <p className="text-sm text-foreground/50 leading-relaxed">{t.splitBody}</p>
+        <section className="mb-10 mkt-card border-t-[3px] border-t-[var(--home-clinic)]">
+          <h2 className="text-xl mb-2">{t.splitTitle}</h2>
+          <p className="text-sm leading-relaxed">{t.splitBody}</p>
         </section>
 
         <section className="mb-10">
-          <h2 className="text-xl font-semibold text-foreground/82 mb-4">
-            {t.modulesTitle}
-          </h2>
+          <h2 className="text-xl mb-4">{t.modulesTitle}</h2>
           <ul className="grid gap-3 sm:grid-cols-2">
             {t.modules.map((mod) => (
-              <li
-                key={mod.title}
-                className="rounded-xl border border-foreground/[0.08] p-4"
-              >
-                <p className="text-sm font-semibold text-foreground/85 mb-1">
+              <li key={mod.title} className="mkt-card">
+                <p className="text-sm font-semibold text-[var(--home-ink)] mb-1">
                   {mod.title}
                 </p>
-                <p className="text-sm text-foreground/45 leading-relaxed">
-                  {mod.text}
-                </p>
+                <p className="text-sm leading-relaxed">{mod.text}</p>
               </li>
             ))}
           </ul>
         </section>
 
         <section className="mb-10">
-          <h2 className="text-xl font-semibold text-foreground/82 mb-3">
-            {t.forWhomTitle}
-          </h2>
-          <ul className="list-disc ps-6 text-sm text-foreground/55 space-y-2">
+          <h2 className="text-xl mb-3">{t.forWhomTitle}</h2>
+          <ul className="space-y-2 text-sm">
             {t.forWhom.map((item) => (
-              <li key={item}>{item}</li>
+              <li key={item} className="flex gap-2">
+                <span aria-hidden className="text-[var(--home-clinic)]">
+                  ·
+                </span>
+                {item}
+              </li>
             ))}
           </ul>
         </section>
 
-        <section className="mb-10">
-          <h2 className="text-xl font-semibold text-foreground/82 mb-3">
-            {t.ethicsTitle}
-          </h2>
-          <p className="text-sm text-foreground/55 leading-relaxed">{t.ethicsBody}</p>
+        <section className="mb-10 mkt-card">
+          <h2 className="text-xl mb-3">{t.ethicsTitle}</h2>
+          <p className="text-sm leading-relaxed">{t.ethicsBody}</p>
         </section>
 
-        <nav
-          aria-label={t.title}
-          className="flex flex-wrap gap-4 font-medium text-anima-violet"
-        >
-          <Link href="/clinic" className="hover:underline">
+        <nav aria-label={t.title} className="mkt-cta-row">
+          <Link href="/clinic" className="mkt-btn mkt-btn-clinic">
             {t.ctaOpen}
           </Link>
           <Link
+            href={localizedPath(locale, "/clinicas")}
+            className="mkt-btn mkt-btn-ghost-clinic"
+          >
+            {locale === "en" ? "Clinics overview" : "Visão geral"}
+          </Link>
+          <Link
             href={localizedPath(locale, "/plans")}
-            className="hover:underline"
+            className="mkt-btn mkt-btn-ghost"
           >
             {t.ctaPlans}
           </Link>
           <Link
             href={localizedPath(locale, "/psychologists")}
-            className="hover:underline"
+            className="mkt-btn mkt-btn-ghost"
           >
             {t.ctaPsych}
           </Link>

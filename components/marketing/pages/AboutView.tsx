@@ -11,7 +11,8 @@ export function AboutView({ locale }: { locale: Locale }) {
   return (
     <MarketingChrome locale={locale}>
       <article>
-        <h1 className="text-3xl font-bold text-foreground/90 mb-6">{t.title}</h1>
+        <p className="mkt-eyebrow mb-3">EmotiveCare</p>
+        <h1 className="text-3xl sm:text-4xl mb-6">{t.title}</h1>
         <p className="text-sm text-foreground/55 leading-relaxed mb-6">
           {t.introBefore ? `${t.introBefore} ` : null}
           <strong className="text-foreground/75 font-semibold">{t.introBrand}</strong>{" "}
@@ -69,28 +70,32 @@ export function AboutView({ locale }: { locale: Locale }) {
           </p>
         </section>
 
-        <p className="text-sm font-medium mb-6">
+        <nav className="mkt-cta-row" aria-label={t.title}>
           <Link
-            className="text-anima-violet hover:underline"
-            href={localizedPath(locale, "/plans")}
-          >
-            {t.linkPlans}
-          </Link>
-          {" · "}
-          <Link
-            className="text-anima-violet hover:underline"
-            href={localizedPath(locale, "/blog")}
-          >
-            {t.linkBlog}
-          </Link>
-          {" · "}
-          <Link
-            className="text-anima-violet hover:underline"
+            className="mkt-btn mkt-btn-primary"
             href={localizedPath(locale, "/register")}
           >
             {t.linkRegister}
           </Link>
-        </p>
+          <Link
+            className="mkt-btn mkt-btn-ghost"
+            href={localizedPath(locale, "/plans")}
+          >
+            {t.linkPlans}
+          </Link>
+          <Link
+            className="mkt-btn mkt-btn-ghost-clinic"
+            href={localizedPath(locale, "/clinicas")}
+          >
+            Clínicas
+          </Link>
+          <Link
+            className="mkt-btn mkt-btn-ghost"
+            href={localizedPath(locale, "/blog")}
+          >
+            {t.linkBlog}
+          </Link>
+        </nav>
       </article>
     </MarketingChrome>
   );

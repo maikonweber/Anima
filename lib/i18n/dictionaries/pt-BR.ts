@@ -6,6 +6,7 @@ export const ptBR: MarketingDictionary = {
     plans: "Planos",
     psychologists: "Cuidado",
     clinics: "Clínicas",
+    clinicApp: "Abrir Clínicas",
     faq: "FAQ",
     blog: "Blog",
     contact: "Contato",

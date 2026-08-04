@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { Fraunces, DM_Sans } from "next/font/google";
 import { AnimaLogo } from "@/components/brand/AnimaLogo";
+import { marketingFontVariables } from "@/components/marketing/marketing-fonts";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { faqSchema, medicalHomePageSchema } from "@/components/seo/schema";
 import {
@@ -10,18 +10,6 @@ import {
 } from "@/lib/i18n/config";
 import { homeEn } from "@/lib/i18n/dictionaries/home-en";
 import { homePt, type HomeDictionary } from "@/lib/i18n/dictionaries/home-pt";
-
-const display = Fraunces({
-  subsets: ["latin"],
-  variable: "--font-home-display",
-  display: "swap",
-});
-
-const body = DM_Sans({
-  subsets: ["latin"],
-  variable: "--font-home-body",
-  display: "swap",
-});
 
 function getHomeDictionary(locale: Locale): HomeDictionary {
   return (locale === "en" ? homeEn : homePt) as HomeDictionary;
@@ -56,7 +44,7 @@ export function HomePage({ locale }: { locale: Locale }) {
         ]}
       />
       <div
-        className={`home-shell ${display.variable} ${body.variable} flex flex-col min-h-full`}
+        className={`home-shell ${marketingFontVariables} flex flex-col min-h-full`}
         lang={locale === "en" ? "en" : "pt-BR"}
       >
         <header>

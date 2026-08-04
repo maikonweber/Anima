@@ -10,22 +10,22 @@ export function FaqView({ locale }: { locale: Locale }) {
   return (
     <MarketingChrome locale={locale}>
       <article>
-        <h1 className="text-3xl font-bold text-foreground/90 mb-8">{t.title}</h1>
-        <div className="space-y-8">
+        <p className="mkt-eyebrow mb-3">FAQ</p>
+        <h1 className="text-3xl sm:text-4xl mb-8">{t.title}</h1>
+        <div className="space-y-4">
           {entries.map((item) => (
             <section
               key={item.question}
               aria-labelledby={`faq-${item.question.slice(0, 12)}`}
+              className="mkt-card"
             >
               <h2
                 id={`faq-${item.question.slice(0, 12)}`}
-                className="text-lg font-semibold text-foreground/85 mb-2"
+                className="text-lg mb-2"
               >
                 {item.question}
               </h2>
-              <p className="text-sm text-foreground/55 leading-relaxed">
-                {item.answer}
-              </p>
+              <p className="text-sm leading-relaxed">{item.answer}</p>
             </section>
           ))}
         </div>
