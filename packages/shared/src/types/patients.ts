@@ -78,6 +78,11 @@ export type CreatePatientPayload = {
 
 export type UpdatePatientPayload = Partial<CreatePatientPayload> & {
   status?: PatientStatus;
+  userId?: string | null;
+};
+
+export type LinkPatientAppUserPayload = {
+  email: string;
 };
 
 export type UpdatePatientStatusPayload = {

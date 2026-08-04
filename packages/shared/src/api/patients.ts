@@ -80,3 +80,28 @@ export async function updatePatientStatus(
     },
   );
 }
+
+export async function linkPatientAppUser(
+  orgId: string,
+  patientId: string,
+  payload: { email: string },
+) {
+  return api<Patient>(
+    `/organizations/${encodeURIComponent(orgId)}/patients/${encodeURIComponent(patientId)}/link-app-user`,
+    {
+      method: "POST",
+      auth: true,
+      body: JSON.stringify(payload),
+    },
+  );
+}
+
+export async function unlinkPatientAppUser(orgId: string, patientId: string) {
+  return api<Patient>(
+    `/organizations/${encodeURIComponent(orgId)}/patients/${encodeURIComponent(patientId)}/link-app-user`,
+    {
+      method: "DELETE",
+      auth: true,
+    },
+  );
+}

@@ -4,11 +4,14 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   createPatient,
   getPatient,
+  linkPatientAppUser,
   listPatients,
+  unlinkPatientAppUser,
   updatePatientStatus,
 } from "@/lib/api/patients";
 import type {
   CreatePatientPayload,
+  LinkPatientAppUserPayload,
   ListPatientsQuery,
   UpdatePatientStatusPayload,
 } from "@anima/shared";
@@ -53,6 +56,37 @@ export function useUpdatePatientStatus(orgId: string, patientId: string) {
         queryKey: ["patients", orgId, patientId],
       });
       void queryClient.invalidateQueries({ queryKey: ["patients", orgId] });
+    },
+  });
+}
+
+export function useLinkPatientAppUser(orgId: string, patientId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: LinkPatientAppUserPayload) =>
+      linkPatientAppUser(orgId, patientId, payload),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: ["patients", orgId, patientId],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ["patient-diary", orgId, patientId],
+      });
+    },
+  });
+}
+
+export function useUnlinkPatientAppUser(orgId: string, patientId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => unlinkPatientAppUser(orgId, patientId),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: ["patients", orgId, patientId],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ["patient-diary", orgId, patientId],
+      });
     },
   });
 }

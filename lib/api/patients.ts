@@ -4,4 +4,6 @@ export {
   createPatient,
   updatePatient,
   updatePatientStatus,
+  linkPatientAppUser,
+  unlinkPatientAppUser,
 } from "@anima/shared";

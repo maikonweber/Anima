@@ -12,6 +12,7 @@ import {
   STATUS_LABELS,
 } from "@/components/clinic/PatientStatusBadge";
 import { PatientConsentsPanel } from "@/components/clinic/PatientConsentsPanel";
+import { PatientAppLinkPanel } from "@/components/clinic/PatientAppLinkPanel";
 import { PatientClinicalNotesPanel } from "@/components/clinic/PatientClinicalNotesPanel";
 import { PatientDiaryPanel } from "@/components/clinic/PatientDiaryPanel";
 import { PatientRemindersPanel } from "@/components/clinic/PatientRemindersPanel";
@@ -138,6 +139,8 @@ export default function PatientDetailPage() {
 
             {tab === "resumo" && (
               <>
+                <PatientAppLinkPanel orgId={orgId} patient={data} />
+
                 {data.operationalNotes && (
                   <div className="glass-panel p-5 mb-4">
                     <p className="text-xs uppercase tracking-wide text-foreground/35 mb-2">
