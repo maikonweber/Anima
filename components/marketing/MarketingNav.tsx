@@ -11,6 +11,7 @@ import {
   pathWithoutLocale,
 } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { clinicAppEntryHref } from "@/lib/subscription/acquisition";
 
 const LINK_KEYS = [
   { path: "/about", key: "about" },
@@ -58,7 +59,7 @@ export function MarketingNav({
     return "hover:text-[var(--home-accent)] transition-colors";
   };
 
-  const clinicAppHref = localizedPath(locale, "/clinic");
+  const clinicAppHref = clinicAppEntryHref(locale);
 
   return (
     <>

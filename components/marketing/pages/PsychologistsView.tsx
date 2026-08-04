@@ -4,7 +4,10 @@ import { localizedPath } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { MarketingChrome } from "@/components/marketing/MarketingChrome";
 import { blogPath } from "@/lib/seo/i18n";
-import { localizedAuthCheckoutHref } from "@/lib/subscription/acquisition";
+import {
+  clinicAppEntryHref,
+  localizedAuthCheckoutHref,
+} from "@/lib/subscription/acquisition";
 
 export function PsychologistsView({ locale }: { locale: Locale }) {
   const dict = getDictionary(locale);
@@ -92,7 +95,10 @@ export function PsychologistsView({ locale }: { locale: Locale }) {
           >
             {t.ctaClinics}
           </Link>
-          <Link href="/clinic" className="mkt-btn mkt-btn-clinic">
+          <Link
+            href={clinicAppEntryHref(locale)}
+            className="mkt-btn mkt-btn-clinic"
+          >
             {dict.nav.clinicApp}
           </Link>
         </nav>

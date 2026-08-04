@@ -3,6 +3,7 @@ import type { Locale } from "@/lib/i18n/config";
 import { localizedPath } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { MarketingChrome } from "@/components/marketing/MarketingChrome";
+import { clinicAppEntryHref } from "@/lib/subscription/acquisition";
 
 export function ClinicsView({ locale }: { locale: Locale }) {
   const t = getDictionary(locale).clinics;
@@ -55,7 +56,10 @@ export function ClinicsView({ locale }: { locale: Locale }) {
         </section>
 
         <nav aria-label={t.title} className="mkt-cta-row">
-          <Link href="/clinic" className="mkt-btn mkt-btn-clinic">
+          <Link
+            href={clinicAppEntryHref(locale)}
+            className="mkt-btn mkt-btn-clinic"
+          >
             {t.ctaOpen}
           </Link>
           <Link

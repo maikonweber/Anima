@@ -9,6 +9,7 @@ export const clinicUiEs = {
     organizations: "Organizaciones",
     openMenu: "Abrir menú",
     closeMenu: "Cerrar menú",
+    moreMenu: "Más",
   },
   brand: {
     product: "EmotiveCare",
@@ -125,11 +126,14 @@ export const clinicUiEs = {
     inbox: "Conversaciones",
     emptyInbox: "Aún no hay conversaciones. Cuando un paciente escriba, aparece aquí.",
     selectConversation: "Selecciona una conversación para leer y responder.",
+    backToInbox: "Volver a conversaciones",
     replyPlaceholder: "Escribe una respuesta…",
     send: "Enviar",
-    handoff: "Atención humana",
+    handoff: "Humano",
     enableAi: "Activar IA",
     disableAi: "Desactivar IA",
+    statusLabel: "Estado",
+    unnamedPatient: "Paciente",
   },
   knowledgePage: {
     description:

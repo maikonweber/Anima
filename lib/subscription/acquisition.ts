@@ -47,6 +47,21 @@ export function isAssinaturaCheckoutRedirect(path: string): boolean {
   }
 }
 
+function isClinicAppRedirect(path: string): boolean {
+  const bare = pathWithoutLocale(path.split("?")[0] ?? path);
+  return bare === "/clinic" || bare.startsWith("/clinic/");
+}
+
+function canAccessClinicApp(planSlug?: string | null): boolean {
+  return planSlug === "cuidado" || planSlug === "preview";
+}
+
+/** Entrada pública para o CRM: login com retorno a /clinic após auth. */
+export function clinicAppEntryHref(locale: Locale = "pt-BR"): string {
+  const login = localizedPath(locale, "/login");
+  return `${login}?redirect=${encodeURIComponent("/clinic")}`;
+}
+
 export function resolvePostAuthDestination(
   emailVerified: boolean,
   redirectTo: string | null | undefined,
@@ -65,12 +80,16 @@ export function resolvePostAuthDestination(
     return localizedPath(locale, "/aguardando-verificacao");
   }
   if (isSafeInternalRedirect(redirectTo)) {
+    // Não honrar redirect para /clinic sem plano Cuidado/preview (RF-090).
+    if (isClinicAppRedirect(redirectTo) && !canAccessClinicApp(planSlug)) {
+      return localizedPath(locale, "/dashboard");
+    }
     const [path, query] = redirectTo.split("?");
     const localized = localizedPath(locale, pathWithoutLocale(path));
     return query ? `${localized}?${query}` : localized;
   }
   // Conta Cuidado = app do profissional → Clínicas (não diário pessoal).
-  if (planSlug === "cuidado") {
+  if (canAccessClinicApp(planSlug)) {
     return localizedPath(locale, "/clinic");
   }
   return localizedPath(locale, "/dashboard");

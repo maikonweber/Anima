@@ -140,9 +140,9 @@ export function ClinicSidebar() {
     [orgNav, t],
   );
 
-  const primaryMobile = orgId
-    ? orgNav.slice(0, 3)
-    : [
+  const primaryMobile = useMemo(() => {
+    if (!orgId) {
+      return [
         {
           href: "/clinic",
           label: t.brand.clinics,
@@ -151,6 +151,22 @@ export function ClinicSidebar() {
           icon: BuildingIcon,
         },
       ];
+    }
+    const base = `/clinic/${orgId}`;
+    const preferred = [
+      base,
+      `${base}/patients`,
+      `${base}/whatsapp`,
+      `${base}/agenda`,
+    ];
+    const picked: NavItem[] = [];
+    for (const href of preferred) {
+      const item = orgNav.find((nav) => nav.href === href);
+      if (item) picked.push(item);
+      if (picked.length >= 3) break;
+    }
+    return picked.length > 0 ? picked : orgNav.slice(0, 3);
+  }, [orgId, orgNav, t.brand.clinics]);
 
   const isItemActive = (item: NavItem) =>
     item.match ? item.match(barePath) : barePath.startsWith(item.href);
@@ -322,7 +338,7 @@ export function ClinicSidebar() {
           >
             <MenuIcon active={isMenuActive || menuOpen} />
             <span className="w-full text-[10px] font-medium leading-tight text-center">
-              Mais
+              {t.common.moreMenu}
             </span>
           </button>
         </div>
@@ -342,9 +358,8 @@ export function ClinicSidebar() {
             className="absolute inset-0 bg-black/35"
           />
           <div className="absolute bottom-0 inset-x-0 rounded-t-2xl border-t border-[var(--clinic-border)] bg-[var(--clinic-panel)] p-4 clinic-safe-pb shadow-2xl max-h-[85dvh] overflow-y-auto">
-            <div className="mb-4 flex items-center justify-between gap-2">
-              <div className="mx-auto h-1 w-10 rounded-full bg-foreground/12" />
-              <LanguageSwitcher variant="pills" className="shrink-0" />
+            <div className="mb-3 flex justify-center">
+              <div className="h-1 w-10 rounded-full bg-foreground/12" />
             </div>
             {orgQuery.data ? (
               <p className="text-xs text-[var(--clinic-muted)] mb-3 px-1 truncate font-medium">

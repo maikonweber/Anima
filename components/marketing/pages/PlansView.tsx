@@ -3,7 +3,10 @@ import type { Locale } from "@/lib/i18n/config";
 import { localizedPath } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { MarketingChrome } from "@/components/marketing/MarketingChrome";
-import { localizedAuthCheckoutHref } from "@/lib/subscription/acquisition";
+import {
+  clinicAppEntryHref,
+  localizedAuthCheckoutHref,
+} from "@/lib/subscription/acquisition";
 
 function planTone(name: string): "person" | "care" | "default" {
   if (name === "Pleno") return "person";
@@ -121,7 +124,10 @@ export function PlansView({ locale }: { locale: Locale }) {
           >
             Clínicas
           </Link>
-          <Link href="/clinic" className="mkt-btn mkt-btn-clinic">
+          <Link
+            href={clinicAppEntryHref(locale)}
+            className="mkt-btn mkt-btn-clinic"
+          >
             {dict.nav.clinicApp}
           </Link>
           <Link

@@ -7,6 +7,7 @@ import { useAuth } from "@/lib/auth/AuthContext";
 import { useLocale } from "@/lib/i18n/locale-provider";
 import { ClinicRorschachLoader } from "@/components/clinic/ClinicRorschachLoader";
 import { ClinicSidebar } from "@/components/clinic/ClinicSidebar";
+import { useSubscription } from "@/providers/subscription-provider";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -16,14 +17,24 @@ const dmSans = DM_Sans({
 
 export function ClinicRouteLayout({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
+  const { isCuidado, isPreviewPlan } = useSubscription();
   const router = useRouter();
   const { localizedHref } = useLocale();
+  const canAccessClinic = isCuidado || isPreviewPlan;
 
   useEffect(() => {
-    if (!isLoading && !user) {
-      router.replace(localizedHref("/login"));
+    if (isLoading) return;
+    if (!user) {
+      router.replace(
+        `${localizedHref("/login")}?redirect=${encodeURIComponent("/clinic")}`,
+      );
+      return;
     }
-  }, [user, isLoading, router, localizedHref]);
+    // CRM profissional é exclusivo do plano Cuidado (RF-090).
+    if (!canAccessClinic) {
+      router.replace(localizedHref("/dashboard"));
+    }
+  }, [user, isLoading, canAccessClinic, router, localizedHref]);
 
   if (isLoading) {
     return (
@@ -33,7 +44,7 @@ export function ClinicRouteLayout({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (!user) return null;
+  if (!user || !canAccessClinic) return null;
 
   return (
     <div

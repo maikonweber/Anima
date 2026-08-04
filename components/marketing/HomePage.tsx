@@ -13,7 +13,10 @@ import { homeEn } from "@/lib/i18n/dictionaries/home-en";
 import { homeEs } from "@/lib/i18n/dictionaries/home-es";
 import { homePt, type HomeDictionary } from "@/lib/i18n/dictionaries/home-pt";
 import { getFaqEntries } from "@/lib/seo/faq";
-import { localizedAuthCheckoutHref } from "@/lib/subscription/acquisition";
+import {
+  clinicAppEntryHref,
+  localizedAuthCheckoutHref,
+} from "@/lib/subscription/acquisition";
 
 function getHomeDictionary(locale: Locale): HomeDictionary {
   if (locale === "en") return homeEn as HomeDictionary;
@@ -39,7 +42,7 @@ export function HomePage({ locale }: { locale: Locale }) {
   const loginHref = localizedPath(locale, "/login");
   const registerHref = localizedPath(locale, "/register");
   const clinicsHref = localizedPath(locale, "/clinicas");
-  const clinicAppHref = localizedPath(locale, "/clinic");
+  const clinicAppHref = clinicAppEntryHref(locale);
   const schemaPath =
     locale === "en" ? "/en" : locale === "es" ? "/es" : "/";
 

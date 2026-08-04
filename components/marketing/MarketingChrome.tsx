@@ -6,6 +6,7 @@ import { MarketingNav } from "@/components/marketing/MarketingNav";
 import type { Locale } from "@/lib/i18n/config";
 import { DEFAULT_LOCALE, localizedPath } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { clinicAppEntryHref } from "@/lib/subscription/acquisition";
 
 interface MarketingChromeProps {
   children: ReactNode;
@@ -62,7 +63,10 @@ export function MarketingChrome({
           <Link href={clinicsHref} className="hover:text-[var(--home-clinic)]">
             {nav.clinics}
           </Link>
-          <Link href="/clinic" className="hover:text-[var(--home-clinic)]">
+          <Link
+            href={clinicAppEntryHref(locale)}
+            className="hover:text-[var(--home-clinic)]"
+          >
             {nav.clinicApp}
           </Link>
           <Link
