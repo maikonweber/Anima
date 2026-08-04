@@ -3,6 +3,7 @@ import type { Locale } from "@/lib/i18n/config";
 import { localizedPath } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { MarketingChrome } from "@/components/marketing/MarketingChrome";
+import { localizedAuthCheckoutHref } from "@/lib/subscription/acquisition";
 
 function planTone(name: string): "person" | "care" | "default" {
   if (name === "Pleno") return "person";
@@ -13,6 +14,16 @@ function planTone(name: string): "person" | "care" | "default" {
 export function PlansView({ locale }: { locale: Locale }) {
   const dict = getDictionary(locale);
   const t = dict.plans;
+  const cuidadoRegisterHref = localizedAuthCheckoutHref(
+    locale,
+    "/register",
+    "cuidado",
+  );
+  const cuidadoLoginHref = localizedAuthCheckoutHref(
+    locale,
+    "/login",
+    "cuidado",
+  );
 
   return (
     <MarketingChrome locale={locale}>
@@ -52,6 +63,22 @@ export function PlansView({ locale }: { locale: Locale }) {
                     </li>
                   ))}
                 </ul>
+                {plan.name === "Cuidado" && (
+                  <div className="mt-5 flex flex-wrap gap-3">
+                    <Link
+                      href={cuidadoRegisterHref}
+                      className="mkt-btn mkt-btn-primary"
+                    >
+                      {t.ctaRegister}
+                    </Link>
+                    <Link
+                      href={cuidadoLoginHref}
+                      className="mkt-btn mkt-btn-ghost"
+                    >
+                      {t.ctaLogin}
+                    </Link>
+                  </div>
+                )}
               </section>
             );
           })}

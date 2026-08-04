@@ -18,18 +18,24 @@ const ICE_SERVERS: RTCIceServer[] = [
 type Props = {
   session: TeleconsultSession;
   isInitiator: boolean;
+  /** Chamado após encerrar com sucesso (ex.: navegar para a agenda). */
+  onEnded?: (session: TeleconsultSession) => void;
 };
 
-export function TeleconsultRoom({ session, isInitiator }: Props) {
+export function TeleconsultRoom({ session, isInitiator, onEnded }: Props) {
   const { user } = useAuth();
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const pcRef = useRef<RTCPeerConnection | null>(null);
   const lastSignalId = useRef<string | undefined>(undefined);
   const makingOffer = useRef(false);
+  const pollStopped = useRef(false);
   const [remoteReady, setRemoteReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [ending, setEnding] = useState(false);
+  const [ended, setEnded] = useState(
+    session.status === "ENCERRADA" || session.status === "CANCELADA",
+  );
 
   const {
     activeStream,
@@ -89,7 +95,7 @@ export function TeleconsultRoom({ session, isInitiator }: Props) {
   }, [activeStream, ensurePeer]);
 
   useEffect(() => {
-    if (!ready || !accessGranted || !isInitiator || !activeStream) return;
+    if (ended || !ready || !accessGranted || !isInitiator || !activeStream) return;
     let cancelled = false;
 
     async function createOffer() {
@@ -119,6 +125,7 @@ export function TeleconsultRoom({ session, isInitiator }: Props) {
   }, [
     accessGranted,
     activeStream,
+    ended,
     ensurePeer,
     isInitiator,
     ready,
@@ -127,10 +134,11 @@ export function TeleconsultRoom({ session, isInitiator }: Props) {
   ]);
 
   useEffect(() => {
-    let stopped = false;
+    if (ended) return;
+    pollStopped.current = false;
 
     async function poll() {
-      while (!stopped) {
+      while (!pollStopped.current) {
         try {
           const messages = await pullTeleconsultSignals(
             session.organizationId,
@@ -172,9 +180,10 @@ export function TeleconsultRoom({ session, isInitiator }: Props) {
 
     void poll();
     return () => {
-      stopped = true;
+      pollStopped.current = true;
     };
   }, [
+    ended,
     ensurePeer,
     isInitiator,
     session.id,
@@ -190,17 +199,41 @@ export function TeleconsultRoom({ session, isInitiator }: Props) {
     };
   }, [stopAllStreaming]);
 
+  const teardownMedia = useCallback(async () => {
+    pollStopped.current = true;
+    pcRef.current?.close();
+    pcRef.current = null;
+    await stopAllStreaming();
+  }, [stopAllStreaming]);
+
   async function handleEnd() {
+    if (ending || ended) return;
     setEnding(true);
+    setError(null);
     try {
-      await endTeleconsult(session.organizationId, session.id);
-      pcRef.current?.close();
-      await stopAllStreaming();
+      const updated = await endTeleconsult(
+        session.organizationId,
+        session.id,
+      );
+      await teardownMedia();
+      setEnded(true);
+      onEnded?.(updated);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Falha ao encerrar");
     } finally {
       setEnding(false);
     }
+  }
+
+  if (ended) {
+    return (
+      <div className="glass-panel p-6 space-y-3">
+        <p className="text-sm text-foreground/70">Sessão encerrada.</p>
+        <p className="text-[11px] text-foreground/35">
+          Código da sala: <code>{session.roomCode}</code> · status ENCERRADA
+        </p>
+      </div>
+    );
   }
 
   if (ready && !accessGranted) {

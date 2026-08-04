@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { motion } from "motion/react";
 import { Button } from "@/components/ui/Button";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
@@ -10,10 +10,13 @@ import { TeleconsultRoom } from "@/components/clinic/TeleconsultRoom";
 import { useTeleconsult } from "@/hooks/use-teleconsult";
 import { useMyOrganizations } from "@/hooks/use-organizations";
 import { useAuth } from "@/providers/auth-provider";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function ClinicTeleconsultPage() {
   const params = useParams<{ orgId: string; sessionId: string }>();
   const { orgId, sessionId } = params;
+  const router = useRouter();
+  const queryClient = useQueryClient();
   const { user } = useAuth();
   const { data: orgs } = useMyOrganizations();
   const { data, isLoading, error, refetch } = useTeleconsult(orgId, sessionId);
@@ -78,7 +81,17 @@ export default function ClinicTeleconsultPage() {
         )}
 
         {data && entered && (
-          <TeleconsultRoom session={data} isInitiator={!!isInitiator} />
+          <TeleconsultRoom
+            session={data}
+            isInitiator={!!isInitiator}
+            onEnded={(updated) => {
+              queryClient.setQueryData(
+                ["teleconsult", orgId, sessionId],
+                updated,
+              );
+              router.push(`/clinic/${orgId}/agenda`);
+            }}
+          />
         )}
       </motion.div>
     </div>

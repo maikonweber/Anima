@@ -11,11 +11,15 @@ import { getCategoryFromEnergy, getCategoryStyle } from "@/lib/energy";
 import { Button } from "@/components/ui/Button";
 import { UsageMeter } from "@/components/subscription/UsageMeter";
 import { hasLimitedHistory } from "@/lib/subscription/plan-highlights";
+import { useLocale } from "@/lib/i18n/locale-provider";
+import { getProductDictionary } from "@/lib/i18n/product-dictionary";
 import { useSubscription } from "@/providers/subscription-provider";
 
 const PAGE_SIZE = 20;
 
 export default function DiaryListPage() {
+  const { locale, localizedHref } = useLocale();
+  const t = getProductDictionary(locale);
   const { usage, shouldSuggestUpgrade, subscription } = useSubscription();
   const limits = subscription?.plan.limits;
   const showHistoryHint =
@@ -46,14 +50,14 @@ export default function DiaryListPage() {
       <div className="flex items-start justify-between gap-4 mb-8">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-foreground/90 mb-1">
-            Linha do tempo
+            {t.pages.diaryTitle}
           </h1>
           <p className="text-sm text-foreground/40">
             Seus momentos e sua memória emocional
           </p>
         </div>
         <Link
-          href="/diary/new"
+          href={localizedHref("/diary/new")}
           className="shrink-0 px-4 py-2 rounded-full text-sm font-medium text-white"
           style={{
             background:
@@ -71,7 +75,7 @@ export default function DiaryListPage() {
           <p className="text-xs text-foreground/50">
             No plano Essencial, você vê apenas os últimos {limits.historyDays}{" "}
             dias na linha do tempo.{" "}
-            <Link href="/assinatura" className="text-anima-violet hover:underline">
+            <Link href={localizedHref("/assinatura")} className="text-anima-violet hover:underline">
               Histórico completo no plano Pleno
             </Link>
           </p>
@@ -157,7 +161,7 @@ export default function DiaryListPage() {
           <p className="text-sm text-foreground/40 mb-6 max-w-xs mx-auto">
             Que tal iniciar sua rotina com um registro sobre como você está hoje?
           </p>
-          <Link href="/diary/new">
+          <Link href={localizedHref("/diary/new")}>
             <Button>Criar meu primeiro registro</Button>
           </Link>
         </div>
@@ -171,7 +175,7 @@ export default function DiaryListPage() {
           return (
             <li key={entry.id}>
               <Link
-                href={`/diary/${entry.id}`}
+                href={localizedHref(`/diary/${entry.id}`)}
                 className="block glass-panel p-4 hover:scale-[1.01] transition-transform duration-200"
               >
                 <div className="flex justify-between items-start gap-3 mb-2">

@@ -1,19 +1,24 @@
 import Link from "next/link";
 import { AnimaLogo } from "@/components/brand/AnimaLogo";
+import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
 import { marketingFontVariables } from "@/components/marketing/marketing-fonts";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { faqSchema, medicalHomePageSchema } from "@/components/seo/schema";
 import {
-  alternateLocale,
+  htmlLang,
   localizedPath,
   type Locale,
 } from "@/lib/i18n/config";
 import { homeEn } from "@/lib/i18n/dictionaries/home-en";
+import { homeEs } from "@/lib/i18n/dictionaries/home-es";
 import { homePt, type HomeDictionary } from "@/lib/i18n/dictionaries/home-pt";
 import { getFaqEntries } from "@/lib/seo/faq";
+import { localizedAuthCheckoutHref } from "@/lib/subscription/acquisition";
 
 function getHomeDictionary(locale: Locale): HomeDictionary {
-  return (locale === "en" ? homeEn : homePt) as HomeDictionary;
+  if (locale === "en") return homeEn as HomeDictionary;
+  if (locale === "es") return homeEs as HomeDictionary;
+  return homePt as HomeDictionary;
 }
 
 function productHref(
@@ -21,7 +26,9 @@ function productHref(
   key: HomeDictionary["products"]["items"][number]["href"],
 ) {
   if (key === "register") return localizedPath(locale, "/register");
-  if (key === "psychologists") return localizedPath(locale, "/psychologists");
+  if (key === "cuidado-checkout") {
+    return localizedAuthCheckoutHref(locale, "/register", "cuidado");
+  }
   return localizedPath(locale, "/clinicas");
 }
 
@@ -32,10 +39,9 @@ export function HomePage({ locale }: { locale: Locale }) {
   const loginHref = localizedPath(locale, "/login");
   const registerHref = localizedPath(locale, "/register");
   const clinicsHref = localizedPath(locale, "/clinicas");
-  const clinicAppHref = "/clinic";
-  const other = alternateLocale(locale);
-  const otherHome = localizedPath(other, "/");
-  const schemaPath = locale === "en" ? "/en" : "/";
+  const clinicAppHref = localizedPath(locale, "/clinic");
+  const schemaPath =
+    locale === "en" ? "/en" : locale === "es" ? "/es" : "/";
 
   return (
     <>
@@ -47,7 +53,7 @@ export function HomePage({ locale }: { locale: Locale }) {
       />
       <div
         className={`home-shell ${marketingFontVariables} flex flex-col min-h-full`}
-        lang={locale === "en" ? "en" : "pt-BR"}
+        lang={htmlLang(locale)}
       >
         <header>
           <nav
@@ -61,27 +67,11 @@ export function HomePage({ locale }: { locale: Locale }) {
               <AnimaLogo href={homeHref} size="header" showWordmark />
             </div>
             <div className="flex items-center gap-2 sm:gap-3.5 justify-end flex-wrap">
-              <nav
-                aria-label={t.nav.languageLabel}
-                className="flex items-center gap-1.5 text-xs font-medium text-[var(--home-muted)]"
-              >
-                <Link
-                  href={homeHref}
-                  hrefLang={locale === "en" ? "en" : "pt-BR"}
-                  className="text-[var(--home-ink)]"
-                  aria-current="page"
-                >
-                  {locale === "en" ? "EN" : "PT"}
-                </Link>
-                <span aria-hidden>·</span>
-                <Link
-                  href={otherHome}
-                  hrefLang={other === "en" ? "en" : "pt-BR"}
-                  className="text-[var(--home-accent)] hover:underline"
-                >
-                  {other === "en" ? "EN" : "PT"}
-                </Link>
-              </nav>
+              <LanguageSwitcher
+                locale={locale}
+                barePath="/"
+                variant="compact"
+              />
               <a
                 href="#produtos"
                 className="hidden lg:inline text-sm font-medium text-[var(--home-muted)] hover:text-[var(--home-ink)] transition-colors"
@@ -381,7 +371,11 @@ export function HomePage({ locale }: { locale: Locale }) {
                     <Link
                       href={
                         plan.name === "Cuidado"
-                          ? localizedPath(locale, "/psychologists")
+                          ? localizedAuthCheckoutHref(
+                              locale,
+                              "/register",
+                              "cuidado",
+                            )
                           : registerHref
                       }
                       className={`text-center px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors ${

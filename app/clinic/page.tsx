@@ -15,14 +15,8 @@ import {
   useCreateOrganization,
   useMyOrganizations,
 } from "@/hooks/use-organizations";
-
-const ROLE_LABELS: Record<string, string> = {
-  CLINIC_ADMIN: "Administrador",
-  PROFESSIONAL: "Profissional",
-  SECRETARY: "Secretaria",
-  PATIENT: "Paciente",
-  DPO: "DPO",
-};
+import { getClinicUiDictionary } from "@/lib/i18n/clinic-ui-dictionary";
+import { useLocale } from "@/lib/i18n/locale-provider";
 
 function orgInitials(name: string) {
   const parts = name.trim().split(/\s+/).filter(Boolean);
@@ -33,6 +27,15 @@ function orgInitials(name: string) {
 
 export default function ClinicHomePage() {
   const router = useRouter();
+  const { locale, localizedHref } = useLocale();
+  const t = getClinicUiDictionary(locale);
+  const roleLabels: Record<string, string> = {
+    CLINIC_ADMIN: t.roles.admin,
+    PROFESSIONAL: t.roles.professional,
+    SECRETARY: t.roles.secretary,
+    PATIENT: t.roles.patient,
+    DPO: t.roles.dpo,
+  };
   const { data, isLoading, error, refetch } = useMyOrganizations();
   const createOrg = useCreateOrganization();
   const [name, setName] = useState("");
@@ -50,7 +53,9 @@ export default function ClinicHomePage() {
       const result = await createOrg.mutateAsync({ name: name.trim() });
       setName("");
       setShowForm(false);
-      router.push(`/clinic/${result.organization.id}/patients`);
+      router.push(
+        localizedHref(`/clinic/${result.organization.id}/patients`),
+      );
     } catch (err) {
       setFormError(
         err instanceof Error ? err.message : "Não foi possível criar a clínica.",
@@ -67,7 +72,7 @@ export default function ClinicHomePage() {
       >
         <ClinicPageHeader
           eyebrow="Área profissional"
-          title="Clínicas"
+          title={t.brand.clinics}
           description="CRM, agenda e equipe por organização — separado do app do paciente."
           actions={
             <Button
@@ -186,7 +191,7 @@ export default function ClinicHomePage() {
                   }}
                 >
                   <Link
-                    href={`/clinic/${organization.id}`}
+                    href={localizedHref(`/clinic/${organization.id}`)}
                     className="group flex items-center gap-3.5 sm:gap-4 rounded-2xl border border-[var(--clinic-border)] bg-[var(--clinic-panel)] px-3.5 sm:px-5 py-3.5 sm:py-4 shadow-[0_1px_2px_rgba(15,28,36,0.03)] hover:border-[rgba(13,115,119,0.28)] hover:shadow-[0_4px_20px_rgba(13,115,119,0.08)] hover:bg-[var(--clinic-row-hover)] transition-all duration-200"
                   >
                     <div className="flex h-11 w-11 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-xl bg-[var(--clinic-accent-soft)] text-[var(--clinic-accent)] text-sm font-semibold tracking-tight">
@@ -197,7 +202,7 @@ export default function ClinicHomePage() {
                         {organization.name}
                       </p>
                       <p className="text-xs sm:text-sm text-[var(--clinic-muted)] mt-0.5 truncate">
-                        {ROLE_LABELS[membership.role] ?? membership.role}
+                        {roleLabels[membership.role] ?? membership.role}
                         <span className="text-[var(--clinic-subtle)]"> · </span>
                         {organization.timezone.replace(/_/g, " ")}
                       </p>

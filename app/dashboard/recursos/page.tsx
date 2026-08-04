@@ -6,8 +6,12 @@ import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { CrisisResourcesList } from "@/components/crisis/CrisisResourcesList";
 import { useCrisisResources } from "@/hooks/use-crisis-resources";
 import { useMyOrganizations } from "@/hooks/use-organizations";
+import { useLocale } from "@/lib/i18n/locale-provider";
+import { getProductDictionary } from "@/lib/i18n/product-dictionary";
 
 export default function PatientCrisisResourcesPage() {
+  const { locale } = useLocale();
+  const t = getProductDictionary(locale);
   const {
     data: orgs,
     isLoading: orgsLoading,
@@ -38,7 +42,7 @@ export default function PatientCrisisResourcesPage() {
         transition={{ duration: 0.3 }}
       >
         <h1 className="text-2xl sm:text-3xl font-bold text-foreground/90 mb-1">
-          Apoio em crise
+          {t.pages.crisisTitle}
         </h1>
         <p className="text-sm text-foreground/40 mb-6">
           Canais de apoio da sua clínica e redes públicas. Não é atendimento de

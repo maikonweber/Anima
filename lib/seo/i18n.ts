@@ -2,8 +2,10 @@ import type { Locale } from "@/lib/i18n/config";
 import {
   DEFAULT_LOCALE,
   LOCALES,
+  alternateLocale,
   htmlLang,
   isLocale,
+  localizedPath,
   ogLocale,
 } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -18,12 +20,12 @@ export {
 export type { Locale };
 
 export function blogPath(locale: Locale, slug?: string): string {
-  const base = locale === "en" ? "/en/blog" : "/blog";
+  const base = localizedPath(locale, "/blog");
   return slug ? `${base}/${slug}` : base;
 }
 
 export function alternateBlogPath(locale: Locale, slug?: string): string {
-  return blogPath(locale === "en" ? "pt-BR" : "en", slug);
+  return blogPath(alternateLocale(locale), slug);
 }
 
 export type BlogUiCopy = {

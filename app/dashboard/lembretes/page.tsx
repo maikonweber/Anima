@@ -14,11 +14,15 @@ import {
   useRespondOccurrence,
 } from "@/hooks/use-reminders";
 import { useMyOrganizations } from "@/hooks/use-organizations";
+import { useLocale } from "@/lib/i18n/locale-provider";
+import { getProductDictionary } from "@/lib/i18n/product-dictionary";
 import { ApiError } from "@anima/shared";
 
 type Tab = "due" | "meds" | "history";
 
 export default function PatientRemindersPage() {
+  const { locale } = useLocale();
+  const t = getProductDictionary(locale);
   const { data: orgs, isLoading: orgsLoading, error: orgsError, refetch: refetchOrgs } =
     useMyOrganizations();
 
@@ -111,7 +115,9 @@ export default function PatientRemindersPage() {
   if (patientOrgs.length === 0) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-12">
-        <h1 className="text-2xl font-bold text-foreground/90 mb-2">Lembretes</h1>
+        <h1 className="text-2xl font-bold text-foreground/90 mb-2">
+          {t.pages.remindersTitle}
+        </h1>
         <p className="text-sm text-foreground/45">
           Você precisa estar vinculado a uma clínica como paciente para usar
           lembretes.
@@ -124,7 +130,7 @@ export default function PatientRemindersPage() {
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="text-2xl sm:text-3xl font-bold text-foreground/90 mb-1">
-          Lembretes
+          {t.pages.remindersTitle}
         </h1>
         <p className="text-sm text-foreground/40 mb-4">
           Medicação e atividades — adesão no seu ritmo

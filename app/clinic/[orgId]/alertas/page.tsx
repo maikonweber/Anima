@@ -15,10 +15,16 @@ import {
   useOrgClinicalAlerts,
   useRejectClinicalAlert,
 } from "@/hooks/use-clinical-alerts";
+import { dateLocale } from "@/lib/i18n/config";
+import { getClinicUiDictionary } from "@/lib/i18n/clinic-ui-dictionary";
+import { useLocale } from "@/lib/i18n/locale-provider";
 
 export default function ClinicalAlertsInboxPage() {
   const params = useParams<{ orgId: string }>();
   const orgId = params.orgId;
+  const { locale, localizedHref } = useLocale();
+  const t = getClinicUiDictionary(locale);
+  const dl = dateLocale(locale);
   const pending = useOrgClinicalAlerts(orgId, {
     status: "PENDENTE_REVISAO",
     limit: 50,
@@ -62,7 +68,7 @@ export default function ClinicalAlertsInboxPage() {
       >
         <ClinicPageHeader
           eyebrow="Revisão humana"
-          title="Alertas pendentes"
+          title={t.pages.alerts}
           description="Candidatos assistivos — revise aqui ou na ficha do paciente. Não é canal de emergência."
         />
 
@@ -102,13 +108,15 @@ export default function ClinicalAlertsInboxPage() {
                     </p>
                     <p className="text-xs text-foreground/40 mt-1">
                       {item.patientFullName ?? "Paciente"} · {item.severity} ·{" "}
-                      {new Date(item.criadoEm).toLocaleString("pt-BR")}
+                      {new Date(item.criadoEm).toLocaleString(dl)}
                     </p>
                     <p className="text-xs text-foreground/55 mt-2 line-clamp-3">
                       {item.workingMessage}
                     </p>
                     <Link
-                      href={`/clinic/${orgId}/patients/${item.patientId}#alertas`}
+                      href={localizedHref(
+                        `/clinic/${orgId}/patients/${item.patientId}#alertas`,
+                      )}
                       className="inline-block text-[11px] text-[var(--clinic-accent)] mt-2"
                     >
                       Abrir ficha →

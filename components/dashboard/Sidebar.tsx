@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { AnimaLogo } from "@/components/brand/AnimaLogo";
+import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
 import { useAuth } from "@/lib/auth/AuthContext";
+import { useLocale } from "@/lib/i18n/locale-provider";
+import { getProductDictionary } from "@/lib/i18n/product-dictionary";
 import { useSubscription } from "@/providers/subscription-provider";
 
 type NavItem = {
@@ -15,93 +17,123 @@ type NavItem = {
   primary?: boolean;
 };
 
-const NAV_ITEMS: NavItem[] = [
-  { href: "/dashboard", label: "Início", icon: HomeIcon, primary: true },
-  {
-    href: "/diary/new",
-    label: "Novo registro",
-    shortLabel: "Registrar",
-    icon: PlusIcon,
-    primary: true,
-  },
-  {
-    href: "/diary",
-    label: "Linha do tempo",
-    shortLabel: "Linha",
-    icon: ClockIcon,
-    primary: true,
-  },
-  {
-    href: "/dashboard/insights",
-    label: "Insights",
-    shortLabel: "Insights",
-    icon: ChartIcon,
-    primary: true,
-  },
-  {
-    href: "/dashboard/conquistas",
-    label: "Conquistas",
-    shortLabel: "Conquistas",
-    icon: TrophyNavIcon,
-  },
-  {
-    href: "/assistente",
-    label: "Assistente emocional",
-    shortLabel: "Assistente",
-    icon: AssistantChatIcon,
-  },
-  { href: "/care/patients", label: "Acompanhamentos", icon: PatientsIcon },
-  {
-    href: "/clinic",
-    label: "Clínicas",
-    shortLabel: "Clínicas",
-    icon: ClinicIcon,
-  },
-  { href: "/dashboard/care", label: "Convidar profissional", icon: ShareIcon },
-  { href: "/dashboard/consents", label: "Consentimentos", icon: ShieldIcon },
-  { href: "/dashboard/lembretes", label: "Lembretes", icon: BellIcon },
-  { href: "/dashboard/plano", label: "Plano de cuidado", icon: PlanIcon },
-  { href: "/dashboard/recursos", label: "Apoio / crise", icon: LifeBuoyIcon },
-  { href: "/suporte", label: "Suporte", icon: SupportIcon },
-  { href: "/dashboard/perfil", label: "Perfil", icon: UserIcon },
-];
-
 export function Sidebar() {
-  const pathname = usePathname();
+  const { barePath, localizedHref } = useLocale();
+  const { locale } = useLocale();
+  const t = getProductDictionary(locale);
   const { user, logout } = useAuth();
-  const { subscription, shouldSuggestUpgrade } = useSubscription();
+  const { subscription, shouldSuggestUpgrade, isCuidado } = useSubscription();
   const planLabel = subscription?.plan.nome ?? "Essencial";
   const [menuOpen, setMenuOpen] = useState(false);
+  const homeHref = isCuidado ? "/clinic" : "/dashboard";
 
-  const primaryItems = NAV_ITEMS.filter((item) => item.primary);
-  const menuItems = NAV_ITEMS.filter((item) => !item.primary);
+  const navItems: NavItem[] = useMemo(() => {
+    // Conta Cuidado: profissional — sem diário / convites / vigiar paciente.
+    if (isCuidado) {
+      return [
+        {
+          href: "/clinic",
+          label: t.nav.clinics,
+          shortLabel: t.nav.clinics,
+          icon: ClinicIcon,
+          primary: true,
+        },
+        {
+          href: "/assistente",
+          label: t.nav.assistant,
+          shortLabel: t.nav.assistantShort,
+          icon: AssistantChatIcon,
+        },
+        { href: "/suporte", label: t.nav.support, icon: SupportIcon },
+        { href: "/dashboard/perfil", label: t.nav.profile, icon: UserIcon },
+      ];
+    }
 
-  const isItemActive = (href: string) =>
-    pathname === href || (href !== "/dashboard" && pathname.startsWith(href));
+    return [
+      { href: "/dashboard", label: t.nav.home, icon: HomeIcon, primary: true },
+      {
+        href: "/diary/new",
+        label: t.nav.newEntry,
+        shortLabel: t.nav.newEntryShort,
+        icon: PlusIcon,
+        primary: true,
+      },
+      {
+        href: "/diary",
+        label: t.nav.timeline,
+        shortLabel: t.nav.timelineShort,
+        icon: ClockIcon,
+        primary: true,
+      },
+      {
+        href: "/dashboard/insights",
+        label: t.nav.insights,
+        shortLabel: t.nav.insights,
+        icon: ChartIcon,
+        primary: true,
+      },
+      {
+        href: "/dashboard/conquistas",
+        label: t.nav.achievements,
+        shortLabel: t.nav.achievements,
+        icon: TrophyNavIcon,
+      },
+      {
+        href: "/assistente",
+        label: t.nav.assistant,
+        shortLabel: t.nav.assistantShort,
+        icon: AssistantChatIcon,
+      },
+      { href: "/care/patients", label: t.nav.carePatients, icon: PatientsIcon },
+      {
+        href: "/clinic",
+        label: t.nav.clinics,
+        shortLabel: t.nav.clinics,
+        icon: ClinicIcon,
+      },
+      { href: "/dashboard/care", label: t.nav.invitePro, icon: ShareIcon },
+      { href: "/dashboard/consents", label: t.nav.consents, icon: ShieldIcon },
+      { href: "/dashboard/lembretes", label: t.nav.reminders, icon: BellIcon },
+      { href: "/dashboard/plano", label: t.nav.carePlan, icon: PlanIcon },
+      { href: "/dashboard/recursos", label: t.nav.crisis, icon: LifeBuoyIcon },
+      { href: "/suporte", label: t.nav.support, icon: SupportIcon },
+      { href: "/dashboard/perfil", label: t.nav.profile, icon: UserIcon },
+    ];
+  }, [t, isCuidado]);
+
+  const primaryItems = navItems.filter((item) => item.primary);
+  const menuItems = navItems.filter((item) => !item.primary);
+
+  const isItemActive = (href: string) => {
+    if (href === "/clinic") {
+      return barePath === "/clinic" || barePath.startsWith("/clinic/");
+    }
+    return (
+      barePath === href || (href !== "/dashboard" && barePath.startsWith(href))
+    );
+  };
 
   const isMenuActive = menuItems.some((item) => isItemActive(item.href));
 
   useEffect(() => {
     setMenuOpen(false);
-  }, [pathname]);
+  }, [barePath]);
 
   return (
     <>
-      {/* Desktop sidebar */}
-      <aside className="hidden lg:flex flex-col w-64 h-full border-r border-foreground/[0.06] bg-background/80 backdrop-blur-sm">
-        <div className="p-6 pb-4">
-          <AnimaLogo href="/dashboard" size="header" />
+      <aside className="hidden lg:flex flex-col w-64 h-full border-r border-foreground/[0.06] bg-[var(--patient-sidebar,#e8eef4)]">
+        <div className="p-6 pb-4 flex items-start justify-between gap-2">
+          <AnimaLogo href={localizedHref(homeHref)} size="header" />
+          <LanguageSwitcher variant="pills" className="shrink-0" />
         </div>
 
-        <nav className="flex-1 px-3 py-2 space-y-1">
-          {NAV_ITEMS.map((item) => {
-            const isActive =
-              pathname === item.href ||
-              (item.href !== "/dashboard" && pathname.startsWith(item.href));
+        <nav className="flex-1 px-3 py-2 space-y-1 overflow-y-auto">
+          {navItems.map((item) => {
+            const isActive = isItemActive(item.href);
             return (
               <Link
                 key={item.href}
-                href={item.href}
+                href={localizedHref(item.href)}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
                   isActive
                     ? "bg-anima-violet/10 text-anima-violet"
@@ -130,11 +162,11 @@ export function Sidebar() {
                 {user?.email}
               </p>
               <Link
-                href="/assinatura"
+                href={localizedHref("/assinatura")}
                 className="text-[10px] text-anima-violet hover:underline mt-0.5 inline-block"
               >
                 {planLabel}
-                {shouldSuggestUpgrade ? " · Upgrade" : ""}
+                {shouldSuggestUpgrade ? ` · ${t.common.upgrade}` : ""}
               </Link>
             </div>
           </div>
@@ -143,20 +175,19 @@ export function Sidebar() {
             className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-foreground/40 hover:text-red-400 hover:bg-red-500/5 transition-all duration-200"
           >
             <LogoutIcon />
-            Sair
+            {t.common.logout}
           </button>
         </div>
       </aside>
 
-      {/* Mobile bottom bar */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-foreground/[0.06] bg-background/90 backdrop-blur-lg safe-area-pb">
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-foreground/[0.06] bg-background/95 backdrop-blur-lg safe-area-pb">
         <div className="flex items-stretch justify-between px-1 py-2">
           {primaryItems.map((item) => {
             const isActive = isItemActive(item.href);
             return (
               <Link
                 key={item.href}
-                href={item.href}
+                href={localizedHref(item.href)}
                 className={`flex flex-1 min-w-0 flex-col items-center gap-0.5 px-0.5 py-1.5 rounded-lg transition-colors ${
                   isActive
                     ? "text-anima-violet"
@@ -174,7 +205,7 @@ export function Sidebar() {
           <button
             type="button"
             onClick={() => setMenuOpen(true)}
-            aria-label="Abrir menu"
+            aria-label="Menu"
             aria-expanded={menuOpen}
             className={`flex flex-1 min-w-0 flex-col items-center gap-0.5 px-0.5 py-1.5 rounded-lg transition-colors ${
               isMenuActive
@@ -190,29 +221,31 @@ export function Sidebar() {
         </div>
       </nav>
 
-      {/* Mobile menu sheet */}
       {menuOpen && (
         <div
           className="lg:hidden fixed inset-0 z-[60]"
           role="dialog"
           aria-modal="true"
-          aria-label="Menu de navegação"
+          aria-label="Menu"
         >
           <button
             type="button"
-            aria-label="Fechar menu"
+            aria-label="Close"
             onClick={() => setMenuOpen(false)}
             className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"
           />
           <div className="absolute bottom-0 left-0 right-0 rounded-t-2xl border-t border-foreground/[0.06] bg-background p-4 pb-8 safe-area-pb shadow-2xl">
-            <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-foreground/15" />
+            <div className="mb-3 flex items-center justify-between">
+              <div className="mx-auto h-1 w-10 rounded-full bg-foreground/15" />
+              <LanguageSwitcher variant="pills" />
+            </div>
             <div className="grid grid-cols-3 gap-2">
               {menuItems.map((item) => {
                 const isActive = isItemActive(item.href);
                 return (
                   <Link
                     key={item.href}
-                    href={item.href}
+                    href={localizedHref(item.href)}
                     onClick={() => setMenuOpen(false)}
                     className={`flex flex-col items-center gap-1.5 rounded-xl p-3 text-center transition-colors ${
                       isActive
@@ -236,7 +269,9 @@ export function Sidebar() {
                 className="flex flex-col items-center gap-1.5 rounded-xl p-3 text-center text-foreground/60 transition-colors hover:bg-red-500/5 hover:text-red-400"
               >
                 <LogoutIcon />
-                <span className="text-[11px] font-medium leading-tight">Sair</span>
+                <span className="text-[11px] font-medium leading-tight">
+                  {t.common.logout}
+                </span>
               </button>
             </div>
           </div>

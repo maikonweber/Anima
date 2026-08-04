@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/Button";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import type { Term, TermStatusItem } from "@/types/terms";
+import { pathWithoutLocale } from "@/lib/i18n/config";
+import { useLocale } from "@/lib/i18n/locale-provider";
 
 /** Rotas onde o gate não deve aparecer (fluxos de auth / leitura pública dos termos). */
 const EXCLUDED_PREFIXES = [
@@ -24,10 +26,35 @@ const EXCLUDED_PREFIXES = [
 
 function isExcludedPath(pathname: string | null): boolean {
   if (!pathname) return false;
+  const bare = pathWithoutLocale(pathname);
   return EXCLUDED_PREFIXES.some(
-    (p) => pathname === p || pathname.startsWith(`${p}/`),
+    (p) => bare === p || bare.startsWith(`${p}/`),
   );
 }
+
+const TERMS_COPY = {
+  "pt-BR": {
+    title: "Atualização dos termos",
+    body: "Para continuar, aceite os termos atualizados da plataforma.",
+    accept: "Li e aceito os termos",
+    submit: "Continuar",
+    view: "Ver termos",
+  },
+  en: {
+    title: "Terms update",
+    body: "To continue, please accept the updated platform terms.",
+    accept: "I have read and accept the terms",
+    submit: "Continue",
+    view: "View terms",
+  },
+  es: {
+    title: "Actualización de términos",
+    body: "Para continuar, acepta los términos actualizados de la plataforma.",
+    accept: "He leído y acepto los términos",
+    submit: "Continuar",
+    view: "Ver términos",
+  },
+} as const;
 
 export function TermsGate() {
   const { user } = useAuth();
@@ -48,6 +75,8 @@ export function TermsGate() {
 }
 
 function TermsGateModal({ pendentes }: { pendentes: TermStatusItem[] }) {
+  const { locale } = useLocale();
+  const copy = TERMS_COPY[locale];
   const { data: terms, isLoading: termsLoading } = useTerms();
   const acceptMutation = useAcceptTerms();
 
@@ -147,11 +176,9 @@ function TermsGateModal({ pendentes }: { pendentes: TermStatusItem[] }) {
             id="terms-gate-title"
             className="text-lg font-bold text-foreground/90"
           >
-            Aceite dos Termos
+            {copy.title}
           </h2>
-          <p className="mt-1 text-sm text-foreground/50">
-            Para continuar usando a EmotiveCare, leia e aceite os termos abaixo.
-          </p>
+          <p className="mt-1 text-sm text-foreground/50">{copy.body}</p>
         </div>
 
         <div className="flex-1 overflow-y-auto px-6 sm:px-8 space-y-4">
@@ -192,8 +219,8 @@ function TermsGateModal({ pendentes }: { pendentes: TermStatusItem[] }) {
                         [term.id]: e.target.checked,
                       }))
                     }
-                    label={`Li e aceito: ${term.titulo}`}
-                    aria-label={`Aceitar ${term.titulo} (${item.tipo})`}
+                    label={`${copy.accept}: ${term.titulo}`}
+                    aria-label={`${copy.accept} ${term.titulo} (${item.tipo})`}
                   />
                 </div>
               </section>
@@ -205,7 +232,7 @@ function TermsGateModal({ pendentes }: { pendentes: TermStatusItem[] }) {
             <Checkbox
               checked={allChecked}
               onChange={(e) => toggleAll(e.target.checked)}
-              label="Li e aceito todos os termos"
+              label={copy.accept}
             />
           )}
 
@@ -217,7 +244,7 @@ function TermsGateModal({ pendentes }: { pendentes: TermStatusItem[] }) {
             disabled={!allChecked || termsLoading}
             isLoading={acceptMutation.isPending}
           >
-            Aceitar e continuar
+            {copy.submit}
           </Button>
         </div>
       </div>

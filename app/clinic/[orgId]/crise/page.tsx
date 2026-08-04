@@ -16,11 +16,15 @@ import {
   useUpdateCrisisResource,
 } from "@/hooks/use-crisis-resources";
 import { useMyOrganizations } from "@/hooks/use-organizations";
+import { getClinicUiDictionary } from "@/lib/i18n/clinic-ui-dictionary";
+import { useLocale } from "@/lib/i18n/locale-provider";
 import type { OrganizationRole } from "@anima/shared";
 
 export default function ClinicCrisisResourcesPage() {
   const params = useParams<{ orgId: string }>();
   const orgId = params.orgId;
+  const { locale } = useLocale();
+  const t = getClinicUiDictionary(locale);
   const { data: orgs } = useMyOrganizations();
   const role: OrganizationRole | undefined = useMemo(
     () =>
@@ -98,7 +102,7 @@ export default function ClinicCrisisResourcesPage() {
       >
         <ClinicPageHeader
           eyebrow="RF-042"
-          title="Recursos de crise"
+          title={t.pages.crisis}
           description="Apoio não emergencial configurável. Pacientes veem estes canais no app. A plataforma nunca substitui SAMU/pronto-socorro."
         />
 

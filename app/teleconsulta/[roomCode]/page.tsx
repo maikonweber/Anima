@@ -77,6 +77,10 @@ export default function TeleconsultJoinPage() {
           <TeleconsultRoom
             session={session}
             isInitiator={session.professionalUserId === user?.id}
+            onEnded={(updated) => {
+              setSession(updated);
+              router.push("/");
+            }}
           />
         ) : (
           <form onSubmit={handleJoin} className="glass-panel p-6 space-y-3">

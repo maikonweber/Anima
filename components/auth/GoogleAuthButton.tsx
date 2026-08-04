@@ -4,7 +4,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { GoogleLogin } from "@react-oauth/google";
 import { ApiError } from "@/lib/api-client";
+import { resolvePostAuthDestination } from "@/lib/subscription/acquisition";
 import { useAuth } from "@/providers/auth-provider";
+import { useLocale } from "@/lib/i18n/locale-provider";
 
 interface GoogleAuthButtonProps {
   /** Rótulo do botão do Google. */
@@ -25,6 +27,7 @@ export function GoogleAuthButton({
   onError,
 }: GoogleAuthButtonProps) {
   const router = useRouter();
+  const { locale } = useLocale();
   const { googleLogin } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -33,12 +36,14 @@ export function GoogleAuthButton({
     onError?.("");
     try {
       const user = await googleLogin(idToken);
-      const destination = !user.emailVerified
-        ? "/aguardando-verificacao"
-        : redirectTo?.startsWith("/")
-          ? redirectTo
-          : "/dashboard";
-      router.push(destination);
+      router.push(
+        resolvePostAuthDestination(
+          user.emailVerified,
+          redirectTo,
+          locale,
+          user.subscription?.plan.slug,
+        ),
+      );
     } catch (err) {
       setIsLoading(false);
       onError?.(

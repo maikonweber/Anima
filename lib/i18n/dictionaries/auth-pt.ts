@@ -60,6 +60,37 @@ export const authPt = {
       sendFailed: "Não foi possível enviar o pedido. Tente novamente.",
     },
   },
+  resetPassword: {
+    title: "Nova senha",
+    subtitle: "Escolha uma senha segura para sua conta",
+    passwordLabel: "Nova senha",
+    passwordPlaceholder: "Mínimo 6 caracteres",
+    confirmLabel: "Confirmar senha",
+    confirmPlaceholder: "Repita a nova senha",
+    submit: "Salvar senha",
+    successRedirect: "Senha atualizada. Redirecionando…",
+    invalidToken: "Link inválido ou expirado. Solicite um novo.",
+    errors: {
+      passwordTooShort: "A senha deve ter pelo menos 6 caracteres.",
+      passwordMismatch: "As senhas não coincidem.",
+      failed: "Não foi possível redefinir a senha. Tente novamente.",
+    },
+  },
+  verifyEmail: {
+    title: "Verificar e-mail",
+    verifying: "Confirmando seu e-mail…",
+    success: "E-mail confirmado. Você já pode entrar.",
+    failed: "Não foi possível verificar o e-mail. O link pode ter expirado.",
+    goLogin: "Ir para o login",
+  },
+  awaitingVerification: {
+    title: "Confirme seu e-mail",
+    body: "Enviamos um link de verificação para o seu e-mail. Abra-o para ativar sua conta.",
+    resend: "Reenviar e-mail",
+    resent: "E-mail reenviado.",
+    logout: "Sair",
+    goLogin: "Ir para o login",
+  },
 } as const;
 
 type DeepStringify<T> = T extends string

@@ -1,10 +1,10 @@
 import Link from "next/link";
 import {
-  alternateBlogPath,
-  blogPath,
-  getBlogUi,
+  LOCALE_LABEL,
+  LOCALES,
   type Locale,
-} from "@/lib/seo/i18n";
+} from "@/lib/i18n/config";
+import { blogPath, getBlogUi } from "@/lib/seo/i18n";
 
 export function BlogLanguageSwitch({
   locale,
@@ -14,32 +14,30 @@ export function BlogLanguageSwitch({
   slug?: string;
 }) {
   const ui = getBlogUi(locale);
-  const other: Locale = locale === "en" ? "pt-BR" : "en";
-  const currentHref = blogPath(locale, slug);
-  const otherHref = alternateBlogPath(locale, slug);
 
   return (
     <nav
       aria-label={ui.languageLabel}
-      className="mb-6 flex items-center gap-2 text-xs font-medium text-foreground/45"
+      className="mb-6 flex flex-wrap items-center gap-2 text-xs font-medium text-foreground/45"
     >
       <span className="uppercase tracking-[0.16em]">{ui.languageLabel}</span>
-      <Link
-        href={currentHref}
-        hrefLang={locale === "en" ? "en" : "pt-BR"}
-        className="text-foreground/75"
-        aria-current="page"
-      >
-        {locale === "en" ? "EN" : "PT"}
-      </Link>
-      <span aria-hidden>·</span>
-      <Link
-        href={otherHref}
-        hrefLang={other === "en" ? "en" : "pt-BR"}
-        className="text-anima-violet hover:underline"
-      >
-        {other === "en" ? "EN" : "PT"}
-      </Link>
+      {LOCALES.map((code, index) => (
+        <span key={code} className="inline-flex items-center gap-2">
+          {index > 0 ? <span aria-hidden>·</span> : null}
+          <Link
+            href={blogPath(code, slug)}
+            hrefLang={code === "pt-BR" ? "pt-BR" : code}
+            className={
+              code === locale
+                ? "text-foreground/75"
+                : "text-anima-violet hover:underline"
+            }
+            aria-current={code === locale ? "page" : undefined}
+          >
+            {LOCALE_LABEL[code]}
+          </Link>
+        </span>
+      ))}
     </nav>
   );
 }

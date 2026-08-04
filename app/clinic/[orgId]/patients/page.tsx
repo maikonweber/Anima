@@ -16,6 +16,8 @@ import {
   STATUS_LABELS,
 } from "@/components/clinic/PatientStatusBadge";
 import { usePatients } from "@/hooks/use-patients";
+import { getClinicUiDictionary } from "@/lib/i18n/clinic-ui-dictionary";
+import { useLocale } from "@/lib/i18n/locale-provider";
 import type { PatientStatus } from "@anima/shared";
 
 const PAGE_SIZE = 20;
@@ -33,6 +35,8 @@ const STATUS_FILTERS: Array<PatientStatus | "ALL"> = [
 export default function ClinicPatientsPage() {
   const params = useParams<{ orgId: string }>();
   const orgId = params.orgId;
+  const { locale, localizedHref } = useLocale();
+  const t = getClinicUiDictionary(locale);
   const [q, setQ] = useState("");
   const [status, setStatus] = useState<PatientStatus | "ALL">("ALL");
   const [page, setPage] = useState(1);
@@ -58,10 +62,10 @@ export default function ClinicPatientsPage() {
       >
         <ClinicPageHeader
           eyebrow="CRM clínico"
-          title="Pacientes"
+          title={t.pages.patients}
           description="Cadastro operacional desta organização — dados isolados por tenant"
           actions={
-            <Link href={`/clinic/${orgId}/patients/new`}>
+            <Link href={localizedHref(`/clinic/${orgId}/patients/new`)}>
               <Button type="button" className="!rounded-lg !px-3.5 !py-2.5 text-sm clinic-btn-primary">
                 Novo paciente
               </Button>
@@ -137,7 +141,7 @@ export default function ClinicPatientsPage() {
               <p className="text-sm text-foreground/40 mb-5 max-w-sm mx-auto">
                 Cadastre o primeiro paciente ou ajuste a busca e os filtros.
               </p>
-              <Link href={`/clinic/${orgId}/patients/new`}>
+              <Link href={localizedHref(`/clinic/${orgId}/patients/new`)}>
                 <Button type="button" className="w-auto mx-auto !rounded-lg">
                   Cadastrar paciente
                 </Button>
@@ -157,7 +161,9 @@ export default function ClinicPatientsPage() {
                 {data.items.map((patient) => (
                   <li key={patient.id}>
                     <Link
-                      href={`/clinic/${orgId}/patients/${patient.id}`}
+                      href={localizedHref(
+                        `/clinic/${orgId}/patients/${patient.id}`,
+                      )}
                       className="grid grid-cols-1 sm:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_7.5rem_1.5rem] gap-1 sm:gap-3 items-center px-3 sm:px-4 py-2.5 hover:bg-[var(--clinic-row-hover)] transition-colors"
                     >
                       <div className="min-w-0">

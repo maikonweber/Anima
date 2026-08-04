@@ -10,26 +10,38 @@ import {
   blogPostingSchema,
   faqSchema,
 } from "@/components/seo/schema";
+import { getRequestLocale } from "@/lib/i18n/get-request-locale";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { localizedPath } from "@/lib/i18n/config";
 import { getBlogUi, blogPath, htmlLang, ogLocale } from "@/lib/seo/i18n";
-import { getPostBySlug, getPostsByLocale } from "@/lib/seo/posts";
+import { allBlogPosts, getPostBySlug } from "@/lib/seo/posts";
 import { OG_IMAGE_PATH, SITE_URL } from "@/lib/seo/site";
 
-const LOCALE = "pt-BR" as const;
-
 export async function generateStaticParams() {
-  return getPostsByLocale(LOCALE).map((p) => ({ slug: p.slug }));
+  const seen = new Set<string>();
+  return allBlogPosts()
+    .filter((p) => {
+      if (seen.has(p.slug)) return false;
+      seen.add(p.slug);
+      return true;
+    })
+    .map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata(props: {
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
+  const locale = await getRequestLocale();
   const params = await props.params;
-  const ui = getBlogUi(LOCALE);
-  const post = getPostBySlug(params.slug, LOCALE);
+  const ui = getBlogUi(locale);
+  const post = getPostBySlug(params.slug, locale);
   if (!post) return { title: ui.notFoundTitle };
 
-  const url = `${SITE_URL}${blogPath(LOCALE, post.slug)}`;
+  const url = `${SITE_URL}${blogPath(locale, post.slug)}`;
+  const ptUrl = `${SITE_URL}${blogPath("pt-BR", post.slug)}`;
   const enUrl = `${SITE_URL}${blogPath("en", post.slug)}`;
+  const esUrl = `${SITE_URL}${blogPath("es", post.slug)}`;
+  const currentOg = ogLocale(locale);
 
   return {
     title: post.title,
@@ -37,9 +49,10 @@ export async function generateMetadata(props: {
     alternates: {
       canonical: url,
       languages: {
-        "pt-BR": url,
+        "pt-BR": ptUrl,
         en: enUrl,
-        "x-default": url,
+        es: esUrl,
+        "x-default": ptUrl,
       },
     },
     robots: { index: true, follow: true },
@@ -52,8 +65,8 @@ export async function generateMetadata(props: {
     authors: [{ name: "MutterCorp · EmotiveCare" }],
     openGraph: {
       type: "article",
-      locale: ogLocale(LOCALE),
-      alternateLocale: ["en_US"],
+      locale: currentOg,
+      alternateLocale: ["pt_BR", "en_US", "es_ES"].filter((l) => l !== currentOg),
       url,
       siteName: "EmotiveCare",
       title: `${post.title} · EmotiveCare`,
@@ -78,7 +91,7 @@ export async function generateMetadata(props: {
       images: [`${SITE_URL}${OG_IMAGE_PATH}`],
     },
     other: {
-      language: htmlLang(LOCALE),
+      language: htmlLang(locale),
     },
   };
 }
@@ -86,17 +99,19 @@ export async function generateMetadata(props: {
 export default async function BlogSlugPage(props: {
   params: Promise<{ slug: string }>;
 }) {
+  const locale = await getRequestLocale();
   const params = await props.params;
-  const ui = getBlogUi(LOCALE);
-  const post = getPostBySlug(params.slug, LOCALE);
+  const dict = getDictionary(locale);
+  const ui = getBlogUi(locale);
+  const post = getPostBySlug(params.slug, locale);
   if (!post) notFound();
 
   const jsonLd = [
-    blogPostingSchema(post, undefined, LOCALE),
+    blogPostingSchema(post, undefined, locale),
     breadcrumbListSchema([
-      { name: "Início", path: "/" },
-      { name: "Blog", path: blogPath(LOCALE) },
-      { name: post.title, path: blogPath(LOCALE, post.slug) },
+      { name: dict.common.home, path: localizedPath(locale, "/") },
+      { name: "Blog", path: blogPath(locale) },
+      { name: post.title, path: blogPath(locale, post.slug) },
     ]),
     ...(post.faq?.length ? [faqSchema(post.faq)] : []),
   ];
@@ -104,9 +119,9 @@ export default async function BlogSlugPage(props: {
   return (
     <>
       <JsonLd data={jsonLd} />
-      <MarketingChrome>
-        <article className="max-w-3xl" lang={htmlLang(LOCALE)}>
-          <BlogLanguageSwitch locale={LOCALE} slug={post.slug} />
+      <MarketingChrome locale={locale}>
+        <article className="max-w-3xl" lang={htmlLang(locale)}>
+          <BlogLanguageSwitch locale={locale} slug={post.slug} />
           <p className="text-xs uppercase tracking-[0.2em] text-foreground/40 mb-2">
             Blog · {post.datePublished}
           </p>
@@ -114,14 +129,14 @@ export default async function BlogSlugPage(props: {
             {post.title}
           </h1>
 
-          <BlogArticleBody post={post} locale={LOCALE} />
+          <BlogArticleBody post={post} locale={locale} />
 
           <p className="mt-10 text-xs text-foreground/40 leading-relaxed">
             {ui.crisisNote}
           </p>
           <p className="mt-6 text-xs text-foreground/40">
             <Link
-              href={blogPath(LOCALE)}
+              href={blogPath(locale)}
               prefetch={false}
               className="text-anima-violet hover:underline"
             >

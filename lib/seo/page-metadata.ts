@@ -16,6 +16,7 @@ import {
 
 const OG_IMAGE_ABSOLUTE = `${SITE_URL}${OG_IMAGE_PATH}`;
 const BRAND = "EmotiveCare";
+const ALL_OG_LOCALES = ["pt_BR", "en_US", "es_ES"] as const;
 
 export interface MarketingMetadataInput {
   /** Título único da página (sem o sufixo da marca — o template global cuida disso). */
@@ -31,7 +32,7 @@ export interface MarketingMetadataInput {
 
 /**
  * Gera metadata consistente para páginas públicas de marketing:
- * canônico absoluto, hreflang PT↔EN, keywords e preview social.
+ * canônico absoluto, hreflang PT↔EN↔ES, keywords e preview social.
  */
 export function buildMarketingMetadata({
   title,
@@ -46,6 +47,8 @@ export function buildMarketingMetadata({
   const socialTitle = `${title} · ${BRAND}`;
   const ptUrl = absoluteUrl(localizedPath("pt-BR", path));
   const enUrl = absoluteUrl(localizedPath("en", path));
+  const esUrl = absoluteUrl(localizedPath("es", path));
+  const currentOg = ogLocale(locale);
 
   return {
     title,
@@ -55,6 +58,7 @@ export function buildMarketingMetadata({
       languages: {
         "pt-BR": ptUrl,
         en: enUrl,
+        es: esUrl,
         "x-default": ptUrl,
       },
     },
@@ -62,8 +66,8 @@ export function buildMarketingMetadata({
     keywords: [...DEFAULT_SITE_KEYWORDS, ...keywords],
     openGraph: {
       type: ogType,
-      locale: ogLocale(locale),
-      alternateLocale: [locale === "en" ? "pt_BR" : "en_US"],
+      locale: currentOg,
+      alternateLocale: ALL_OG_LOCALES.filter((l) => l !== currentOg),
       url: canonical,
       siteName: BRAND,
       title: socialTitle,

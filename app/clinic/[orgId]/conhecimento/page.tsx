@@ -14,6 +14,8 @@ import {
   usePublishClinicalKnowledge,
 } from "@/hooks/use-clinical-knowledge";
 import { useMyOrganizations } from "@/hooks/use-organizations";
+import { getClinicUiDictionary } from "@/lib/i18n/clinic-ui-dictionary";
+import { useLocale } from "@/lib/i18n/locale-provider";
 import type { OrganizationRole } from "@anima/shared";
 
 const STATUS_LABEL = {
@@ -25,6 +27,8 @@ const STATUS_LABEL = {
 export default function ClinicalKnowledgePage() {
   const params = useParams<{ orgId: string }>();
   const orgId = params.orgId;
+  const { locale } = useLocale();
+  const t = getClinicUiDictionary(locale);
   const { data: orgs } = useMyOrganizations();
   const role: OrganizationRole | undefined = useMemo(
     () =>
@@ -86,7 +90,7 @@ export default function ClinicalKnowledgePage() {
         transition={{ duration: 0.35 }}
       >
         <h1 className="text-2xl font-bold text-foreground/90 mb-1">
-          Conhecimento clínico
+          {t.pages.knowledge}
         </h1>
         <p className="text-sm text-foreground/40 mb-6">
           RAG curado (RF-073) · só artigos publicados entram nas sínteses ·

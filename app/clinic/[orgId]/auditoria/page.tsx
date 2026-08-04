@@ -12,6 +12,9 @@ import {
   useMyOrganizations,
   useOrganizationAuditLogs,
 } from "@/hooks/use-organizations";
+import { dateLocale } from "@/lib/i18n/config";
+import { getClinicUiDictionary } from "@/lib/i18n/clinic-ui-dictionary";
+import { useLocale } from "@/lib/i18n/locale-provider";
 import type { OrganizationRole } from "@anima/shared";
 
 const ACTION_FILTERS: { label: string; value: string }[] = [
@@ -30,6 +33,9 @@ const ACTION_FILTERS: { label: string; value: string }[] = [
 export default function ClinicAuditLogsPage() {
   const params = useParams<{ orgId: string }>();
   const orgId = params.orgId;
+  const { locale } = useLocale();
+  const t = getClinicUiDictionary(locale);
+  const dl = dateLocale(locale);
   const { data: orgs } = useMyOrganizations();
   const role: OrganizationRole | undefined = useMemo(
     () =>
@@ -64,7 +70,7 @@ export default function ClinicAuditLogsPage() {
       >
         <ClinicPageHeader
           eyebrow="Governança"
-          title="Auditoria"
+          title={t.pages.audit}
           description={
             role === "DPO"
               ? "Trilha de ações com metadata minimizada — sem conteúdo clínico."
@@ -136,7 +142,7 @@ export default function ClinicAuditLogsPage() {
                     ) : null}
                   </div>
                   <time className="text-[11px] text-foreground/35 shrink-0 tabular-nums">
-                    {new Date(row.criadoEm).toLocaleString("pt-BR")}
+                    {new Date(row.criadoEm).toLocaleString(dl)}
                   </time>
                 </div>
               </li>

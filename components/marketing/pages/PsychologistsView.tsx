@@ -4,10 +4,21 @@ import { localizedPath } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { MarketingChrome } from "@/components/marketing/MarketingChrome";
 import { blogPath } from "@/lib/seo/i18n";
+import { localizedAuthCheckoutHref } from "@/lib/subscription/acquisition";
 
 export function PsychologistsView({ locale }: { locale: Locale }) {
   const dict = getDictionary(locale);
   const t = dict.psychologists;
+  const cuidadoRegisterHref = localizedAuthCheckoutHref(
+    locale,
+    "/register",
+    "cuidado",
+  );
+  const cuidadoLoginHref = localizedAuthCheckoutHref(
+    locale,
+    "/login",
+    "cuidado",
+  );
 
   return (
     <MarketingChrome locale={locale}>
@@ -69,17 +80,11 @@ export function PsychologistsView({ locale }: { locale: Locale }) {
         </section>
 
         <nav aria-label={t.flowNavAria} className="mkt-cta-row">
-          <Link
-            href={localizedPath(locale, "/register")}
-            className="mkt-btn mkt-btn-primary"
-          >
+          <Link href={cuidadoRegisterHref} className="mkt-btn mkt-btn-primary">
             {t.ctaRegister}
           </Link>
-          <Link
-            href={localizedPath(locale, "/plans")}
-            className="mkt-btn mkt-btn-ghost"
-          >
-            {t.ctaPlans}
+          <Link href={cuidadoLoginHref} className="mkt-btn mkt-btn-ghost">
+            {dict.plans.ctaLogin}
           </Link>
           <Link
             href={localizedPath(locale, "/clinicas")}

@@ -20,6 +20,8 @@ import { PatientCarePlanPanel } from "@/components/clinic/PatientCarePlanPanel";
 import { PatientAiSynthesesPanel } from "@/components/clinic/PatientAiSynthesesPanel";
 import { PatientClinicalAlertsPanel } from "@/components/clinic/PatientClinicalAlertsPanel";
 import { ClinicToolHelp } from "@/components/clinic/ClinicToolHelp";
+import { getClinicUiDictionary } from "@/lib/i18n/clinic-ui-dictionary";
+import { useLocale } from "@/lib/i18n/locale-provider";
 import { usePatient, useUpdatePatientStatus } from "@/hooks/use-patients";
 import type { PatientStatus } from "@anima/shared";
 
@@ -31,18 +33,28 @@ type TabId =
   | "prontuario"
   | "alertas";
 
-const TABS: Array<{ id: TabId; label: string }> = [
-  { id: "resumo", label: "Resumo" },
-  { id: "diario", label: "Diário" },
-  { id: "plano", label: "Plano" },
-  { id: "alertas", label: "Alertas" },
-  { id: "ia", label: "IA" },
-  { id: "prontuario", label: "Prontuário" },
+const TAB_IDS: TabId[] = [
+  "resumo",
+  "diario",
+  "plano",
+  "alertas",
+  "ia",
+  "prontuario",
 ];
 
 export default function PatientDetailPage() {
   const params = useParams<{ orgId: string; patientId: string }>();
   const { orgId, patientId } = params;
+  const { locale } = useLocale();
+  const tabs = getClinicUiDictionary(locale).patientTabs;
+  const tabItems: Array<{ id: TabId; label: string }> = [
+    { id: "resumo", label: tabs.summary },
+    { id: "diario", label: tabs.diary },
+    { id: "plano", label: tabs.carePlan },
+    { id: "alertas", label: tabs.alerts },
+    { id: "ia", label: tabs.syntheses },
+    { id: "prontuario", label: tabs.notes },
+  ];
   const { data, isLoading, error, refetch } = usePatient(orgId, patientId);
   const updateStatus = useUpdatePatientStatus(orgId, patientId);
   const [status, setStatus] = useState<PatientStatus | "">("");
@@ -52,7 +64,7 @@ export default function PatientDetailPage() {
 
   useEffect(() => {
     const hash = window.location.hash.replace("#", "") as TabId;
-    if (TABS.some((t) => t.id === hash)) setTab(hash);
+    if (TAB_IDS.includes(hash)) setTab(hash);
   }, []);
 
   function selectTab(next: TabId) {
@@ -122,7 +134,7 @@ export default function PatientDetailPage() {
             </div>
 
             <nav className="flex gap-1 overflow-x-auto pb-2 mb-5 border-b border-foreground/[0.06]">
-              {TABS.map((item) => (
+              {tabItems.map((item) => (
                 <button
                   key={item.id}
                   type="button"

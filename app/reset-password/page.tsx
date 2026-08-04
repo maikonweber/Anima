@@ -9,9 +9,13 @@ import { resetPasswordFormSchema } from "@/lib/validations/auth";
 import { AuthLayout } from "@/components/ui/AuthLayout";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
+import { getAuthDictionary } from "@/lib/i18n/auth-dictionary";
+import { useLocale } from "@/lib/i18n/locale-provider";
 
 function ResetPasswordForm() {
   const router = useRouter();
+  const { locale, localizedHref } = useLocale();
+  const t = getAuthDictionary(locale);
   const searchParams = useSearchParams();
   const token = searchParams.get("token")?.trim() ?? "";
 
@@ -24,18 +28,18 @@ function ResetPasswordForm() {
     return (
       <div className="flex flex-col gap-4 text-center py-2">
         <p className="text-sm text-foreground/50 leading-relaxed">
-          Este link de redefinição é inválido ou está incompleto.
+          {t.resetPassword.invalidToken}
         </p>
-        <Link href="/forgot-password">
+        <Link href={localizedHref("/forgot-password")}>
           <Button type="button" className="w-full">
-            Solicitar novo link
+            {t.forgotPassword.submit}
           </Button>
         </Link>
         <Link
-          href="/login"
+          href={localizedHref("/login")}
           className="text-sm text-anima-violet hover:text-anima-lilac transition-colors font-medium"
         >
-          Voltar ao login
+          {t.forgotPassword.backToLogin}
         </Link>
       </div>
     );
@@ -52,7 +56,9 @@ function ResetPasswordForm() {
     });
 
     if (!parsed.success) {
-      setError(parsed.error.issues[0]?.message ?? "Verifique os campos.");
+      setError(
+        parsed.error.issues[0]?.message ?? t.resetPassword.errors.failed,
+      );
       return;
     }
 
@@ -60,19 +66,16 @@ function ResetPasswordForm() {
 
     try {
       await resetPasswordApi(parsed.data.token, parsed.data.senha);
-      router.push("/login?reset=success");
+      router.push(`${localizedHref("/login")}?reset=success`);
     } catch (err) {
       if (err instanceof ApiError && err.status === 400) {
-        setError(
-          err.message ||
-            "Link inválido ou expirado. Solicite uma nova redefinição de senha.",
-        );
+        setError(err.message || t.resetPassword.invalidToken);
       } else if (err instanceof ApiError && err.status >= 500) {
-        setError("Tente novamente mais tarde.");
+        setError(t.forgotPassword.errors.tryLater);
       } else if (err instanceof ApiError) {
         setError(err.message);
       } else {
-        setError("Não foi possível redefinir a senha. Tente novamente.");
+        setError(t.resetPassword.errors.failed);
       }
     } finally {
       setIsLoading(false);
@@ -84,22 +87,19 @@ function ResetPasswordForm() {
       {error && (
         <div className="rounded-lg bg-red-500/10 border border-red-400/20 px-4 py-3 text-sm text-red-400 space-y-3">
           <p>{error}</p>
-          {error.toLowerCase().includes("expirado") ||
-          error.toLowerCase().includes("inválido") ? (
-            <Link
-              href="/forgot-password"
-              className="block text-xs font-medium text-anima-violet hover:text-anima-lilac"
-            >
-              Solicitar novo link →
-            </Link>
-          ) : null}
+          <Link
+            href={localizedHref("/forgot-password")}
+            className="block text-xs font-medium text-anima-violet hover:text-anima-lilac"
+          >
+            {t.forgotPassword.submit} →
+          </Link>
         </div>
       )}
 
       <Input
-        label="Nova senha"
+        label={t.resetPassword.passwordLabel}
         type="password"
-        placeholder="Mínimo 6 caracteres"
+        placeholder={t.resetPassword.passwordPlaceholder}
         value={senha}
         onChange={(e) => setSenha(e.target.value)}
         autoComplete="new-password"
@@ -107,9 +107,9 @@ function ResetPasswordForm() {
       />
 
       <Input
-        label="Confirmar senha"
+        label={t.resetPassword.confirmLabel}
         type="password"
-        placeholder="Repita a nova senha"
+        placeholder={t.resetPassword.confirmPlaceholder}
         value={confirmarSenha}
         onChange={(e) => setConfirmarSenha(e.target.value)}
         autoComplete="new-password"
@@ -117,15 +117,15 @@ function ResetPasswordForm() {
       />
 
       <Button type="submit" isLoading={isLoading} className="mt-2">
-        Redefinir senha
+        {t.resetPassword.submit}
       </Button>
 
       <p className="text-center text-xs text-foreground/40 mt-2">
         <Link
-          href="/login"
+          href={localizedHref("/login")}
           className="text-anima-violet hover:text-anima-lilac transition-colors font-medium"
         >
-          Voltar ao login
+          {t.forgotPassword.backToLogin}
         </Link>
       </p>
     </form>
@@ -133,15 +133,18 @@ function ResetPasswordForm() {
 }
 
 export default function ResetPasswordPage() {
+  const { locale } = useLocale();
+  const t = getAuthDictionary(locale);
+
   return (
     <AuthLayout
-      title="Nova senha"
-      subtitle="Escolha uma senha segura para sua conta"
+      title={t.resetPassword.title}
+      subtitle={t.resetPassword.subtitle}
     >
       <Suspense
         fallback={
           <div className="py-8 text-center text-sm text-foreground/40">
-            Carregando...
+            {t.common.loading}
           </div>
         }
       >

@@ -19,52 +19,63 @@ import {
   useOrganizationInvites,
 } from "@/hooks/use-organizations";
 import { useClinicDashboard } from "@/hooks/use-clinical-alerts";
+import { dateLocale, type Locale } from "@/lib/i18n/config";
+import { getClinicUiDictionary } from "@/lib/i18n/clinic-ui-dictionary";
+import { useLocale } from "@/lib/i18n/locale-provider";
 import type { OrganizationRole } from "@anima/shared";
 
-const INVITE_ROLES: Array<{ value: OrganizationRole; label: string }> = [
-  { value: "PROFESSIONAL", label: "Profissional" },
-  { value: "SECRETARY", label: "Secretaria" },
-  { value: "CLINIC_ADMIN", label: "Administrador" },
-  { value: "DPO", label: "DPO" },
-];
+function inviteRoles(locale: Locale) {
+  const roles = getClinicUiDictionary(locale).roles;
+  return [
+    { value: "PROFESSIONAL" as const, label: roles.professional },
+    { value: "SECRETARY" as const, label: roles.secretary },
+    { value: "CLINIC_ADMIN" as const, label: roles.admin },
+    { value: "DPO" as const, label: roles.dpo },
+  ];
+}
 
-function quickActions(orgId: string, role: OrganizationRole | undefined) {
+function quickActions(
+  orgId: string,
+  role: OrganizationRole | undefined,
+  locale: Locale,
+) {
+  const qa = getClinicUiDictionary(locale).quickActions;
   const items: Array<{ href: string; title: string; subtitle: string }> = [
     {
       href: `/clinic/${orgId}/patients`,
-      title: "CRM de pacientes",
-      subtitle: "Cadastro, funil e contatos",
+      title: qa.patients.title,
+      subtitle: qa.patients.subtitle,
     },
     {
       href: `/clinic/${orgId}/agenda`,
-      title: "Agenda",
-      subtitle: "Sessões, confirmação e disponibilidade",
+      title: qa.agenda.title,
+      subtitle: qa.agenda.subtitle,
     },
   ];
   if (role === "CLINIC_ADMIN" || role === "PROFESSIONAL") {
     items.push(
       {
         href: `/clinic/${orgId}/alertas`,
-        title: "Alertas pendentes",
-        subtitle: "Revisão humana (RF-072)",
+        title: qa.alerts.title,
+        subtitle: qa.alerts.subtitle,
       },
       {
         href: `/clinic/${orgId}/conhecimento`,
-        title: "Conhecimento clínico",
-        subtitle: "Base curada para sínteses",
+        title: qa.knowledge.title,
+        subtitle: qa.knowledge.subtitle,
       },
       {
         href: `/clinic/${orgId}/crise`,
-        title: "Recursos de crise",
-        subtitle: "Canais de apoio (RF-042)",
+        title: qa.crisis.title,
+        subtitle: qa.crisis.subtitle,
       },
     );
   }
   if (role === "CLINIC_ADMIN" || role === "DPO") {
     items.push({
       href: `/clinic/${orgId}/auditoria`,
-      title: "Auditoria",
-      subtitle: "Trilha de ações da organização",
+      title: qa.audit.title,
+      subtitle: qa.audit.subtitle,
     });
   }
   if (role === "DPO") {
@@ -76,6 +87,9 @@ function quickActions(orgId: string, role: OrganizationRole | undefined) {
 export default function ClinicOrgHomePage() {
   const params = useParams<{ orgId: string }>();
   const orgId = params.orgId;
+  const { locale, localizedHref } = useLocale();
+  const t = getClinicUiDictionary(locale);
+  const inviteRoleOptions = inviteRoles(locale);
   const { data: org, isLoading, error, refetch } = useOrganization(orgId);
   const { data: orgs } = useMyOrganizations();
   const role = useMemo(
@@ -97,7 +111,8 @@ export default function ClinicOrgHomePage() {
   const canClinical = caps?.clinicalQueues ?? false;
   const canOps =
     (caps?.crm ?? true) && role !== "DPO" && role !== "PATIENT";
-  const actions = quickActions(orgId, role ?? dashboard.data?.role);
+  const actions = quickActions(orgId, role ?? dashboard.data?.role, locale);
+  const dl = dateLocale(locale);
 
   async function handleInvite(e: FormEvent) {
     e.preventDefault();
@@ -152,7 +167,7 @@ export default function ClinicOrgHomePage() {
               actions={
                 canOps ? (
                   <>
-                    <Link href={`/clinic/${orgId}/patients/new`}>
+                    <Link href={localizedHref(`/clinic/${orgId}/patients/new`)}>
                       <Button
                         type="button"
                         variant="secondary"
@@ -161,7 +176,7 @@ export default function ClinicOrgHomePage() {
                         Novo paciente
                       </Button>
                     </Link>
-                    <Link href={`/clinic/${orgId}/agenda/new`}>
+                    <Link href={localizedHref(`/clinic/${orgId}/agenda/new`)}>
                       <Button
                         type="button"
                         className="!rounded-lg !px-3.5 !py-2.5 text-sm clinic-btn-primary"
@@ -171,7 +186,7 @@ export default function ClinicOrgHomePage() {
                     </Link>
                   </>
                 ) : role === "DPO" ? (
-                  <Link href={`/clinic/${orgId}/auditoria`}>
+                  <Link href={localizedHref(`/clinic/${orgId}/auditoria`)}>
                     <Button
                       type="button"
                       className="!rounded-lg !px-3.5 !py-2.5 text-sm clinic-btn-primary"
@@ -201,7 +216,7 @@ export default function ClinicOrgHomePage() {
                     Auditoria recente
                   </h2>
                   <Link
-                    href={`/clinic/${orgId}/auditoria`}
+                    href={localizedHref(`/clinic/${orgId}/auditoria`)}
                     className="text-[11px] text-[var(--clinic-accent)]"
                   >
                     Ver trilha
@@ -217,7 +232,7 @@ export default function ClinicOrgHomePage() {
                         {item.action}
                       </span>
                       <time className="text-[11px] text-foreground/35 shrink-0">
-                        {new Date(item.criadoEm).toLocaleString("pt-BR")}
+                        {new Date(item.criadoEm).toLocaleString(dl)}
                       </time>
                     </li>
                   ))}
@@ -228,7 +243,7 @@ export default function ClinicOrgHomePage() {
             {dashboard.data && canOps && (
               <section className="grid gap-3 sm:grid-cols-3 mb-6">
                 <Link
-                  href={`/clinic/${orgId}/agenda`}
+                  href={localizedHref(`/clinic/${orgId}/agenda`)}
                   className="rounded-2xl border border-[var(--clinic-border)] bg-[var(--clinic-panel)] px-4 py-4 hover:border-[rgba(13,115,119,0.28)] transition-all"
                 >
                   <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--clinic-subtle)] font-semibold">
@@ -245,11 +260,11 @@ export default function ClinicOrgHomePage() {
                 {canClinical ? (
                   <>
                     <Link
-                      href={`/clinic/${orgId}/alertas`}
+                      href={localizedHref(`/clinic/${orgId}/alertas`)}
                       className="rounded-2xl border border-[var(--clinic-border)] bg-[var(--clinic-panel)] px-4 py-4 hover:border-[rgba(13,115,119,0.28)] transition-all"
                     >
                       <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--clinic-subtle)] font-semibold">
-                        Alertas
+                        {t.nav.alerts}
                       </p>
                       <p className="text-3xl font-semibold text-foreground mt-1.5 tracking-tight">
                         {dashboard.data.pendingAlerts?.count ?? 0}
@@ -272,11 +287,11 @@ export default function ClinicOrgHomePage() {
                   </>
                 ) : (
                   <Link
-                    href={`/clinic/${orgId}/patients`}
+                    href={localizedHref(`/clinic/${orgId}/patients`)}
                     className="rounded-2xl border border-[var(--clinic-border)] bg-[var(--clinic-panel)] px-4 py-4 sm:col-span-2 hover:border-[rgba(13,115,119,0.28)] transition-all"
                   >
                     <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--clinic-subtle)] font-semibold">
-                      Pacientes
+                      {t.nav.patients}
                     </p>
                     <p className="text-3xl font-semibold text-foreground mt-1.5 tracking-tight">
                       {dashboard.data.patientsSummary?.total ?? 0}
@@ -301,7 +316,9 @@ export default function ClinicOrgHomePage() {
                     {dashboard.data!.pendingSyntheses!.items.map((item) => (
                       <li key={item.id}>
                         <Link
-                          href={`/clinic/${orgId}/patients/${item.patientId}#ia`}
+                          href={localizedHref(
+                            `/clinic/${orgId}/patients/${item.patientId}#ia`,
+                          )}
                           className="flex items-center justify-between gap-3 px-3 sm:px-4 py-3 hover:bg-[var(--clinic-row-hover)] transition-colors"
                         >
                           <div className="min-w-0">
@@ -309,7 +326,7 @@ export default function ClinicOrgHomePage() {
                               {item.title || "Síntese sem título"}
                             </p>
                             <p className="text-xs text-foreground/40 mt-0.5">
-                              {new Date(item.criadoEm).toLocaleString("pt-BR")}
+                              {new Date(item.criadoEm).toLocaleString(dl)}
                             </p>
                           </div>
                           <span className="text-[var(--clinic-accent)] text-sm">
@@ -330,7 +347,7 @@ export default function ClinicOrgHomePage() {
                       Agenda de hoje
                     </h2>
                     <Link
-                      href={`/clinic/${orgId}/agenda`}
+                      href={localizedHref(`/clinic/${orgId}/agenda`)}
                       className="text-[11px] text-[var(--clinic-accent)]"
                     >
                       Ver tudo
@@ -340,18 +357,17 @@ export default function ClinicOrgHomePage() {
                     {dashboard.data!.today!.appointments.map((appt) => (
                       <li key={appt.id}>
                         <Link
-                          href={`/clinic/${orgId}/agenda/${appt.id}`}
+                          href={localizedHref(
+                            `/clinic/${orgId}/agenda/${appt.id}`,
+                          )}
                           className="flex items-center justify-between gap-3 px-3 sm:px-4 py-3 hover:bg-[var(--clinic-row-hover)] transition-colors"
                         >
                           <div className="min-w-0">
                             <p className="text-sm font-medium text-foreground/85">
-                              {new Date(appt.startsAt).toLocaleTimeString(
-                                "pt-BR",
-                                {
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                },
-                              )}{" "}
+                              {new Date(appt.startsAt).toLocaleTimeString(dl, {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}{" "}
                               · {appt.modality}
                             </p>
                             <p className="text-xs text-foreground/40 mt-0.5">
@@ -384,7 +400,7 @@ export default function ClinicOrgHomePage() {
                 {actions.map((action) => (
                   <li key={action.href}>
                     <Link
-                      href={action.href}
+                      href={localizedHref(action.href)}
                       className="flex items-center justify-between gap-3 px-3 sm:px-4 py-3 hover:bg-[var(--clinic-row-hover)] transition-colors"
                     >
                       <div className="min-w-0">
@@ -429,7 +445,7 @@ export default function ClinicOrgHomePage() {
                           setInviteRole(e.target.value as OrganizationRole)
                         }
                       >
-                        {INVITE_ROLES.map((r) => (
+                        {inviteRoleOptions.map((r) => (
                           <option key={r.value} value={r.value}>
                             {r.label}
                           </option>
@@ -462,7 +478,7 @@ export default function ClinicOrgHomePage() {
                           {invite.email}
                         </span>
                         <span className="text-foreground/35 text-xs whitespace-nowrap">
-                          {INVITE_ROLES.find((r) => r.value === invite.role)
+                          {inviteRoleOptions.find((r) => r.value === invite.role)
                             ?.label ?? invite.role}{" "}
                           · {invite.status}
                         </span>

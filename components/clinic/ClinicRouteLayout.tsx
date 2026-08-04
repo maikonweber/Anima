@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { DM_Sans } from "next/font/google";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth/AuthContext";
+import { useLocale } from "@/lib/i18n/locale-provider";
 import { ClinicRorschachLoader } from "@/components/clinic/ClinicRorschachLoader";
 import { ClinicSidebar } from "@/components/clinic/ClinicSidebar";
 
@@ -16,12 +17,13 @@ const dmSans = DM_Sans({
 export function ClinicRouteLayout({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
   const router = useRouter();
+  const { localizedHref } = useLocale();
 
   useEffect(() => {
     if (!isLoading && !user) {
-      router.replace("/login");
+      router.replace(localizedHref("/login"));
     }
-  }, [user, isLoading, router]);
+  }, [user, isLoading, router, localizedHref]);
 
   if (isLoading) {
     return (

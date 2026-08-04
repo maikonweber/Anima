@@ -147,6 +147,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (bootstrapDone.current) return;
     bootstrapDone.current = true;
 
+    const BOOTSTRAP_TIMEOUT_MS = 12_000;
+
     async function bootstrap() {
       const session = getStoredSession();
       if (!session) {
@@ -203,7 +205,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     }
 
-    void bootstrap();
+    const timeoutId = window.setTimeout(() => {
+      setState((prev) => {
+        if (!prev.isLoading) return prev;
+        const session = getStoredSession();
+        if (session) return { ...sessionToState(session), isLoading: false };
+        return { ...prev, isLoading: false };
+      });
+    }, BOOTSTRAP_TIMEOUT_MS);
+
+    void bootstrap().finally(() => {
+      window.clearTimeout(timeoutId);
+    });
   }, [applySession, handleUnauthorized]);
 
   const proactiveRefreshTimer = useRef<ReturnType<typeof setTimeout> | null>(

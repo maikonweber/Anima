@@ -138,14 +138,14 @@ function getPaywallCta(
     case "PLAN_LIMIT_CARE_SHARE":
       return {
         primary: "Fazer upgrade",
-        primaryHref: "/assinatura?plan=pleno",
+        primaryHref: "/assinatura?plan=pleno&checkout=1",
         secondary: "Fechar",
         showPlansLink: true,
       };
     case "PLAN_LIMIT_CARE_VIEW":
       return {
         primary: "Fazer upgrade",
-        primaryHref: "/assinatura?plan=cuidado",
+        primaryHref: "/assinatura?plan=cuidado&checkout=1",
         secondary: "Fechar",
         showPlansLink: true,
       };
@@ -165,7 +165,7 @@ function getPaywallCta(
     case "PLAN_LIMIT_ASSISTANT_MESSAGES":
       return {
         primary: "Fazer upgrade para Pleno",
-        primaryHref: "/assinatura?plan=pleno",
+        primaryHref: "/assinatura?plan=pleno&checkout=1",
         secondary: "Fechar",
         showPlansLink: true,
       };

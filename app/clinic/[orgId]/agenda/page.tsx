@@ -19,6 +19,8 @@ import {
 } from "@/components/clinic/ClinicPageFrame";
 import { useAppointments } from "@/hooks/use-agenda";
 import { usePatients } from "@/hooks/use-patients";
+import { getClinicUiDictionary } from "@/lib/i18n/clinic-ui-dictionary";
+import { useLocale } from "@/lib/i18n/locale-provider";
 import type { AppointmentStatus } from "@anima/shared";
 
 const STATUS_FILTERS: Array<AppointmentStatus | "ALL"> = [
@@ -34,6 +36,8 @@ const STATUS_FILTERS: Array<AppointmentStatus | "ALL"> = [
 export default function AgendaPage() {
   const params = useParams<{ orgId: string }>();
   const orgId = params.orgId;
+  const { locale, localizedHref } = useLocale();
+  const t = getClinicUiDictionary(locale);
   const [status, setStatus] = useState<AppointmentStatus | "ALL">("ALL");
   const [page, setPage] = useState(1);
 
@@ -77,20 +81,20 @@ export default function AgendaPage() {
       >
         <ClinicPageHeader
           eyebrow="Operação"
-          title="Agenda"
+          title={t.pages.agenda}
           description="Sessões da clínica (últimos 7 dias → próximos 45)"
           actions={
             <>
-              <Link href={`/clinic/${orgId}/agenda/disponibilidade`}>
+              <Link href={localizedHref(`/clinic/${orgId}/agenda/disponibilidade`)}>
                 <Button
                   type="button"
                   variant="secondary"
                   className="!rounded-lg !px-3.5 !py-2.5 text-sm clinic-btn-secondary"
                 >
-                  Disponibilidade
+                  {t.nav.availability}
                 </Button>
               </Link>
-              <Link href={`/clinic/${orgId}/agenda/new`}>
+              <Link href={localizedHref(`/clinic/${orgId}/agenda/new`)}>
                 <Button type="button" className="!rounded-lg !px-3.5 !py-2.5 text-sm clinic-btn-primary">
                   Nova sessão
                 </Button>
@@ -153,7 +157,7 @@ export default function AgendaPage() {
               <p className="text-sm text-foreground/40 mb-4">
                 Agende a primeira sessão com um paciente do CRM.
               </p>
-              <Link href={`/clinic/${orgId}/agenda/new`}>
+              <Link href={localizedHref(`/clinic/${orgId}/agenda/new`)}>
                 <Button type="button" className="w-auto mx-auto !rounded-lg">
                   Agendar sessão
                 </Button>
@@ -173,7 +177,7 @@ export default function AgendaPage() {
                 {data.items.map((item) => (
                   <li key={item.id}>
                     <Link
-                      href={`/clinic/${orgId}/agenda/${item.id}`}
+                      href={localizedHref(`/clinic/${orgId}/agenda/${item.id}`)}
                       className="grid grid-cols-1 sm:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_7.5rem_1.25rem] gap-1 sm:gap-3 items-center px-3 sm:px-4 py-2.5 hover:bg-[var(--clinic-row-hover)] transition-colors"
                     >
                       <div className="min-w-0">

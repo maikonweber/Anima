@@ -3,12 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
 import type { Locale } from "@/lib/i18n/config";
 import {
   DEFAULT_LOCALE,
-  alternateLocale,
-  alternatePath,
   localizedPath,
+  pathWithoutLocale,
 } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 
@@ -22,14 +22,6 @@ const LINK_KEYS = [
   { path: "/contact", key: "contact" },
 ] as const;
 
-function pathWithoutLocale(pathname: string): string {
-  if (pathname === "/en" || pathname.startsWith("/en/")) {
-    const rest = pathname.slice(3);
-    return rest.length ? rest : "/";
-  }
-  return pathname || "/";
-}
-
 /** Navegação institucional alinhada ao rebrand. */
 export function MarketingNav({
   locale = DEFAULT_LOCALE,
@@ -40,9 +32,6 @@ export function MarketingNav({
   const pathname = usePathname() || "/";
   const barePath = pathWithoutLocale(pathname);
   const nav = getDictionary(locale).nav;
-  const common = getDictionary(locale).common;
-  const other = alternateLocale(locale);
-  const otherHref = alternatePath(locale, barePath);
 
   const links = LINK_KEYS.map(({ path, key }) => ({
     href: localizedPath(locale, path),
@@ -56,24 +45,7 @@ export function MarketingNav({
   }));
 
   const langSwitch = (
-    <span className="inline-flex items-center gap-1.5 text-xs font-medium">
-      <span className="uppercase tracking-[0.14em] text-[var(--home-subtle)]">
-        {common.language}
-      </span>
-      <span className="text-[var(--home-ink)]" aria-current="page">
-        {locale === "en" ? "EN" : "PT"}
-      </span>
-      <span aria-hidden className="text-[var(--home-line)]">
-        ·
-      </span>
-      <Link
-        href={otherHref}
-        hrefLang={other === "en" ? "en" : "pt-BR"}
-        className="text-[var(--home-accent)] hover:underline"
-      >
-        {other === "en" ? "EN" : "PT"}
-      </Link>
-    </span>
+    <LanguageSwitcher locale={locale} barePath={barePath} variant="compact" />
   );
 
   const linkClass = (accent: string) => {
@@ -85,6 +57,8 @@ export function MarketingNav({
     }
     return "hover:text-[var(--home-accent)] transition-colors";
   };
+
+  const clinicAppHref = localizedPath(locale, "/clinic");
 
   return (
     <>
@@ -103,7 +77,7 @@ export function MarketingNav({
         ))}
         <Link
           className="text-[var(--home-clinic)] hover:underline"
-          href="/clinic"
+          href={clinicAppHref}
         >
           {nav.clinicApp}
         </Link>
@@ -153,7 +127,7 @@ export function MarketingNav({
               </Link>
             ))}
             <Link
-              href="/clinic"
+              href={clinicAppHref}
               onClick={() => setOpen(false)}
               className="rounded-lg px-3 py-3 text-sm font-medium text-[var(--home-clinic)] hover:bg-[var(--home-clinic-soft)]"
             >

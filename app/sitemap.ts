@@ -27,13 +27,14 @@ const MARKETING_PATHS: {
   { path: "/terms", changeFrequency: "yearly", priority: 0.4 },
 ];
 
-const LOCALES: Locale[] = ["pt-BR", "en"];
+const LOCALES: Locale[] = ["pt-BR", "en", "es"];
 const SITE_LAST_MOD = new Date("2026-08-03");
 
 function languageAlternates(path: string): Record<string, string> {
   return {
     "pt-BR": `${SITE_URL}${localizedPath("pt-BR", path)}`,
     en: `${SITE_URL}${localizedPath("en", path)}`,
+    es: `${SITE_URL}${localizedPath("es", path)}`,
     "x-default": `${SITE_URL}${localizedPath("pt-BR", path)}`,
   };
 }
@@ -47,7 +48,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
         url: `${SITE_URL}${localizedPath(locale, p.path)}`,
         lastModified: SITE_LAST_MOD,
         changeFrequency: p.changeFrequency,
-        priority: locale === "en" ? Number((p.priority * 0.94).toFixed(2)) : p.priority,
+        priority:
+          locale === "pt-BR"
+            ? p.priority
+            : Number((p.priority * 0.94).toFixed(2)),
         alternates: {
           languages: languageAlternates(p.path),
         },

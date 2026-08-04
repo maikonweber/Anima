@@ -1,22 +1,23 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f8f7fc;
-  --foreground: #171717;
+  /* Alinhado à home (coral / care blue) — tokens legados anima-violet* */
+  --background: #f6f4f1;
+  --foreground: #152028;
 
   --emotion-joy: #F5D76E;
   --emotion-sadness: #7EB8DA;
-  --emotion-fear: #B8A4E8;
+  --emotion-fear: #8fa4c0;
   --emotion-anger: #E88B8B;
   --emotion-disgust: #7BC67E;
   --emotion-surprise: #F5A962;
 
-  --anima-violet: #7c5cbf;
-  --anima-lilac: #c3a6e8;
-  --anima-indigo: #5b6abf;
+  --anima-violet: #c45c4a;
+  --anima-lilac: #e07a68;
+  --anima-indigo: #3d5a80;
   --anima-surface-glass: rgba(255, 255, 255, 0.6);
   --anima-border-glass: rgba(255, 255, 255, 0.25);
-  --anima-glow: rgba(124, 92, 191, 0.25);
+  --anima-glow: rgba(196, 92, 74, 0.28);
 }
 
 @theme inline {
@@ -39,13 +40,56 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0c0a14;
+    /* Dark sem roxo — teal/coral como na home escura */
+    --background: #0b1214;
     --foreground: #ededed;
 
+    --anima-violet: #e07a68;
+    --anima-lilac: #2dd4bf;
+    --anima-indigo: #0d7377;
     --anima-surface-glass: rgba(255, 255, 255, 0.06);
     --anima-border-glass: rgba(255, 255, 255, 0.1);
-    --anima-glow: rgba(124, 92, 191, 0.35);
+    --anima-glow: rgba(224, 122, 104, 0.32);
   }
+}
+
+/* EmotiveCare paciente — app pessoal (care blue, alinhado ao marketing) */
+.patient-shell {
+  color-scheme: light;
+  --background: #f3f5f8;
+  --foreground: #152028;
+  --patient-accent: #3d5a80;
+  --patient-accent-hover: #2f4766;
+  --patient-accent-soft: rgba(61, 90, 128, 0.1);
+  --patient-sidebar: #e8eef4;
+  --patient-sidebar-edge: rgba(21, 32, 40, 0.06);
+  --patient-panel: #ffffff;
+  --patient-border: rgba(21, 32, 40, 0.09);
+  --patient-border-strong: rgba(21, 32, 40, 0.14);
+  --patient-muted: rgba(21, 32, 40, 0.52);
+  --patient-subtle: rgba(21, 32, 40, 0.38);
+  --anima-violet: #3d5a80;
+  --anima-indigo: #2f4766;
+  --anima-lilac: #8fa4c0;
+  --anima-surface-glass: rgba(255, 255, 255, 0.92);
+  --anima-border-glass: rgba(21, 32, 40, 0.08);
+  --anima-glow: rgba(61, 90, 128, 0.18);
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.patient-shell .patient-main {
+  background:
+    radial-gradient(ellipse 70% 45% at 92% -8%, rgba(61, 90, 128, 0.1), transparent 55%),
+    radial-gradient(ellipse 50% 35% at 0% 95%, rgba(196, 92, 74, 0.05), transparent 50%),
+    linear-gradient(180deg, #f7f8fa 0%, var(--background) 40%);
+}
+
+.patient-shell .glass-panel {
+  background: var(--patient-panel);
+  border: 1px solid var(--patient-border);
+  box-shadow: 0 1px 2px rgba(21, 32, 40, 0.04);
+  backdrop-filter: none;
 }
 
 /* EmotiveCare Clínicas — produto B2B (tema claro clínico, independente do OS) */
@@ -182,7 +226,7 @@ select.anima-select option {
   }
 
   select.anima-select option {
-    background-color: #1a1628;
+    background-color: #0b1214;
     color: #ededed;
   }
 }

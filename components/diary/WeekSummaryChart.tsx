@@ -56,10 +56,10 @@ export function WeekSummaryChart({ summary }: WeekSummaryChartProps) {
         )}
       </div>
 
-      {trackingItems.some((item) => item.value !== undefined) && (
+      {trackingItems.some((item) => item.value != null) && (
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
           {trackingItems.map((item) =>
-            item.value !== undefined ? (
+            item.value != null ? (
               <StatCard
                 key={item.label}
                 label={`Média ${item.label.toLowerCase()}`}

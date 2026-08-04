@@ -93,8 +93,8 @@ export const homePt = {
           "Contexto emocional contínuo",
           "Pacientes herdam benefícios do Pleno",
         ],
-        cta: "Ver plano Cuidado",
-        href: "psychologists",
+        cta: "Assinar plano Cuidado",
+        href: "cuidado-checkout",
         tone: "care",
       },
       {

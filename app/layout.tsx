@@ -12,6 +12,9 @@ import { SubscriptionConfigProvider } from "@/providers/subscription-config-prov
 import { GoogleProvider } from "@/providers/google-oauth-provider";
 import { QueryProvider } from "@/providers/query-provider";
 import { SubscriptionProvider } from "@/providers/subscription-provider";
+import { LocaleProvider } from "@/lib/i18n/locale-provider";
+import { getRequestLocale } from "@/lib/i18n/get-request-locale";
+import { htmlLang } from "@/lib/i18n/config";
 import { DEFAULT_SITE_KEYWORDS, OG_IMAGE_PATH, SITE_URL } from "@/lib/seo/site";
 import "./globals.css";
 
@@ -54,6 +57,7 @@ export const metadata: Metadata = {
     languages: {
       "pt-BR": "/",
       en: "/en",
+      es: "/es",
       "x-default": "/",
     },
   },
@@ -94,19 +98,21 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f8f7fc" },
+    { media: "(prefers-color-scheme: light)", color: "#f3f5f8" },
     { media: "(prefers-color-scheme: dark)", color: "#0b0f1a" },
   ],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getRequestLocale();
+
   return (
     <html
-      lang="pt-BR"
+      lang={htmlLang(locale)}
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background">
@@ -115,15 +121,17 @@ export default function RootLayout({
         <GoogleProvider>
           <QueryProvider>
             <AuthProvider>
-              <FeatureFlagsProvider>
-                <SubscriptionConfigProvider>
-                <SubscriptionProvider>
-                  <PreviewModeBanner />
-                  {children}
-                  <TermsGate />
-                </SubscriptionProvider>
-                </SubscriptionConfigProvider>
-              </FeatureFlagsProvider>
+              <LocaleProvider initialLocale={locale}>
+                <FeatureFlagsProvider>
+                  <SubscriptionConfigProvider>
+                    <SubscriptionProvider>
+                      <PreviewModeBanner />
+                      {children}
+                      <TermsGate />
+                    </SubscriptionProvider>
+                  </SubscriptionConfigProvider>
+                </FeatureFlagsProvider>
+              </LocaleProvider>
             </AuthProvider>
           </QueryProvider>
         </GoogleProvider>

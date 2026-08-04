@@ -94,8 +94,8 @@ export const homeEn = {
           "Continuous emotional context",
           "Patients inherit Pleno benefits",
         ],
-        cta: "See Cuidado plan",
-        href: "psychologists",
+        cta: "Subscribe to Cuidado",
+        href: "cuidado-checkout",
         tone: "care",
       },
       {

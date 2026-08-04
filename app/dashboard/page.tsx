@@ -8,11 +8,15 @@ import { WeekSummaryChart } from "@/components/diary/WeekSummaryChart";
 import { StreakWidget } from "@/components/insights/StreakWidget";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { Button } from "@/components/ui/Button";
+import { useLocale } from "@/lib/i18n/locale-provider";
+import { getProductDictionary } from "@/lib/i18n/product-dictionary";
 
 export default function DashboardHome() {
   const { user } = useAuth();
+  const { locale, localizedHref } = useLocale();
+  const t = getProductDictionary(locale);
   const { data: summary, isLoading, error, refetch } = useWeekSummary();
-  const greeting = getGreeting();
+  const greeting = getGreeting(t.pages.greetings);
 
   return (
     <div className="relative max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
@@ -36,18 +40,18 @@ export default function DashboardHome() {
           {greeting}, {user?.nome?.split(" ")[0]}
         </h1>
         <p className="text-sm text-foreground/40 mb-6">
-          Seu panorama emocional desta semana
+          {t.pages.dashboardSubtitle}
         </p>
 
         <Link
-          href="/diary/new"
+          href={localizedHref("/diary/new")}
           className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold text-white transition-all hover:shadow-lg hover:shadow-[var(--anima-glow)]"
           style={{
             background:
               "linear-gradient(135deg, var(--anima-violet), var(--anima-indigo))",
           }}
         >
-          + Novo momento
+          {t.pages.dashboardNewMoment}
         </Link>
       </motion.div>
 
@@ -58,7 +62,7 @@ export default function DashboardHome() {
       {error && (
         <div className="relative mb-6">
           <ErrorMessage
-            message="Não foi possível carregar o resumo semanal."
+            message={t.pages.dashboardWeekError}
             onRetry={() => refetch()}
           />
         </div>
@@ -89,10 +93,10 @@ export default function DashboardHome() {
           animate={{ opacity: 1 }}
         >
           <p className="text-sm text-foreground/50 mb-4">
-            Você ainda não registrou momentos esta semana. Como está se sentindo hoje?
+            {t.pages.dashboardEmpty}
           </p>
-          <Link href="/diary/new">
-            <Button>Registrar primeiro momento</Button>
+          <Link href={localizedHref("/diary/new")}>
+            <Button>{t.pages.dashboardFirstMoment}</Button>
           </Link>
         </motion.div>
       )}
@@ -104,10 +108,10 @@ export default function DashboardHome() {
         transition={{ delay: 0.2 }}
       >
         <Link
-          href="/diary"
+          href={localizedHref("/diary")}
           className="text-sm text-anima-violet hover:text-anima-lilac transition-colors"
         >
-          Ver linha do tempo completa →
+          {t.pages.dashboardSeeTimeline}
         </Link>
       </motion.div>
     </div>
@@ -123,9 +127,13 @@ function DashboardSkeletonExtra() {
   );
 }
 
-function getGreeting(): string {
+function getGreeting(greetings: {
+  morning: string;
+  afternoon: string;
+  evening: string;
+}): string {
   const hour = new Date().getHours();
-  if (hour < 12) return "Bom dia";
-  if (hour < 18) return "Boa tarde";
-  return "Boa noite";
+  if (hour < 12) return greetings.morning;
+  if (hour < 18) return greetings.afternoon;
+  return greetings.evening;
 }

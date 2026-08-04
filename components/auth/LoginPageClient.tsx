@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState, type FormEvent } from "react";
+import { Suspense, useEffect, useState, type FormEvent } from "react";
 import { consumeSessionReuseWarning } from "@/lib/auth/storage";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -12,13 +12,15 @@ import { EmailInput } from "@/components/ui/EmailInput";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { GoogleAuthButton } from "@/components/auth/GoogleAuthButton";
-import { localizedPath, type Locale } from "@/lib/i18n/config";
-import { authEn } from "@/lib/i18n/dictionaries/auth-en";
-import { authPt, type AuthPageDictionary } from "@/lib/i18n/dictionaries/auth-pt";
-
-function getAuthDictionary(locale: Locale): AuthPageDictionary {
-  return (locale === "en" ? authEn : authPt) as AuthPageDictionary;
-}
+import {
+  authPathPreservingRedirect,
+  resolvePostAuthDestination,
+} from "@/lib/subscription/acquisition";
+import { type Locale, localizedPath } from "@/lib/i18n/config";
+import {
+  getAuthDictionary,
+  type AuthPageDictionary,
+} from "@/lib/i18n/auth-dictionary";
 
 function LoginForm({
   locale,
@@ -32,17 +34,24 @@ function LoginForm({
   const resetSuccess = searchParams.get("reset") === "success";
   const verifiedSuccess = searchParams.get("verified") === "true";
   const redirectTo = searchParams.get("redirect");
-  const { login } = useAuth();
+  const { login, user, isLoading: authLoading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sessionReuseWarning] = useState(() => consumeSessionReuseWarning());
 
-  function destination(emailVerified: boolean) {
-    if (!emailVerified) return "/aguardando-verificacao";
-    return redirectTo?.startsWith("/") ? redirectTo : "/dashboard";
-  }
+  useEffect(() => {
+    if (authLoading || !user) return;
+    router.replace(
+      resolvePostAuthDestination(
+        user.emailVerified,
+        redirectTo,
+        locale,
+        user.subscription?.plan.slug,
+      ),
+    );
+  }, [authLoading, user, redirectTo, router, locale]);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -57,8 +66,15 @@ function LoginForm({
     setIsLoading(true);
 
     try {
-      const user = await login(parsed.data.email, parsed.data.senha);
-      router.push(destination(user.emailVerified));
+      const loggedIn = await login(parsed.data.email, parsed.data.senha);
+      router.push(
+        resolvePostAuthDestination(
+          loggedIn.emailVerified,
+          redirectTo,
+          locale,
+          loggedIn.subscription?.plan.slug,
+        ),
+      );
     } catch (err) {
       setError(
         err instanceof ApiError
@@ -147,7 +163,7 @@ function LoginForm({
       <p className="text-center text-xs text-foreground/40 mt-2">
         {t.login.noAccount}{" "}
         <Link
-          href={localizedPath(locale, "/register")}
+          href={authPathPreservingRedirect("/register", redirectTo, locale)}
           className="text-anima-violet hover:text-anima-lilac transition-colors font-medium"
         >
           {t.login.createAccount}

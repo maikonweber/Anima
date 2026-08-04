@@ -2,9 +2,12 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { useParams, usePathname } from "next/navigation";
+import { useParams } from "next/navigation";
 import { AnimaLogo } from "@/components/brand/AnimaLogo";
+import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
 import { useAuth } from "@/lib/auth/AuthContext";
+import { getClinicUiDictionary } from "@/lib/i18n/clinic-ui-dictionary";
+import { useLocale } from "@/lib/i18n/locale-provider";
 import { useMyOrganizations, useOrganization } from "@/hooks/use-organizations";
 
 type NavItem = {
@@ -16,7 +19,8 @@ type NavItem = {
 };
 
 export function ClinicSidebar() {
-  const pathname = usePathname();
+  const { locale, barePath, localizedHref } = useLocale();
+  const t = getClinicUiDictionary(locale);
   const params = useParams<{ orgId?: string }>();
   const orgId = typeof params.orgId === "string" ? params.orgId : undefined;
   const { user, logout } = useAuth();
@@ -46,8 +50,8 @@ export function ClinicSidebar() {
     const items: NavItem[] = [
       {
         href: base,
-        label: "Visão geral",
-        shortLabel: "Início",
+        label: t.nav.overview,
+        shortLabel: t.nav.overviewShort,
         match: (p) => p === base,
         icon: HomeIcon,
       },
@@ -56,23 +60,23 @@ export function ClinicSidebar() {
       items.push(
         {
           href: `${base}/patients`,
-          label: "Pacientes",
-          shortLabel: "CRM",
+          label: t.nav.patients,
+          shortLabel: t.nav.patientsShort,
           match: (p) => p.startsWith(`${base}/patients`),
           icon: PatientsIcon,
         },
         {
           href: `${base}/agenda`,
-          label: "Agenda",
-          shortLabel: "Agenda",
+          label: t.nav.agenda,
+          shortLabel: t.nav.agenda,
           match: (p) =>
             p.startsWith(`${base}/agenda`) && !p.includes("/disponibilidade"),
           icon: CalendarIcon,
         },
         {
           href: `${base}/agenda/disponibilidade`,
-          label: "Disponibilidade",
-          shortLabel: "Horários",
+          label: t.nav.availability,
+          shortLabel: t.nav.availabilityShort,
           match: (p) => p.includes("/disponibilidade"),
           icon: ClockIcon,
         },
@@ -82,22 +86,22 @@ export function ClinicSidebar() {
       items.push(
         {
           href: `${base}/conhecimento`,
-          label: "Conhecimento",
-          shortLabel: "RAG",
+          label: t.nav.knowledge,
+          shortLabel: t.nav.knowledgeShort,
           match: (p) => p.startsWith(`${base}/conhecimento`),
           icon: BookIcon,
         },
         {
           href: `${base}/alertas`,
-          label: "Alertas",
-          shortLabel: "Alertas",
+          label: t.nav.alerts,
+          shortLabel: t.nav.alerts,
           match: (p) => p.startsWith(`${base}/alertas`),
           icon: AlertIcon,
         },
         {
           href: `${base}/crise`,
-          label: "Recursos de crise",
-          shortLabel: "Crise",
+          label: t.nav.crisis,
+          shortLabel: t.nav.crisisShort,
           match: (p) => p.startsWith(`${base}/crise`),
           icon: CrisisIcon,
         },
@@ -106,27 +110,27 @@ export function ClinicSidebar() {
     if (canViewAudit) {
       items.push({
         href: `${base}/auditoria`,
-        label: "Auditoria",
-        shortLabel: "Audit",
+        label: t.nav.audit,
+        shortLabel: t.nav.auditShort,
         match: (p) => p.startsWith(`${base}/auditoria`),
         icon: AuditIcon,
       });
     }
     return items;
-  }, [orgId, canViewAudit, canClinical, canOpsCrm]);
+  }, [orgId, canViewAudit, canClinical, canOpsCrm, t]);
 
   const topNav: NavItem[] = useMemo(
     () => [
       {
         href: "/clinic",
-        label: "Minhas clínicas",
-        shortLabel: "Clínicas",
+        label: t.common.organizations,
+        shortLabel: t.brand.clinics,
         match: (p) => p === "/clinic",
         icon: BuildingIcon,
       },
       ...orgNav,
     ],
-    [orgNav],
+    [orgNav, t],
   );
 
   const primaryMobile = orgId
@@ -134,15 +138,15 @@ export function ClinicSidebar() {
     : [
         {
           href: "/clinic",
-          label: "Clínicas",
-          shortLabel: "Clínicas",
+          label: t.brand.clinics,
+          shortLabel: t.brand.clinics,
           match: (p: string) => p.startsWith("/clinic"),
           icon: BuildingIcon,
         },
       ];
 
   const isItemActive = (item: NavItem) =>
-    item.match ? item.match(pathname) : pathname.startsWith(item.href);
+    item.match ? item.match(barePath) : barePath.startsWith(item.href);
 
   const isMenuActive = topNav.some(
     (item) => isItemActive(item) && !primaryMobile.some((p) => p.href === item.href),
@@ -150,7 +154,7 @@ export function ClinicSidebar() {
 
   useEffect(() => {
     setMenuOpen(false);
-  }, [pathname]);
+  }, [barePath]);
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -166,45 +170,49 @@ export function ClinicSidebar() {
       {/* Mobile top bar */}
       <header className="lg:hidden fixed top-0 inset-x-0 z-40 border-b border-[var(--clinic-sidebar-edge)] bg-[var(--clinic-sidebar)]/95 backdrop-blur-md clinic-safe-top">
         <div className="flex items-center justify-between gap-3 px-3 h-12">
-          <Link href="/clinic" className="flex items-center gap-2 min-w-0">
+          <Link href={localizedHref("/clinic")} className="flex items-center gap-2 min-w-0">
             <AnimaLogo size="sm" className="scale-75 origin-left" />
             <div className="min-w-0 -ml-1">
               <p className="text-[11px] font-semibold text-foreground leading-none truncate">
-                EmotiveCare
+                {t.brand.product}
               </p>
               <p className="text-[9px] uppercase tracking-[0.14em] text-[var(--clinic-accent)] font-semibold mt-0.5">
-                Clínicas
+                {t.brand.clinics}
               </p>
             </div>
           </Link>
-          {orgQuery.data ? (
-            <p className="text-[11px] text-[var(--clinic-muted)] truncate max-w-[42%] text-right font-medium">
-              {orgQuery.data.name}
-            </p>
-          ) : null}
+          <div className="flex items-center gap-2 min-w-0">
+            <LanguageSwitcher variant="pills" className="shrink-0" />
+            {orgQuery.data ? (
+              <p className="text-[11px] text-[var(--clinic-muted)] truncate max-w-[42%] text-right font-medium">
+                {orgQuery.data.name}
+              </p>
+            ) : null}
+          </div>
         </div>
       </header>
 
       {/* Desktop sidebar */}
       <aside className="hidden lg:flex flex-col w-60 xl:w-64 shrink-0 h-dvh sticky top-0 border-r border-[var(--clinic-sidebar-edge)] bg-[var(--clinic-sidebar)]">
-        <div className="p-4 pb-4">
-          <Link href="/clinic" className="flex items-center gap-2.5 group">
+        <div className="p-4 pb-4 flex items-start justify-between gap-2">
+          <Link href={localizedHref("/clinic")} className="flex items-center gap-2.5 group min-w-0">
             <AnimaLogo size="sm" />
             <div className="min-w-0">
               <p className="text-[13px] font-semibold tracking-tight text-foreground leading-tight group-hover:text-[var(--clinic-accent)] transition-colors">
-                EmotiveCare
+                {t.brand.product}
               </p>
               <p className="text-[10px] uppercase tracking-[0.16em] text-[var(--clinic-accent)] font-semibold mt-0.5">
-                Clínicas
+                {t.brand.clinics}
               </p>
             </div>
           </Link>
+          <LanguageSwitcher variant="pills" className="shrink-0" />
         </div>
 
         {orgId && orgQuery.data && (
           <div className="mx-3 mb-3 rounded-xl border border-[var(--clinic-border)] bg-[var(--clinic-panel)] px-3 py-2.5 shadow-[0_1px_2px_rgba(15,28,36,0.03)]">
             <p className="text-[10px] uppercase tracking-[0.12em] text-[var(--clinic-subtle)] mb-0.5 font-medium">
-              Organização
+              {t.common.organizations}
             </p>
             <p className="text-sm font-semibold text-foreground truncate">
               {orgQuery.data.name}
@@ -218,7 +226,7 @@ export function ClinicSidebar() {
             return (
               <Link
                 key={item.href}
-                href={item.href}
+                href={localizedHref(item.href)}
                 className={`flex items-center gap-2.5 px-2.5 py-2.5 rounded-xl text-sm font-medium transition-colors ${
                   active
                     ? "bg-[var(--clinic-panel)] text-[var(--clinic-accent)] shadow-[0_1px_3px_rgba(15,28,36,0.06)] ring-1 ring-[var(--clinic-border)]"
@@ -253,10 +261,10 @@ export function ClinicSidebar() {
           </div>
           <div className="flex gap-1.5">
             <Link
-              href="/dashboard"
+              href={localizedHref("/dashboard")}
               className="flex-1 text-center px-2 py-2 rounded-lg text-[11px] font-medium text-[var(--clinic-muted)] hover:text-foreground hover:bg-white/70 transition-colors"
             >
-              App paciente
+              {t.common.backToApp}
             </Link>
             <button
               type="button"
@@ -264,7 +272,7 @@ export function ClinicSidebar() {
               className="flex-1 flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg text-[11px] font-medium text-[var(--clinic-muted)] hover:text-red-600 hover:bg-red-50 transition-colors"
             >
               <LogoutIcon />
-              Sair
+              {t.common.logout}
             </button>
           </div>
         </div>
@@ -278,7 +286,7 @@ export function ClinicSidebar() {
             return (
               <Link
                 key={item.href}
-                href={item.href}
+                href={localizedHref(item.href)}
                 className={`flex flex-1 min-w-0 flex-col items-center gap-0.5 px-0.5 py-1.5 rounded-lg transition-colors ${
                   active
                     ? "text-[var(--clinic-accent)]"
@@ -295,7 +303,7 @@ export function ClinicSidebar() {
           <button
             type="button"
             onClick={() => setMenuOpen(true)}
-            aria-label="Abrir menu"
+            aria-label={t.common.openMenu}
             aria-expanded={menuOpen}
             className={`flex flex-1 min-w-0 flex-col items-center gap-0.5 px-0.5 py-1.5 rounded-lg transition-colors ${
               isMenuActive || menuOpen
@@ -316,16 +324,19 @@ export function ClinicSidebar() {
           className="lg:hidden fixed inset-0 z-[60]"
           role="dialog"
           aria-modal="true"
-          aria-label="Menu clínicas"
+          aria-label={t.brand.clinics}
         >
           <button
             type="button"
-            aria-label="Fechar menu"
+            aria-label={t.common.closeMenu}
             onClick={() => setMenuOpen(false)}
             className="absolute inset-0 bg-black/35"
           />
           <div className="absolute bottom-0 inset-x-0 rounded-t-2xl border-t border-[var(--clinic-border)] bg-[var(--clinic-panel)] p-4 clinic-safe-pb shadow-2xl max-h-[85dvh] overflow-y-auto">
-            <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-foreground/12" />
+            <div className="mb-4 flex items-center justify-between gap-2">
+              <div className="mx-auto h-1 w-10 rounded-full bg-foreground/12" />
+              <LanguageSwitcher variant="pills" className="shrink-0" />
+            </div>
             {orgQuery.data ? (
               <p className="text-xs text-[var(--clinic-muted)] mb-3 px-1 truncate font-medium">
                 {orgQuery.data.name}
@@ -337,7 +348,7 @@ export function ClinicSidebar() {
                 return (
                   <Link
                     key={item.href}
-                    href={item.href}
+                    href={localizedHref(item.href)}
                     onClick={() => setMenuOpen(false)}
                     className={`flex items-center gap-2 rounded-xl px-3 py-3 text-sm font-medium transition-colors ${
                       active
@@ -352,11 +363,11 @@ export function ClinicSidebar() {
               })}
             </div>
             <Link
-              href="/dashboard"
+              href={localizedHref("/dashboard")}
               onClick={() => setMenuOpen(false)}
               className="block w-full rounded-xl px-3 py-3 text-sm text-[var(--clinic-muted)] hover:bg-[var(--clinic-row-hover)] mb-1"
             >
-              Voltar ao app do paciente
+              {t.common.backToApp}
             </Link>
             <button
               type="button"
@@ -366,7 +377,7 @@ export function ClinicSidebar() {
               }}
               className="w-full rounded-xl px-3 py-3 text-sm text-[var(--clinic-muted)] hover:text-red-600 hover:bg-red-50"
             >
-              Sair
+              {t.common.logout}
             </button>
           </div>
         </div>

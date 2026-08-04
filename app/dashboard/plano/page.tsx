@@ -6,9 +6,13 @@ import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { Select } from "@/components/ui/Select";
 import { useMyCarePlan } from "@/hooks/use-care-plans";
 import { useMyOrganizations } from "@/hooks/use-organizations";
+import { useLocale } from "@/lib/i18n/locale-provider";
+import { getProductDictionary } from "@/lib/i18n/product-dictionary";
 import { ApiError } from "@anima/shared";
 
 export default function PatientCarePlanPage() {
+  const { locale } = useLocale();
+  const t = getProductDictionary(locale);
   const {
     data: orgs,
     isLoading: orgsLoading,
@@ -54,7 +58,7 @@ export default function PatientCarePlanPage() {
     return (
       <div className="max-w-2xl mx-auto px-4 py-12">
         <h1 className="text-2xl font-bold text-foreground/90 mb-2">
-          Plano de cuidado
+          {t.pages.carePlanTitle}
         </h1>
         <p className="text-sm text-foreground/45">
           Você precisa estar vinculado a uma clínica como paciente.
@@ -67,7 +71,7 @@ export default function PatientCarePlanPage() {
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="text-2xl sm:text-3xl font-bold text-foreground/90 mb-1">
-          Plano de cuidado
+          {t.pages.carePlanTitle}
         </h1>
         <p className="text-sm text-foreground/40 mb-6">
           Atividades e orientações liberadas pelo seu profissional

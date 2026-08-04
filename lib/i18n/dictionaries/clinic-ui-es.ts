@@ -1,0 +1,86 @@
+import type { ClinicUiDictionary } from "./clinic-ui-pt";
+
+export const clinicUiEs = {
+  common: {
+    loading: "Cargando...",
+    logout: "Salir",
+    language: "Idioma",
+    backToApp: "App personal",
+    organizations: "Organizaciones",
+    openMenu: "Abrir menú",
+    closeMenu: "Cerrar menú",
+  },
+  brand: {
+    product: "EmotiveCare",
+    clinics: "Clínicas",
+  },
+  nav: {
+    overview: "Resumen",
+    overviewShort: "Inicio",
+    patients: "Pacientes",
+    patientsShort: "CRM",
+    agenda: "Agenda",
+    availability: "Disponibilidad",
+    availabilityShort: "Horarios",
+    knowledge: "Conocimiento",
+    knowledgeShort: "RAG",
+    alerts: "Alertas",
+    crisis: "Recursos de crisis",
+    crisisShort: "Crisis",
+    audit: "Auditoría",
+    auditShort: "Logs",
+  },
+  patientTabs: {
+    summary: "Resumen",
+    diary: "Diario",
+    notes: "Prontuario",
+    consents: "Consentimientos",
+    reminders: "Recordatorios",
+    carePlan: "Plan",
+    syntheses: "Síntesis IA",
+    alerts: "Alertas",
+    appLink: "Vínculo app",
+  },
+  pages: {
+    overview: "Resumen",
+    patients: "Pacientes",
+    agenda: "Agenda",
+    alerts: "Alertas pendientes",
+    crisis: "Recursos de crisis",
+    knowledge: "Conocimiento clínico",
+    audit: "Auditoría",
+  },
+  roles: {
+    professional: "Profesional",
+    secretary: "Secretaría",
+    admin: "Administrador",
+    dpo: "DPO",
+    patient: "Paciente",
+  },
+  quickActions: {
+    patients: {
+      title: "CRM de pacientes",
+      subtitle: "Registro, embudo y contactos",
+    },
+    agenda: {
+      title: "Agenda",
+      subtitle: "Sesiones, confirmación y disponibilidad",
+    },
+    alerts: {
+      title: "Alertas pendientes",
+      subtitle: "Revisión humana (RF-072)",
+    },
+    knowledge: {
+      title: "Conocimiento clínico",
+      subtitle: "Base curada para síntesis",
+    },
+    crisis: {
+      title: "Recursos de crisis",
+      subtitle: "Canales de apoyo (RF-042)",
+    },
+    audit: {
+      title: "Auditoría",
+      subtitle: "Rastro de acciones de la organización",
+    },
+  },
+} as const satisfies ClinicUiDictionary;

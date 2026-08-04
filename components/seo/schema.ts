@@ -1,6 +1,11 @@
 import { SITE_URL } from "@/lib/seo/site";
 import type { BlogPost } from "@/lib/seo/posts";
 import type { FaqEntry } from "@/lib/seo/faq";
+import {
+  htmlLang,
+  localizedPath,
+  type Locale,
+} from "@/lib/i18n/config";
 
 const ORG_ID = `${SITE_URL}/#organization`;
 const WEBSITE_ID = `${SITE_URL}/#website`;
@@ -28,7 +33,7 @@ export function organizationSchema() {
       width: 512,
       height: 512,
     },
-    knowsLanguage: ["pt-BR", "en"],
+    knowsLanguage: ["pt-BR", "en", "es"],
     areaServed: { "@type": "Country", name: "Brasil" },
     description:
       "MutterCorp desenvolve a EmotiveCare: app pessoal de segundo cérebro emocional com SENTIO AI, plano Cuidado para profissionais convidados, e EmotiveCare Clínicas (CRM, agenda, teleconsulta, prontuário e sínteses de IA revisáveis) para psicólogos, psiquiatras e equipes clínicas.",
@@ -45,7 +50,7 @@ export function websiteSchema() {
     description:
       "EmotiveCare é o segundo cérebro emocional para uso pessoal e a suíte EmotiveCare Clínicas para psicólogos e psiquiatras: CRM, agenda, teleconsulta, prontuário e IA clínica com revisão humana.",
     publisher: { "@id": ORG_ID },
-    inLanguage: ["pt-BR", "en"],
+    inLanguage: ["pt-BR", "en", "es"],
   };
 }
 
@@ -59,7 +64,7 @@ export function softwareSchema() {
     applicationCategory: "HealthApplication",
     applicationSubCategory: "Emotional journaling and personal knowledge",
     operatingSystem: "Web",
-    inLanguage: ["pt-BR", "en"],
+    inLanguage: ["pt-BR", "en", "es"],
     url: SITE_URL,
     creator: { "@id": ORG_ID },
     audience: {
@@ -109,7 +114,7 @@ export function clinicsSoftwareSchema() {
     applicationCategory: "BusinessApplication",
     applicationSubCategory: "Clinical practice management for mental health",
     operatingSystem: "Web",
-    inLanguage: ["pt-BR", "en"],
+    inLanguage: ["pt-BR", "en", "es"],
     url: `${SITE_URL}/clinicas`,
     creator: { "@id": ORG_ID },
     isRelatedTo: { "@id": APP_ID },
@@ -185,9 +190,9 @@ export function faqSchema(entries: FaqEntry[]) {
 export function blogPostingSchema(
   post: BlogPost,
   authorName = "EmotiveCare · MutterCorp",
-  locale: "pt-BR" | "en" = "pt-BR",
+  locale: Locale = "pt-BR",
 ) {
-  const path = locale === "en" ? `/en/blog/${post.slug}` : `/blog/${post.slug}`;
+  const path = localizedPath(locale, `/blog/${post.slug}`);
   const url = `${SITE_URL}${path}`;
   return {
     "@context": "https://schema.org",
@@ -197,7 +202,7 @@ export function blogPostingSchema(
     datePublished: post.datePublished,
     dateModified: post.dateModified ?? post.datePublished,
     url,
-    inLanguage: locale === "en" ? "en" : "pt-BR",
+    inLanguage: htmlLang(locale),
     author: { "@type": "Organization", name: authorName },
     publisher: { "@id": ORG_ID },
   };

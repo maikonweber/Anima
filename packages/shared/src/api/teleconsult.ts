@@ -11,7 +11,7 @@ export async function createTeleconsult(
 ) {
   return api<TeleconsultSession>(
     `/organizations/${encodeURIComponent(orgId)}/appointments/${encodeURIComponent(appointmentId)}/teleconsult`,
-    { method: "POST", auth: true },
+    { method: "POST", auth: true, body: "{}" },
   );
 }
 
@@ -42,7 +42,7 @@ export async function joinTeleconsultByRoomCode(roomCode: string) {
 export async function endTeleconsult(orgId: string, sessionId: string) {
   return api<TeleconsultSession>(
     `/organizations/${encodeURIComponent(orgId)}/teleconsult/${encodeURIComponent(sessionId)}/end`,
-    { method: "POST", auth: true },
+    { method: "POST", auth: true, body: "{}" },
   );
 }
 

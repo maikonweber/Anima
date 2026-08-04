@@ -1,5 +1,6 @@
 import type { Locale } from "@/lib/i18n/config";
 import { faqEntriesEn } from "./faq-en";
+import { faqEntriesEs } from "./faq-es";
 
 /** FAQ institucional — SEO + GEO (respostas claras para buscadores e LLMs). */
 
@@ -57,5 +58,7 @@ export const faqEntries: FaqEntry[] = [
 ];
 
 export function getFaqEntries(locale: Locale): FaqEntry[] {
-  return locale === "en" ? faqEntriesEn : faqEntries;
+  if (locale === "en") return faqEntriesEn;
+  if (locale === "es") return faqEntriesEs;
+  return faqEntries;
 }

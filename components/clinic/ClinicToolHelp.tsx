@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useMemo, useState } from "react";
 import {
   CLINIC_HELP_UI,
   getClinicPatientTabHelp,
@@ -8,15 +8,16 @@ import {
   type ClinicPatientTabId,
   type ClinicToolHelpDefinition,
 } from "@/components/clinic/clinic-tool-help-content";
+import { useLocale } from "@/lib/i18n/locale-provider";
+import type { Locale } from "@/lib/i18n/config";
 
 type Props = {
-  /** Preferred: pass tab id so PT/EN/ES switch works */
+  /** Preferred: pass tab id so PT/EN/ES content resolves from global locale */
   tab?: ClinicPatientTabId;
   /** Or pass a pre-resolved help object */
   help?: ClinicToolHelpDefinition;
   className?: string;
   defaultTopicId?: string;
-  defaultLocale?: ClinicHelpLocale;
 };
 
 const LOCALE_LANG: Record<ClinicHelpLocale, string> = {
@@ -25,26 +26,26 @@ const LOCALE_LANG: Record<ClinicHelpLocale, string> = {
   es: "es",
 };
 
-const LOCALE_BUTTONS: Array<{ code: ClinicHelpLocale; label: string }> = [
-  { code: "pt", label: "PT" },
-  { code: "en", label: "EN" },
-  { code: "es", label: "ES" },
-];
+function toHelpLocale(locale: Locale): ClinicHelpLocale {
+  if (locale === "en") return "en";
+  if (locale === "es") return "es";
+  return "pt";
+}
 
 export function ClinicToolHelp({
   tab,
   help: helpProp,
   className = "",
   defaultTopicId,
-  defaultLocale = "pt",
 }: Props) {
   const selectId = useId();
-  const [locale, setLocale] = useState<ClinicHelpLocale>(defaultLocale);
+  const { locale: appLocale } = useLocale();
+  const helpLocale = useMemo(() => toHelpLocale(appLocale), [appLocale]);
   const help =
     helpProp ??
-    (tab ? getClinicPatientTabHelp(tab, locale) : null);
+    (tab ? getClinicPatientTabHelp(tab, helpLocale) : null);
 
-  const ui = CLINIC_HELP_UI[locale];
+  const ui = CLINIC_HELP_UI[helpLocale];
   const initialTopic =
     help && defaultTopicId && help.topics.some((t) => t.id === defaultTopicId)
       ? defaultTopicId
@@ -58,7 +59,7 @@ export function ClinicToolHelp({
         ? defaultTopicId
         : help.topics[0]?.id ?? "",
     );
-  }, [help, defaultTopicId, locale]);
+  }, [help, defaultTopicId, helpLocale]);
 
   if (!help) return null;
 
@@ -69,35 +70,13 @@ export function ClinicToolHelp({
     <aside
       className={`rounded-2xl border border-[var(--clinic-border)] bg-[var(--clinic-panel)] p-4 sm:p-5 mb-5 ${className}`.trim()}
       aria-label={`${ui.ariaPrefix}: ${help.title}`}
-      lang={LOCALE_LANG[locale]}
+      lang={LOCALE_LANG[helpLocale]}
     >
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-3">
         <div className="min-w-0">
-          <div className="flex flex-wrap items-center gap-2 mb-1">
-            <p className="text-[11px] uppercase tracking-[0.14em] text-[var(--clinic-accent)] font-semibold">
-              {ui.eyebrow}
-            </p>
-            <div
-              className="inline-flex rounded-lg border border-[var(--clinic-border)] p-0.5"
-              role="group"
-              aria-label={ui.languageLabel}
-            >
-              {LOCALE_BUTTONS.map(({ code, label }) => (
-                <button
-                  key={code}
-                  type="button"
-                  onClick={() => setLocale(code)}
-                  className={`px-2 py-0.5 rounded-md text-[10px] font-semibold uppercase transition-colors ${
-                    locale === code
-                      ? "bg-[var(--clinic-accent-soft)] text-[var(--clinic-accent)]"
-                      : "text-foreground/40 hover:text-foreground/65"
-                  }`}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-          </div>
+          <p className="text-[11px] uppercase tracking-[0.14em] text-[var(--clinic-accent)] font-semibold mb-1">
+            {ui.eyebrow}
+          </p>
           <h2 className="text-sm font-semibold text-foreground/85">
             {help.title}
           </h2>

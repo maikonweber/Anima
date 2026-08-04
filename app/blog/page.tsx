@@ -4,46 +4,77 @@ import { MarketingChrome } from "@/components/marketing/MarketingChrome";
 import { BlogLanguageSwitch } from "@/components/seo/BlogLanguageSwitch";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbListSchema } from "@/components/seo/schema";
+import { getRequestLocale } from "@/lib/i18n/get-request-locale";
+import { localizedPath, type Locale } from "@/lib/i18n/config";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { blogPath, getBlogUi, htmlLang } from "@/lib/seo/i18n";
 import { getPostsByLocale } from "@/lib/seo/posts";
 import { buildMarketingMetadata } from "@/lib/seo/page-metadata";
 import { SITE_URL } from "@/lib/seo/site";
 
-const LOCALE = "pt-BR" as const;
-
-export const metadata: Metadata = {
-  ...buildMarketingMetadata({
+const COPY: Record<Locale, { title: string; description: string; keywords: string[] }> = {
+  "pt-BR": {
     title: "Blog — bem-estar emocional assistido pela SENTIO AI",
     description:
       "Artigos sintéticos pensados para leitura humana e para motores semânticos: autoconhecimento, burnout e acompanhamento longitudinal ético.",
-    path: "/blog",
     keywords: ["blog saúde emocional", "IA contextual"],
-  }),
-  alternates: {
-    canonical: `${SITE_URL}/blog`,
-    languages: {
-      "pt-BR": `${SITE_URL}/blog`,
-      en: `${SITE_URL}/en/blog`,
-      "x-default": `${SITE_URL}/blog`,
-    },
+  },
+  en: {
+    title: "Blog — emotional well-being with SENTIO AI",
+    description:
+      "Articles written for people and search engines: self-awareness, burnout, and ethical longitudinal follow-up.",
+    keywords: ["emotional health blog", "contextual AI", "EmotiveCare", "SENTIO AI"],
+  },
+  es: {
+    title: "Blog — bienestar emocional con SENTIO AI",
+    description:
+      "Artículos pensados para personas y motores de búsqueda: autoconocimiento, burnout y seguimiento longitudinal ético.",
+    keywords: ["blog salud emocional", "IA contextual", "EmotiveCare", "SENTIO AI"],
   },
 };
 
-export default function BlogIndexPage() {
-  const ui = getBlogUi(LOCALE);
-  const posts = getPostsByLocale(LOCALE);
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getRequestLocale();
+  const copy = COPY[locale];
+  const meta = buildMarketingMetadata({
+    title: copy.title,
+    description: copy.description,
+    path: "/blog",
+    locale,
+    keywords: copy.keywords,
+  });
+
+  return {
+    ...meta,
+    alternates: {
+      canonical: `${SITE_URL}${blogPath(locale)}`,
+      languages: {
+        "pt-BR": `${SITE_URL}${blogPath("pt-BR")}`,
+        en: `${SITE_URL}${blogPath("en")}`,
+        es: `${SITE_URL}${blogPath("es")}`,
+        "x-default": `${SITE_URL}${blogPath("pt-BR")}`,
+      },
+    },
+  };
+}
+
+export default async function BlogIndexPage() {
+  const locale = await getRequestLocale();
+  const dict = getDictionary(locale);
+  const ui = getBlogUi(locale);
+  const posts = getPostsByLocale(locale);
 
   return (
     <>
       <JsonLd
         data={breadcrumbListSchema([
-          { name: "Início", path: "/" },
-          { name: "Blog", path: blogPath(LOCALE) },
+          { name: dict.common.home, path: localizedPath(locale, "/") },
+          { name: "Blog", path: blogPath(locale) },
         ])}
       />
-      <MarketingChrome>
-        <article lang={htmlLang(LOCALE)}>
-          <BlogLanguageSwitch locale={LOCALE} />
+      <MarketingChrome locale={locale}>
+        <article lang={htmlLang(locale)}>
+          <BlogLanguageSwitch locale={locale} />
           <h1 className="text-3xl font-bold text-foreground/90 mb-6">
             {ui.indexTitle}
           </h1>
@@ -60,7 +91,7 @@ export default function BlogIndexPage() {
                   {post.datePublished}
                 </p>
                 <Link
-                  href={blogPath(LOCALE, post.slug)}
+                  href={blogPath(locale, post.slug)}
                   className="text-lg font-semibold text-anima-violet hover:underline block mb-2"
                   prefetch={false}
                 >
