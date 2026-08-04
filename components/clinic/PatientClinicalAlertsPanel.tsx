@@ -87,8 +87,9 @@ export function PatientClinicalAlertsPanel({ orgId, patientId }: Props) {
           <h2 className="text-sm font-semibold text-foreground/60">
             Alertas revisáveis
           </h2>
-          <p className="text-xs text-foreground/35 mt-0.5">
-            RF-072 · heurísticas no diário compartilhado · humano aprova
+          <p className="text-xs text-foreground/35 mt-0.5 leading-relaxed">
+            Sugestões a partir do diário compartilhado. Varra padrões, edite se
+            precisar e aprove ou rejeite — não é emergência nem diagnóstico.
           </p>
         </div>
         {!consentBlocked && (

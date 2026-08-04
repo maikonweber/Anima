@@ -137,8 +137,9 @@ export function PatientConsentsPanel({ orgId, patientId }: Props) {
           <h2 className="text-sm font-semibold text-foreground/60">
             Consentimentos (LGPD)
           </h2>
-          <p className="text-xs text-foreground/35 mt-0.5">
-            Finalidades versionadas · grant e revogação auditados
+          <p className="text-xs text-foreground/35 mt-0.5 leading-relaxed">
+            Controle por finalidade (diário, prontuário, teleconsulta, IA…).
+            Concessão e revogação ficam auditadas.
           </p>
         </div>
         {status && (

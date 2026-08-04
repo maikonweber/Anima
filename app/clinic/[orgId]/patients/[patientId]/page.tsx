@@ -19,6 +19,8 @@ import { PatientRemindersPanel } from "@/components/clinic/PatientRemindersPanel
 import { PatientCarePlanPanel } from "@/components/clinic/PatientCarePlanPanel";
 import { PatientAiSynthesesPanel } from "@/components/clinic/PatientAiSynthesesPanel";
 import { PatientClinicalAlertsPanel } from "@/components/clinic/PatientClinicalAlertsPanel";
+import { ClinicToolHelp } from "@/components/clinic/ClinicToolHelp";
+import { CLINIC_PATIENT_TAB_HELP } from "@/components/clinic/clinic-tool-help-content";
 import { usePatient, useUpdatePatientStatus } from "@/hooks/use-patients";
 import type { PatientStatus } from "@anima/shared";
 
@@ -137,6 +139,8 @@ export default function PatientDetailPage() {
               ))}
             </nav>
 
+            <ClinicToolHelp help={CLINIC_PATIENT_TAB_HELP[tab]} key={tab} />
+
             {tab === "resumo" && (
               <>
                 <PatientAppLinkPanel orgId={orgId} patient={data} />
@@ -159,6 +163,10 @@ export default function PatientDetailPage() {
                   <h2 className="text-base font-semibold text-foreground/80">
                     Alterar status do funil
                   </h2>
+                  <p className="text-xs text-foreground/40 -mt-1 mb-1 leading-relaxed">
+                    Atualize a etapa do paciente no CRM (lead, ativo, alta…).
+                    Isso não altera o prontuário clínico.
+                  </p>
                   <Select
                     value={status}
                     onChange={(e) =>

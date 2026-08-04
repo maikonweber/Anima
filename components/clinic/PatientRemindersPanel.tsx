@@ -38,8 +38,9 @@ export function PatientRemindersPanel({ orgId, patientId }: Props) {
         <h2 className="text-sm font-semibold text-foreground/60">
           Lembretes / adesão
         </h2>
-        <p className="text-xs text-foreground/35 mt-0.5">
-          Somente leitura · histórico requer consentimento LEMBRETES
+        <p className="text-xs text-foreground/35 mt-0.5 leading-relaxed">
+          Visão da adesão autorreportada pelo paciente. A clínica não altera doses
+          nem prescritos — histórico exige consentimento LEMBRETES.
         </p>
       </div>
 

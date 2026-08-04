@@ -114,8 +114,9 @@ export function PatientCarePlanPanel({ orgId, patientId }: Props) {
         <h2 className="text-sm font-semibold text-foreground/70">
           Plano de cuidado
         </h2>
-        <p className="text-xs text-[var(--clinic-muted)] mt-0.5">
-          Itens só aparecem para o paciente quando liberados
+        <p className="text-xs text-[var(--clinic-muted)] mt-0.5 leading-relaxed">
+          Defina atividades e orientações. O paciente só vê os itens que você
+          liberar no app (menu <em>Plano de cuidado</em>).
         </p>
       </div>
 
@@ -147,13 +148,21 @@ export function PatientCarePlanPanel({ orgId, patientId }: Props) {
           onSubmit={handleCreatePlan}
           className="rounded-2xl border border-[var(--clinic-border)] bg-[var(--clinic-panel)] p-4 sm:p-5 space-y-3"
         >
+          <p className="text-xs text-[var(--clinic-muted)] leading-relaxed">
+            Ainda não há plano ativo. Crie um para começar a adicionar
+            atividades. Você controla o que fica visível para o paciente.
+          </p>
           <Input
             label="Título do plano"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Ex.: Plano de acompanhamento"
+            placeholder="Ex.: Plano de acompanhamento — agosto"
             required
           />
+          <p className="text-[11px] text-foreground/40 -mt-1">
+            Nome interno e também aparece no app do paciente quando houver itens
+            liberados.
+          </p>
           <Button
             type="submit"
             isLoading={createPlan.isPending}
@@ -202,6 +211,11 @@ export function PatientCarePlanPanel({ orgId, patientId }: Props) {
             onSubmit={handleAddItem}
             className="rounded-2xl border border-[var(--clinic-border)] bg-[var(--clinic-panel)] p-4 space-y-3"
           >
+            <p className="text-xs text-[var(--clinic-muted)] leading-relaxed">
+              Novos itens começam <strong className="text-foreground/70">privados ao staff</strong>.
+              Depois use <strong className="text-foreground/70">Liberar</strong> para
+              aparecerem no app do paciente.
+            </p>
             <Input
               label="Nova atividade / orientação"
               value={itemTitle}

@@ -153,9 +153,9 @@ export function PatientClinicalNotesPanel({ orgId, patientId }: Props) {
         <h2 className="text-sm font-semibold text-foreground/60">
           Prontuário clínico
         </h2>
-        <p className="text-xs text-foreground/35 mt-0.5">
-          Notas formais · assinatura soft · adendos append-only · requer
-          consentimento PRONTUARIO
+        <p className="text-xs text-foreground/35 mt-0.5 leading-relaxed">
+          Notas formais da evolução: escreva em rascunho, assine para fechar e
+          use adendo para complementos. Exige consentimento PRONTUARIO.
         </p>
       </div>
 

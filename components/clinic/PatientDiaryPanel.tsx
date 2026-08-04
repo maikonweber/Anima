@@ -73,12 +73,13 @@ export function PatientDiaryPanel({ orgId, patientId }: Props) {
     <section className="mb-6">
       <div className="mb-3 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
         <div>
-          <h2 className="text-sm font-semibold text-foreground/60">
-            Diário / check-ins
-          </h2>
-          <p className="text-xs text-foreground/35 mt-0.5">
-            Somente leitura · itens compartilhados · vínculo app + DIARIO_CHECKIN
-          </p>
+        <h2 className="text-sm font-semibold text-foreground/60">
+          Diário / check-ins
+        </h2>
+        <p className="text-xs text-foreground/35 mt-0.5 leading-relaxed">
+          Somente leitura · só itens que o paciente compartilhou · exige vínculo
+          com o app e consentimento DIARIO_CHECKIN
+        </p>
         </div>
         {!isUnlinked && (
           <div className="flex flex-wrap gap-1.5">
