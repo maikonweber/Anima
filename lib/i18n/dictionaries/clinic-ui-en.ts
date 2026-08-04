@@ -51,6 +51,8 @@ export const clinicUiEn = {
     alerts: "Alerts",
     crisis: "Crisis resources",
     crisisShort: "Crisis",
+    whatsapp: "WhatsApp",
+    whatsappShort: "WA",
     audit: "Audit",
     auditShort: "Logs",
   },
@@ -72,6 +74,7 @@ export const clinicUiEn = {
     alerts: "Pending alerts",
     crisis: "Crisis resources",
     knowledge: "Clinical knowledge",
+    whatsapp: "Clinic WhatsApp",
     audit: "Audit",
   },
   roles: {
@@ -102,9 +105,83 @@ export const clinicUiEn = {
       title: "Crisis resources",
       subtitle: "Support channels (RF-042)",
     },
+    whatsapp: {
+      title: "WhatsApp",
+      subtitle: "Connection, inbox, and AI chat",
+    },
     audit: {
       title: "Audit",
       subtitle: "Organization action trail",
     },
+  },
+  whatsappPage: {
+    description:
+      "Connect the clinic number, register patients via WhatsApp, send approved alerts, and use AI chat.",
+    connection: "Connection",
+    connect: "Connect WhatsApp",
+    connected: "Connected",
+    disconnect: "Disconnect",
+    scanQr: "Scan the QR code in the clinic phone’s WhatsApp.",
+    inbox: "Conversations",
+    emptyInbox: "No conversations yet. When a patient messages, it appears here.",
+    selectConversation: "Select a conversation to read and reply.",
+    replyPlaceholder: "Write a reply…",
+    send: "Send",
+    handoff: "Human handoff",
+    enableAi: "Enable AI",
+    disableAi: "Disable AI",
+  },
+  knowledgePage: {
+    description:
+      "Your clinic’s curated library — only published articles enter SENTIO AI syntheses.",
+    purposeTitle: "What it’s for",
+    purposeBody:
+      "Instead of searching the open web, the AI queries this curated base. Syntheses stay aligned with your clinic’s care approach: educational materials, referral criteria, support scripts, and internal guidance. This is not a diagnostic protocol and does not replace clinical judgment.",
+    workflowTitle: "How to use it (step by step)",
+    workflowSteps: [
+      "Write an article with a clear title and focused content.",
+      "Save as a draft, review with the team, then publish.",
+      "Published articles can be used in patient AI syntheses.",
+      "When content is outdated, archive it — the AI stops using it without deleting history.",
+    ],
+    examplesTitle: "Day-to-day professional examples",
+    examples: [
+      {
+        title: "Before a session",
+        body: "Publish a short psychoeducation piece on anxiety (signs, what to discuss in session, when to refer). When you generate an AI synthesis, the model can ground suggestions in that clinic material.",
+      },
+      {
+        title: "Intake and crisis",
+        body: "Add your internal support script (local helplines, emergency services, clinic criteria). The team and the AI speak the same language — without inventing channels or steps.",
+      },
+      {
+        title: "Align the team",
+        body: "Document the triage flow or CRM discharge criteria. New professionals find the rule here; the AI uses the same context in syntheses.",
+      },
+      {
+        title: "Periodic review",
+        body: "Once a month, review published articles: update what changed and archive what is obsolete. That keeps the base trustworthy.",
+      },
+    ],
+    disclaimer:
+      "Educational and governance content — not the clinical record. Avoid identifiable patient data. The platform catalog is read-only; the clinic publishes its own articles.",
+    formTitle: "New clinic article",
+    titlePlaceholder: "Title",
+    categoryPlaceholder: "Category (optional) — e.g. crisis, psychoeducation",
+    bodyPlaceholder:
+      "Curated content — what the team and AI should remember (no patient data)",
+    saveDraft: "Save draft",
+    publish: "Publish",
+    archive: "Archive",
+    delete: "Delete",
+    scopePlatform: "Platform",
+    scopeClinic: "Clinic",
+    statusDraft: "Draft",
+    statusPublished: "Published",
+    statusArchived: "Archived",
+    errorRequired: "Enter a title and content.",
+    errorCreate: "Could not create the article.",
+    errorLoad: "Could not load articles.",
+    noPermission: "You don’t have permission to manage the curated base.",
   },
 } as const satisfies ClinicUiDictionary;

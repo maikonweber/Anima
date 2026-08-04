@@ -836,11 +836,358 @@ const HELP_BY_LOCALE: Record<
   es: helpEs,
 };
 
+export type ClinicPageHelpId = "conhecimento";
+
+const pageHelpPt: Record<ClinicPageHelpId, ClinicToolHelpDefinition> = {
+  conhecimento: {
+    title: "Para que serve o Conhecimento clínico",
+    summary:
+      "É a biblioteca curada da clínica: artigos que você publica aqui passam a orientar as sínteses da SENTIO AI — só o que a equipe validar entra no raciocínio da IA.",
+    topics: [
+      {
+        id: "o-que-e",
+        label: "O que é e por que usar",
+        content: (
+          <>
+            <p>
+              Em vez de a IA buscar a internet aberta, ela consulta esta base
+              curada (RAG). Assim as sínteses ficam alinhadas à linha de cuidado
+              da sua clínica — materiais educativos, critérios de encaminhamento,
+              textos de acolhimento, orientações de governança.
+            </p>
+            <p>
+              <strong>Não é protocolo diagnóstico</strong> nem substitui julgamento
+              clínico. Use para educação, padronização interna e contexto seguro
+              para a IA.
+            </p>
+          </>
+        ),
+      },
+      {
+        id: "como-usar",
+        label: "Como usar no dia a dia",
+        content: (
+          <ol className="list-decimal pl-4 space-y-1.5">
+            <li>
+              Escreva um artigo com título claro e conteúdo objetivo (o que a
+              equipe ou a IA devem lembrar).
+            </li>
+            <li>
+              Salve como <strong>rascunho</strong>, revise com calma e só então
+              clique em <strong>Publicar</strong>.
+            </li>
+            <li>
+              Artigos publicados passam a poder ser usados nas sínteses IA do
+              paciente; rascunhos e arquivados ficam de fora.
+            </li>
+            <li>
+              Arquive quando o conteúdo ficar desatualizado — assim a IA deixa de
+              usá-lo sem apagar o histórico.
+            </li>
+          </ol>
+        ),
+      },
+      {
+        id: "exemplos",
+        label: "Exemplos do dia a dia",
+        content: (
+          <ul className="list-disc pl-4 space-y-2">
+            <li>
+              <strong>Antes da sessão:</strong> publique psicoeducação sobre
+              ansiedade; a síntese IA pode ancorar sugestões nesse material.
+            </li>
+            <li>
+              <strong>Acolhimento e crise:</strong> cadastre o roteiro interno
+              (CVV, SAMU, critérios da clínica) para a equipe e a IA falarem a
+              mesma linguagem.
+            </li>
+            <li>
+              <strong>Padronizar a equipe:</strong> documente triagem ou critérios
+              de alta do funil CRM — novos profissionais e a IA usam a mesma regra.
+            </li>
+            <li>
+              <strong>Revisão mensal:</strong> atualize o que mudou e arquive o
+              obsoleto para manter a base confiável.
+            </li>
+          </ul>
+        ),
+      },
+      {
+        id: "plataforma-vs-clinica",
+        label: "Catálogo da plataforma vs. da clínica",
+        content: (
+          <p>
+            Há artigos da <strong>plataforma</strong> (somente leitura) e artigos
+            da <strong>sua clínica</strong>, que você cria e gerencia. Publique o
+            que for específico da sua prática — a IA combina as duas fontes, sempre
+            com humano no comando na revisão da síntese.
+          </p>
+        ),
+      },
+      {
+        id: "boas-praticas",
+        label: "Boas práticas de conteúdo",
+        content: (
+          <ul className="list-disc pl-4 space-y-1.5">
+            <li>Prefira textos curtos, datados e com linguagem da equipe.</li>
+            <li>
+              Evite dados identificáveis de pacientes — isto é base educativa,
+              não prontuário.
+            </li>
+            <li>
+              Use categorias (ex.: crise, acolhimento, psicoeducação) para
+              organizar o catálogo.
+            </li>
+            <li>
+              Revise periodicamente: publique o atual, arquive o obsoleto.
+            </li>
+          </ul>
+        ),
+      },
+    ],
+  },
+};
+
+const pageHelpEn: Record<ClinicPageHelpId, ClinicToolHelpDefinition> = {
+  conhecimento: {
+    title: "What Clinical knowledge is for",
+    summary:
+      "Your clinic’s curated library: articles you publish here guide SENTIO AI syntheses — only content the team validates enters the AI’s reasoning.",
+    topics: [
+      {
+        id: "o-que-e",
+        label: "What it is and why use it",
+        content: (
+          <>
+            <p>
+              Instead of browsing the open web, the AI queries this curated base
+              (RAG). Syntheses stay aligned with your clinic’s care approach —
+              educational materials, referral criteria, support scripts, and
+              governance guidance.
+            </p>
+            <p>
+              <strong>This is not a diagnostic protocol</strong> and does not
+              replace clinical judgment. Use it for education, internal standards,
+              and safe context for the AI.
+            </p>
+          </>
+        ),
+      },
+      {
+        id: "como-usar",
+        label: "How to use it day to day",
+        content: (
+          <ol className="list-decimal pl-4 space-y-1.5">
+            <li>
+              Write an article with a clear title and focused content (what the
+              team or AI should remember).
+            </li>
+            <li>
+              Save as a <strong>draft</strong>, review carefully, then click{" "}
+              <strong>Publish</strong>.
+            </li>
+            <li>
+              Published articles can be used in patient AI syntheses; drafts and
+              archived items stay out.
+            </li>
+            <li>
+              Archive when content is outdated — the AI stops using it without
+              deleting history.
+            </li>
+          </ol>
+        ),
+      },
+      {
+        id: "exemplos",
+        label: "Day-to-day examples",
+        content: (
+          <ul className="list-disc pl-4 space-y-2">
+            <li>
+              <strong>Before a session:</strong> publish psychoeducation on
+              anxiety; AI syntheses can ground suggestions in that material.
+            </li>
+            <li>
+              <strong>Intake and crisis:</strong> add your internal support
+              script so the team and AI speak the same language.
+            </li>
+            <li>
+              <strong>Align the team:</strong> document triage or CRM discharge
+              criteria — new professionals and the AI use the same rule.
+            </li>
+            <li>
+              <strong>Monthly review:</strong> update what changed and archive
+              what is obsolete to keep the base trustworthy.
+            </li>
+          </ul>
+        ),
+      },
+      {
+        id: "plataforma-vs-clinica",
+        label: "Platform catalog vs. clinic articles",
+        content: (
+          <p>
+            There are <strong>platform</strong> articles (read-only) and{" "}
+            <strong>your clinic’s</strong> articles, which you create and manage.
+            Publish what is specific to your practice — the AI combines both
+            sources, always with a human reviewing the synthesis.
+          </p>
+        ),
+      },
+      {
+        id: "boas-praticas",
+        label: "Content best practices",
+        content: (
+          <ul className="list-disc pl-4 space-y-1.5">
+            <li>Prefer short, dated texts in the team’s language.</li>
+            <li>
+              Avoid identifiable patient data — this is an educational base, not
+              the clinical record.
+            </li>
+            <li>
+              Use categories (e.g. crisis, intake, psychoeducation) to organize
+              the catalog.
+            </li>
+            <li>
+              Review regularly: publish what is current, archive what is obsolete.
+            </li>
+          </ul>
+        ),
+      },
+    ],
+  },
+};
+
+const pageHelpEs: Record<ClinicPageHelpId, ClinicToolHelpDefinition> = {
+  conhecimento: {
+    title: "Para qué sirve el Conocimiento clínico",
+    summary:
+      "Es la biblioteca curada de la clínica: los artículos que publicas aquí orientan las síntesis de SENTIO AI — solo lo que el equipo valide entra en el razonamiento de la IA.",
+    topics: [
+      {
+        id: "o-que-e",
+        label: "Qué es y por qué usarlo",
+        content: (
+          <>
+            <p>
+              En lugar de buscar en la web abierta, la IA consulta esta base
+              curada (RAG). Así las síntesis se alinean con la línea de cuidado de
+              tu clínica — materiales educativos, criterios de derivación, textos
+              de acogida y orientación de gobernanza.
+            </p>
+            <p>
+              <strong>No es un protocolo diagnóstico</strong> ni sustituye el
+              juicio clínico. Úsalo para educación, estandarización interna y
+              contexto seguro para la IA.
+            </p>
+          </>
+        ),
+      },
+      {
+        id: "como-usar",
+        label: "Cómo usarlo día a día",
+        content: (
+          <ol className="list-decimal pl-4 space-y-1.5">
+            <li>
+              Escribe un artículo con título claro y contenido concreto (lo que
+              el equipo o la IA deben recordar).
+            </li>
+            <li>
+              Guárdalo como <strong>borrador</strong>, revísalo con calma y solo
+              entonces pulsa <strong>Publicar</strong>.
+            </li>
+            <li>
+              Los artículos publicados pueden usarse en las síntesis IA del
+              paciente; borradores y archivados quedan fuera.
+            </li>
+            <li>
+              Archiva cuando el contenido quede desactualizado — la IA deja de
+              usarlo sin borrar el historial.
+            </li>
+          </ol>
+        ),
+      },
+      {
+        id: "exemplos",
+        label: "Ejemplos del día a día",
+        content: (
+          <ul className="list-disc pl-4 space-y-2">
+            <li>
+              <strong>Antes de la sesión:</strong> publica psicoeducación sobre
+              ansiedad; la síntesis IA puede anclar sugerencias en ese material.
+            </li>
+            <li>
+              <strong>Acogida y crisis:</strong> registra el guion interno de
+              apoyo para que el equipo y la IA hablen el mismo idioma.
+            </li>
+            <li>
+              <strong>Alinear al equipo:</strong> documenta triaje o criterios de
+              alta del embudo CRM — profesionales nuevos y la IA usan la misma
+              regla.
+            </li>
+            <li>
+              <strong>Revisión mensual:</strong> actualiza lo que cambió y
+              archiva lo obsoleto para mantener la base confiable.
+            </li>
+          </ul>
+        ),
+      },
+      {
+        id: "plataforma-vs-clinica",
+        label: "Catálogo de la plataforma vs. de la clínica",
+        content: (
+          <p>
+            Hay artículos de la <strong>plataforma</strong> (solo lectura) y
+            artículos de <strong>tu clínica</strong>, que creas y gestionas.
+            Publica lo específico de tu práctica — la IA combina ambas fuentes,
+            siempre con revisión humana de la síntesis.
+          </p>
+        ),
+      },
+      {
+        id: "boas-praticas",
+        label: "Buenas prácticas de contenido",
+        content: (
+          <ul className="list-disc pl-4 space-y-1.5">
+            <li>Prefiere textos cortos, fechados y con el lenguaje del equipo.</li>
+            <li>
+              Evita datos identificables de pacientes — esto es base educativa,
+              no prontuario.
+            </li>
+            <li>
+              Usa categorías (p. ej. crisis, acogida, psicoeducación) para
+              organizar el catálogo.
+            </li>
+            <li>
+              Revisa periódicamente: publica lo actual, archiva lo obsoleto.
+            </li>
+          </ul>
+        ),
+      },
+    ],
+  },
+};
+
+const PAGE_HELP_BY_LOCALE: Record<
+  ClinicHelpLocale,
+  Record<ClinicPageHelpId, ClinicToolHelpDefinition>
+> = {
+  pt: pageHelpPt,
+  en: pageHelpEn,
+  es: pageHelpEs,
+};
+
 export function getClinicPatientTabHelp(
   tab: ClinicPatientTabId,
   locale: ClinicHelpLocale = "pt",
 ): ClinicToolHelpDefinition {
   return HELP_BY_LOCALE[locale][tab];
+}
+
+export function getClinicPageHelp(
+  page: ClinicPageHelpId,
+  locale: ClinicHelpLocale = "pt",
+): ClinicToolHelpDefinition {
+  return PAGE_HELP_BY_LOCALE[locale][page];
 }
 
 /** @deprecated Prefer getClinicPatientTabHelp(tab, locale) */

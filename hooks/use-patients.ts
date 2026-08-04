@@ -2,14 +2,24 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+  acceptPatientAppInvite,
   createPatient,
+  createPatientAppInvite,
+  deletePatient,
   getPatient,
+  getPatientAppInviteByToken,
+  leaveClinic,
   linkPatientAppUser,
+  listMyClinicLinks,
+  listPatientAppInvites,
   listPatients,
+  revokePatientAppInvite,
   unlinkPatientAppUser,
   updatePatientStatus,
 } from "@/lib/api/patients";
 import type {
+  AcceptPatientAppInvitePayload,
+  CreatePatientAppInvitePayload,
   CreatePatientPayload,
   LinkPatientAppUserPayload,
   ListPatientsQuery,
@@ -86,6 +96,100 @@ export function useUnlinkPatientAppUser(orgId: string, patientId: string) {
       });
       void queryClient.invalidateQueries({
         queryKey: ["patient-diary", orgId, patientId],
+      });
+      void queryClient.invalidateQueries({ queryKey: ["clinic-links"] });
+    },
+  });
+}
+
+export function usePatientAppInvites(
+  orgId: string,
+  patientId: string,
+  enabled = true,
+) {
+  const { user } = useAuth();
+  return useQuery({
+    queryKey: ["patient-app-invites", orgId, patientId],
+    queryFn: () => listPatientAppInvites(orgId, patientId),
+    enabled: !!user && !!orgId && !!patientId && enabled,
+  });
+}
+
+export function useCreatePatientAppInvite(orgId: string, patientId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: CreatePatientAppInvitePayload) =>
+      createPatientAppInvite(orgId, patientId, payload),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: ["patient-app-invites", orgId, patientId],
+      });
+    },
+  });
+}
+
+export function useRevokePatientAppInvite(orgId: string, patientId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (inviteId: string) =>
+      revokePatientAppInvite(orgId, patientId, inviteId),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: ["patient-app-invites", orgId, patientId],
+      });
+    },
+  });
+}
+
+export function usePatientAppInviteByToken(token: string | null) {
+  return useQuery({
+    queryKey: ["patient-app-invite", token],
+    queryFn: () => getPatientAppInviteByToken(token!),
+    enabled: !!token,
+  });
+}
+
+export function useAcceptPatientAppInvite() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: AcceptPatientAppInvitePayload) =>
+      acceptPatientAppInvite(payload),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["clinic-links"] });
+      void queryClient.invalidateQueries({ queryKey: ["subscription"] });
+    },
+  });
+}
+
+export function useMyClinicLinks() {
+  const { user } = useAuth();
+  return useQuery({
+    queryKey: ["clinic-links"],
+    queryFn: () => listMyClinicLinks(),
+    enabled: !!user,
+  });
+}
+
+export function useLeaveClinic() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (orgId: string) => leaveClinic(orgId),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["clinic-links"] });
+      void queryClient.invalidateQueries({ queryKey: ["subscription"] });
+      void queryClient.invalidateQueries({ queryKey: ["organizations"] });
+    },
+  });
+}
+
+export function useDeletePatient(orgId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (patientId: string) => deletePatient(orgId, patientId),
+    onSuccess: (_data, patientId) => {
+      void queryClient.invalidateQueries({ queryKey: ["patients", orgId] });
+      void queryClient.removeQueries({
+        queryKey: ["patients", orgId, patientId],
       });
     },
   });

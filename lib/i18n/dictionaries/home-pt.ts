@@ -90,8 +90,8 @@ export const homePt = {
         text: "Plano do profissional no app: dashboards em leitura dos pacientes que convidam você — não é o prontuário da clínica.",
         bullets: [
           "Dashboards ilimitados por convite",
-          "Contexto emocional contínuo",
-          "Pacientes herdam benefícios do Pleno",
+          "Pacientes herdam Pleno (+ R$ 5/mês por vínculo)",
+          "Convite por e-mail para vincular ao app",
         ],
         cta: "Assinar plano Cuidado",
         href: "cuidado-checkout",
@@ -180,8 +180,8 @@ export const homePt = {
         tagline: "Acompanhe quem te convida.",
         features: [
           "Dashboards ilimitados por convite",
-          "Leitura entre sessões",
-          "Pacientes herdam benefícios do Pleno",
+          "Pleno patrocinado (+ R$ 5/mês por paciente)",
+          "Convite por e-mail para vincular",
         ],
         cta: "Sou profissional",
         highlighted: false,

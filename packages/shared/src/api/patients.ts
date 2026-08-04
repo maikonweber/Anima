@@ -1,9 +1,14 @@
 import { api } from "../api-client";
 import type {
+  AcceptPatientAppInvitePayload,
+  ClinicLink,
+  CreatePatientAppInvitePayload,
   CreatePatientPayload,
   ListPatientsQuery,
   PaginatedPatients,
   Patient,
+  PatientAppInvite,
+  PatientAppInvitePublic,
   PatientContact,
   PatientDetail,
   UpdatePatientPayload,
@@ -99,6 +104,89 @@ export async function linkPatientAppUser(
 export async function unlinkPatientAppUser(orgId: string, patientId: string) {
   return api<Patient>(
     `/organizations/${encodeURIComponent(orgId)}/patients/${encodeURIComponent(patientId)}/link-app-user`,
+    {
+      method: "DELETE",
+      auth: true,
+    },
+  );
+}
+
+export async function createPatientAppInvite(
+  orgId: string,
+  patientId: string,
+  payload: CreatePatientAppInvitePayload,
+) {
+  return api<PatientAppInvite>(
+    `/organizations/${encodeURIComponent(orgId)}/patients/${encodeURIComponent(patientId)}/app-invites`,
+    {
+      method: "POST",
+      auth: true,
+      body: JSON.stringify(payload),
+    },
+  );
+}
+
+export async function listPatientAppInvites(orgId: string, patientId: string) {
+  return api<PatientAppInvite[]>(
+    `/organizations/${encodeURIComponent(orgId)}/patients/${encodeURIComponent(patientId)}/app-invites`,
+    { auth: true },
+  );
+}
+
+export async function revokePatientAppInvite(
+  orgId: string,
+  patientId: string,
+  inviteId: string,
+) {
+  return api<PatientAppInvite>(
+    `/organizations/${encodeURIComponent(orgId)}/patients/${encodeURIComponent(patientId)}/app-invites/${encodeURIComponent(inviteId)}`,
+    {
+      method: "DELETE",
+      auth: true,
+    },
+  );
+}
+
+export async function getPatientAppInviteByToken(token: string) {
+  return api<PatientAppInvitePublic>(
+    `/patient-app-invites/by-token/${encodeURIComponent(token)}`,
+  );
+}
+
+export async function acceptPatientAppInvite(
+  payload: AcceptPatientAppInvitePayload,
+) {
+  return api<{
+    ok: true;
+    grantPleno: boolean;
+    organizationId: string;
+    patientId: string;
+    invite: PatientAppInvite | null;
+  }>("/patient-app-invites/accept", {
+    method: "POST",
+    auth: true,
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function listMyClinicLinks() {
+  return api<ClinicLink[]>("/me/clinic-links", { auth: true });
+}
+
+export async function leaveClinic(orgId: string) {
+  return api<{ ok: true; organizationId: string; patientId: string }>(
+    `/me/clinic-links/${encodeURIComponent(orgId)}`,
+    {
+      method: "DELETE",
+      auth: true,
+    },
+  );
+}
+
+/** Soft delete — marca o paciente como INATIVO e remove da listagem (CLINIC_ADMIN). */
+export async function deletePatient(orgId: string, patientId: string) {
+  return api<{ ok: true }>(
+    `/organizations/${encodeURIComponent(orgId)}/patients/${encodeURIComponent(patientId)}`,
     {
       method: "DELETE",
       auth: true,

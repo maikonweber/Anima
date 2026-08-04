@@ -3,8 +3,10 @@
 import { useEffect, useId, useMemo, useState } from "react";
 import {
   CLINIC_HELP_UI,
+  getClinicPageHelp,
   getClinicPatientTabHelp,
   type ClinicHelpLocale,
+  type ClinicPageHelpId,
   type ClinicPatientTabId,
   type ClinicToolHelpDefinition,
 } from "@/components/clinic/clinic-tool-help-content";
@@ -14,6 +16,8 @@ import type { Locale } from "@/lib/i18n/config";
 type Props = {
   /** Preferred: pass tab id so PT/EN/ES content resolves from global locale */
   tab?: ClinicPatientTabId;
+  /** Standalone clinic tool pages (e.g. clinical knowledge) */
+  page?: ClinicPageHelpId;
   /** Or pass a pre-resolved help object */
   help?: ClinicToolHelpDefinition;
   className?: string;
@@ -34,6 +38,7 @@ function toHelpLocale(locale: Locale): ClinicHelpLocale {
 
 export function ClinicToolHelp({
   tab,
+  page,
   help: helpProp,
   className = "",
   defaultTopicId,
@@ -43,7 +48,11 @@ export function ClinicToolHelp({
   const helpLocale = useMemo(() => toHelpLocale(appLocale), [appLocale]);
   const help =
     helpProp ??
-    (tab ? getClinicPatientTabHelp(tab, helpLocale) : null);
+    (page
+      ? getClinicPageHelp(page, helpLocale)
+      : tab
+        ? getClinicPatientTabHelp(tab, helpLocale)
+        : null);
 
   const ui = CLINIC_HELP_UI[helpLocale];
   const initialTopic =

@@ -1,8 +1,8 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { motion } from "motion/react";
 import { Button } from "@/components/ui/Button";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
@@ -22,8 +22,13 @@ import { PatientClinicalAlertsPanel } from "@/components/clinic/PatientClinicalA
 import { ClinicToolHelp } from "@/components/clinic/ClinicToolHelp";
 import { getClinicUiDictionary } from "@/lib/i18n/clinic-ui-dictionary";
 import { useLocale } from "@/lib/i18n/locale-provider";
-import { usePatient, useUpdatePatientStatus } from "@/hooks/use-patients";
-import type { PatientStatus } from "@anima/shared";
+import { useMyOrganizations } from "@/hooks/use-organizations";
+import {
+  useDeletePatient,
+  usePatient,
+  useUpdatePatientStatus,
+} from "@/hooks/use-patients";
+import type { OrganizationRole, PatientStatus } from "@anima/shared";
 
 type TabId =
   | "resumo"
@@ -45,7 +50,8 @@ const TAB_IDS: TabId[] = [
 export default function PatientDetailPage() {
   const params = useParams<{ orgId: string; patientId: string }>();
   const { orgId, patientId } = params;
-  const { locale } = useLocale();
+  const router = useRouter();
+  const { locale, localizedHref } = useLocale();
   const tabs = getClinicUiDictionary(locale).patientTabs;
   const tabItems: Array<{ id: TabId; label: string }> = [
     { id: "resumo", label: tabs.summary },
@@ -55,11 +61,21 @@ export default function PatientDetailPage() {
     { id: "ia", label: tabs.syntheses },
     { id: "prontuario", label: tabs.notes },
   ];
+  const { data: orgs } = useMyOrganizations();
+  const role: OrganizationRole | undefined = useMemo(
+    () =>
+      orgs?.find((item) => item.organization.id === orgId)?.membership.role,
+    [orgs, orgId],
+  );
+  const canDelete = role === "CLINIC_ADMIN";
   const { data, isLoading, error, refetch } = usePatient(orgId, patientId);
   const updateStatus = useUpdatePatientStatus(orgId, patientId);
+  const deletePatient = useDeletePatient(orgId);
   const [status, setStatus] = useState<PatientStatus | "">("");
   const [reason, setReason] = useState("");
   const [statusError, setStatusError] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const [tab, setTab] = useState<TabId>("resumo");
 
   useEffect(() => {
@@ -93,6 +109,19 @@ export default function PatientDetailPage() {
     }
   }
 
+  async function handleDelete() {
+    setDeleteError(null);
+    try {
+      await deletePatient.mutateAsync(patientId);
+      router.push(localizedHref(`/clinic/${orgId}/patients`));
+    } catch (err) {
+      setDeleteError(
+        err instanceof Error ? err.message : "Não foi possível remover o paciente.",
+      );
+      setConfirmDelete(false);
+    }
+  }
+
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
       <motion.div
@@ -101,7 +130,7 @@ export default function PatientDetailPage() {
         transition={{ duration: 0.4 }}
       >
         <Link
-          href={`/clinic/${orgId}/patients`}
+          href={localizedHref(`/clinic/${orgId}/patients`)}
           className="text-sm text-foreground/40 hover:text-anima-violet mb-4 inline-block"
         >
           ← Pacientes
@@ -234,7 +263,7 @@ export default function PatientDetailPage() {
                 )}
 
                 {data.statusHistory.length > 0 && (
-                  <section>
+                  <section className="mb-6">
                     <h2 className="text-sm font-semibold text-foreground/60 mb-3">
                       Histórico de status
                     </h2>
@@ -257,6 +286,54 @@ export default function PatientDetailPage() {
                         </li>
                       ))}
                     </ul>
+                  </section>
+                )}
+
+                {canDelete && (
+                  <section className="rounded-2xl border border-red-500/20 bg-red-500/[0.04] p-5 space-y-3">
+                    <div>
+                      <h2 className="text-base font-semibold text-red-700/90">
+                        Remover paciente
+                      </h2>
+                      <p className="text-xs text-foreground/45 mt-1 leading-relaxed">
+                        Remove o paciente da listagem do CRM (inativação lógica).
+                        O histórico permanece na auditoria. Apenas administradores
+                        da clínica podem fazer isso.
+                      </p>
+                    </div>
+                    {deleteError && (
+                      <p className="text-xs text-red-500">{deleteError}</p>
+                    )}
+                    {!confirmDelete ? (
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        className="!w-auto !text-red-700 !border-red-500/25 hover:!bg-red-500/10"
+                        onClick={() => setConfirmDelete(true)}
+                      >
+                        Remover paciente
+                      </Button>
+                    ) : (
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Button
+                          type="button"
+                          isLoading={deletePatient.isPending}
+                          className="!w-auto !bg-red-700 hover:!bg-red-800 !from-red-700 !to-red-800"
+                          onClick={() => void handleDelete()}
+                        >
+                          Confirmar remoção
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          className="!w-auto"
+                          disabled={deletePatient.isPending}
+                          onClick={() => setConfirmDelete(false)}
+                        >
+                          Cancelar
+                        </Button>
+                      </div>
+                    )}
                   </section>
                 )}
               </>

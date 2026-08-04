@@ -51,6 +51,8 @@ export const clinicUiEs = {
     alerts: "Alertas",
     crisis: "Recursos de crisis",
     crisisShort: "Crisis",
+    whatsapp: "WhatsApp",
+    whatsappShort: "WA",
     audit: "Auditoría",
     auditShort: "Logs",
   },
@@ -72,6 +74,7 @@ export const clinicUiEs = {
     alerts: "Alertas pendientes",
     crisis: "Recursos de crisis",
     knowledge: "Conocimiento clínico",
+    whatsapp: "WhatsApp de la clínica",
     audit: "Auditoría",
   },
   roles: {
@@ -102,9 +105,83 @@ export const clinicUiEs = {
       title: "Recursos de crisis",
       subtitle: "Canales de apoyo (RF-042)",
     },
+    whatsapp: {
+      title: "WhatsApp",
+      subtitle: "Conexión, bandeja y chat con IA",
+    },
     audit: {
       title: "Auditoría",
       subtitle: "Rastro de acciones de la organización",
     },
+  },
+  whatsappPage: {
+    description:
+      "Conecta el número de la clínica, registra pacientes por WhatsApp, envía alertas aprobadas y usa el chat con IA.",
+    connection: "Conexión",
+    connect: "Conectar WhatsApp",
+    connected: "Conectado",
+    disconnect: "Desconectar",
+    scanQr: "Escanea el QR en el WhatsApp del celular de la clínica.",
+    inbox: "Conversaciones",
+    emptyInbox: "Aún no hay conversaciones. Cuando un paciente escriba, aparece aquí.",
+    selectConversation: "Selecciona una conversación para leer y responder.",
+    replyPlaceholder: "Escribe una respuesta…",
+    send: "Enviar",
+    handoff: "Atención humana",
+    enableAi: "Activar IA",
+    disableAi: "Desactivar IA",
+  },
+  knowledgePage: {
+    description:
+      "Biblioteca curada de la clínica — solo los artículos publicados entran en las síntesis de SENTIO AI.",
+    purposeTitle: "Para qué sirve",
+    purposeBody:
+      "En lugar de buscar en la web abierta, la IA consulta esta base curada. Así las síntesis se alinean con la línea de cuidado de tu clínica: materiales educativos, criterios de derivación, textos de acogida y orientación interna. No es un protocolo diagnóstico ni sustituye el juicio clínico.",
+    workflowTitle: "Cómo usarlo (paso a paso)",
+    workflowSteps: [
+      "Escribe un artículo con título claro y contenido concreto.",
+      "Guárdalo como borrador, revísalo con el equipo y solo entonces publícalo.",
+      "Los artículos publicados pueden usarse en las síntesis IA del paciente.",
+      "Cuando quede desactualizado, archívalo — la IA deja de usarlo sin borrar el historial.",
+    ],
+    examplesTitle: "Ejemplos del día a día profesional",
+    examples: [
+      {
+        title: "Antes de la sesión",
+        body: "Publica un texto breve de psicoeducación sobre ansiedad (señales, qué conversar en sesión, cuándo derivar). Al generar una síntesis IA, el modelo puede anclar sugerencias en ese material de la clínica.",
+      },
+      {
+        title: "Acogida y crisis",
+        body: "Registra el guion interno de apoyo (líneas de ayuda, emergencias, criterios de la clínica). El equipo y la IA hablan el mismo idioma — sin inventar canales ni pasos.",
+      },
+      {
+        title: "Alinear al equipo",
+        body: "Documenta el flujo de triaje o el criterio de alta del embudo CRM. Los profesionales nuevos encuentran la regla aquí; la IA usa el mismo contexto en las síntesis.",
+      },
+      {
+        title: "Revisión periódica",
+        body: "Una vez al mes, revisa los artículos publicados: actualiza lo que cambió y archiva lo obsoleto. Así la base sigue siendo confiable.",
+      },
+    ],
+    disclaimer:
+      "Contenido educativo y de gobernanza — no es prontuario. Evita datos identificables de pacientes. El catálogo de la plataforma es de solo lectura; la clínica publica sus propios artículos.",
+    formTitle: "Nuevo artículo de la clínica",
+    titlePlaceholder: "Título",
+    categoryPlaceholder: "Categoría (opcional) — ej.: crisis, psicoeducación",
+    bodyPlaceholder:
+      "Contenido curado — lo que el equipo y la IA deben recordar (sin datos de pacientes)",
+    saveDraft: "Guardar borrador",
+    publish: "Publicar",
+    archive: "Archivar",
+    delete: "Eliminar",
+    scopePlatform: "Plataforma",
+    scopeClinic: "Clínica",
+    statusDraft: "Borrador",
+    statusPublished: "Publicado",
+    statusArchived: "Archivado",
+    errorRequired: "Indica título y contenido.",
+    errorCreate: "No se pudo crear el artículo.",
+    errorLoad: "No se pudieron cargar los artículos.",
+    noPermission: "Sin permiso para gestionar la base curada.",
   },
 } as const satisfies ClinicUiDictionary;

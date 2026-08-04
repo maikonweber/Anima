@@ -6,6 +6,7 @@ import { motion } from "motion/react";
 import { Button } from "@/components/ui/Button";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { Input } from "@/components/ui/Input";
+import { ClinicToolHelp } from "@/components/clinic/ClinicToolHelp";
 import {
   useArchiveClinicalKnowledge,
   useClinicalKnowledge,
@@ -18,17 +19,17 @@ import { getClinicUiDictionary } from "@/lib/i18n/clinic-ui-dictionary";
 import { useLocale } from "@/lib/i18n/locale-provider";
 import type { OrganizationRole } from "@anima/shared";
 
-const STATUS_LABEL = {
-  RASCUNHO: "Rascunho",
-  PUBLICADO: "Publicado",
-  ARQUIVADO: "Arquivado",
-} as const;
-
 export default function ClinicalKnowledgePage() {
   const params = useParams<{ orgId: string }>();
   const orgId = params.orgId;
   const { locale } = useLocale();
   const t = getClinicUiDictionary(locale);
+  const k = t.knowledgePage;
+  const statusLabel = {
+    RASCUNHO: k.statusDraft,
+    PUBLICADO: k.statusPublished,
+    ARQUIVADO: k.statusArchived,
+  } as const;
   const { data: orgs } = useMyOrganizations();
   const role: OrganizationRole | undefined = useMemo(
     () =>
@@ -53,7 +54,7 @@ export default function ClinicalKnowledgePage() {
     e.preventDefault();
     setActionError(null);
     if (!title.trim() || !body.trim()) {
-      setActionError("Informe título e conteúdo.");
+      setActionError(k.errorRequired);
       return;
     }
     try {
@@ -67,7 +68,7 @@ export default function ClinicalKnowledgePage() {
       setCategory("");
     } catch (err) {
       setActionError(
-        err instanceof Error ? err.message : "Falha ao criar artigo.",
+        err instanceof Error ? err.message : k.errorCreate,
       );
     }
   }
@@ -75,9 +76,7 @@ export default function ClinicalKnowledgePage() {
   if (!canManage) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-10">
-        <p className="text-sm text-foreground/50">
-          Sem permissão para gerenciar a base curada.
-        </p>
+        <p className="text-sm text-foreground/50">{k.noPermission}</p>
       </div>
     );
   }
@@ -92,45 +91,81 @@ export default function ClinicalKnowledgePage() {
         <h1 className="text-2xl font-bold text-foreground/90 mb-1">
           {t.pages.knowledge}
         </h1>
-        <p className="text-sm text-foreground/40 mb-6">
-          RAG curado (RF-073) · só artigos publicados entram nas sínteses ·
-          humano no comando
-        </p>
+        <p className="text-sm text-foreground/40 mb-5">{k.description}</p>
 
-        <div className="glass-panel p-4 mb-4 border border-amber-500/15">
-          <p className="text-[11px] text-foreground/50 leading-relaxed">
-            Conteúdo educativo/governança — não é protocolo diagnóstico. Catálogo
-            da plataforma é somente leitura; a clínica pode publicar artigos
-            próprios.
+        <section className="rounded-2xl border border-[var(--clinic-border)] bg-[var(--clinic-panel)] p-4 sm:p-5 mb-4 space-y-5">
+          <div>
+            <h2 className="text-sm font-semibold text-foreground/85 mb-1.5">
+              {k.purposeTitle}
+            </h2>
+            <p className="text-sm text-[var(--clinic-muted)] leading-relaxed">
+              {k.purposeBody}
+            </p>
+          </div>
+
+          <div>
+            <h2 className="text-sm font-semibold text-foreground/85 mb-2">
+              {k.workflowTitle}
+            </h2>
+            <ol className="list-decimal pl-4 space-y-1.5 text-sm text-[var(--clinic-muted)] leading-relaxed">
+              {k.workflowSteps.map((step) => (
+                <li key={step}>{step}</li>
+              ))}
+            </ol>
+          </div>
+
+          <div>
+            <h2 className="text-sm font-semibold text-foreground/85 mb-3">
+              {k.examplesTitle}
+            </h2>
+            <ul className="space-y-3">
+              {k.examples.map((example) => (
+                <li
+                  key={example.title}
+                  className="rounded-xl border border-[var(--clinic-border)] bg-foreground/[0.02] px-3.5 py-3"
+                >
+                  <p className="text-xs font-semibold text-[var(--clinic-accent)] mb-1">
+                    {example.title}
+                  </p>
+                  <p className="text-sm text-[var(--clinic-muted)] leading-relaxed">
+                    {example.body}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <p className="text-[11px] text-foreground/45 leading-relaxed border-t border-[var(--clinic-border)] pt-3">
+            {k.disclaimer}
           </p>
-        </div>
+        </section>
+
+        <ClinicToolHelp page="conhecimento" defaultTopicId="exemplos" />
 
         <form onSubmit={handleCreate} className="glass-panel p-4 space-y-3 mb-6">
-          <p className="text-xs font-medium text-foreground/55">
-            Novo artigo da clínica
-          </p>
+          <p className="text-xs font-medium text-foreground/55">{k.formTitle}</p>
           <Input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Título"
+            placeholder={k.titlePlaceholder}
           />
           <Input
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            placeholder="Categoria (opcional)"
+            placeholder={k.categoryPlaceholder}
           />
           <textarea
             value={body}
             onChange={(e) => setBody(e.target.value)}
             rows={5}
-            placeholder="Conteúdo curado"
+            placeholder={k.bodyPlaceholder}
             className="w-full rounded-xl px-4 py-3 text-sm bg-foreground/[0.03] border border-foreground/[0.08] text-foreground/90"
           />
           {actionError && (
             <p className="text-xs text-red-400">{actionError}</p>
           )}
           <Button type="submit" isLoading={create.isPending}>
-            Salvar rascunho
+            {k.saveDraft}
           </Button>
         </form>
 
@@ -142,7 +177,7 @@ export default function ClinicalKnowledgePage() {
             message={
               list.error instanceof Error
                 ? list.error.message
-                : "Falha ao carregar artigos."
+                : k.errorLoad
             }
             onRetry={() => list.refetch()}
           />
@@ -157,8 +192,8 @@ export default function ClinicalKnowledgePage() {
                     {item.title}
                   </p>
                   <p className="text-[11px] text-foreground/40 mt-0.5">
-                    {item.scope === "PLATFORM" ? "Plataforma" : "Clínica"} ·{" "}
-                    {STATUS_LABEL[item.status]}
+                    {item.scope === "PLATFORM" ? k.scopePlatform : k.scopeClinic}{" "}
+                    · {statusLabel[item.status]}
                     {item.category ? ` · ${item.category}` : ""}
                   </p>
                 </div>
@@ -175,7 +210,7 @@ export default function ClinicalKnowledgePage() {
                         isLoading={publish.isPending}
                         onClick={() => publish.mutate(item.id)}
                       >
-                        Publicar
+                        {k.publish}
                       </Button>
                     )}
                   {item.status === "PUBLICADO" && (
@@ -185,7 +220,7 @@ export default function ClinicalKnowledgePage() {
                       isLoading={archive.isPending}
                       onClick={() => archive.mutate(item.id)}
                     >
-                      Arquivar
+                      {k.archive}
                     </Button>
                   )}
                   {canDelete && (
@@ -195,7 +230,7 @@ export default function ClinicalKnowledgePage() {
                       isLoading={remove.isPending}
                       onClick={() => remove.mutate(item.id)}
                     >
-                      Excluir
+                      {k.delete}
                     </Button>
                   )}
                 </div>

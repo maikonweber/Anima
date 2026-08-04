@@ -12,6 +12,8 @@ import type { Plan, PlanSlug } from "@/types/subscription";
 interface PlanCardProps {
   plan: Plan;
   isCurrent?: boolean;
+  /** Assinatura paga ativa noutro produto (Pleno ↔ Cuidado). */
+  isTrackIncompatible?: boolean;
   onSubscribe?: (slug: Exclude<PlanSlug, "essencial" | "preview">) => void;
   isLoading?: boolean;
   showUsage?: boolean;
@@ -22,6 +24,7 @@ interface PlanCardProps {
 export function PlanCard({
   plan,
   isCurrent,
+  isTrackIncompatible = false,
   onSubscribe,
   isLoading,
   showUsage,
@@ -72,6 +75,12 @@ export function PlanCard({
         {plan.slug === "essencial" ? (
           <p className="text-center text-sm font-medium text-foreground/50 py-3">
             {isCurrent ? "Seu plano gratuito" : "Incluído na conta"}
+          </p>
+        ) : isTrackIncompatible ? (
+          <p className="text-center text-sm font-medium text-foreground/50 py-3">
+            {plan.slug === "pleno"
+              ? "App do paciente — incompatível com Cuidado"
+              : "App do profissional — incompatível com Pleno"}
           </p>
         ) : canCheckout ? (
           <Button

@@ -91,8 +91,8 @@ export const homeEn = {
         text: "Professional plan in the app: read-only dashboards for patients who invite you — not the clinic chart.",
         bullets: [
           "Unlimited invite-based dashboards",
-          "Continuous emotional context",
-          "Patients inherit Pleno benefits",
+          "Sponsored Pleno (+ R$ 5/mo per linked patient)",
+          "Email invite to link to the app",
         ],
         cta: "Subscribe to Cuidado",
         href: "cuidado-checkout",
@@ -181,8 +181,8 @@ export const homeEn = {
         tagline: "Follow those who invite you.",
         features: [
           "Unlimited invite-based dashboards",
-          "Read-only between sessions",
-          "Patients inherit Pleno benefits",
+          "Sponsored Pleno (+ R$ 5/mo per patient)",
+          "Email invite to link patients",
         ],
         cta: "I am a professional",
         highlighted: false,

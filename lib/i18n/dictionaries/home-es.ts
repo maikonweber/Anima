@@ -91,8 +91,8 @@ export const homeEs = {
         text: "Plan profesional en la app: paneles de solo lectura para pacientes que te invitan — no es el expediente de la clínica.",
         bullets: [
           "Paneles ilimitados por invitación",
-          "Contexto emocional continuo",
-          "Los pacientes heredan beneficios Pleno",
+          "Pacientes heredan Pleno (+ R$ 5/mes por vínculo)",
+          "Invitación por e-mail para vincular al app",
         ],
         cta: "Suscribirse al plan Cuidado",
         href: "cuidado-checkout",
@@ -181,8 +181,8 @@ export const homeEs = {
         tagline: "Acompaña a quienes te invitan.",
         features: [
           "Paneles ilimitados por invitación",
-          "Solo lectura entre sesiones",
-          "Los pacientes heredan beneficios Pleno",
+          "Pleno patrocinado (+ R$ 5/mes por paciente)",
+          "Invitación por e-mail para vincular",
         ],
         cta: "Soy profesional",
         highlighted: false,

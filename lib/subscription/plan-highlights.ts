@@ -4,8 +4,9 @@ import type { PlanLimits, PlanSlug } from "@/types/subscription";
 const PLAN_TAGLINES: Record<PlanSlug, string> = {
   essencial: "Para começar a se entender — diário e SENTIO AI no seu ritmo.",
   pleno: "Segundo cérebro completo: memória, tracking, 500 interações do assistente/mês e 1 profissional — R$ 9,99.",
+  /** Cuidado: base do profissional + R$ 5/mês por paciente Pleno patrocinado. */
   cuidado:
-    "Para profissionais no app: dashboards ilimitados por convite e 500 interações do assistente/mês.",
+    "Para profissionais: dashboards por convite, Pleno patrocinado (+ R$ 5/mês por paciente) e 500 mensagens do assistente/mês.",
   preview: "Modo demonstração — limites ampliados durante o período experimental",
 };
 
@@ -63,7 +64,9 @@ export function buildPlanHighlights(limits: PlanLimits): string[] {
       `Até ${limits.accessiblePatients} dashboards Cuidado (leitura, por convite)`,
     );
   } else if (limits.canViewSharedDashboard && limits.accessiblePatients === null) {
-    items.push("Dashboards Cuidado ilimitados (leitura, por convite)");
+    items.push(
+      "Dashboards Cuidado ilimitados · Pleno patrocinado (+ R$ 5/mês por paciente)",
+    );
   }
 
   if (limits.canShareDashboard && !items.some((i) => i.toLowerCase().includes("compartilh"))) {

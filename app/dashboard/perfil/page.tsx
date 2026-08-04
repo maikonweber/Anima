@@ -12,6 +12,10 @@ import { Input } from "@/components/ui/Input";
 import { ApiError } from "@/lib/api-client";
 import { deleteAccountApi } from "@/lib/api/auth";
 import { clearAuth } from "@/lib/auth/storage";
+import {
+  useLeaveClinic,
+  useMyClinicLinks,
+} from "@/hooks/use-patients";
 import { useAuth } from "@/providers/auth-provider";
 import { useSubscription } from "@/providers/subscription-provider";
 
@@ -28,6 +32,10 @@ export default function PerfilPage() {
     previewMode,
   } = useSubscription();
 
+  const clinicLinks = useMyClinicLinks();
+  const leaveClinic = useLeaveClinic();
+  const [leavingOrgId, setLeavingOrgId] = useState<string | null>(null);
+  const [leaveError, setLeaveError] = useState<string | null>(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [confirmationEmail, setConfirmationEmail] = useState("");
   const [senha, setSenha] = useState("");
@@ -140,6 +148,67 @@ export default function PerfilPage() {
         </div>
       </motion.div>
 
+      {(clinicLinks.data?.length ?? 0) > 0 && (
+        <motion.div
+          className="glass-panel p-6 mt-6"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.12 }}
+        >
+          <h2 className="text-sm font-semibold text-foreground/70 mb-2">
+            Clínicas vinculadas
+          </h2>
+          <p className="text-[11px] text-foreground/40 mb-4">
+            Você pode se desvincular a qualquer momento. Se o Pleno vier do
+            profissional, o benefício termina ao sair.
+          </p>
+          <div className="space-y-3">
+            {clinicLinks.data?.map((link) => (
+              <div
+                key={`${link.organizationId}-${link.patientId}`}
+                className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-t border-foreground/[0.06] pt-3 first:border-0 first:pt-0"
+              >
+                <div>
+                  <p className="text-sm font-medium text-foreground/75">
+                    {link.organizationName}
+                  </p>
+                  <p className="text-[11px] text-foreground/40">
+                    Cadastro: {link.patientFullName}
+                  </p>
+                </div>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  className="!w-auto text-xs"
+                  isLoading={
+                    leaveClinic.isPending && leavingOrgId === link.organizationId
+                  }
+                  onClick={() => {
+                    setLeaveError(null);
+                    setLeavingOrgId(link.organizationId);
+                    void leaveClinic
+                      .mutateAsync(link.organizationId)
+                      .catch((err: unknown) => {
+                        setLeaveError(
+                          err instanceof Error
+                            ? err.message
+                            : "Não foi possível desvincular.",
+                        );
+                      })
+                      .finally(() => setLeavingOrgId(null));
+                  }}
+                >
+                  Desvincular
+                </Button>
+              </div>
+            ))}
+          </div>
+          {leaveError && (
+            <p className="text-xs text-red-500 mt-3">{leaveError}</p>
+          )}
+        </motion.div>
+      )}
+
       <motion.div
         className="glass-panel p-6 mt-6"
         initial={{ opacity: 0, y: 16 }}
@@ -163,6 +232,18 @@ export default function PerfilPage() {
                 vínculo com seu profissional — conforme retornado pela API.
               </p>
             )}
+            {subscription?.sponsoredPlenoSeats &&
+              subscription.sponsoredPlenoSeats.count > 0 && (
+                <p className="text-[10px] text-foreground/45 max-w-xs">
+                  Assentos Pleno patrocinados:{" "}
+                  {subscription.sponsoredPlenoSeats.count} × R${" "}
+                  {subscription.sponsoredPlenoSeats.unitPriceBrl.toFixed(2)} = R${" "}
+                  {subscription.sponsoredPlenoSeats.estimatedMonthlyBrl.toFixed(
+                    2,
+                  )}
+                  /mês
+                </p>
+              )}
             {(previewMode || isPreviewPlan) && (
               <p className="text-[10px] text-foreground/40">
                 Modo demonstração ativo.

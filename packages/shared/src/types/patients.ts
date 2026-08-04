@@ -83,6 +83,62 @@ export type UpdatePatientPayload = Partial<CreatePatientPayload> & {
 
 export type LinkPatientAppUserPayload = {
   email: string;
+  /** Concede Pleno patrocinado (assento R$ 5). Default true no backend. */
+  grantPleno?: boolean;
+};
+
+export type PatientAppInviteStatus =
+  | "PENDENTE"
+  | "ACEITO"
+  | "REVOGADO"
+  | "EXPIRADO";
+
+export type PatientAppInvite = {
+  id: string;
+  organizationId: string;
+  patientId: string;
+  email: string;
+  status: PatientAppInviteStatus;
+  grantPleno: boolean;
+  invitedByUserId: string;
+  sponsorUserId: string | null;
+  acceptedUserId: string | null;
+  expiresAt: string;
+  criadoEm: string;
+  aceitoEm: string | null;
+  revogadoEm: string | null;
+};
+
+export type CreatePatientAppInvitePayload = {
+  email?: string;
+  grantPleno?: boolean;
+};
+
+export type AcceptPatientAppInvitePayload = {
+  token: string;
+};
+
+export type PatientAppInvitePublic = {
+  status: PatientAppInviteStatus;
+  grantPleno: boolean;
+  email: string;
+  expiresAt: string;
+  expirado: boolean;
+  organization: { id: string; name: string };
+  patient: { id: string; fullName: string };
+  inviter: { id: string; nome: string };
+};
+
+export type ClinicLink = {
+  organizationId: string;
+  organizationName: string;
+  patientId: string;
+  patientFullName: string;
+  membershipStatus: string | null;
+  membershipRole: string | null;
+  primaryProfessionalUserId: string | null;
+  sponsoredByPsychologist: boolean;
+  vinculadoEm: string;
 };
 
 export type UpdatePatientStatusPayload = {

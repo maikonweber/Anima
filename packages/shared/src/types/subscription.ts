@@ -21,6 +21,12 @@ export type SubscriptionSummary = {
   stripeConfigured?: boolean;
   /** Usuário com benefícios tipo Pleno via profissional no plano Cuidado */
   sponsoredByPsychologist?: boolean;
+  /** Assentos Pleno patrocinados (Cuidado): R$ 5/mês por paciente vinculado */
+  sponsoredPlenoSeats?: {
+    count: number;
+    unitPriceBrl: number;
+    estimatedMonthlyBrl: number;
+  };
   /** Resposta em modo demonstração (slug pode ser `preview`) */
   preview?: boolean;
   usage: {

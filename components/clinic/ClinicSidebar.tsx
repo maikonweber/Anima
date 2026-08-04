@@ -80,6 +80,13 @@ export function ClinicSidebar() {
           match: (p) => p.includes("/disponibilidade"),
           icon: ClockIcon,
         },
+        {
+          href: `${base}/whatsapp`,
+          label: t.nav.whatsapp,
+          shortLabel: t.nav.whatsappShort,
+          match: (p) => p.startsWith(`${base}/whatsapp`),
+          icon: WhatsAppIcon,
+        },
       );
     }
     if (canClinical) {
@@ -440,6 +447,23 @@ function AuditIcon({ active }: { active: boolean }) {
   return (
     <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={active ? 2 : 1.5}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+    </svg>
+  );
+}
+
+function WhatsAppIcon({ active }: { active: boolean }) {
+  return (
+    <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={active ? 2 : 1.5}>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M8.625 9.75h.008v.008H8.625V9.75zm3.375 0h.008v.008H12V9.75zm3.375 0h.008v.008h-.008V9.75zm-9.75 7.5c.621 0 1.215-.056 1.78-.16L12 21l2.595-3.91A9 9 0 1012 21"
+      />
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M20.25 12a8.25 8.25 0 11-16.5 0 8.25 8.25 0 0116.5 0z"
+      />
     </svg>
   );
 }

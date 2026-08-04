@@ -52,6 +52,17 @@ function quickActions(
       subtitle: qa.agenda.subtitle,
     },
   ];
+  if (
+    role === "CLINIC_ADMIN" ||
+    role === "PROFESSIONAL" ||
+    role === "SECRETARY"
+  ) {
+    items.push({
+      href: `/clinic/${orgId}/whatsapp`,
+      title: qa.whatsapp.title,
+      subtitle: qa.whatsapp.subtitle,
+    });
+  }
   if (role === "CLINIC_ADMIN" || role === "PROFESSIONAL") {
     items.push(
       {

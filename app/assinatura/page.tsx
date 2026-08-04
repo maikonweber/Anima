@@ -3,7 +3,12 @@
 import { Suspense, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "motion/react";
-import { getCheckoutErrorMessage } from "@/lib/subscription/checkout";
+import {
+  canSubscribeToPlan,
+  getBilledPaidPlanSlug,
+  getCheckoutErrorMessage,
+  PLAN_TRACK_INCOMPATIBLE_MESSAGE,
+} from "@/lib/subscription/checkout";
 import { isCheckoutPlanSlug } from "@/lib/subscription/acquisition";
 import { PlanCard } from "@/components/subscription/PlanCard";
 import { SubscriptionUsagePanel } from "@/components/subscription/SubscriptionUsagePanel";
@@ -36,6 +41,8 @@ function AssinaturaPageContent() {
     isPreviewPlan,
     previewMode,
     checkoutEnabled,
+    sponsoredByPsychologist,
+    hasPaidSubscription,
   } = useSubscription();
   const { data: plans, isLoading, error, refetch } = usePlans();
   const checkout = useCheckout();
@@ -44,6 +51,11 @@ function AssinaturaPageContent() {
 
   const highlightPlan = searchParams.get("plan") as PlanSlug | null;
   const wantsAutoCheckout = searchParams.get("checkout") === "1";
+  const billedPaidSlug = getBilledPaidPlanSlug({
+    planSlug,
+    sponsoredByPsychologist,
+    hasPaidSubscription,
+  });
 
   useEffect(() => {
     if (wantsAutoCheckout || !isCheckoutPlanSlug(highlightPlan)) return;
@@ -65,6 +77,10 @@ function AssinaturaPageContent() {
   async function handleSubscribe(
     slug: Exclude<PlanSlug, "essencial" | "preview">,
   ) {
+    if (!canSubscribeToPlan(billedPaidSlug, slug)) {
+      setCheckoutError(PLAN_TRACK_INCOMPATIBLE_MESSAGE);
+      return;
+    }
     setCheckoutError(null);
     try {
       await checkout.mutateAsync(slug);
@@ -85,6 +101,13 @@ function AssinaturaPageContent() {
 
     if (planSlug === highlightPlan) {
       autoCheckoutStarted.current = true;
+      router.replace(`/assinatura?plan=${highlightPlan}`);
+      return;
+    }
+
+    if (!canSubscribeToPlan(billedPaidSlug, highlightPlan)) {
+      autoCheckoutStarted.current = true;
+      setCheckoutError(PLAN_TRACK_INCOMPATIBLE_MESSAGE);
       router.replace(`/assinatura?plan=${highlightPlan}`);
       return;
     }
@@ -120,6 +143,7 @@ function AssinaturaPageContent() {
     checkoutEnabled,
     highlightPlan,
     planSlug,
+    billedPaidSlug,
     router,
   ]);
 
@@ -151,6 +175,7 @@ function AssinaturaPageContent() {
     checkoutEnabled &&
     isCheckoutPlanSlug(highlightPlan) &&
     planSlug !== highlightPlan &&
+    canSubscribeToPlan(billedPaidSlug, highlightPlan) &&
     (checkout.isPending || !checkoutError);
 
   return (
@@ -216,6 +241,10 @@ function AssinaturaPageContent() {
                 <PlanCard
                   plan={plan}
                   isCurrent={plan.slug === currentSlug}
+                  isTrackIncompatible={
+                    !canSubscribeToPlan(billedPaidSlug, plan.slug) &&
+                    plan.slug !== currentSlug
+                  }
                   onSubscribe={handleSubscribe}
                   isLoading={checkout.isPending}
                   checkoutEnabled={checkoutEnabled}

@@ -85,12 +85,6 @@ export function Sidebar() {
         icon: AssistantChatIcon,
       },
       { href: "/care/patients", label: t.nav.carePatients, icon: PatientsIcon },
-      {
-        href: "/clinic",
-        label: t.nav.clinics,
-        shortLabel: t.nav.clinics,
-        icon: ClinicIcon,
-      },
       { href: "/dashboard/care", label: t.nav.invitePro, icon: ShareIcon },
       { href: "/dashboard/consents", label: t.nav.consents, icon: ShieldIcon },
       { href: "/dashboard/lembretes", label: t.nav.reminders, icon: BellIcon },

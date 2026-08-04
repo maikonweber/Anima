@@ -55,7 +55,9 @@ export function PaywallModal({
         <p className="text-sm text-foreground/50 mb-1">
           {error.code === "PLAN_LIMIT_OWNER_SHARE"
             ? "Quem registra momentos precisa do plano Pleno para autorizar você a visualizar o dashboard compartilhado."
-            : error.code === "PLAN_LIMIT_ACCESSIBLE_PATIENTS"
+            : error.code === "PLAN_LIMIT_CLINIC_ACCESS"
+              ? "A área de Clínicas (CRM profissional) é exclusiva do plano Cuidado. Free e Pleno são planos do app pessoal."
+              : error.code === "PLAN_LIMIT_ACCESSIBLE_PATIENTS"
               ? "Você atingiu o limite de pacientes no plano Cuidado. Entre em contato para ampliar sua capacidade."
               : error.code === "PLAN_LIMIT_ASSISTANT_MESSAGES"
                 ? (() => {
@@ -143,6 +145,7 @@ function getPaywallCta(
         showPlansLink: true,
       };
     case "PLAN_LIMIT_CARE_VIEW":
+    case "PLAN_LIMIT_CLINIC_ACCESS":
       return {
         primary: "Fazer upgrade",
         primaryHref: "/assinatura?plan=cuidado&checkout=1",

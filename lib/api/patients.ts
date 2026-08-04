@@ -6,4 +6,12 @@ export {
   updatePatientStatus,
   linkPatientAppUser,
   unlinkPatientAppUser,
+  createPatientAppInvite,
+  listPatientAppInvites,
+  revokePatientAppInvite,
+  getPatientAppInviteByToken,
+  acceptPatientAppInvite,
+  listMyClinicLinks,
+  leaveClinic,
+  deletePatient,
 } from "@anima/shared";
