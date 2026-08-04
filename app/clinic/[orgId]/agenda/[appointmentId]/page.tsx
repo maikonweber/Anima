@@ -117,11 +117,19 @@ export default function AppointmentDetailPage() {
     }
   }
 
-  const canManage =
-    data &&
+  const allowedNext = data?.allowedNextStatuses ?? [];
+  const canReschedule =
+    !!data &&
     (data.status === "AGENDADA" ||
       data.status === "CONFIRMADA" ||
       data.status === "REMARCADA");
+  const showConfirm =
+    !!data &&
+    data.status !== "CONFIRMADA" &&
+    allowedNext.includes("CONFIRMADA");
+  const showComplete = allowedNext.includes("CONCLUIDA");
+  const showNoShow = allowedNext.includes("NO_SHOW");
+  const hasStatusActions = showConfirm || showComplete || showNoShow;
 
   const canTeleconsult =
     data &&
@@ -277,39 +285,46 @@ export default function AppointmentDetailPage() {
               </div>
             )}
 
-            {canManage && (
+            {(canReschedule || hasStatusActions) && (
               <div className="space-y-4">
-                <div className="flex flex-wrap gap-2">
-                  {data.status !== "CONFIRMADA" && (
-                    <Button
-                      type="button"
-                      className="w-auto"
-                      isLoading={updateAppointment.isPending}
-                      onClick={() => runUpdate({ status: "CONFIRMADA" })}
-                    >
-                      Confirmar
-                    </Button>
-                  )}
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    className="w-auto"
-                    isLoading={updateAppointment.isPending}
-                    onClick={() => runUpdate({ status: "CONCLUIDA" })}
-                  >
-                    Marcar concluída
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    className="w-auto"
-                    isLoading={updateAppointment.isPending}
-                    onClick={() => runUpdate({ status: "NO_SHOW" })}
-                  >
-                    Registrar falta
-                  </Button>
-                </div>
+                {hasStatusActions && (
+                  <div className="flex flex-wrap gap-2">
+                    {showConfirm && (
+                      <Button
+                        type="button"
+                        className="w-auto"
+                        isLoading={updateAppointment.isPending}
+                        onClick={() => runUpdate({ status: "CONFIRMADA" })}
+                      >
+                        Confirmar
+                      </Button>
+                    )}
+                    {showComplete && (
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        className="w-auto"
+                        isLoading={updateAppointment.isPending}
+                        onClick={() => runUpdate({ status: "CONCLUIDA" })}
+                      >
+                        Marcar concluída
+                      </Button>
+                    )}
+                    {showNoShow && (
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        className="w-auto"
+                        isLoading={updateAppointment.isPending}
+                        onClick={() => runUpdate({ status: "NO_SHOW" })}
+                      >
+                        Registrar falta
+                      </Button>
+                    )}
+                  </div>
+                )}
 
+                {canReschedule && (
                 <form
                   onSubmit={handleReschedule}
                   className="glass-panel p-5 space-y-3"
@@ -335,7 +350,9 @@ export default function AppointmentDetailPage() {
                     Salvar remarcação
                   </Button>
                 </form>
+                )}
 
+                {canReschedule && (
                 <div className="glass-panel p-5 space-y-3">
                   <h2 className="text-base font-semibold text-foreground/80">
                     Cancelar
@@ -361,6 +378,7 @@ export default function AppointmentDetailPage() {
                     Cancelar sessão
                   </Button>
                 </div>
+                )}
               </div>
             )}
 

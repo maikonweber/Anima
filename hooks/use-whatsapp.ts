@@ -11,6 +11,7 @@ import {
   listWhatsAppInstances,
   listWhatsAppMessages,
   sendWhatsAppConversationMessage,
+  sendWhatsAppPatientMessage,
   setWhatsAppConversationAi,
 } from "@anima/shared";
 import { useAuth } from "@/providers/auth-provider";
@@ -110,6 +111,19 @@ export function useSendWhatsAppMessage(orgId: string) {
       void queryClient.invalidateQueries({
         queryKey: ["whatsapp-messages", orgId, vars.conversationId],
       });
+      void queryClient.invalidateQueries({
+        queryKey: ["whatsapp-conversations", orgId],
+      });
+    },
+  });
+}
+
+export function useSendWhatsAppPatientMessage(orgId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (vars: { patientId: string; body: string }) =>
+      sendWhatsAppPatientMessage(orgId, vars.patientId, vars.body),
+    onSuccess: () => {
       void queryClient.invalidateQueries({
         queryKey: ["whatsapp-conversations", orgId],
       });

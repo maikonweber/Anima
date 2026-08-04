@@ -31,6 +31,8 @@ export type Appointment = {
   startsAt: string;
   endsAt: string;
   status: AppointmentStatus;
+  /** Transições válidas retornadas pela API — use na UI de ações. */
+  allowedNextStatuses?: AppointmentStatus[];
   modality: AppointmentModality;
   timezone: string;
   locationOrLink: string | null;
