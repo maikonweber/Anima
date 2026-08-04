@@ -38,6 +38,21 @@ export const faqEntriesEn: FaqEntry[] = [
       "Yes. Cuidado is for professionals in the EmotiveCare app: follow read-only dashboards when patients invite you. It fits psychologists, psychiatrists, and other authorized companions. To run the clinic (CRM, agenda, teleconsult), use EmotiveCare Clinics.",
   },
   {
+    question: "How do I sign up for EmotiveCare?",
+    answer:
+      "Everyone starts on the free Essential plan via email or Google registration. There is no plan choice at signup — after login you upgrade to Pleno (personal app, R$ 9.99/mo) or Cuidado (professional app, R$ 149/mo) on the subscription page.",
+  },
+  {
+    question: "How does a Pleno patient link a Cuidado professional?",
+    answer:
+      "The Pleno patient sends a secure email invite (care invite). The Cuidado professional accepts and sees a read-only dashboard — only what the patient authorized, with pause or revoke anytime. Essential (free) accounts cannot send or accept this link.",
+  },
+  {
+    question: "How can a Cuidado professional grant Pleno to a free patient?",
+    answer:
+      "Through the clinic (EmotiveCare Clinics): the Cuidado professional sends a patient invite with sponsored Pleno (grantPleno). The patient accepts with their app account; they stay Essential in the database but get Pleno-equivalent limits. The professional pays R$ 5/mo per sponsored patient on the Cuidado plan.",
+  },
+  {
     question: "Can I share records with my psychologist or psychiatrist?",
     answer:
       "Yes. In the app via Pleno/Cuidado invites with pause/revoke. In Clinics, consent is purpose-based (e.g. TELECONSULTA, PRONTUARIO, DIARIO_CHECKIN) and the patient controls what to release.",

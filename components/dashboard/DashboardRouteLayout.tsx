@@ -5,6 +5,7 @@ import { DM_Sans } from "next/font/google";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth/AuthContext";
 import { Sidebar } from "@/components/dashboard/Sidebar";
+import { PatientRorschachLoader } from "@/components/patient/PatientRorschachLoader";
 import { useLocale } from "@/lib/i18n/locale-provider";
 import { getProductDictionary } from "@/lib/i18n/product-dictionary";
 import { useSubscription } from "@/providers/subscription-provider";
@@ -47,14 +48,8 @@ export function DashboardRouteLayout({
 
   if (isLoading) {
     return (
-      <div
-        className={`patient-shell min-h-full flex items-center justify-center ${dmSans.variable} font-[family-name:var(--font-patient)]`}
-        style={{ colorScheme: "light" }}
-      >
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 rounded-full border-2 border-anima-violet/30 border-t-anima-violet animate-spin" />
-          <p className="text-sm text-foreground/40">{t.common.loading}</p>
-        </div>
+      <div className={dmSans.variable}>
+        <PatientRorschachLoader label={t.common.loading} />
       </div>
     );
   }

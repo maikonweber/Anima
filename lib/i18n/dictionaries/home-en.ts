@@ -90,10 +90,10 @@ export const homeEn = {
         id: "cuidado",
         eyebrow: "App · Cuidado",
         title: "For those who follow between sessions",
-        text: "Professional plan in the app: read-only dashboards for patients who invite you — not the clinic chart.",
+        text: "Professional plan in the app — R$ 149/mo: read-only dashboards for patients who invite you — not the clinic chart.",
         bullets: [
           "Unlimited invite-based dashboards",
-          "Sponsored Pleno (+ R$ 5/mo per linked patient)",
+          "Up to 15 free accounts with sponsored Pleno (+ R$ 5/mo each)",
           "Email invite to link to the app",
         ],
         cta: "Subscribe to Cuidado",
@@ -139,6 +139,11 @@ export const homeEn = {
       },
     ],
   },
+  testimonials: {
+    title: "People using the platform",
+    subtitle:
+      "Stories from professionals and individuals who track their emotional journey with EmotiveCare.",
+  },
   plans: {
     title: "App plans",
     subtitle:
@@ -179,11 +184,11 @@ export const homeEn = {
       },
       {
         name: "Cuidado",
-        price: "Professional",
+        price: "R$ 149/mo",
         tagline: "Follow those who invite you.",
         features: [
           "Unlimited invite-based dashboards",
-          "Sponsored Pleno (+ R$ 5/mo per patient)",
+          "Up to 15 free accounts with sponsored Pleno (+ R$ 5/mo each)",
           "Email invite to link patients",
         ],
         cta: "I am a professional",
@@ -213,6 +218,21 @@ export const homeEn = {
         question: "How does SENTIO AI work?",
         answer:
           "It synthesizes patterns and suggestions from what you log — or, in Clinics, drafts professionals review before charting.",
+      },
+      {
+        question: "How do I sign up for EmotiveCare?",
+        answer:
+          "Everyone starts on the free Essential plan via email or Google registration. There is no plan choice at signup — after login you can upgrade to Pleno (personal app) or Cuidado (professional app) on the subscription page.",
+      },
+      {
+        question: "How does a Pleno patient link a Cuidado professional?",
+        answer:
+          "The Pleno patient sends the invite: a secure email invitation. The professional on the Cuidado plan accepts and sees a read-only dashboard — only what the patient authorized. Essential (free) cannot send or accept this type of link.",
+      },
+      {
+        question: "How can a Cuidado professional grant Pleno to a free patient?",
+        answer:
+          "Through the clinic (EmotiveCare Clinics): a Cuidado professional sends a patient invite with sponsored Pleno. The patient accepts with their app account; they stay Essential in the database but get Pleno-equivalent limits. The professional pays R$ 5/mo per sponsored patient.",
       },
       {
         question: "Can I share with my psychologist?",

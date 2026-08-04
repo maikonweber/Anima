@@ -32,6 +32,8 @@ export * from "./api/clinical-knowledge";
 export * from "./api/clinical-alerts";
 export * from "./api/crisis-resources";
 export * from "./api/whatsapp";
+export * from "./api/marketing";
+export * from "./api/home-testimonials";
 
 export {
   configureTokenStorage,
@@ -88,3 +90,4 @@ export * from "./validations/auth";
 export * from "./validations/diary";
 export * from "./validations/care";
 export * from "./validations/feedback";
+export * from "./validations/marketing";

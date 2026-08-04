@@ -19,6 +19,8 @@ export const CONSENT_PURPOSE_LABELS: Record<ConsentPurpose, string> = {
   PRONTUARIO: "Prontuário",
   DIARIO_CHECKIN: "Diário / check-in",
   TELECONSULTA: "Teleconsulta",
+  TELECONSULTA_TRANSCRICAO: "Transcrição da teleconsulta",
+  TELECONSULTA_MULTIMODAL: "Gravação multimodal da teleconsulta",
   IA_ASSISTIVA: "IA assistiva",
   PESQUISA_QUALIDADE: "Pesquisa e qualidade",
   DASHBOARD_PROFISSIONAL: "Dashboard profissional",

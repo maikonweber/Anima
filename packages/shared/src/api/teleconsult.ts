@@ -1,11 +1,16 @@
 import { api } from "../api-client";
 import type {
+  AppendTranscriptionSegmentsPayload,
   ListTeleconsultMessagesQuery,
+  PostMultimodalAggregatePayload,
   PostTeleconsultMessagePayload,
   PostTeleconsultSignalPayload,
   TeleconsultMessage,
+  TeleconsultMultimodalAggregate,
+  TeleconsultRecording,
   TeleconsultSession,
   TeleconsultSignalMessage,
+  TeleconsultTranscription,
 } from "../types/teleconsult";
 import type { AiSynthesis } from "../types/ai-syntheses";
 
@@ -136,6 +141,160 @@ export async function pullTeleconsultSignals(
   const qs = afterId ? `?afterId=${encodeURIComponent(afterId)}` : "";
   return api<TeleconsultSignalMessage[]>(
     `/organizations/${encodeURIComponent(orgId)}/teleconsult/${encodeURIComponent(sessionId)}/signal${qs}`,
+    { auth: true },
+  );
+}
+
+export async function startTeleconsultTranscription(
+  orgId: string,
+  sessionId: string,
+) {
+  return api<TeleconsultTranscription>(
+    `/organizations/${encodeURIComponent(orgId)}/teleconsult/${encodeURIComponent(sessionId)}/transcription/start`,
+    { method: "POST", auth: true, body: "{}" },
+  );
+}
+
+export async function stopTeleconsultTranscription(
+  orgId: string,
+  sessionId: string,
+) {
+  return api<TeleconsultTranscription>(
+    `/organizations/${encodeURIComponent(orgId)}/teleconsult/${encodeURIComponent(sessionId)}/transcription/stop`,
+    { method: "POST", auth: true, body: "{}" },
+  );
+}
+
+export async function getTeleconsultTranscription(
+  orgId: string,
+  sessionId: string,
+) {
+  return api<TeleconsultTranscription | { transcription: null; segments: [] }>(
+    `/organizations/${encodeURIComponent(orgId)}/teleconsult/${encodeURIComponent(sessionId)}/transcription`,
+    { auth: true },
+  );
+}
+
+export async function appendTeleconsultTranscriptionSegments(
+  orgId: string,
+  sessionId: string,
+  payload: AppendTranscriptionSegmentsPayload,
+) {
+  return api<{
+    transcriptionId: string;
+    inserted: number;
+    segments: Array<{
+      id: string;
+      speaker: string;
+      text: string;
+      confidence: number | null;
+      criadoEm: string;
+    }>;
+  }>(
+    `/organizations/${encodeURIComponent(orgId)}/teleconsult/${encodeURIComponent(sessionId)}/transcription/segments`,
+    {
+      method: "POST",
+      auth: true,
+      body: JSON.stringify(payload),
+    },
+  );
+}
+
+export async function postTeleconsultMultimodalAggregate(
+  orgId: string,
+  sessionId: string,
+  payload: PostMultimodalAggregatePayload,
+) {
+  return api<TeleconsultMultimodalAggregate>(
+    `/organizations/${encodeURIComponent(orgId)}/teleconsult/${encodeURIComponent(sessionId)}/multimodal/aggregates`,
+    {
+      method: "POST",
+      auth: true,
+      body: JSON.stringify(payload),
+    },
+  );
+}
+
+export async function listTeleconsultMultimodalAggregates(
+  orgId: string,
+  sessionId: string,
+) {
+  return api<{ aggregates: TeleconsultMultimodalAggregate[] }>(
+    `/organizations/${encodeURIComponent(orgId)}/teleconsult/${encodeURIComponent(sessionId)}/multimodal/aggregates`,
+    { auth: true },
+  );
+}
+
+export async function startTeleconsultRecording(
+  orgId: string,
+  sessionId: string,
+) {
+  return api<TeleconsultRecording>(
+    `/organizations/${encodeURIComponent(orgId)}/teleconsult/${encodeURIComponent(sessionId)}/recordings/start`,
+    {
+      method: "POST",
+      auth: true,
+      body: JSON.stringify({
+        mediaType: "video",
+        contentType: "video/webm",
+        expectedSizeBytes: 2 * 1024 * 1024 * 1024,
+      }),
+    },
+  );
+}
+
+export async function getTeleconsultRecordingPartUrl(
+  orgId: string,
+  sessionId: string,
+  recordingId: string,
+  partNumber: number,
+) {
+  return api<{ partNumber: number; uploadUrl: string; expiresAt: string }>(
+    `/organizations/${encodeURIComponent(orgId)}/teleconsult/${encodeURIComponent(sessionId)}/recordings/${encodeURIComponent(recordingId)}/part`,
+    {
+      method: "POST",
+      auth: true,
+      body: JSON.stringify({ partNumber }),
+    },
+  );
+}
+
+export async function completeTeleconsultRecording(
+  orgId: string,
+  sessionId: string,
+  recordingId: string,
+  payload: {
+    parts: Array<{ partNumber: number; etag: string }>;
+    durationMs: number;
+  },
+) {
+  return api<TeleconsultRecording>(
+    `/organizations/${encodeURIComponent(orgId)}/teleconsult/${encodeURIComponent(sessionId)}/recordings/${encodeURIComponent(recordingId)}/complete`,
+    {
+      method: "POST",
+      auth: true,
+      body: JSON.stringify(payload),
+    },
+  );
+}
+
+export async function listTeleconsultRecordings(
+  orgId: string,
+  sessionId: string,
+) {
+  return api<TeleconsultRecording[]>(
+    `/organizations/${encodeURIComponent(orgId)}/teleconsult/${encodeURIComponent(sessionId)}/recordings`,
+    { auth: true },
+  );
+}
+
+export async function getTeleconsultRecordingDownload(
+  orgId: string,
+  sessionId: string,
+  recordingId: string,
+) {
+  return api<{ url: string; expiresAt: string }>(
+    `/organizations/${encodeURIComponent(orgId)}/teleconsult/${encodeURIComponent(sessionId)}/recordings/${encodeURIComponent(recordingId)}/download`,
     { auth: true },
   );
 }

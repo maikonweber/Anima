@@ -34,6 +34,15 @@ export const MODALITY_LABELS = {
   HIBRIDO: "Híbrido",
 } as const;
 
+export function dayLabel(dayOfWeek: number): string {
+  return DAY_LABELS[dayOfWeek] ?? `Dia ${dayOfWeek}`;
+}
+
+export function formatTimeLabel(value: string): string {
+  const match = /^(\d{2}:\d{2})/.exec(value);
+  return match ? match[1] : value;
+}
+
 export function AppointmentStatusBadge({
   status,
 }: {

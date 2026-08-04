@@ -107,3 +107,14 @@ export async function listConsentExports(orgId: string, patientId: string) {
     { auth: true },
   );
 }
+
+export async function getConsentExportDownload(
+  orgId: string,
+  patientId: string,
+  exportId: string,
+) {
+  return api<{ url: string; expiresAt: string }>(
+    `/organizations/${encodeURIComponent(orgId)}/patients/${encodeURIComponent(patientId)}/consents/export/${encodeURIComponent(exportId)}/download`,
+    { auth: true },
+  );
+}

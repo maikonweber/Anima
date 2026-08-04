@@ -80,6 +80,9 @@ export function useApproveAiSynthesis(orgId: string, patientId: string) {
       void queryClient.invalidateQueries({
         queryKey: ["clinical-notes", orgId, patientId],
       });
+      void queryClient.invalidateQueries({
+        queryKey: ["care-plans", orgId, patientId],
+      });
     },
   });
 }

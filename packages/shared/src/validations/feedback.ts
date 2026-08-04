@@ -23,6 +23,7 @@ export const feedbackSchema = z.object({
     .string()
     .trim()
     .max(254, "Contato deve ter no máximo 254 caracteres."),
+  attachmentIds: z.array(z.string().uuid()).max(3).optional(),
 });
 
 export type FeedbackFormInput = z.infer<typeof feedbackSchema>;

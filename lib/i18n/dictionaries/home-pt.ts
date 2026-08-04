@@ -89,10 +89,10 @@ export const homePt = {
         id: "cuidado",
         eyebrow: "App · Cuidado",
         title: "Para quem acompanha entre sessões",
-        text: "Plano do profissional no app: dashboards em leitura dos pacientes que convidam você — não é o prontuário da clínica.",
+        text: "Plano do profissional no app — R$ 149/mês: dashboards em leitura dos pacientes que convidam você — não é o prontuário da clínica.",
         bullets: [
           "Dashboards ilimitados por convite",
-          "Pacientes herdam Pleno (+ R$ 5/mês por vínculo)",
+          "Até 15 contas free com Pleno patrocinado (+ R$ 5/mês por conta)",
           "Convite por e-mail para vincular ao app",
         ],
         cta: "Assinar plano Cuidado",
@@ -138,6 +138,11 @@ export const homePt = {
       },
     ],
   },
+  testimonials: {
+    title: "Quem usa a plataforma",
+    subtitle:
+      "Depoimentos de profissionais e pessoas que acompanham sua jornada emocional com a EmotiveCare.",
+  },
   plans: {
     title: "Planos do app",
     subtitle:
@@ -178,11 +183,11 @@ export const homePt = {
       },
       {
         name: "Cuidado",
-        price: "Profissional",
+        price: "R$ 149/mês",
         tagline: "Acompanhe quem te convida.",
         features: [
           "Dashboards ilimitados por convite",
-          "Pleno patrocinado (+ R$ 5/mês por paciente)",
+          "Até 15 contas free com Pleno patrocinado (+ R$ 5/mês por conta)",
           "Convite por e-mail para vincular",
         ],
         cta: "Sou profissional",
@@ -212,6 +217,21 @@ export const homePt = {
         question: "Como funciona a SENTIO AI?",
         answer:
           "Sintetiza padrões e sugestões a partir do que você registra — ou, em Clínicas, rascunhos que o profissional revisa antes do prontuário.",
+      },
+      {
+        question: "Como me cadastro na EmotiveCare?",
+        answer:
+          "Todo mundo começa no plano Essencial (grátis) via registro com e-mail ou Google. Não há escolha de plano no cadastro — depois do login você pode fazer upgrade para Pleno (app da pessoa) ou Cuidado (app do profissional) na página de assinatura.",
+      },
+      {
+        question: "Como um paciente Pleno vincula um profissional Cuidado?",
+        answer:
+          "Quem convida é o paciente no plano Pleno: envia um convite seguro por e-mail. O profissional no plano Cuidado aceita e passa a ver o dashboard em leitura — só o que o paciente autorizou. O Essencial (grátis) não pode enviar nem aceitar esse tipo de vínculo.",
+      },
+      {
+        question: "Como um profissional Cuidado concede Pleno a um paciente gratuito?",
+        answer:
+          "Pela clínica (EmotiveCare Clínicas): o profissional no plano Cuidado envia convite ao e-mail do paciente com benefício Pleno patrocinado. O paciente aceita com a conta do app; continua Essencial no cadastro, mas ganha limites equivalentes ao Pleno. O profissional paga R$ 5/mês por paciente patrocinado.",
       },
       {
         question: "Posso compartilhar com meu(a) psicólogo(a)?",

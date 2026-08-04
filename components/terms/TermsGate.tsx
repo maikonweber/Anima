@@ -21,6 +21,8 @@ const EXCLUDED_PREFIXES = [
   "/verify-email",
   "/aguardando-verificacao",
   "/care-invite",
+  "/campanha",
+  "/depoimento",
   "/terms",
 ];
 

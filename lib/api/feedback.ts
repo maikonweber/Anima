@@ -1,1 +1,6 @@
-export { submitFeedback } from "@anima/shared";
+export {
+  deleteFeedbackAttachment,
+  reserveFeedbackAttachment,
+  submitFeedback,
+  uploadFeedbackAttachment,
+} from "@anima/shared";

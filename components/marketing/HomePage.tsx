@@ -18,6 +18,7 @@ import {
   clinicAppEntryHref,
   localizedAuthCheckoutHref,
 } from "@/lib/subscription/acquisition";
+import { HomeTestimonialsSection } from "@/components/marketing/HomeTestimonialsSection";
 
 function getHomeDictionary(locale: Locale): HomeDictionary {
   if (locale === "en") return homeEn as HomeDictionary;
@@ -327,6 +328,11 @@ export function HomePage({ locale }: { locale: Locale }) {
               </div>
             </div>
           </section>
+
+          <HomeTestimonialsSection
+            title={t.testimonials.title}
+            subtitle={t.testimonials.subtitle}
+          />
 
           <section
             id="planos"

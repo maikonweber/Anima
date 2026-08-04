@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { motion } from "motion/react";
 import {
@@ -8,7 +8,11 @@ import {
   FEEDBACK_TYPE_OPTIONS,
   type FeedbackType,
 } from "@anima/shared";
-import { submitFeedback } from "@/lib/api/feedback";
+import {
+  reserveFeedbackAttachment,
+  submitFeedback,
+  uploadFeedbackAttachment,
+} from "@/lib/api/feedback";
 import { feedbackSchema } from "@/lib/validations/feedback";
 import { useAuth } from "@/providers/auth-provider";
 import { Button } from "@/components/ui/Button";
@@ -31,6 +35,7 @@ export default function SuportePage() {
   const [status, setStatus] = useState<FormStatus>("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [protocolId, setProtocolId] = useState<string | null>(null);
+  const [images, setImages] = useState<File[]>([]);
 
   useEffect(() => {
     if (!contactPrefillDone && user?.email) {
@@ -66,26 +71,32 @@ export default function SuportePage() {
     const search = searchParams.toString();
     const page = `${pathname}${search ? `?${search}` : ""}`.slice(0, 2048);
 
-    const payload = {
-      type: parsed.data.type,
-      message: parsed.data.message,
-      ...(parsed.data.subject ? { subject: parsed.data.subject } : {}),
-      ...(parsed.data.contact ? { contact: parsed.data.contact } : {}),
-      page,
-      metadata: {
-        frontend: "anima-web",
-        language:
-          typeof navigator !== "undefined" ? navigator.language : "pt-BR",
-        viewportWidth:
-          typeof window !== "undefined" ? window.innerWidth : null,
-        viewportHeight:
-          typeof window !== "undefined" ? window.innerHeight : null,
-      },
-    };
-
     setStatus("loading");
 
     try {
+      const attachmentIds: string[] = [];
+      for (const image of images) {
+        const reservation = await reserveFeedbackAttachment(image);
+        await uploadFeedbackAttachment(image, reservation);
+        attachmentIds.push(reservation.objectId);
+      }
+      const payload = {
+        type: parsed.data.type,
+        message: parsed.data.message,
+        ...(parsed.data.subject ? { subject: parsed.data.subject } : {}),
+        ...(parsed.data.contact ? { contact: parsed.data.contact } : {}),
+        page,
+        metadata: {
+          frontend: "anima-web",
+          language:
+            typeof navigator !== "undefined" ? navigator.language : "pt-BR",
+          viewportWidth:
+            typeof window !== "undefined" ? window.innerWidth : null,
+          viewportHeight:
+            typeof window !== "undefined" ? window.innerHeight : null,
+        },
+        ...(attachmentIds.length ? { attachmentIds } : {}),
+      };
       const res = await submitFeedback(payload);
       if (!res?.ok) {
         throw new Error("Resposta inválida do servidor.");
@@ -94,6 +105,7 @@ export default function SuportePage() {
       setProtocolId(res.id ?? null);
       setMessage("");
       setSubject("");
+      setImages([]);
     } catch (err) {
       setStatus("error");
       if (err instanceof ApiError) {
@@ -119,6 +131,21 @@ export default function SuportePage() {
   }
 
   const isLoading = status === "loading";
+
+  function handleImages(event: ChangeEvent<HTMLInputElement>) {
+    const selected = Array.from(event.target.files ?? []);
+    const allowed = new Set(["image/jpeg", "image/png", "image/webp"]);
+    const invalid = selected.find(
+      (file) => !allowed.has(file.type) || file.size > 5 * 1024 * 1024,
+    );
+    if (invalid) {
+      setErrorMessage("Use JPEG, PNG ou WebP com no máximo 5 MB por imagem.");
+      event.target.value = "";
+      return;
+    }
+    setImages((current) => [...current, ...selected].slice(0, 3));
+    event.target.value = "";
+  }
 
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
@@ -190,6 +217,40 @@ export default function SuportePage() {
             placeholder="Resumo curto"
             error={fieldErrors.subject}
           />
+
+          <div className="w-full">
+            <label className="block text-sm font-medium text-foreground/60 mb-1.5">
+              Imagens (opcional, até 3)
+            </label>
+            <input
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              multiple
+              disabled={isLoading || images.length >= 3}
+              onChange={handleImages}
+              className="block w-full text-sm text-foreground/60 file:mr-3 file:rounded-lg file:border-0 file:px-3 file:py-2 file:bg-anima-violet/10 file:text-anima-violet"
+            />
+            {images.length > 0 && (
+              <div className="mt-2 flex flex-wrap gap-2">
+                {images.map((file, index) => (
+                  <button
+                    key={`${file.name}-${file.lastModified}-${index}`}
+                    type="button"
+                    disabled={isLoading}
+                    onClick={() =>
+                      setImages((current) =>
+                        current.filter((_, currentIndex) => currentIndex !== index),
+                      )
+                    }
+                    className="rounded-lg border border-foreground/10 px-2 py-1 text-xs text-foreground/60"
+                    title="Remover imagem"
+                  >
+                    {file.name} ×
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
 
           <div className="w-full">
             <label

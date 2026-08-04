@@ -65,6 +65,8 @@ const AUTH_PUBLIC_PATHS = [
   "/auth/verify-email",
   "/auth/resend-verification",
   "/care-invites/register",
+  "/marketing-campaigns/register",
+  "/home-testimonials/invites/submit",
 ];
 
 function isAuthPublicPath(path: string): boolean {
@@ -106,10 +108,13 @@ async function fetchWithAuth<T>(
   const resolvedToken =
     token ?? (auth ? (clientConfig?.getToken() ?? null) : null);
 
+  const isFormData =
+    typeof FormData !== "undefined" && fetchOptions.body instanceof FormData;
+
   const res = await fetch(`${API_URL}${path}`, {
     ...fetchOptions,
     headers: {
-      "Content-Type": "application/json",
+      ...(isFormData ? {} : { "Content-Type": "application/json" }),
       ...(resolvedToken ? { Authorization: `Bearer ${resolvedToken}` } : {}),
       ...fetchOptions.headers,
     },

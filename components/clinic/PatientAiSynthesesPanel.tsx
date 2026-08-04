@@ -65,6 +65,7 @@ export function PatientAiSynthesesPanel({ orgId, patientId }: Props) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editContent, setEditContent] = useState("");
   const [createNote, setCreateNote] = useState(true);
+  const [createPlan, setCreatePlan] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
@@ -132,13 +133,21 @@ export function PatientAiSynthesesPanel({ orgId, patientId }: Props) {
     try {
       await approve.mutateAsync({
         synthesisId,
-        payload: { createClinicalNote: createNote },
+        payload: {
+          createClinicalNote: createNote,
+          createCarePlanDraft: createPlan,
+          carePlanStatus: "RASCUNHO",
+        },
       });
       setEditingId(null);
       setSuccessMsg(
-        createNote
-          ? "Aprovada · nota clínica criada em rascunho (não assinada)."
-          : "Síntese aprovada.",
+        [
+          "Síntese aprovada",
+          createNote ? "nota rascunho" : null,
+          createPlan ? "itens de plano (não liberados)" : null,
+        ]
+          .filter(Boolean)
+          .join(" · ") + ".",
       );
     } catch (err) {
       setActionError(
@@ -240,6 +249,15 @@ export function PatientAiSynthesesPanel({ orgId, patientId }: Props) {
               className="rounded border-foreground/20"
             />
             Ao aprovar, criar nota clínica em rascunho
+          </label>
+          <label className="flex items-center gap-2 text-xs text-foreground/50">
+            <input
+              type="checkbox"
+              checked={createPlan}
+              onChange={(e) => setCreatePlan(e.target.checked)}
+              className="rounded border-foreground/20"
+            />
+            Ao aprovar, aplicar sugestões de plano (não liberadas)
           </label>
           <Button type="submit" isLoading={generate.isPending}>
             Gerar síntese

@@ -5,6 +5,7 @@ export type PlanLimits = {
   aiAnalysesPerMonth: number | null;
   /** Mensagens do assistente conversacional por mês; `null` = sem teto no plano (raro — o chat ainda respeita limites da rota `/assistant/*`) */
   assistantMessagesPerMonth?: number | null;
+  storageBytes: number | null;
   historyDays: number | null;
   careInvitesActive: number | null;
   accessiblePatients: number | null;

@@ -7,7 +7,7 @@ const PLAN_TAGLINES: Record<PlanSlug, string> = {
     "Segundo cérebro completo: memória, tracking, 500 interações do assistente/mês, vínculo com clínica e 1 outro Pleno — R$ 9,99.",
   /** Cuidado: base do profissional + R$ 5/mês por paciente Pleno patrocinado. */
   cuidado:
-    "Para profissionais: dashboards por convite, Pleno patrocinado (+ R$ 5/mês por paciente) e 500 mensagens do assistente/mês.",
+    "R$ 149/mês — dashboards ilimitados, até 15 contas free com Pleno patrocinado (+ R$ 5/mês por conta) e 500 mensagens do assistente/mês.",
   preview: "Modo demonstração — limites ampliados durante o período experimental",
 };
 
@@ -61,9 +61,16 @@ export function buildPlanHighlights(limits: PlanLimits): string[] {
   }
 
   if (limits.canViewSharedDashboard && limits.accessiblePatients === null) {
-    items.push(
-      "Dashboards Cuidado ilimitados · Pleno patrocinado (+ R$ 5/mês por paciente)",
-    );
+    if (!limits.canShareDashboard) {
+      items.push("Dashboards ilimitados por convite");
+      items.push(
+        "Até 15 contas free com Pleno patrocinado (+ R$ 5/mês por conta)",
+      );
+    } else {
+      items.push(
+        "Dashboards Cuidado ilimitados · Pleno patrocinado (+ R$ 5/mês por paciente)",
+      );
+    }
   } else if (limits.accessiblePatients === 1) {
     items.push("Acompanhar 1 outro Pleno em leitura");
   } else if (limits.accessiblePatients != null && limits.accessiblePatients > 1) {

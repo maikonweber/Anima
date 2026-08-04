@@ -38,6 +38,21 @@ export const faqEntriesEs: FaqEntry[] = [
       "Sí. El plan Cuidado es para profesionales en la app EmotiveCare: seguir paneles de solo lectura cuando el paciente invita. Sirve a psicólogos, psiquiatras y otros acompañantes autorizados. Para operar la clínica (CRM, agenda, teleconsulta), usa EmotiveCare Clínicas.",
   },
   {
+    question: "¿Cómo me registro en EmotiveCare?",
+    answer:
+      "Todos empiezan en el plan Essencial (gratis) con registro por e-mail o Google. No hay elección de plan en el registro — después del login mejoras a Pleno (app personal, R$ 9.99/mes) o Cuidado (app profesional, R$ 149/mes) en la suscripción.",
+  },
+  {
+    question: "¿Cómo un paciente Pleno vincula a un profesional Cuidado?",
+    answer:
+      "Quien invita es el paciente en plan Pleno: envía invitación segura por e-mail (care invite). El profesional en plan Cuidado acepta y ve el panel en solo lectura — solo lo autorizado por el paciente, con pausa o revocación cuando quiera. Essencial (gratis) no envía ni acepta este vínculo.",
+  },
+  {
+    question: "¿Cómo un profesional Cuidado concede Pleno a un paciente gratuito?",
+    answer:
+      "Desde la clínica (EmotiveCare Clínicas): el profesional Cuidado envía invitación al e-mail del paciente con Pleno patrocinado (grantPleno). El paciente acepta con su cuenta del app; sigue Essencial en el registro, pero gana límites equivalentes a Pleno. El profesional paga R$ 5/mes por paciente patrocinado en plan Cuidado.",
+  },
+  {
     question: "¿Puedo compartir registros con mi psicólogo o psiquiatra?",
     answer:
       "Sí. En la app, vía planes Pleno/Cuidado con invitación y pausa/revocación. En Clínicas, el consentimiento es por propósito (p. ej. TELECONSULTA, PRONTUARIO, DIARIO_CHECKIN) y el paciente controla qué liberar.",

@@ -88,9 +88,10 @@ export const es: MarketingDictionary = {
       },
       {
         name: "Cuidado",
-        tagline: "Para quienes acompañan entre sesiones.",
+        tagline: "R$ 149/mes — para quienes acompañan entre sesiones.",
         points: [
-          "Paneles ilimitados de pacientes autorizados por el paciente",
+          "Paneles ilimitados por invitación",
+          "Hasta 15 cuentas free con Pleno patrocinado (+ R$ 5/mes por cuenta)",
           "Contexto emocional en solo lectura entre citas",
           "Los pacientes vinculados heredan beneficios equivalentes a Pleno",
         ],

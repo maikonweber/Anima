@@ -17,7 +17,8 @@ export type AiSynthesisSourceRef = {
     | "clinical_knowledge"
     | "manual_session_notes"
     | "teleconsult_session"
-    | "teleconsult_chat";
+    | "teleconsult_chat"
+    | "transcription_segment";
   id: string;
 };
 
@@ -65,6 +66,21 @@ export type UpdateAiSynthesisPayload = Partial<{
 export type ApproveAiSynthesisPayload = {
   createClinicalNote?: boolean;
   noteTitle?: string;
+  createCarePlanDraft?: boolean;
+  carePlanStatus?: "RASCUNHO" | "ATIVO";
+};
+
+export type CarePlanSuggestion = {
+  id: string;
+  kind: "ATIVIDADE" | "OBJETIVO" | "ORIENTACAO" | "OUTRO";
+  title: string;
+  description: string | null;
+};
+
+export type ApplyCarePlanSuggestionsPayload = {
+  suggestionIds: string[];
+  planId?: string | null;
+  carePlanStatus?: "RASCUNHO" | "ATIVO";
 };
 
 export type RejectAiSynthesisPayload = {

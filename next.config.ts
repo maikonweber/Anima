@@ -4,6 +4,11 @@ const nextConfig: NextConfig = {
   transpilePackages: ["@anima/shared"],
   images: {
     formats: ["image/avif", "image/webp"],
+    remotePatterns: [
+      { protocol: "http", hostname: "localhost", port: "3000", pathname: "/home-testimonials/photos/**" },
+      { protocol: "https", hostname: "emotivecare.com.br", pathname: "/home-testimonials/photos/**" },
+      { protocol: "https", hostname: "api.emotivecare.com.br", pathname: "/home-testimonials/photos/**" },
+    ],
   },
   experimental: {
     optimizePackageImports: ["motion/react"],

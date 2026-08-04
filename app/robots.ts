@@ -23,6 +23,8 @@ const DISALLOW = [
   "/verify-email",
   "/aguardando-verificacao",
   "/care-invite",
+  "/campanha",
+  "/depoimento",
   "/admin/",
   "/settings/",
   "/auth/",

@@ -84,6 +84,7 @@ export default function ClinicTeleconsultPage() {
           <TeleconsultRoom
             session={data}
             isInitiator={!!isInitiator}
+            enablePostConsultBriefing={!!isInitiator}
             onEnded={(updated) => {
               queryClient.setQueryData(
                 ["teleconsult", orgId, sessionId],

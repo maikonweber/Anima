@@ -74,6 +74,8 @@ function shouldRedirectToLogin(): boolean {
     !path.startsWith("/forgot-password") &&
     !path.startsWith("/reset-password") &&
     !path.startsWith("/care-invite") &&
+    !path.startsWith("/campanha") &&
+    !path.startsWith("/depoimento") &&
     !path.startsWith("/assinatura")
   );
 }
@@ -119,6 +121,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       !path.startsWith("/verify-email") &&
       !path.startsWith("/login") &&
       !path.startsWith("/register") &&
+      !path.startsWith("/campanha") &&
+      !path.startsWith("/depoimento") &&
       !path.startsWith("/assinatura")
     ) {
       window.location.href = "/aguardando-verificacao";

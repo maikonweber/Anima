@@ -53,3 +53,108 @@ export type ListTeleconsultMessagesQuery = {
   afterId?: string;
   limit?: number;
 };
+
+export type TeleconsultTranscriptSpeaker =
+  | "PROFESSIONAL"
+  | "PATIENT"
+  | "UNKNOWN";
+
+export type TeleconsultTranscriptionStatus =
+  | "PENDING"
+  | "RUNNING"
+  | "READY"
+  | "FAILED"
+  | "STOPPED";
+
+export type TeleconsultTranscriptionSegment = {
+  id: string;
+  speaker: TeleconsultTranscriptSpeaker;
+  authorUserId?: string | null;
+  startedMs?: number | null;
+  endedMs?: number | null;
+  text: string;
+  confidence?: number | null;
+  criadoEm: string;
+};
+
+export type TeleconsultTranscription = {
+  id: string;
+  organizationId: string;
+  sessionId: string;
+  status: TeleconsultTranscriptionStatus;
+  language: string;
+  provider: string;
+  startedByUserId: string | null;
+  startedAt: string | null;
+  endedAt: string | null;
+  error: string | null;
+  criadoEm: string;
+  segments: TeleconsultTranscriptionSegment[];
+};
+
+export type AppendTranscriptionSegmentsPayload = {
+  segments: Array<{
+    text: string;
+    speaker?: TeleconsultTranscriptSpeaker;
+    startedMs?: number | null;
+    endedMs?: number | null;
+    confidence?: number | null;
+  }>;
+};
+
+export type TeleconsultMultimodalAggregatePayload = {
+  voice?: {
+    avgEnergy: number;
+    peakEnergy: number;
+    pauseRatio: number;
+    speakingRatio: number;
+    longPauseCount: number;
+  };
+  vision?: {
+    facePresenceRatio: number;
+    motionScore: number;
+    sampleCount: number;
+  };
+  meta?: {
+    muted?: boolean;
+    videoOff?: boolean;
+    source?: "local" | "remote";
+  };
+};
+
+export type PostMultimodalAggregatePayload = {
+  clientModelVersion: string;
+  windowStartedAt?: string | null;
+  windowEndedAt?: string | null;
+  payload: TeleconsultMultimodalAggregatePayload;
+};
+
+export type TeleconsultMultimodalAggregate = {
+  id: string;
+  sessionId: string;
+  clientModelVersion: string;
+  windowStartedAt: string | null;
+  windowEndedAt: string | null;
+  payload: TeleconsultMultimodalAggregatePayload;
+  criadoEm: string;
+};
+
+export type TeleconsultRecording = {
+  id: string;
+  objectId?: string;
+  organizationId?: string;
+  sessionId?: string;
+  mediaType: "audio" | "video";
+  contentType?: "audio/webm" | "video/webm";
+  status:
+    | "PENDING"
+    | "RECORDING"
+    | "PROCESSING"
+    | "READY"
+    | "FAILED"
+    | "DELETED";
+  durationMs?: number | null;
+  startedAt?: string | null;
+  endedAt?: string | null;
+  criadoEm?: string;
+};
