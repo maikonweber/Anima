@@ -39,8 +39,9 @@ export function PatientRemindersPanel({ orgId, patientId }: Props) {
           Lembretes / adesão
         </h2>
         <p className="text-xs text-foreground/35 mt-0.5 leading-relaxed">
-          Visão da adesão autorreportada pelo paciente. A clínica não altera doses
-          nem prescritos — histórico exige consentimento LEMBRETES.
+          Veja como o paciente responde aos lembretes no dia a dia. A clínica
+          acompanha a adesão; prescritos e doses seguem sob responsabilidade
+          profissional.
         </p>
       </div>
 

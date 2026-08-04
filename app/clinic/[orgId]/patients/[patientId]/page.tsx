@@ -20,7 +20,6 @@ import { PatientCarePlanPanel } from "@/components/clinic/PatientCarePlanPanel";
 import { PatientAiSynthesesPanel } from "@/components/clinic/PatientAiSynthesesPanel";
 import { PatientClinicalAlertsPanel } from "@/components/clinic/PatientClinicalAlertsPanel";
 import { ClinicToolHelp } from "@/components/clinic/ClinicToolHelp";
-import { CLINIC_PATIENT_TAB_HELP } from "@/components/clinic/clinic-tool-help-content";
 import { usePatient, useUpdatePatientStatus } from "@/hooks/use-patients";
 import type { PatientStatus } from "@anima/shared";
 
@@ -139,7 +138,7 @@ export default function PatientDetailPage() {
               ))}
             </nav>
 
-            <ClinicToolHelp help={CLINIC_PATIENT_TAB_HELP[tab]} key={tab} />
+            <ClinicToolHelp tab={tab} key={tab} />
 
             {tab === "resumo" && (
               <>
@@ -164,8 +163,8 @@ export default function PatientDetailPage() {
                     Alterar status do funil
                   </h2>
                   <p className="text-xs text-foreground/40 -mt-1 mb-1 leading-relaxed">
-                    Atualize a etapa do paciente no CRM (lead, ativo, alta…).
-                    Isso não altera o prontuário clínico.
+                    Acompanhe a jornada do paciente no funil da clínica. Manter o
+                    status atualizado ajuda a equipe a priorizar o próximo passo.
                   </p>
                   <Select
                     value={status}

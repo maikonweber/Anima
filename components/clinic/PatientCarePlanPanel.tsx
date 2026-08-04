@@ -115,8 +115,8 @@ export function PatientCarePlanPanel({ orgId, patientId }: Props) {
           Plano de cuidado
         </h2>
         <p className="text-xs text-[var(--clinic-muted)] mt-0.5 leading-relaxed">
-          Defina atividades e orientações. O paciente só vê os itens que você
-          liberar no app (menu <em>Plano de cuidado</em>).
+          Convide o paciente a seguir o combinado entre sessões. Você monta o
+          plano e libera no app só o que fizer sentido agora.
         </p>
       </div>
 
@@ -149,8 +149,9 @@ export function PatientCarePlanPanel({ orgId, patientId }: Props) {
           className="rounded-2xl border border-[var(--clinic-border)] bg-[var(--clinic-panel)] p-4 sm:p-5 space-y-3"
         >
           <p className="text-xs text-[var(--clinic-muted)] leading-relaxed">
-            Ainda não há plano ativo. Crie um para começar a adicionar
-            atividades. Você controla o que fica visível para o paciente.
+            Ainda não há plano ativo. Crie o primeiro para começar a adicionar
+            atividades — e liberar no app quando estiver pronto para o paciente
+            acompanhar.
           </p>
           <Input
             label="Título do plano"
@@ -160,8 +161,8 @@ export function PatientCarePlanPanel({ orgId, patientId }: Props) {
             required
           />
           <p className="text-[11px] text-foreground/40 -mt-1">
-            Nome interno e também aparece no app do paciente quando houver itens
-            liberados.
+            Nome que a equipe e o paciente reconhecem. Depois você libera cada
+          item no ritmo do cuidado.
           </p>
           <Button
             type="submit"
@@ -212,9 +213,9 @@ export function PatientCarePlanPanel({ orgId, patientId }: Props) {
             className="rounded-2xl border border-[var(--clinic-border)] bg-[var(--clinic-panel)] p-4 space-y-3"
           >
             <p className="text-xs text-[var(--clinic-muted)] leading-relaxed">
-              Novos itens começam <strong className="text-foreground/70">privados ao staff</strong>.
-              Depois use <strong className="text-foreground/70">Liberar</strong> para
-              aparecerem no app do paciente.
+              Novos itens começam só para a equipe. Quando quiser convidar o
+              paciente a acompanhar, use{" "}
+              <strong className="text-foreground/70">Liberar</strong>.
             </p>
             <Input
               label="Nova atividade / orientação"

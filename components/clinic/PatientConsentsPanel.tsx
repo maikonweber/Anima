@@ -138,8 +138,8 @@ export function PatientConsentsPanel({ orgId, patientId }: Props) {
             Consentimentos (LGPD)
           </h2>
           <p className="text-xs text-foreground/35 mt-0.5 leading-relaxed">
-            Controle por finalidade (diário, prontuário, teleconsulta, IA…).
-            Concessão e revogação ficam auditadas.
+            Ative as finalidades que abrem diário, teleconsulta, IA e demais
+            ferramentas — com transparência para o paciente e trilha de auditoria.
           </p>
         </div>
         {status && (

@@ -77,8 +77,9 @@ export function PatientDiaryPanel({ orgId, patientId }: Props) {
           Diário / check-ins
         </h2>
         <p className="text-xs text-foreground/35 mt-0.5 leading-relaxed">
-          Somente leitura · só itens que o paciente compartilhou · exige vínculo
-          com o app e consentimento DIARIO_CHECKIN
+          Acompanhe os check-ins que o paciente escolheu compartilhar — contexto
+          entre sessões, com privacidade no comando dele. Exige vínculo com o app
+          e consentimento de diário.
         </p>
         </div>
         {!isUnlinked && (

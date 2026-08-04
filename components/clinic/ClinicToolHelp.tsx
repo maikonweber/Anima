@@ -1,34 +1,66 @@
 "use client";
 
 import { useEffect, useId, useState } from "react";
-import type { ClinicToolHelpDefinition } from "@/components/clinic/clinic-tool-help-content";
+import {
+  CLINIC_HELP_UI,
+  getClinicPatientTabHelp,
+  type ClinicHelpLocale,
+  type ClinicPatientTabId,
+  type ClinicToolHelpDefinition,
+} from "@/components/clinic/clinic-tool-help-content";
 
 type Props = {
-  help: ClinicToolHelpDefinition;
+  /** Preferred: pass tab id so PT/EN/ES switch works */
+  tab?: ClinicPatientTabId;
+  /** Or pass a pre-resolved help object */
+  help?: ClinicToolHelpDefinition;
   className?: string;
-  /** Topic id to open first */
   defaultTopicId?: string;
+  defaultLocale?: ClinicHelpLocale;
 };
 
+const LOCALE_LANG: Record<ClinicHelpLocale, string> = {
+  pt: "pt-BR",
+  en: "en",
+  es: "es",
+};
+
+const LOCALE_BUTTONS: Array<{ code: ClinicHelpLocale; label: string }> = [
+  { code: "pt", label: "PT" },
+  { code: "en", label: "EN" },
+  { code: "es", label: "ES" },
+];
+
 export function ClinicToolHelp({
-  help,
+  tab,
+  help: helpProp,
   className = "",
   defaultTopicId,
+  defaultLocale = "pt",
 }: Props) {
   const selectId = useId();
-  const initial =
-    defaultTopicId && help.topics.some((t) => t.id === defaultTopicId)
+  const [locale, setLocale] = useState<ClinicHelpLocale>(defaultLocale);
+  const help =
+    helpProp ??
+    (tab ? getClinicPatientTabHelp(tab, locale) : null);
+
+  const ui = CLINIC_HELP_UI[locale];
+  const initialTopic =
+    help && defaultTopicId && help.topics.some((t) => t.id === defaultTopicId)
       ? defaultTopicId
-      : help.topics[0]?.id ?? "";
-  const [topicId, setTopicId] = useState(initial);
+      : help?.topics[0]?.id ?? "";
+  const [topicId, setTopicId] = useState(initialTopic);
 
   useEffect(() => {
+    if (!help) return;
     setTopicId(
       defaultTopicId && help.topics.some((t) => t.id === defaultTopicId)
         ? defaultTopicId
         : help.topics[0]?.id ?? "",
     );
-  }, [help, defaultTopicId]);
+  }, [help, defaultTopicId, locale]);
+
+  if (!help) return null;
 
   const topic =
     help.topics.find((t) => t.id === topicId) ?? help.topics[0] ?? null;
@@ -36,13 +68,36 @@ export function ClinicToolHelp({
   return (
     <aside
       className={`rounded-2xl border border-[var(--clinic-border)] bg-[var(--clinic-panel)] p-4 sm:p-5 mb-5 ${className}`.trim()}
-      aria-label={`Ajuda: ${help.title}`}
+      aria-label={`${ui.ariaPrefix}: ${help.title}`}
+      lang={LOCALE_LANG[locale]}
     >
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-3">
         <div className="min-w-0">
-          <p className="text-[11px] uppercase tracking-[0.14em] text-[var(--clinic-accent)] font-semibold mb-1">
-            Como usar
-          </p>
+          <div className="flex flex-wrap items-center gap-2 mb-1">
+            <p className="text-[11px] uppercase tracking-[0.14em] text-[var(--clinic-accent)] font-semibold">
+              {ui.eyebrow}
+            </p>
+            <div
+              className="inline-flex rounded-lg border border-[var(--clinic-border)] p-0.5"
+              role="group"
+              aria-label={ui.languageLabel}
+            >
+              {LOCALE_BUTTONS.map(({ code, label }) => (
+                <button
+                  key={code}
+                  type="button"
+                  onClick={() => setLocale(code)}
+                  className={`px-2 py-0.5 rounded-md text-[10px] font-semibold uppercase transition-colors ${
+                    locale === code
+                      ? "bg-[var(--clinic-accent-soft)] text-[var(--clinic-accent)]"
+                      : "text-foreground/40 hover:text-foreground/65"
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
           <h2 className="text-sm font-semibold text-foreground/85">
             {help.title}
           </h2>
@@ -55,7 +110,7 @@ export function ClinicToolHelp({
             htmlFor={selectId}
             className="block text-[11px] font-medium text-foreground/45 mb-1"
           >
-            Tópico de ajuda
+            {ui.topicLabel}
           </label>
           <select
             id={selectId}

@@ -88,8 +88,9 @@ export function PatientClinicalAlertsPanel({ orgId, patientId }: Props) {
             Alertas revisáveis
           </h2>
           <p className="text-xs text-foreground/35 mt-0.5 leading-relaxed">
-            Sugestões a partir do diário compartilhado. Varra padrões, edite se
-            precisar e aprove ou rejeite — não é emergência nem diagnóstico.
+            Deixe a plataforma destacar padrões no diário compartilhado. Revise,
+            ajuste e aprove com critério humano — para chegar à próxima sessão
+            com mais contexto.
           </p>
         </div>
         {!consentBlocked && (

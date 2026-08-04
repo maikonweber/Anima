@@ -170,8 +170,9 @@ export function PatientAiSynthesesPanel({ orgId, patientId }: Props) {
           Sínteses de IA (revisáveis)
         </h2>
         <p className="text-xs text-foreground/35 mt-0.5 leading-relaxed">
-          Gere um rascunho com diário e/ou sessão, revise o texto e só então
-          aprove. Requer consentimento IA_ASSISTIVA · a IA não diagnostica.
+          Gere um rascunho com diário e/ou sessão, revise com a sua voz e aprove
+          o que fizer sentido. A IA sugere — você decide. Requer consentimento
+          de IA assistiva.
         </p>
       </div>
 

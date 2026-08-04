@@ -154,8 +154,8 @@ export function PatientClinicalNotesPanel({ orgId, patientId }: Props) {
           Prontuário clínico
         </h2>
         <p className="text-xs text-foreground/35 mt-0.5 leading-relaxed">
-          Notas formais da evolução: escreva em rascunho, assine para fechar e
-          use adendo para complementos. Exige consentimento PRONTUARIO.
+          Registre a evolução com clareza: rascunho, assinatura e adendo.
+          Integridade clínica primeiro — separado do CRM e do diário do paciente.
         </p>
       </div>
 
