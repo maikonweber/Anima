@@ -112,6 +112,36 @@
   border: 1px solid var(--clinic-border-strong) !important;
   box-shadow: 0 1px 2px rgba(15, 28, 36, 0.04);
 }
+.clinic-loading {
+  background: var(--background);
+  color: var(--clinic-accent);
+}
+
+.clinic-rorschach {
+  color: var(--clinic-accent);
+  animation: clinic-rorschach-breathe 2.8s ease-in-out infinite;
+  filter: drop-shadow(0 12px 28px rgba(13, 115, 119, 0.22));
+}
+
+@keyframes clinic-rorschach-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.72;
+  }
+  50% {
+    transform: scale(1.04);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .clinic-rorschach {
+    animation: none;
+    opacity: 0.9;
+  }
+}
+
 .clinic-shell .clinic-btn-secondary:hover:not(:disabled) {
   background: var(--clinic-accent-soft) !important;
   border-color: rgba(13, 115, 119, 0.28) !important;

@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { DM_Sans } from "next/font/google";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth/AuthContext";
+import { ClinicRorschachLoader } from "@/components/clinic/ClinicRorschachLoader";
 import { ClinicSidebar } from "@/components/clinic/ClinicSidebar";
 
 const dmSans = DM_Sans({
@@ -24,11 +25,8 @@ export function ClinicRouteLayout({ children }: { children: React.ReactNode }) {
 
   if (isLoading) {
     return (
-      <div className={`clinic-shell min-h-full flex items-center justify-center ${dmSans.variable}`}>
-        <div className="flex flex-col items-center gap-3 font-[family-name:var(--font-clinic)]">
-          <div className="w-10 h-10 rounded-full border-2 border-[var(--clinic-accent)]/30 border-t-[var(--clinic-accent)] animate-spin" />
-          <p className="text-sm text-foreground/40">Carregando clínicas...</p>
-        </div>
+      <div className={dmSans.variable}>
+        <ClinicRorschachLoader />
       </div>
     );
   }
