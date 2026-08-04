@@ -34,3 +34,22 @@ export type PostTeleconsultSignalPayload = {
   type: TeleconsultSignalType;
   payload: unknown;
 };
+
+export type TeleconsultMessage = {
+  id: string;
+  organizationId: string;
+  sessionId: string;
+  authorUserId: string;
+  body: string | null;
+  deleted: boolean;
+  criadoEm: string;
+};
+
+export type PostTeleconsultMessagePayload = {
+  body: string;
+};
+
+export type ListTeleconsultMessagesQuery = {
+  afterId?: string;
+  limit?: number;
+};

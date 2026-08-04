@@ -16,7 +16,8 @@ export type AiSynthesisSourceRef = {
     | "appointment"
     | "clinical_knowledge"
     | "manual_session_notes"
-    | "teleconsult_session";
+    | "teleconsult_session"
+    | "teleconsult_chat";
   id: string;
 };
 
@@ -75,7 +76,7 @@ export type ListAiSynthesesQuery = {
 };
 
 export type GenerateSessionIntelligencePayload = {
-  manualSessionNotes: string;
+  manualSessionNotes?: string;
   title?: string;
   includeDiary?: boolean;
 };

@@ -1,9 +1,13 @@
 import { api } from "../api-client";
 import type {
+  ListTeleconsultMessagesQuery,
+  PostTeleconsultMessagePayload,
   PostTeleconsultSignalPayload,
+  TeleconsultMessage,
   TeleconsultSession,
   TeleconsultSignalMessage,
 } from "../types/teleconsult";
+import type { AiSynthesis } from "../types/ai-syntheses";
 
 export async function createTeleconsult(
   orgId: string,
@@ -50,14 +54,14 @@ export async function generateSessionIntelligence(
   orgId: string,
   sessionId: string,
   payload: {
-    manualSessionNotes: string;
+    manualSessionNotes?: string;
     title?: string;
     includeDiary?: boolean;
   },
 ) {
   return api<{
     session: TeleconsultSession;
-    synthesis: import("../types/ai-syntheses").AiSynthesis;
+    synthesis: AiSynthesis;
   }>(
     `/organizations/${encodeURIComponent(orgId)}/teleconsult/${encodeURIComponent(sessionId)}/session-intelligence`,
     {
@@ -65,6 +69,47 @@ export async function generateSessionIntelligence(
       auth: true,
       body: JSON.stringify(payload),
     },
+  );
+}
+
+export async function listTeleconsultMessages(
+  orgId: string,
+  sessionId: string,
+  query: ListTeleconsultMessagesQuery = {},
+) {
+  const params = new URLSearchParams();
+  if (query.afterId) params.set("afterId", query.afterId);
+  if (query.limit != null) params.set("limit", String(query.limit));
+  const qs = params.toString();
+  return api<TeleconsultMessage[]>(
+    `/organizations/${encodeURIComponent(orgId)}/teleconsult/${encodeURIComponent(sessionId)}/messages${qs ? `?${qs}` : ""}`,
+    { auth: true },
+  );
+}
+
+export async function postTeleconsultMessage(
+  orgId: string,
+  sessionId: string,
+  payload: PostTeleconsultMessagePayload,
+) {
+  return api<TeleconsultMessage>(
+    `/organizations/${encodeURIComponent(orgId)}/teleconsult/${encodeURIComponent(sessionId)}/messages`,
+    {
+      method: "POST",
+      auth: true,
+      body: JSON.stringify(payload),
+    },
+  );
+}
+
+export async function deleteTeleconsultMessage(
+  orgId: string,
+  sessionId: string,
+  messageId: string,
+) {
+  return api<TeleconsultMessage>(
+    `/organizations/${encodeURIComponent(orgId)}/teleconsult/${encodeURIComponent(sessionId)}/messages/${encodeURIComponent(messageId)}`,
+    { method: "DELETE", auth: true },
   );
 }
 
