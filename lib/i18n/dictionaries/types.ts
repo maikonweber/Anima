@@ -11,6 +11,8 @@ export type NavDictionary = {
   menuOpen: string;
   menuClose: string;
   ariaLabel: string;
+  themeToDark: string;
+  themeToLight: string;
 };
 
 export type FooterDictionary = {

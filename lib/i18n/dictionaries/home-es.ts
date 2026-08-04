@@ -12,6 +12,8 @@ export const homeEs = {
     login: "Entrar",
     cta: "Empezar gratis",
     languageLabel: "Idioma",
+    themeToDark: "Activar tema oscuro",
+    themeToLight: "Activar tema claro",
   },
   hero: {
     brand: "EmotiveCare",

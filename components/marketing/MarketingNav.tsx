@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import type { Locale } from "@/lib/i18n/config";
 import {
   DEFAULT_LOCALE,
@@ -44,6 +45,13 @@ export function MarketingNav({
           ? "care"
           : "default",
   }));
+
+  const themeSwitch = (
+    <ThemeToggle
+      toDarkLabel={nav.themeToDark}
+      toLightLabel={nav.themeToLight}
+    />
+  );
 
   const langSwitch = (
     <LanguageSwitcher locale={locale} barePath={barePath} variant="compact" />
@@ -88,6 +96,7 @@ export function MarketingNav({
         >
           {nav.login}
         </Link>
+        {themeSwitch}
         {langSwitch}
       </nav>
 
@@ -141,7 +150,10 @@ export function MarketingNav({
             >
               {nav.login}
             </Link>
-            <div className="px-3 py-3">{langSwitch}</div>
+            <div className="flex items-center gap-3 px-3 py-3">
+              {themeSwitch}
+              {langSwitch}
+            </div>
           </div>
         </nav>
       ) : null}

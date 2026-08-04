@@ -14,6 +14,8 @@ export const ptBR: MarketingDictionary = {
     menuOpen: "Abrir menu",
     menuClose: "Fechar menu",
     ariaLabel: "Links institucionais",
+    themeToDark: "Ativar tema escuro",
+    themeToLight: "Ativar tema claro",
   },
   footer: {
     privacy: "Privacidade",

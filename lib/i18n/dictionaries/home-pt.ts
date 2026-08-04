@@ -10,6 +10,8 @@ export const homePt = {
     login: "Entrar",
     cta: "Começar grátis",
     languageLabel: "Idioma",
+    themeToDark: "Ativar tema escuro",
+    themeToLight: "Ativar tema claro",
   },
   hero: {
     brand: "EmotiveCare",

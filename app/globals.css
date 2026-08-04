@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Tema manual (class .dark) — alinhado às cores da home */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   /* Alinhado à home (coral / care blue) — tokens legados anima-violet* */
   --background: #f6f4f1;
@@ -38,19 +41,23 @@
   --color-anima-indigo: var(--anima-indigo);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* Dark sem roxo — teal/coral como na home escura */
-    --background: #0b1214;
-    --foreground: #ededed;
+.dark {
+  /* Dark sem roxo — teal/coral como na home escura */
+  --background: #0b1214;
+  --foreground: #ededed;
 
-    --anima-violet: #e07a68;
-    --anima-lilac: #2dd4bf;
-    --anima-indigo: #0d7377;
-    --anima-surface-glass: rgba(255, 255, 255, 0.06);
-    --anima-border-glass: rgba(255, 255, 255, 0.1);
-    --anima-glow: rgba(224, 122, 104, 0.32);
-  }
+  --anima-violet: #e07a68;
+  --anima-lilac: #2dd4bf;
+  --anima-indigo: #0d7377;
+  --anima-surface-glass: rgba(255, 255, 255, 0.06);
+  --anima-border-glass: rgba(255, 255, 255, 0.1);
+  --anima-glow: rgba(224, 122, 104, 0.32);
+}
+
+/* Apps (paciente/clínica) permanecem no look claro mesmo com html.dark */
+.dark .patient-shell,
+.dark .clinic-shell {
+  color-scheme: light;
 }
 
 /* EmotiveCare paciente — app pessoal (care blue, alinhado ao marketing) */
@@ -220,15 +227,13 @@ select.anima-select option {
   color: var(--foreground);
 }
 
-@media (prefers-color-scheme: dark) {
-  select.anima-select {
-    color-scheme: dark;
-  }
+.dark select.anima-select {
+  color-scheme: dark;
+}
 
-  select.anima-select option {
-    background-color: #0b1214;
-    color: #ededed;
-  }
+.dark select.anima-select option {
+  background-color: #0b1214;
+  color: #ededed;
 }
 
 /* Glass panel utility */
@@ -406,6 +411,10 @@ select.anima-select option {
   color-scheme: light;
 }
 
+.dark .marketing-shell {
+  color-scheme: dark;
+}
+
 .marketing-shell h1 {
   font-family: var(--font-home-display), Georgia, "Times New Roman", serif;
   font-weight: 550;
@@ -534,54 +543,38 @@ select.anima-select option {
   background: var(--home-clinic-soft);
 }
 
-@media (prefers-color-scheme: dark) {
-  .home-shell {
-    --home-ink: #e8eef1;
-    --home-muted: rgba(232, 238, 241, 0.62);
-    --home-subtle: rgba(232, 238, 241, 0.4);
-    --home-line: rgba(232, 238, 241, 0.12);
-    --home-surface: #121a1e;
-    --home-panel: #182227;
-    --home-accent: #e07a68;
-    --home-accent-hover: #f09180;
-    --home-clinic: #2dd4bf;
-    --home-clinic-soft: rgba(45, 212, 191, 0.12);
-    --home-glow: rgba(224, 122, 104, 0.28);
-    --home-care: #8bb4e0;
-    background:
-      radial-gradient(120% 80% at 10% -10%, rgba(224, 122, 104, 0.12), transparent 45%),
-      radial-gradient(90% 60% at 100% 0%, rgba(45, 212, 191, 0.1), transparent 40%),
-      #0c1215;
-  }
+.dark .home-shell {
+  --home-ink: #e8eef1;
+  --home-muted: rgba(232, 238, 241, 0.62);
+  --home-subtle: rgba(232, 238, 241, 0.4);
+  --home-line: rgba(232, 238, 241, 0.12);
+  --home-surface: #121a1e;
+  --home-panel: #182227;
+  --home-accent: #e07a68;
+  --home-accent-hover: #f09180;
+  --home-clinic: #2dd4bf;
+  --home-clinic-soft: rgba(45, 212, 191, 0.12);
+  --home-glow: rgba(224, 122, 104, 0.28);
+  --home-care: #8bb4e0;
+  background:
+    radial-gradient(120% 80% at 10% -10%, rgba(224, 122, 104, 0.12), transparent 45%),
+    radial-gradient(90% 60% at 100% 0%, rgba(45, 212, 191, 0.1), transparent 40%),
+    #0c1215;
+}
 
-  .home-hero-wash {
-    background:
-      linear-gradient(180deg, transparent 55%, #0c1215 100%),
-      radial-gradient(ellipse 80% 55% at 70% 20%, rgba(45, 212, 191, 0.12), transparent 60%),
-      radial-gradient(ellipse 60% 45% at 15% 40%, rgba(224, 122, 104, 0.1), transparent 55%);
-  }
+.dark .home-hero-wash {
+  background:
+    linear-gradient(180deg, transparent 55%, #0c1215 100%),
+    radial-gradient(ellipse 80% 55% at 70% 20%, rgba(45, 212, 191, 0.12), transparent 60%),
+    radial-gradient(ellipse 60% 45% at 15% 40%, rgba(224, 122, 104, 0.1), transparent 55%);
+}
 
-  .home-product--clinic {
-    background: linear-gradient(180deg, #132226 0%, #182227 45%);
-  }
+.dark .home-hero-grid {
+  background-image:
+    linear-gradient(rgba(232, 238, 241, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(232, 238, 241, 0.05) 1px, transparent 1px);
+}
 
-  /* Marketing institucional permanece no look claro do produto */
-  .marketing-shell {
-    --home-ink: #152028;
-    --home-muted: rgba(21, 32, 40, 0.62);
-    --home-subtle: rgba(21, 32, 40, 0.42);
-    --home-line: rgba(21, 32, 40, 0.1);
-    --home-surface: #eef3f1;
-    --home-panel: #ffffff;
-    --home-accent: #c45c4a;
-    --home-accent-hover: #a84838;
-    --home-clinic: #0d7377;
-    --home-clinic-soft: rgba(13, 115, 119, 0.1);
-    --home-care: #3d5a80;
-    background:
-      radial-gradient(120% 80% at 10% -10%, rgba(196, 92, 74, 0.08), transparent 45%),
-      radial-gradient(90% 60% at 100% 0%, rgba(13, 115, 119, 0.1), transparent 40%),
-      #f6f4f1;
-    color: var(--home-ink);
-  }
+.dark .home-product--clinic {
+  background: linear-gradient(180deg, #132226 0%, #182227 45%);
 }

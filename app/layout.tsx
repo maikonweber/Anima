@@ -16,6 +16,10 @@ import { LocaleProvider } from "@/lib/i18n/locale-provider";
 import { getRequestLocale } from "@/lib/i18n/get-request-locale";
 import { htmlLang } from "@/lib/i18n/config";
 import { DEFAULT_SITE_KEYWORDS, OG_IMAGE_PATH, SITE_URL } from "@/lib/seo/site";
+import {
+  ThemeProvider,
+  THEME_INIT_SCRIPT,
+} from "@/providers/theme-provider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -98,8 +102,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f3f5f8" },
-    { media: "(prefers-color-scheme: dark)", color: "#0b0f1a" },
+    { media: "(prefers-color-scheme: light)", color: "#f6f4f1" },
+    { media: "(prefers-color-scheme: dark)", color: "#0c1215" },
   ],
 };
 
@@ -114,27 +118,31 @@ export default async function RootLayout({
     <html
       lang={htmlLang(locale)}
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col bg-background">
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <GlobalJsonLd />
         <SkipLink />
-        <GoogleProvider>
-          <QueryProvider>
-            <AuthProvider>
-              <LocaleProvider initialLocale={locale}>
-                <FeatureFlagsProvider>
-                  <SubscriptionConfigProvider>
-                    <SubscriptionProvider>
-                      <PreviewModeBanner />
-                      {children}
-                      <TermsGate />
-                    </SubscriptionProvider>
-                  </SubscriptionConfigProvider>
-                </FeatureFlagsProvider>
-              </LocaleProvider>
-            </AuthProvider>
-          </QueryProvider>
-        </GoogleProvider>
+        <ThemeProvider>
+          <GoogleProvider>
+            <QueryProvider>
+              <AuthProvider>
+                <LocaleProvider initialLocale={locale}>
+                  <FeatureFlagsProvider>
+                    <SubscriptionConfigProvider>
+                      <SubscriptionProvider>
+                        <PreviewModeBanner />
+                        {children}
+                        <TermsGate />
+                      </SubscriptionProvider>
+                    </SubscriptionConfigProvider>
+                  </FeatureFlagsProvider>
+                </LocaleProvider>
+              </AuthProvider>
+            </QueryProvider>
+          </GoogleProvider>
+        </ThemeProvider>
         <Analytics />
         <SpeedInsights />
       </body>

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { AnimaLogo } from "@/components/brand/AnimaLogo";
 import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { marketingFontVariables } from "@/components/marketing/marketing-fonts";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { faqSchema, medicalHomePageSchema } from "@/components/seo/schema";
@@ -70,6 +71,10 @@ export function HomePage({ locale }: { locale: Locale }) {
               <AnimaLogo href={homeHref} size="header" showWordmark />
             </div>
             <div className="flex items-center gap-2 sm:gap-3.5 justify-end flex-wrap">
+              <ThemeToggle
+                toDarkLabel={t.nav.themeToDark}
+                toLightLabel={t.nav.themeToLight}
+              />
               <LanguageSwitcher
                 locale={locale}
                 barePath="/"

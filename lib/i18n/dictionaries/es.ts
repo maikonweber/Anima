@@ -14,6 +14,8 @@ export const es: MarketingDictionary = {
     menuOpen: "Abrir menú",
     menuClose: "Cerrar menú",
     ariaLabel: "Enlaces institucionales",
+    themeToDark: "Activar tema oscuro",
+    themeToLight: "Activar tema claro",
   },
   footer: {
     privacy: "Privacidad",
