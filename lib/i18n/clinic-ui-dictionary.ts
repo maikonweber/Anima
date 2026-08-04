@@ -9,7 +9,7 @@ import {
 export type { ClinicUiDictionary };
 
 export function getClinicUiDictionary(locale: Locale): ClinicUiDictionary {
-  if (locale === "en") return clinicUiEn;
-  if (locale === "es") return clinicUiEs;
-  return clinicUiPt;
+  if (locale === "en") return clinicUiEn as ClinicUiDictionary;
+  if (locale === "es") return clinicUiEs as ClinicUiDictionary;
+  return clinicUiPt as ClinicUiDictionary;
 }
