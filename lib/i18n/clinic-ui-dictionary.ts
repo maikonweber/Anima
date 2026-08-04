@@ -9,7 +9,8 @@ import {
 export type { ClinicUiDictionary };
 
 export function getClinicUiDictionary(locale: Locale): ClinicUiDictionary {
-  if (locale === "en") return clinicUiEn as ClinicUiDictionary;
-  if (locale === "es") return clinicUiEs as ClinicUiDictionary;
-  return clinicUiPt as ClinicUiDictionary;
+  // `as const` dictionaries are readonly; DeepStringify expects mutable strings.
+  if (locale === "en") return clinicUiEn as unknown as ClinicUiDictionary;
+  if (locale === "es") return clinicUiEs as unknown as ClinicUiDictionary;
+  return clinicUiPt as unknown as ClinicUiDictionary;
 }
