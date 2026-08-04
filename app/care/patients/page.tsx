@@ -19,7 +19,7 @@ export default function CarePatientsPage() {
           Acompanhamentos
         </h1>
         <p className="text-sm text-foreground/40 mb-8">
-          Pacientes que compartilham a evolução com você
+          Pessoas Pleno que autorizaram você a acompanhar o painel em leitura
         </p>
 
         {error && (

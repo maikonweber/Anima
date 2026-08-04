@@ -48,9 +48,9 @@ export default function SharedPatientDashboardPage({
       {!canViewSharedDashboard && !isLoading && !error && (
         <div className="glass-panel p-6 text-center">
           <p className="text-sm text-foreground/50 mb-4">
-            Visualizar dashboards compartilhados requer o plano Cuidado.
+            Visualizar painéis compartilhados requer o plano Pleno.
           </p>
-          <UpgradeBadge planName="Cuidado" href="/assinatura?plan=cuidado" />
+          <UpgradeBadge planName="Pleno" href="/assinatura?plan=pleno" />
         </div>
       )}
 
@@ -70,10 +70,10 @@ export default function SharedPatientDashboardPage({
           />
           {paymentRequired && (
             <Link
-              href="/assinatura?plan=cuidado"
+              href="/assinatura?plan=pleno"
               className="block mt-4 text-center text-sm text-anima-violet"
             >
-              Ver plano Cuidado →
+              Ver plano Pleno →
             </Link>
           )}
         </div>

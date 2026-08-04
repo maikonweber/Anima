@@ -36,7 +36,7 @@ const DEFAULT_CHECK_IN: CheckInMetricsValue = {
 
 export default function NewDiaryPage() {
   const router = useRouter();
-  const { usage } = useSubscription();
+  const { usage, canShareDashboard } = useSubscription();
   const { data: emotions = [], isLoading: loadingEmotions, error: emotionsError, refetch } = useEmotions();
   const createEntry = useCreateDiaryEntry();
 
@@ -197,6 +197,7 @@ export default function NewDiaryPage() {
           value={visibility}
           onChange={setVisibility}
           disabled={createEntry.isPending}
+          shareLocked={!canShareDashboard}
         />
 
         <Button type="submit" isLoading={createEntry.isPending}>

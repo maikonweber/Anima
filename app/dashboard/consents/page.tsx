@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { motion } from "motion/react";
 import { Button } from "@/components/ui/Button";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
@@ -15,10 +16,12 @@ import {
   useRevokeConsent,
 } from "@/hooks/use-consents";
 import { useMyOrganizations } from "@/hooks/use-organizations";
+import { useSubscription } from "@/providers/subscription-provider";
 import type { ConsentPurpose } from "@anima/shared";
 import { ApiError } from "@anima/shared";
 
 export default function PatientConsentsPage() {
+  const { canShareDashboard } = useSubscription();
   const { data: orgs, isLoading: orgsLoading, error: orgsError, refetch: refetchOrgs } =
     useMyOrganizations();
 
@@ -210,15 +213,28 @@ export default function PatientConsentsPage() {
                       </div>
 
                       {item.status !== "CONCEDIDO" ? (
-                        <Button
-                          type="button"
-                          isLoading={
-                            grant.isPending && busyPurpose === item.purpose
-                          }
-                          onClick={() => void handleGrant(item.purpose)}
-                        >
-                          Conceder
-                        </Button>
+                        item.purpose === "DIARIO_CHECKIN" &&
+                        !canShareDashboard ? (
+                          <div className="space-y-2">
+                            <p className="text-xs text-foreground/45">
+                              Compartilhar o diário com a clínica requer o plano
+                              Pleno.
+                            </p>
+                            <Link href="/assinatura?plan=pleno">
+                              <Button type="button">Assinar Pleno</Button>
+                            </Link>
+                          </div>
+                        ) : (
+                          <Button
+                            type="button"
+                            isLoading={
+                              grant.isPending && busyPurpose === item.purpose
+                            }
+                            onClick={() => void handleGrant(item.purpose)}
+                          >
+                            Conceder
+                          </Button>
+                        )
                       ) : (
                         item.consentId && (
                           <Button

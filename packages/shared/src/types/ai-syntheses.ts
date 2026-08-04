@@ -4,10 +4,19 @@ export type AiSynthesisStatus =
   | "APROVADA"
   | "REJEITADA";
 
-export type AiSynthesisSourceKind = "DIARIO" | "SESSAO" | "MISTO";
+export type AiSynthesisSourceKind =
+  | "DIARIO"
+  | "SESSAO"
+  | "MISTO"
+  | "POS_CONSULTA";
 
 export type AiSynthesisSourceRef = {
-  type: "diary_entry" | "appointment" | "clinical_knowledge";
+  type:
+    | "diary_entry"
+    | "appointment"
+    | "clinical_knowledge"
+    | "manual_session_notes"
+    | "teleconsult_session";
   id: string;
 };
 
@@ -39,9 +48,12 @@ export type AiSynthesis = {
 export type GenerateAiSynthesisPayload = {
   sourceKind: AiSynthesisSourceKind;
   appointmentId?: string | null;
+  teleconsultSessionId?: string | null;
   dateFrom?: string;
   dateTo?: string;
   title?: string;
+  manualSessionNotes?: string;
+  includeDiary?: boolean;
 };
 
 export type UpdateAiSynthesisPayload = Partial<{
@@ -60,4 +72,15 @@ export type RejectAiSynthesisPayload = {
 
 export type ListAiSynthesesQuery = {
   status?: AiSynthesisStatus;
+};
+
+export type GenerateSessionIntelligencePayload = {
+  manualSessionNotes: string;
+  title?: string;
+  includeDiary?: boolean;
+};
+
+export type SessionIntelligenceResult = {
+  session: import("./teleconsult").TeleconsultSession;
+  synthesis: AiSynthesis;
 };

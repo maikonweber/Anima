@@ -28,7 +28,7 @@ export const productEs = {
     assistantShort: "Asistente",
     carePatients: "Acompañamientos",
     clinics: "Clínicas",
-    invitePro: "Invitar profesional",
+    invitePro: "Vincular cuenta",
     consents: "Consentimientos",
     reminders: "Recordatorios",
     carePlan: "Plan de cuidado",

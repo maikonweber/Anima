@@ -23,6 +23,7 @@ import {
 } from "@/components/diary/CheckInMetricsFields";
 import { Button } from "@/components/ui/Button";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
+import { useSubscription } from "@/providers/subscription-provider";
 import type { DiaryEntryVisibility } from "@anima/shared";
 
 type DiaryEntry = NonNullable<ReturnType<typeof useDiaryEntry>["data"]>;
@@ -84,6 +85,7 @@ function EditDiaryForm({
 }) {
   const router = useRouter();
   const updateEntry = useUpdateDiaryEntry();
+  const { canShareDashboard } = useSubscription();
 
   const [texto, setTexto] = useState(entry.texto);
   const [energia, setEnergia] = useState(entry.energiaInformada);
@@ -231,6 +233,7 @@ function EditDiaryForm({
           value={visibility}
           onChange={setVisibility}
           disabled={updateEntry.isPending}
+          shareLocked={!canShareDashboard}
         />
 
         <Button type="submit" isLoading={updateEntry.isPending}>

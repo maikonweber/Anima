@@ -16,6 +16,7 @@ import { useAssistantSuggestions } from "@/hooks/use-insights";
 import { ApiError } from "@/lib/api-client";
 import { extractApiErrorExtras } from "@/lib/assistant/api-errors";
 import { formatAssistantMessageTime } from "@/lib/assistant/message-time";
+import { useLocale } from "@/lib/i18n/locale-provider";
 import { isNearLimit } from "@/lib/subscription/utils";
 import { useAuth } from "@/providers/auth-provider";
 import type { AssistantLimits, AssistantMessage } from "@/types/assistant";
@@ -56,6 +57,13 @@ function TypingDots() {
 
 export function AssistantChatPage() {
   const { user, refreshUser } = useAuth();
+  const { locale } = useLocale();
+  const retryLabel =
+    locale === "es"
+      ? "Intentar de nuevo"
+      : locale === "en"
+        ? "Try again"
+        : "Tentar novamente";
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [draft, setDraft] = useState("");
@@ -592,7 +600,7 @@ export function AssistantChatPage() {
                 }`}
                 onClick={() => void handleRetry()}
               >
-                Tentar novamente
+                {retryLabel}
               </button>
             ) : null}
           </div>

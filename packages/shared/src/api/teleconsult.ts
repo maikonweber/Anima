@@ -46,6 +46,28 @@ export async function endTeleconsult(orgId: string, sessionId: string) {
   );
 }
 
+export async function generateSessionIntelligence(
+  orgId: string,
+  sessionId: string,
+  payload: {
+    manualSessionNotes: string;
+    title?: string;
+    includeDiary?: boolean;
+  },
+) {
+  return api<{
+    session: TeleconsultSession;
+    synthesis: import("../types/ai-syntheses").AiSynthesis;
+  }>(
+    `/organizations/${encodeURIComponent(orgId)}/teleconsult/${encodeURIComponent(sessionId)}/session-intelligence`,
+    {
+      method: "POST",
+      auth: true,
+      body: JSON.stringify(payload),
+    },
+  );
+}
+
 export async function postTeleconsultSignal(
   orgId: string,
   sessionId: string,

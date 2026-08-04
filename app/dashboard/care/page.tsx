@@ -42,7 +42,7 @@ export default function DashboardCarePage() {
     try {
       await createMutation.mutateAsync(parsed.data.viewerEmail);
       setEmail("");
-      setFormSuccess("Convite enviado! O profissional receberá instruções por e-mail.");
+      setFormSuccess("Convite enviado! O destinatário receberá instruções por e-mail.");
     } catch (err) {
       if (err instanceof ApiError && err.status === 402) return;
       setFormError(
@@ -61,17 +61,18 @@ export default function DashboardCarePage() {
         transition={{ duration: 0.4 }}
       >
         <h1 className="text-2xl sm:text-3xl font-bold text-foreground/90 mb-1">
-          Convidar profissional
+          Vincular conta
         </h1>
         <p className="text-sm text-foreground/40 mb-8">
-          Autorize alguém de confiança a enxergar resumos entre sessões e os
-          momentos que você salvar na linha do tempo (somente leitura).
+          Autorize outro Pleno (ou profissional Cuidado) a ver resumos e momentos
+          que você marcar como compartilhados — somente leitura. O plano Essencial
+          não participa de vínculos.
         </p>
 
         {!canShareDashboard && (
           <div className="glass-panel p-4 mb-6 flex flex-wrap items-center justify-between gap-3">
             <p className="text-sm text-foreground/50">
-              Esta função faz parte do plano Pleno, para compartilhamento ético entre sessões.
+              Vincular com clínica ou outro Pleno faz parte do plano Pleno.
             </p>
             <UpgradeBadge planName="Pleno" href="/assinatura?plan=pleno" />
           </div>

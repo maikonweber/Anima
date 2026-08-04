@@ -3,7 +3,8 @@ import type { PlanLimits, PlanSlug } from "@/types/subscription";
 
 const PLAN_TAGLINES: Record<PlanSlug, string> = {
   essencial: "Para começar a se entender — diário e SENTIO AI no seu ritmo.",
-  pleno: "Segundo cérebro completo: memória, tracking, 500 interações do assistente/mês e 1 profissional — R$ 9,99.",
+  pleno:
+    "Segundo cérebro completo: memória, tracking, 500 interações do assistente/mês, vínculo com clínica e 1 outro Pleno — R$ 9,99.",
   /** Cuidado: base do profissional + R$ 5/mês por paciente Pleno patrocinado. */
   cuidado:
     "Para profissionais: dashboards por convite, Pleno patrocinado (+ R$ 5/mês por paciente) e 500 mensagens do assistente/mês.",
@@ -49,32 +50,33 @@ export function buildPlanHighlights(limits: PlanLimits): string[] {
   }
 
   if (limits.careInvitesActive === 1) {
-    items.push("1 compartilhamento ativo com profissional");
+    items.push("1 vínculo ativo (clínica ou outro Pleno)");
   } else if (
     limits.careInvitesActive != null &&
     limits.careInvitesActive > 1
   ) {
     items.push(
-      `Até ${limits.careInvitesActive} compartilhamentos ativos com profissionais`,
+      `Até ${limits.careInvitesActive} vínculos ativos (clínica ou outros Plenos)`,
     );
   }
 
-  if (limits.accessiblePatients != null && limits.accessiblePatients > 0) {
-    items.push(
-      `Até ${limits.accessiblePatients} dashboards Cuidado (leitura, por convite)`,
-    );
-  } else if (limits.canViewSharedDashboard && limits.accessiblePatients === null) {
+  if (limits.canViewSharedDashboard && limits.accessiblePatients === null) {
     items.push(
       "Dashboards Cuidado ilimitados · Pleno patrocinado (+ R$ 5/mês por paciente)",
     );
+  } else if (limits.accessiblePatients === 1) {
+    items.push("Acompanhar 1 outro Pleno em leitura");
+  } else if (limits.accessiblePatients != null && limits.accessiblePatients > 1) {
+    items.push(
+      `Até ${limits.accessiblePatients} painéis em leitura (por convite)`,
+    );
   }
 
-  if (limits.canShareDashboard && !items.some((i) => i.toLowerCase().includes("compartilh"))) {
-    items.push("Convidar 1 profissional para dashboard em leitura (Pleno)");
-  }
-
-  if (limits.canViewSharedDashboard) {
-    items.push("Visualizar dashboards de pacientes no plano Cuidado");
+  if (
+    limits.canShareDashboard &&
+    !items.some((i) => i.toLowerCase().includes("vínculo"))
+  ) {
+    items.push("Vincular painel com clínica ou outro Pleno");
   }
 
   return items;

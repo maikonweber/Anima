@@ -301,4 +301,6 @@ export interface RegisterWithInviteResponse {
   accessTokenExpiresIn: number;
   user: User;
   invite: CareInvitePublic;
+  /** Conta criada no Essencial — convite só pode ser aceito após Pleno/Cuidado. */
+  requiresViewerPlan?: boolean;
 }

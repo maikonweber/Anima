@@ -8,9 +8,17 @@ import {
 
 export type { ClinicUiDictionary };
 
+/**
+ * Dictionaries are declared with `as const`; ClinicUiDictionary widens strings.
+ * Map through unknown so Next typecheck accepts the readonly → mutable widen.
+ */
+const byLocale = {
+  en: clinicUiEn,
+  es: clinicUiEs,
+  pt: clinicUiPt,
+} as unknown as Record<"en" | "es" | "pt", ClinicUiDictionary>;
+
 export function getClinicUiDictionary(locale: Locale): ClinicUiDictionary {
-  // `as const` dictionaries are readonly; DeepStringify expects mutable strings.
-  if (locale === "en") return clinicUiEn as unknown as ClinicUiDictionary;
-  if (locale === "es") return clinicUiEs as unknown as ClinicUiDictionary;
-  return clinicUiPt as unknown as ClinicUiDictionary;
+  if (locale === "en" || locale === "es") return byLocale[locale];
+  return byLocale.pt;
 }

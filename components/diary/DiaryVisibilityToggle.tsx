@@ -1,15 +1,24 @@
 "use client";
 
+import Link from "next/link";
 import type { DiaryEntryVisibility } from "@anima/shared";
 
 type Props = {
   value: DiaryEntryVisibility;
   onChange: (value: DiaryEntryVisibility) => void;
   disabled?: boolean;
+  /** Plano Essencial: não pode marcar COMPARTILHADO. */
+  shareLocked?: boolean;
 };
 
-export function DiaryVisibilityToggle({ value, onChange, disabled }: Props) {
+export function DiaryVisibilityToggle({
+  value,
+  onChange,
+  disabled,
+  shareLocked = false,
+}: Props) {
   const shared = value === "COMPARTILHADO";
+  const locked = shareLocked && !shared;
 
   return (
     <div className="glass-panel p-5 space-y-3">
@@ -19,16 +28,18 @@ export function DiaryVisibilityToggle({ value, onChange, disabled }: Props) {
             Compartilhamento
           </p>
           <p className="text-xs text-foreground/40 mt-1 leading-relaxed">
-            {shared
-              ? "Este registro pode aparecer para quem você autorizou (care ou clínica com consentimento DIARIO_CHECKIN)."
-              : "Privado: só você vê este registro. Ninguém do care ou da clínica terá acesso a ele."}
+            {locked
+              ? "Compartilhar o histórico com profissionais faz parte do plano Pleno."
+              : shared
+                ? "Este registro pode aparecer para quem você autorizou (care ou clínica com consentimento DIARIO_CHECKIN)."
+                : "Privado: só você vê este registro. Ninguém do care ou da clínica terá acesso a ele."}
           </p>
         </div>
         <button
           type="button"
           role="switch"
           aria-checked={shared}
-          disabled={disabled}
+          disabled={disabled || locked}
           onClick={() =>
             onChange(shared ? "PRIVADO" : "COMPARTILHADO")
           }
@@ -49,6 +60,14 @@ export function DiaryVisibilityToggle({ value, onChange, disabled }: Props) {
           {shared ? "Compartilhado" : "Privado"}
         </span>
       </p>
+      {locked ? (
+        <Link
+          href="/assinatura?plan=pleno"
+          className="inline-block text-xs font-medium text-anima-violet hover:underline"
+        >
+          Assinar Pleno para compartilhar
+        </Link>
+      ) : null}
     </div>
   );
 }

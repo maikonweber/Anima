@@ -251,6 +251,10 @@ function InviteRegisterForm({
         accessTokenExpiresIn: res.accessTokenExpiresIn,
         user: res.user,
       });
+      if (res.requiresViewerPlan) {
+        router.push("/assinatura?plan=pleno");
+        return;
+      }
       router.push("/care/patients");
     } catch (err) {
       setFormError(
@@ -291,8 +295,13 @@ function InviteRegisterForm({
         required
       />
 
+      <p className="text-xs text-foreground/40">
+        A conta começa no Essencial. Para aceitar o vínculo, assine o Pleno
+        depois do cadastro.
+      </p>
+
       <Button type="submit" isLoading={registerMutation.isPending} className="mt-1">
-        Criar conta e aceitar
+        Criar conta
       </Button>
     </form>
   );

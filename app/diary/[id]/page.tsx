@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/Button";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { getCategoryFromEnergy, getCategoryStyle } from "@/lib/energy";
 import { UsageMeter } from "@/components/subscription/UsageMeter";
+import { useLocale } from "@/lib/i18n/locale-provider";
 import { useSubscription } from "@/providers/subscription-provider";
 
 export default function DiaryDetailPage({
@@ -347,11 +348,19 @@ function DiaryDetailAnalyzeError({
   onRetry: () => void;
   isLoading: boolean;
 }) {
+  const { locale } = useLocale();
+  const retryLabel =
+    locale === "es"
+      ? "Intentar de nuevo"
+      : locale === "en"
+        ? "Try again"
+        : "Tentar novamente";
+
   return (
     <div className="mb-6">
-      <ErrorMessage message={message} onRetry={onRetry} />
+      <ErrorMessage message={message} onRetry={onRetry} retryLabel={retryLabel} />
       <Button onClick={onRetry} isLoading={isLoading} variant="secondary" className="mt-3">
-        Tentar novamente
+        {retryLabel}
       </Button>
     </div>
   );

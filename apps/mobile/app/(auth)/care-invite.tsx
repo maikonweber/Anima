@@ -75,7 +75,11 @@ export default function CareInviteScreen() {
         inviteToken: token,
       });
       setSession(res);
-      router.replace("/(app)/(tabs)");
+      if (res.requiresViewerPlan) {
+        router.replace("/(app)/(tabs)/more");
+        return;
+      }
+      router.replace("/(app)/care/patients");
     } catch (e) {
       setError(e instanceof ApiError ? e.message : "Falha no cadastro");
     } finally {
