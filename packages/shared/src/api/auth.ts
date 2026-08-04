@@ -74,3 +74,18 @@ export async function resetPasswordApi(token: string, senha: string) {
     body: JSON.stringify({ token, senha }),
   });
 }
+
+export async function deleteAccountApi(params: {
+  confirmationEmail: string;
+  senha?: string;
+  token: string;
+}) {
+  return api<{ message: string }>("/auth/account", {
+    method: "DELETE",
+    token: params.token,
+    body: JSON.stringify({
+      confirmationEmail: params.confirmationEmail,
+      ...(params.senha ? { senha: params.senha } : {}),
+    }),
+  });
+}

@@ -14,6 +14,8 @@ export interface User {
   nome: string;
   email: string;
   emailVerified: boolean;
+  /** Present when the account can sign in with e-mail/password. */
+  hasPassword?: boolean;
   criadoEm: string;
   atualizadoEm: string;
   subscription?: SubscriptionSummary;

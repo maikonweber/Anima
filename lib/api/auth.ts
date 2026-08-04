@@ -10,4 +10,5 @@ export {
   meApi,
   forgotPasswordApi,
   resetPasswordApi,
+  deleteAccountApi,
 } from "@anima/shared";
