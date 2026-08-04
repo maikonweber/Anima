@@ -149,6 +149,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const BOOTSTRAP_TIMEOUT_MS = 12_000;
 
+    function stripPlan(user: User): User {
+      const next = { ...user };
+      delete next.subscription;
+      return next;
+    }
+
+    /** Sessão sem plano em cache — gates de /clinic falham fechados (RF-090). */
+    function applySessionWithoutPlan(session: AuthSession) {
+      const safe = persistSession({
+        accessToken: session.accessToken,
+        refreshToken: session.refreshToken,
+        user: stripPlan(session.user),
+      });
+      applySession(safe);
+    }
+
+    async function hydrateUser(accessToken: string, refreshToken: string | null) {
+      const user = await meApi(accessToken);
+      const updated = persistSession({
+        accessToken,
+        refreshToken,
+        user,
+      });
+      applySession(updated);
+    }
+
     async function bootstrap() {
       const session = getStoredSession();
       if (!session) {
@@ -163,35 +189,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         expiresAt != null &&
         Date.now() >= expiresAt - PROACTIVE_REFRESH_LEAD_MS;
 
+      let accessToken = session.accessToken;
+      let activeRefreshToken = refreshToken;
+
       if (refreshToken && (accessExpired || expiresSoon)) {
         const refreshed = await refreshAccessToken();
         if (refreshed) {
-          applySession(getStoredSession()!);
-          return;
-        }
-        if (accessExpired) {
+          accessToken = refreshed.accessToken;
+          activeRefreshToken = refreshed.refreshToken;
+        } else if (accessExpired) {
           handleUnauthorized("expired");
           return;
         }
       }
 
       try {
-        const user = await meApi(session.accessToken);
-        const updated = persistSession({
-          accessToken: session.accessToken,
-          refreshToken: session.refreshToken,
-          user,
-        });
-        applySession(updated);
+        await hydrateUser(accessToken, activeRefreshToken);
       } catch (err: unknown) {
         if (err instanceof ApiError && err.status === 401) {
-          if (refreshToken) {
+          if (activeRefreshToken) {
             const refreshed = await refreshAccessToken();
             if (refreshed) {
               try {
-                const user = await meApi(refreshed.accessToken);
-                const updated = persistAuthResponse({ ...refreshed, user });
-                applySession(updated);
+                await hydrateUser(refreshed.accessToken, refreshed.refreshToken);
                 return;
               } catch {
                 /* fall through */
@@ -201,7 +221,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           handleUnauthorized("expired");
           return;
         }
-        applySession(session);
+        // Sem /me atualizado: não confiar em plano antigo (preview/cuidado em cache).
+        applySessionWithoutPlan(getStoredSession() ?? session);
       }
     }
 
@@ -209,8 +230,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setState((prev) => {
         if (!prev.isLoading) return prev;
         const session = getStoredSession();
-        if (session) return { ...sessionToState(session), isLoading: false };
-        return { ...prev, isLoading: false };
+        if (!session) return { ...prev, isLoading: false };
+        // Timeout: falha fechada — remove plano em cache (memória + storage).
+        const safe = persistSession({
+          accessToken: session.accessToken,
+          refreshToken: session.refreshToken,
+          user: stripPlan(session.user),
+        });
+        return { ...sessionToState(safe), isLoading: false };
       });
     }, BOOTSTRAP_TIMEOUT_MS);
 
@@ -261,6 +288,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const applyAuthResponse = useCallback(
     (response: AuthResponse) => {
+      if (!response.user) {
+        throw new Error("Resposta de autenticação sem usuário");
+      }
       const session = persistAuthResponse(response);
       applySession(session);
       return response.user;

@@ -24,6 +24,8 @@ interface SubscriptionContextValue {
   isCuidado: boolean;
   isEssencial: boolean;
   isPreviewPlan: boolean;
+  /** CRM /clinic — exclusivo Cuidado (ou preview). Free e Pleno = false. */
+  canAccessClinic: boolean;
   previewMode: boolean;
   sponsoredByPsychologist: boolean;
   /** Stripe 100% configurado no backend — informativo */
@@ -76,6 +78,8 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     subscription?.preview === true ||
     planSlug === "preview";
   const isPreviewPlan = planSlug === "preview" || subscription?.preview === true;
+  // Allowlist explícita — Pleno/essencial nunca abrem o CRM.
+  const canAccessClinic = planSlug === "cuidado" || isPreviewPlan;
 
   const value = useMemo<SubscriptionContextValue>(
     () => ({
@@ -86,6 +90,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
       isCuidado: planSlug === "cuidado",
       isEssencial: planSlug === "essencial",
       isPreviewPlan,
+      canAccessClinic,
       previewMode,
       sponsoredByPsychologist,
       paymentsEnabled,
@@ -117,6 +122,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
       planSlug,
       limits,
       isPreviewPlan,
+      canAccessClinic,
       previewMode,
       sponsoredByPsychologist,
       paymentsEnabled,

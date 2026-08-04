@@ -52,7 +52,10 @@ function isClinicAppRedirect(path: string): boolean {
   return bare === "/clinic" || bare.startsWith("/clinic/");
 }
 
-function canAccessClinicApp(planSlug?: string | null): boolean {
+/**
+ * CRM Clínicas: só Cuidado (e preview). Free (essencial) e Pleno ficam no app pessoal.
+ */
+export function canAccessClinicApp(planSlug?: string | null): boolean {
   return planSlug === "cuidado" || planSlug === "preview";
 }
 
@@ -80,9 +83,12 @@ export function resolvePostAuthDestination(
     return localizedPath(locale, "/aguardando-verificacao");
   }
   if (isSafeInternalRedirect(redirectTo)) {
-    // Não honrar redirect para /clinic sem plano Cuidado/preview (RF-090).
+    // Free/Pleno não entram no CRM — manda para upgrade Cuidado (RF-090).
     if (isClinicAppRedirect(redirectTo) && !canAccessClinicApp(planSlug)) {
-      return localizedPath(locale, "/dashboard");
+      const upgrade = assinaturaCheckoutPath("cuidado");
+      const [path, query] = upgrade.split("?");
+      const localized = localizedPath(locale, path);
+      return query ? `${localized}?${query}` : localized;
     }
     const [path, query] = redirectTo.split("?");
     const localized = localizedPath(locale, pathWithoutLocale(path));

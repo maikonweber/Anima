@@ -102,11 +102,16 @@ export function persistAuth(accessToken: string, user: User): AuthSession {
 }
 
 export function persistAuthResponse(response: AuthResponse): AuthSession {
+  // /auth/refresh devolve só tokens — preservar o user em cache.
+  const user = response.user ?? getStoredUser();
+  if (!user) {
+    throw new Error("persistAuthResponse requires user on first persist");
+  }
   return persistSession({
     accessToken: response.accessToken,
     refreshToken: response.refreshToken,
     accessTokenExpiresIn: response.accessTokenExpiresIn,
-    user: response.user,
+    user,
   });
 }
 

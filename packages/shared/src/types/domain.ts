@@ -25,7 +25,8 @@ export interface AuthResponse {
   accessToken: string;
   refreshToken: string;
   accessTokenExpiresIn: number;
-  user: User;
+  /** Ausente em /auth/refresh — só login/register/Google/me trazem user. */
+  user?: User;
 }
 
 export interface RegisterResponse extends AuthResponse {
