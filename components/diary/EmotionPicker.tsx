@@ -7,6 +7,20 @@ export interface SelectedEmotion {
   intensidade?: number;
 }
 
+/** Nomes das 10 emoções positivas do catálogo rastreável. */
+const POSITIVE_EMOTION_NAMES = new Set([
+  "alegria",
+  "calma",
+  "esperança",
+  "gratidão",
+  "amor",
+  "orgulho",
+  "alívio",
+  "entusiasmo",
+  "confiança",
+  "paz",
+]);
+
 interface EmotionPickerProps {
   emotions: Emotion[];
   selected: SelectedEmotion[];
@@ -24,7 +38,7 @@ export function EmotionPicker({
 }: EmotionPickerProps) {
   if (isLoading) {
     return (
-      <div className="flex flex-wrap gap-2">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
         {Array.from({ length: 8 }).map((_, i) => (
           <EmotionPickerSkeleton key={i} />
         ))}
@@ -33,6 +47,12 @@ export function EmotionPicker({
   }
 
   const activeEmotions = emotions.filter((e) => e.ativo);
+  const positive = activeEmotions.filter((e) =>
+    POSITIVE_EMOTION_NAMES.has(e.nome.toLowerCase()),
+  );
+  const challenging = activeEmotions.filter(
+    (e) => !POSITIVE_EMOTION_NAMES.has(e.nome.toLowerCase()),
+  );
 
   function toggle(emotion: Emotion) {
     if (disabled) return;
@@ -53,28 +73,30 @@ export function EmotionPicker({
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       <p className="text-sm font-medium text-foreground/70">
         Emoções que você sente
       </p>
-      <div className="flex flex-wrap gap-2" role="group" aria-label="Selecionar emoções">
-        {activeEmotions.map((emotion) => {
-          const sel = selected.find((s) => s.emotionId === emotion.id);
-          const isSelected = !!sel;
-          const color = emotion.cor ?? "#7c5cbf";
 
-          return (
-            <EmotionPickerChip
-              key={emotion.id}
-              emotion={emotion}
-              isSelected={isSelected}
-              color={color}
-              disabled={disabled}
-              onToggle={() => toggle(emotion)}
-            />
-          );
-        })}
-      </div>
+      {positive.length > 0 && (
+        <EmotionPickerGroup
+          label="Mais leve"
+          emotions={positive}
+          selected={selected}
+          disabled={disabled}
+          onToggle={toggle}
+        />
+      )}
+
+      {challenging.length > 0 && (
+        <EmotionPickerGroup
+          label="Mais pesada"
+          emotions={challenging}
+          selected={selected}
+          disabled={disabled}
+          onToggle={toggle}
+        />
+      )}
 
       {selected.length > 0 && (
         <div className="space-y-3 pt-2 border-t border-foreground/[0.06]">
@@ -98,8 +120,52 @@ export function EmotionPicker({
   );
 }
 
+function EmotionPickerGroup({
+  label,
+  emotions,
+  selected,
+  disabled,
+  onToggle,
+}: {
+  label: string;
+  emotions: Emotion[];
+  selected: SelectedEmotion[];
+  disabled?: boolean;
+  onToggle: (emotion: Emotion) => void;
+}) {
+  return (
+    <div className="space-y-2">
+      <p className="text-xs font-medium uppercase tracking-wide text-foreground/40">
+        {label}
+      </p>
+      <div
+        className="grid grid-cols-2 sm:grid-cols-3 gap-2"
+        role="group"
+        aria-label={label}
+      >
+        {emotions.map((emotion) => {
+          const isSelected = selected.some((s) => s.emotionId === emotion.id);
+          const color = emotion.cor ?? "#7c5cbf";
+          return (
+            <EmotionPickerChip
+              key={emotion.id}
+              emotion={emotion}
+              isSelected={isSelected}
+              color={color}
+              disabled={disabled}
+              onToggle={() => onToggle(emotion)}
+            />
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function EmotionPickerSkeleton() {
-  return <div className="h-9 w-24 rounded-full bg-foreground/[0.06] animate-pulse" />;
+  return (
+    <div className="h-10 w-full rounded-xl bg-foreground/[0.06] animate-pulse" />
+  );
 }
 
 function EmotionPickerChip({
@@ -121,7 +187,7 @@ function EmotionPickerChip({
       onClick={onToggle}
       disabled={disabled}
       aria-pressed={isSelected}
-      className={`flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium border transition-all duration-200 disabled:opacity-50 ${
+      className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium border transition-all duration-200 disabled:opacity-50 ${
         isSelected
           ? "border-transparent text-white shadow-md"
           : "border-foreground/[0.08] text-foreground/60 hover:border-foreground/20 bg-foreground/[0.03]"
@@ -137,7 +203,7 @@ function EmotionPickerChip({
         style={{ backgroundColor: color }}
         aria-hidden
       />
-      {emotion.nome}
+      <span className="capitalize truncate">{emotion.nome}</span>
     </button>
   );
 }
@@ -156,7 +222,9 @@ function EmotionPickerIntensity({
   const color = emotion.cor ?? "#7c5cbf";
   return (
     <div className="flex items-center gap-3">
-      <span className="text-sm text-foreground/60 w-28 shrink-0">{emotion.nome}</span>
+      <span className="text-sm text-foreground/60 w-28 shrink-0 capitalize">
+        {emotion.nome}
+      </span>
       <input
         type="range"
         min={1}
@@ -171,7 +239,9 @@ function EmotionPickerIntensity({
         }}
         aria-label={`Intensidade de ${emotion.nome}`}
       />
-      <span className="text-xs font-medium text-foreground/50 w-4">{intensidade}</span>
+      <span className="text-xs font-medium text-foreground/50 w-4">
+        {intensidade}
+      </span>
     </div>
   );
 }

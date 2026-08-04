@@ -14,6 +14,30 @@ export const clinicUiEs = {
     product: "EmotiveCare",
     clinics: "Clínicas",
   },
+  clinicHome: {
+    eyebrow: "Área profesional",
+    description:
+      "CRM, agenda y equipo por organización — separado de la app del paciente.",
+    newClinicButton: "Nueva clínica",
+    cancelButton: "Cancelar",
+    newOrgTitle: "Nueva organización",
+    newOrgSubtitle:
+      "Serás el administrador y podrás invitar al equipo después.",
+    clinicNameLabel: "Nombre de la clínica",
+    clinicNamePlaceholder: "Ej.: Clínica Aurora",
+    createButton: "Crear y abrir CRM",
+    errorNameRequired: "Ingresa el nombre de la clínica.",
+    errorCreateFailed: "No fue posible crear la clínica.",
+    loadError: "No fue posible cargar tus clínicas.",
+    emptyTitle: "Aún no hay clínicas",
+    emptyDescription:
+      "Crea una organización para registrar pacientes, invitar al equipo y operar el CRM clínico.",
+    emptyButton: "Crear clínica",
+    yourOrganizations: "Tus organizaciones",
+    clinicCountSingular: "clínica",
+    clinicCountPlural: "clínicas",
+    openButton: "Abrir",
+  },
   nav: {
     overview: "Resumen",
     overviewShort: "Inicio",

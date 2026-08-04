@@ -46,7 +46,7 @@ export default function ClinicHomePage() {
     e.preventDefault();
     setFormError(null);
     if (name.trim().length < 2) {
-      setFormError("Informe o nome da clínica.");
+      setFormError(t.clinicHome.errorNameRequired);
       return;
     }
     try {
@@ -58,7 +58,7 @@ export default function ClinicHomePage() {
       );
     } catch (err) {
       setFormError(
-        err instanceof Error ? err.message : "Não foi possível criar a clínica.",
+        err instanceof Error ? err.message : t.clinicHome.errorCreateFailed,
       );
     }
   }
@@ -71,9 +71,9 @@ export default function ClinicHomePage() {
         transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
       >
         <ClinicPageHeader
-          eyebrow="Área profissional"
+          eyebrow={t.clinicHome.eyebrow}
           title={t.brand.clinics}
-          description="CRM, agenda e equipe por organização — separado do app do paciente."
+          description={t.clinicHome.description}
           actions={
             <Button
               type="button"
@@ -83,7 +83,7 @@ export default function ClinicHomePage() {
               }`}
               onClick={() => setShowForm((v) => !v)}
             >
-              {showForm ? "Cancelar" : "Nova clínica"}
+              {showForm ? t.clinicHome.cancelButton : t.clinicHome.newClinicButton}
             </Button>
           }
         />
@@ -98,17 +98,17 @@ export default function ClinicHomePage() {
           >
             <div>
               <h2 className="text-base font-semibold text-foreground">
-                Nova organização
+                {t.clinicHome.newOrgTitle}
               </h2>
               <p className="text-sm text-[var(--clinic-muted)] mt-1">
-                Você será o administrador e poderá convidar a equipe depois.
+                {t.clinicHome.newOrgSubtitle}
               </p>
             </div>
             <Input
-              label="Nome da clínica"
+              label={t.clinicHome.clinicNameLabel}
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Ex.: Clínica Aurora"
+              placeholder={t.clinicHome.clinicNamePlaceholder}
               error={formError ?? undefined}
               autoFocus
             />
@@ -117,14 +117,14 @@ export default function ClinicHomePage() {
               isLoading={createOrg.isPending}
               className="!rounded-lg sm:!w-auto clinic-btn-primary"
             >
-              Criar e abrir CRM
+              {t.clinicHome.createButton}
             </Button>
           </motion.form>
         )}
 
         {error && (
           <ErrorMessage
-            message="Não foi possível carregar suas clínicas."
+            message={t.clinicHome.loadError}
             onRetry={() => refetch()}
           />
         )}
@@ -151,18 +151,17 @@ export default function ClinicHomePage() {
                 <BuildingEmptyIcon />
               </div>
               <h3 className="text-lg font-semibold text-foreground mb-2">
-                Nenhuma clínica ainda
+                {t.clinicHome.emptyTitle}
               </h3>
               <p className="text-sm text-[var(--clinic-muted)] max-w-sm mx-auto mb-6 leading-relaxed">
-                Crie uma organização para cadastrar pacientes, convidar a equipe
-                e operar o CRM clínico.
+                {t.clinicHome.emptyDescription}
               </p>
               <Button
                 type="button"
                 className="w-auto mx-auto !rounded-lg clinic-btn-primary"
                 onClick={() => setShowForm(true)}
               >
-                Criar clínica
+                {t.clinicHome.emptyButton}
               </Button>
             </div>
           </div>
@@ -172,10 +171,13 @@ export default function ClinicHomePage() {
           <div>
             <div className="flex items-baseline justify-between gap-3 mb-3 px-0.5">
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--clinic-subtle)]">
-                Suas organizações
+                {t.clinicHome.yourOrganizations}
               </p>
               <p className="text-xs text-[var(--clinic-subtle)]">
-                {data.length} {data.length === 1 ? "clínica" : "clínicas"}
+                {data.length}{" "}
+                {data.length === 1
+                  ? t.clinicHome.clinicCountSingular
+                  : t.clinicHome.clinicCountPlural}
               </p>
             </div>
             <ul className="space-y-2.5">
@@ -208,7 +210,7 @@ export default function ClinicHomePage() {
                       </p>
                     </div>
                     <span className="inline-flex items-center gap-1 shrink-0 rounded-lg bg-[var(--clinic-accent-soft)] px-2.5 py-1.5 text-xs font-semibold text-[var(--clinic-accent)] opacity-90 group-hover:opacity-100 transition-opacity">
-                      Abrir
+                      {t.clinicHome.openButton}
                       <ArrowIcon />
                     </span>
                   </Link>

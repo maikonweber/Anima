@@ -169,9 +169,9 @@ export function ClinicSidebar() {
     <>
       {/* Mobile top bar */}
       <header className="lg:hidden fixed top-0 inset-x-0 z-40 border-b border-[var(--clinic-sidebar-edge)] bg-[var(--clinic-sidebar)]/95 backdrop-blur-md clinic-safe-top">
-        <div className="flex items-center justify-between gap-3 px-3 h-12">
-          <Link href={localizedHref("/clinic")} className="flex items-center gap-2 min-w-0">
-            <AnimaLogo size="sm" className="scale-75 origin-left" />
+        <div className="flex items-center justify-between gap-2 px-3 h-12">
+          <Link href={localizedHref("/clinic")} className="flex items-center gap-2 min-w-0 flex-1">
+            <AnimaLogo size="sm" className="scale-75 origin-left shrink-0" />
             <div className="min-w-0 -ml-1">
               <p className="text-[11px] font-semibold text-foreground leading-none truncate">
                 {t.brand.product}
@@ -181,10 +181,10 @@ export function ClinicSidebar() {
               </p>
             </div>
           </Link>
-          <div className="flex items-center gap-2 min-w-0">
+          <div className="flex items-center gap-2 shrink-0">
             <LanguageSwitcher variant="pills" className="shrink-0" />
             {orgQuery.data ? (
-              <p className="text-[11px] text-[var(--clinic-muted)] truncate max-w-[42%] text-right font-medium">
+              <p className="hidden sm:block text-[11px] text-[var(--clinic-muted)] truncate max-w-[7rem] text-right font-medium">
                 {orgQuery.data.name}
               </p>
             ) : null}
@@ -194,11 +194,11 @@ export function ClinicSidebar() {
 
       {/* Desktop sidebar */}
       <aside className="hidden lg:flex flex-col w-60 xl:w-64 shrink-0 h-dvh sticky top-0 border-r border-[var(--clinic-sidebar-edge)] bg-[var(--clinic-sidebar)]">
-        <div className="p-4 pb-4 flex items-start justify-between gap-2">
+        <div className="p-4 pb-4 space-y-3">
           <Link href={localizedHref("/clinic")} className="flex items-center gap-2.5 group min-w-0">
-            <AnimaLogo size="sm" />
+            <AnimaLogo size="sm" className="shrink-0" />
             <div className="min-w-0">
-              <p className="text-[13px] font-semibold tracking-tight text-foreground leading-tight group-hover:text-[var(--clinic-accent)] transition-colors">
+              <p className="text-[13px] font-semibold tracking-tight text-foreground leading-tight truncate group-hover:text-[var(--clinic-accent)] transition-colors">
                 {t.brand.product}
               </p>
               <p className="text-[10px] uppercase tracking-[0.16em] text-[var(--clinic-accent)] font-semibold mt-0.5">
@@ -206,7 +206,9 @@ export function ClinicSidebar() {
               </p>
             </div>
           </Link>
-          <LanguageSwitcher variant="pills" className="shrink-0" />
+          <div className="[&>div]:flex [&>div]:w-full [&>div_a]:flex-1 [&>div_a]:text-center">
+            <LanguageSwitcher variant="pills" />
+          </div>
         </div>
 
         {orgId && orgQuery.data && (
