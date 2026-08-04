@@ -34,11 +34,12 @@ const ogImageAbsolute = `${SITE_URL}${OG_IMAGE_PATH}`;
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "EmotiveCare · O futuro do cuidado emocional (SENTIO AI)",
+    default:
+      "EmotiveCare · Segundo cérebro emocional e Clínicas para psicólogos e psiquiatras",
     template: "%s · EmotiveCare",
   },
   description:
-    "Plataforma de cuidado emocional contínuo com SENTIO AI por MutterCorp: diário emocional inteligente, acompanhamento longitudinal e dashboards terapêuticos compartilháveis sob consentimento.",
+    "EmotiveCare: segundo cérebro emocional para uso pessoal com SENTIO AI; plano Cuidado para profissionais; EmotiveCare Clínicas com CRM, agenda, teleconsulta, prontuário e IA clínica revisável para psicólogos e psiquiatras.",
   applicationName: "EmotiveCare",
   authors: [{ name: "MutterCorp", url: SITE_URL }],
   creator: "MutterCorp",
@@ -61,16 +62,24 @@ export const metadata: Metadata = {
     locale: "pt_BR",
     url: SITE_URL,
     siteName: "EmotiveCare",
-    title: "EmotiveCare — O futuro do cuidado emocional · SENTIO AI",
+    title:
+      "EmotiveCare — segundo cérebro emocional · Clínicas para psicólogos e psiquiatras",
     description:
-      "Acompanhamento emocional contínuo, memória emocional longitudinal e dashboards terapêuticos com permissão paciente-profissional — powered by SENTIO AI.",
-    images: [{ url: ogImageAbsolute, width: 1200, height: 630, alt: "EmotiveCare · SENTIO AI" }],
+      "App pessoal com memória emocional e SENTIO AI. EmotiveCare Clínicas: CRM, agenda, teleconsulta e IA assistiva com revisão humana para saúde mental.",
+    images: [
+      {
+        url: ogImageAbsolute,
+        width: 1200,
+        height: 630,
+        alt: "EmotiveCare · segundo cérebro e Clínicas",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "EmotiveCare · SENTIO AI",
+    title: "EmotiveCare · segundo cérebro emocional e Clínicas",
     description:
-      "Plataforma de cuidado emocional inteligente e acompanhamento longitudinal para pacientes e profissionais.",
+      "Uso pessoal como segundo cérebro; Clínicas com IA para psicólogos e psiquiatras.",
     images: [ogImageAbsolute],
   },
   icons: {

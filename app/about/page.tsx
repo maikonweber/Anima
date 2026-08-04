@@ -9,12 +9,17 @@ import { buildMarketingMetadata } from "@/lib/seo/page-metadata";
 const LOCALE = "pt-BR" as const;
 
 export const metadata: Metadata = buildMarketingMetadata({
-  title: "Sobre a EmotiveCare e a tecnologia SENTIO AI",
+  title: "Sobre — segundo cérebro emocional e Clínicas com IA",
   description:
-    "Conheça a missão por trás da EmotiveCare, da MutterCorp e do motor contextual SENTIO AI para bem-estar emocional longitudinal.",
+    "A EmotiveCare (MutterCorp) une segundo cérebro emocional pessoal com SENTIO AI e EmotiveCare Clínicas para psicólogos e psiquiatras: CRM, teleconsulta e IA clínica revisável.",
   path: "/about",
   locale: LOCALE,
-  keywords: ["bem-estar digital", "MutterCorp", "história da empresa"],
+  keywords: [
+    "MutterCorp EmotiveCare",
+    "SENTIO AI",
+    "segundo cérebro emocional",
+    "IA para psicólogos",
+  ],
 });
 
 export default function AboutPage() {

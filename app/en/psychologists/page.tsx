@@ -9,12 +9,17 @@ import { buildMarketingMetadata } from "@/lib/seo/page-metadata";
 const LOCALE = "en" as const;
 
 export const metadata: Metadata = buildMarketingMetadata({
-  title: "Psychologists — emotional dashboard between sessions",
+  title: "Cuidado — dashboard for psychologists and psychiatrists between sessions",
   description:
-    "Intelligent emotional dashboards for therapeutic follow-up and patient progress — shared only with consent.",
+    "Cuidado plan: psychologists and psychiatrists follow read-only emotional dashboards when patients invite them. For CRM, scheduling, teleconsult, and clinical AI, use EmotiveCare Clinics.",
   path: "/psychologists",
   locale: LOCALE,
-  keywords: ["online psychologist", "pre-session", "longitudinal dashboard"],
+  keywords: [
+    "Cuidado plan",
+    "dashboard for psychologists",
+    "dashboard for psychiatrists",
+    "between-session follow-up",
+  ],
 });
 
 export default function EnPsychologistsPage() {

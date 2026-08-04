@@ -9,16 +9,21 @@ import { buildMarketingMetadata } from "@/lib/seo/page-metadata";
 const LOCALE = "pt-BR" as const;
 
 export const metadata: Metadata = buildMarketingMetadata({
-  title: "EmotiveCare Clínicas — CRM, agenda e teleconsulta",
+  title:
+    "Clínicas — CRM, teleconsulta e IA para psicólogos e psiquiatras",
   description:
-    "Produto B2B separado do app do paciente: CRM de pacientes, agenda, teleconsulta, prontuário, consentimentos, lembretes, plano de cuidado e sínteses revisáveis.",
+    "EmotiveCare Clínicas: funcionalidades clínicas com IA revisável — CRM, agenda, teleconsulta, prontuário, consentimentos, lembretes, plano de cuidado e sínteses SENTIO AI. Feito para psicólogos, psiquiatras e equipes.",
   path: "/clinicas",
   locale: LOCALE,
   keywords: [
-    "software para clínicas",
-    "CRM psicológico",
-    "agenda teleconsulta",
-    "prontuário consentimento",
+    "EmotiveCare Clínicas",
+    "software para psicólogos",
+    "software para psiquiatras",
+    "CRM clínica psicologia",
+    "IA clínica saúde mental",
+    "teleconsulta psiquiatria",
+    "prontuário eletrônico psicologia",
+    "síntese clínica IA",
   ],
 });
 

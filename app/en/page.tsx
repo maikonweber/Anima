@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import { HomePage } from "@/components/marketing/HomePage";
 import { OG_IMAGE_PATH, SITE_URL } from "@/lib/seo/site";
 
-const title = "People, Cuidado, and Clinics";
+const title =
+  "Emotional second brain and Clinics for psychologists and psychiatrists";
 const description =
-  "Emotional second brain in the person app (Essential/Pleno), Cuidado between sessions, and EmotiveCare Clinics for CRM, scheduling, and teleconsult. Start free.";
+  "EmotiveCare for personal use: an emotional second brain with SENTIO AI, journaling, and semantic memory. EmotiveCare Clinics: CRM, scheduling, teleconsult, notes, and reviewable clinical AI for psychologists and psychiatrists. Start free.";
 const canonical = `${SITE_URL}/en`;
 const ogImage = `${SITE_URL}${OG_IMAGE_PATH}`;
 
@@ -22,22 +23,26 @@ export const metadata: Metadata = {
   keywords: [
     "EmotiveCare",
     "SENTIO AI",
-    "EmotiveCare Clinics",
     "emotional second brain",
-    "Pleno plan",
-    "Cuidado plan",
+    "personal knowledge emotional",
+    "EmotiveCare Clinics",
+    "software for psychologists",
+    "software for psychiatrists",
+    "clinical AI mental health",
+    "psychology CRM",
+    "teleconsult psychology",
   ],
   openGraph: {
     url: canonical,
     title: `EmotiveCare · ${title}`,
     description:
-      "Person app with SENTIO AI, Cuidado for professionals, and EmotiveCare Clinics for clinic operations.",
+      "Personal second-brain app plus Clinics with CRM, teleconsult, and human-reviewed AI for mental health professionals.",
     images: [
       {
         url: ogImage,
         width: 1200,
         height: 630,
-        alt: "EmotiveCare — people and clinics",
+        alt: "EmotiveCare — second brain and Clinics",
       },
     ],
     type: "website",
@@ -48,7 +53,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: `EmotiveCare · ${title}`,
     description:
-      "Emotional memory for people and secure operations for clinics.",
+      "Personal emotional second brain; Clinics with AI for psychologists and psychiatrists.",
   },
 };
 

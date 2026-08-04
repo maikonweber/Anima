@@ -1,5 +1,6 @@
 import { JsonLd } from "@/components/seo/JsonLd";
 import {
+  clinicsSoftwareSchema,
   organizationSchema,
   softwareSchema,
   websiteSchema,
@@ -8,7 +9,12 @@ import {
 export function GlobalJsonLd() {
   return (
     <JsonLd
-      data={[organizationSchema(), websiteSchema(), softwareSchema()]}
+      data={[
+        organizationSchema(),
+        websiteSchema(),
+        softwareSchema(),
+        clinicsSoftwareSchema(),
+      ]}
     />
   );
 }

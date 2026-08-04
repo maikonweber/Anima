@@ -10,12 +10,17 @@ import { buildMarketingMetadata } from "@/lib/seo/page-metadata";
 const LOCALE = "pt-BR" as const;
 
 export const metadata: Metadata = buildMarketingMetadata({
-  title: "FAQ — EmotiveCare e SENTIO AI",
+  title: "FAQ — segundo cérebro, Clínicas, psicólogos e psiquiatras",
   description:
-    "Respostas claras sobre acompanhamento emocional, compartilhamento com psicólogos, privacidade e uso responsável da SENTIO AI.",
+    "Perguntas frequentes: EmotiveCare como segundo cérebro pessoal, plano Cuidado, EmotiveCare Clínicas, SENTIO AI, psicólogos, psiquiatras, consentimento e LGPD.",
   path: "/faq",
   locale: LOCALE,
-  keywords: ["perguntas frequentes"],
+  keywords: [
+    "FAQ EmotiveCare",
+    "segundo cérebro emocional FAQ",
+    "Clínicas psicologia FAQ",
+    "IA psiquiatras",
+  ],
 });
 
 export default function FaqPage() {

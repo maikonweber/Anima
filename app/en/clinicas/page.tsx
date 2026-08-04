@@ -9,16 +9,18 @@ import { buildMarketingMetadata } from "@/lib/seo/page-metadata";
 const LOCALE = "en" as const;
 
 export const metadata: Metadata = buildMarketingMetadata({
-  title: "EmotiveCare Clinics — CRM, scheduling, teleconsult",
+  title: "Clinics — CRM, teleconsult, and AI for psychologists and psychiatrists",
   description:
-    "B2B product separate from the patient app: patient CRM, agenda, teleconsult, clinical notes, consents, reminders, care plans, and human-reviewed AI syntheses.",
+    "EmotiveCare Clinics: clinical features with reviewable AI — patient CRM, scheduling, teleconsult, notes, consents, reminders, care plans, and SENTIO AI syntheses. Built for psychologists, psychiatrists, and care teams.",
   path: "/clinicas",
   locale: LOCALE,
   keywords: [
-    "clinic software",
-    "psychology CRM",
-    "teleconsult scheduling",
-    "clinical consent",
+    "EmotiveCare Clinics",
+    "software for psychologists",
+    "software for psychiatrists",
+    "psychology clinic CRM",
+    "clinical AI mental health",
+    "psychiatry teleconsult",
   ],
 });
 

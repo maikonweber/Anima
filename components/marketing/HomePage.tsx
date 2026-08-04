@@ -10,6 +10,7 @@ import {
 } from "@/lib/i18n/config";
 import { homeEn } from "@/lib/i18n/dictionaries/home-en";
 import { homePt, type HomeDictionary } from "@/lib/i18n/dictionaries/home-pt";
+import { getFaqEntries } from "@/lib/seo/faq";
 
 function getHomeDictionary(locale: Locale): HomeDictionary {
   return (locale === "en" ? homeEn : homePt) as HomeDictionary;
@@ -26,6 +27,7 @@ function productHref(
 
 export function HomePage({ locale }: { locale: Locale }) {
   const t = getHomeDictionary(locale);
+  const faqEntries = getFaqEntries(locale);
   const homeHref = localizedPath(locale, "/");
   const loginHref = localizedPath(locale, "/login");
   const registerHref = localizedPath(locale, "/register");
@@ -40,7 +42,7 @@ export function HomePage({ locale }: { locale: Locale }) {
       <JsonLd
         data={[
           medicalHomePageSchema(schemaPath),
-          faqSchema([...t.faq.entries]),
+          faqSchema(faqEntries),
         ]}
       />
       <div
@@ -434,7 +436,7 @@ export function HomePage({ locale }: { locale: Locale }) {
                 {t.faq.title}
               </h2>
               <div className="flex flex-col gap-3">
-                {t.faq.entries.map((entry) => (
+                {faqEntries.map((entry) => (
                   <details
                     key={entry.question}
                     className="group border border-[var(--home-line)] rounded-xl bg-[var(--home-panel)] px-5 py-4"

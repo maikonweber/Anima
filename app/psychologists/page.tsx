@@ -9,16 +9,18 @@ import { buildMarketingMetadata } from "@/lib/seo/page-metadata";
 const LOCALE = "pt-BR" as const;
 
 export const metadata: Metadata = buildMarketingMetadata({
-  title: "Plano Cuidado — acompanhamento entre sessões",
+  title: "Cuidado — dashboard para psicólogos e psiquiatras entre sessões",
   description:
-    "Plano Cuidado para profissionais: dashboards em leitura dos pacientes que convidam você. Para CRM, agenda e teleconsulta, conheça EmotiveCare Clínicas.",
+    "Plano Cuidado: psicólogos e psiquiatras acompanham dashboards emocionais em leitura quando o paciente convida. Para CRM, agenda, teleconsulta e IA clínica, use EmotiveCare Clínicas.",
   path: "/psychologists",
   locale: LOCALE,
   keywords: [
-    "plano cuidado",
-    "dashboard emocional",
+    "plano Cuidado",
+    "dashboard para psicólogos",
+    "dashboard para psiquiatras",
     "acompanhamento entre sessões",
     "psicólogo digital",
+    "psiquiatra digital",
   ],
 });
 

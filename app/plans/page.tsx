@@ -9,12 +9,17 @@ import { buildMarketingMetadata } from "@/lib/seo/page-metadata";
 const LOCALE = "pt-BR" as const;
 
 export const metadata: Metadata = buildMarketingMetadata({
-  title: "Planos para acompanhamento emocional inteligente",
+  title: "Planos — segundo cérebro pessoal, Cuidado e Clínicas",
   description:
-    "Compare os planos Essencial, Pleno e Cuidado da EmotiveCare: volume de registros, insights SENTIO AI, histórico e compartilhamento com profissionais.",
+    "Essencial e Pleno: EmotiveCare como segundo cérebro emocional pessoal (Pleno R$ 9,99/mês). Cuidado para psicólogos e psiquiatras no app. Operação completa em EmotiveCare Clínicas.",
   path: "/plans",
   locale: LOCALE,
-  keywords: ["planos", "pricing saúde emocional", "benefícios digitais"],
+  keywords: [
+    "plano Pleno EmotiveCare",
+    "segundo cérebro emocional preço",
+    "plano Cuidado psicólogo",
+    "planos clínica saúde mental",
+  ],
 });
 
 export default function PlansPage() {
