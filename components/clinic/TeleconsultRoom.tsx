@@ -22,6 +22,7 @@ import { useFeatureFlagsContext } from "@/providers/feature-flags-provider";
 
 const ICE_SERVERS: RTCIceServer[] = [
   { urls: "stun:stun.l.google.com:19302" },
+  { urls: "stun:stun1.l.google.com:19302" },
 ];
 
 type Props = {
@@ -31,6 +32,19 @@ type Props = {
   enablePostConsultBriefing?: boolean;
   onEnded?: (session: TeleconsultSession) => void;
 };
+
+function attachStreamToVideo(
+  el: HTMLVideoElement | null,
+  stream: MediaStream | null,
+) {
+  if (!el || !stream) return;
+  if (el.srcObject !== stream) {
+    el.srcObject = stream;
+  }
+  void el.play().catch(() => {
+    /* autoplay bloqueado — usuário pode interagir com os controles */
+  });
+}
 
 export function TeleconsultRoom({
   session,
@@ -46,11 +60,13 @@ export function TeleconsultRoom({
   } = useFeatureFlagsContext();
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
+  const remoteStreamRef = useRef<MediaStream | null>(null);
   const pcRef = useRef<RTCPeerConnection | null>(null);
   const lastSignalId = useRef<string | undefined>(undefined);
   const makingOffer = useRef(false);
   const pollStopped = useRef(false);
   const pendingIceRef = useRef<RTCIceCandidateInit[]>([]);
+  const offerEpochRef = useRef(0);
   const [remoteReady, setRemoteReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [ending, setEnding] = useState(false);
@@ -99,40 +115,24 @@ export function TeleconsultRoom({
     remoteVideo: remoteVideoRef.current,
   });
 
-  const attachStreamToVideo = useCallback(
-    (el: HTMLVideoElement | null, stream: MediaStream | null) => {
-      if (!el || !stream) return;
-      if (el.srcObject !== stream) {
-        el.srcObject = stream;
-      }
-      void el.play().catch(() => {
-        /* autoplay bloqueado — usuário pode interagir com os controles */
-      });
-    },
-    [],
-  );
+  const mediaReady = Boolean(ready && accessGranted && activeStream && !ended);
 
   const bindLocalVideo = useCallback(
     (el: HTMLVideoElement | null) => {
       localVideoRef.current = el;
       attachStreamToVideo(el, activeStream ?? null);
     },
-    [activeStream, attachStreamToVideo],
+    [activeStream],
   );
 
-  const bindRemoteVideo = useCallback(
-    (el: HTMLVideoElement | null) => {
-      remoteVideoRef.current = el;
-      if (el?.srcObject) {
-        void el.play().catch(() => {});
-      }
-    },
-    [],
-  );
+  const bindRemoteVideo = useCallback((el: HTMLVideoElement | null) => {
+    remoteVideoRef.current = el;
+    attachStreamToVideo(el, remoteStreamRef.current);
+  }, []);
 
   useEffect(() => {
     attachStreamToVideo(localVideoRef.current, activeStream ?? null);
-  }, [activeStream, attachStreamToVideo]);
+  }, [activeStream]);
 
   useEffect(() => {
     if (multimodalOn && isInitiator && !ended && activeStream) {
@@ -159,6 +159,7 @@ export function TeleconsultRoom({
 
   const addIceCandidateSafe = useCallback(
     async (pc: RTCPeerConnection, candidate: RTCIceCandidateInit) => {
+      if (!candidate) return;
       if (!pc.remoteDescription) {
         pendingIceRef.current.push(candidate);
         return;
@@ -166,8 +167,62 @@ export function TeleconsultRoom({
       try {
         await pc.addIceCandidate(candidate);
       } catch {
-        // candidato fora de ordem — tenta enfileirar
         pendingIceRef.current.push(candidate);
+      }
+    },
+    [],
+  );
+
+  const wirePeerHandlers = useCallback(
+    (pc: RTCPeerConnection) => {
+      pc.ontrack = (event) => {
+        const stream =
+          event.streams[0] ?? new MediaStream([event.track]);
+        remoteStreamRef.current = stream;
+        attachStreamToVideo(remoteVideoRef.current, stream);
+        setRemoteReady(true);
+        setError(null);
+      };
+
+      pc.onconnectionstatechange = () => {
+        if (pc.connectionState === "connected") {
+          setRemoteReady(true);
+          setError(null);
+        } else if (pc.connectionState === "failed") {
+          setError(
+            "Conexão de vídeo falhou. Verifique a rede ou peça ao paciente para recarregar o link.",
+          );
+        }
+      };
+
+      pc.onicecandidate = (event) => {
+        if (!event.candidate) return;
+        void postTeleconsultSignal(session.organizationId, session.id, {
+          type: "ice",
+          payload: event.candidate.toJSON(),
+        }).catch((err: unknown) => {
+          setError(
+            err instanceof Error
+              ? err.message
+              : "Falha ao enviar sinal de conexão",
+          );
+        });
+      };
+    },
+    [session.id, session.organizationId],
+  );
+
+  const attachLocalTracks = useCallback(
+    (pc: RTCPeerConnection, stream: MediaStream) => {
+      for (const track of stream.getTracks()) {
+        const sender = pc
+          .getSenders()
+          .find((s) => s.track?.kind === track.kind);
+        if (sender) {
+          void sender.replaceTrack(track);
+        } else {
+          pc.addTrack(track, stream);
+        }
       }
     },
     [],
@@ -177,75 +232,76 @@ export function TeleconsultRoom({
     if (pcRef.current) return pcRef.current;
     const pc = new RTCPeerConnection({ iceServers: ICE_SERVERS });
     pcRef.current = pc;
-
-    pc.ontrack = (event) => {
-      const stream = event.streams[0];
-      if (!stream || !remoteVideoRef.current) return;
-      remoteVideoRef.current.srcObject = stream;
-      void remoteVideoRef.current.play().catch(() => {});
-      setRemoteReady(true);
-    };
-
-    pc.onconnectionstatechange = () => {
-      if (pc.connectionState === "failed") {
-        setError(
-          "Conexão de vídeo falhou. Verifique a rede ou peça ao paciente para recarregar o link.",
-        );
-      }
-    };
-
-    pc.onicecandidate = (event) => {
-      if (!event.candidate) return;
-      void postTeleconsultSignal(session.organizationId, session.id, {
-        type: "ice",
-        payload: event.candidate.toJSON(),
-      }).catch((err: unknown) => {
-        setError(
-          err instanceof Error
-            ? err.message
-            : "Falha ao enviar sinal de conexão",
-        );
-      });
-    };
-
+    wirePeerHandlers(pc);
     return pc;
-  }, [session.id, session.organizationId]);
+  }, [wirePeerHandlers]);
+
+  /** Recria o PC (usado quando a oferta ficou órfã sem answer). */
+  const recreatePeer = useCallback(
+    (stream: MediaStream) => {
+      pcRef.current?.close();
+      pcRef.current = null;
+      pendingIceRef.current = [];
+      const pc = new RTCPeerConnection({ iceServers: ICE_SERVERS });
+      pcRef.current = pc;
+      wirePeerHandlers(pc);
+      attachLocalTracks(pc, stream);
+      return pc;
+    },
+    [attachLocalTracks, wirePeerHandlers],
+  );
 
   useEffect(() => {
     if (!activeStream) return;
     const pc = ensurePeer();
-    for (const track of activeStream.getTracks()) {
-      const sender = pc.getSenders().find((s) => s.track?.kind === track.kind);
-      if (sender) {
-        void sender.replaceTrack(track);
-      } else {
-        pc.addTrack(track, activeStream);
-      }
-    }
-  }, [activeStream, ensurePeer]);
+    attachLocalTracks(pc, activeStream);
+  }, [activeStream, attachLocalTracks, ensurePeer]);
 
+  const publishOffer = useCallback(
+    async (pc: RTCPeerConnection) => {
+      makingOffer.current = true;
+      offerEpochRef.current += 1;
+      const epoch = offerEpochRef.current;
+      try {
+        const offer = await pc.createOffer({
+          offerToReceiveAudio: true,
+          offerToReceiveVideo: true,
+        });
+        if (epoch !== offerEpochRef.current) return;
+        await pc.setLocalDescription(offer);
+        if (epoch !== offerEpochRef.current) return;
+        await postTeleconsultSignal(session.organizationId, session.id, {
+          type: "offer",
+          payload: pc.localDescription ?? offer,
+        });
+        setError(null);
+      } finally {
+        if (epoch === offerEpochRef.current) {
+          makingOffer.current = false;
+        }
+      }
+    },
+    [session.id, session.organizationId],
+  );
+
+  // Oferta inicial — só depois da mídia local estar no PeerConnection.
   useEffect(() => {
-    if (ended || !ready || !accessGranted || !isInitiator || !activeStream) return;
+    if (!mediaReady || !isInitiator || !activeStream) return;
     let cancelled = false;
 
     async function createOffer() {
       try {
-        makingOffer.current = true;
         const pc = ensurePeer();
-        const offer = await pc.createOffer();
+        attachLocalTracks(pc, activeStream!);
         if (cancelled) return;
-        await pc.setLocalDescription(offer);
-        await postTeleconsultSignal(session.organizationId, session.id, {
-          type: "offer",
-          payload: offer,
-        });
-        setError(null);
+        if (pc.signalingState !== "stable") return;
+        await publishOffer(pc);
       } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "Falha ao criar oferta WebRTC",
-        );
-      } finally {
-        makingOffer.current = false;
+        if (!cancelled) {
+          setError(
+            err instanceof Error ? err.message : "Falha ao criar oferta WebRTC",
+          );
+        }
       }
     }
 
@@ -254,57 +310,61 @@ export function TeleconsultRoom({
       cancelled = true;
     };
   }, [
-    accessGranted,
     activeStream,
-    ended,
+    attachLocalTracks,
     ensurePeer,
     isInitiator,
-    ready,
-    session.id,
-    session.organizationId,
+    mediaReady,
+    publishOffer,
   ]);
 
-  // Reenvia oferta enquanto o paciente ainda não conectou (entrou depois).
+  // Reoferece se o paciente entrar depois: só em stable (nunca substitui offer pendente).
+  // Se ficou preso em have-local-offer sem answer, recria o PC.
   useEffect(() => {
-    if (!isInitiator || ended || remoteReady || !activeStream) return;
+    if (!isInitiator || !mediaReady || remoteReady || !activeStream) return;
     const interval = window.setInterval(() => {
       if (makingOffer.current || remoteReady) return;
-      const pc = pcRef.current;
-      if (!pc) return;
-      if (
-        pc.signalingState !== "stable" &&
-        pc.signalingState !== "have-local-offer"
-      ) {
-        return;
-      }
+      const existing = pcRef.current;
+      if (!existing) return;
+      if (existing.connectionState === "connected") return;
+
       void (async () => {
         try {
-          makingOffer.current = true;
-          const offer = await pc.createOffer();
-          await pc.setLocalDescription(offer);
-          await postTeleconsultSignal(session.organizationId, session.id, {
-            type: "offer",
-            payload: offer,
-          });
+          let pc = existing;
+          // Já tem answer: não reoferece enquanto ICE tenta conectar.
+          if (pc.remoteDescription) {
+            if (pc.connectionState === "failed") {
+              pc = recreatePeer(activeStream);
+              await publishOffer(pc);
+            }
+            return;
+          }
+          if (pc.signalingState === "have-local-offer") {
+            // Offer órfã (paciente ainda não respondeu) — recria e manda de novo.
+            pc = recreatePeer(activeStream);
+          } else if (pc.signalingState !== "stable") {
+            return;
+          }
+          await publishOffer(pc);
         } catch {
           // próximo ciclo tenta de novo
-        } finally {
-          makingOffer.current = false;
         }
       })();
     }, 8000);
     return () => window.clearInterval(interval);
   }, [
     activeStream,
-    ended,
     isInitiator,
+    mediaReady,
+    publishOffer,
+    recreatePeer,
     remoteReady,
-    session.id,
-    session.organizationId,
   ]);
 
+  // Signaling só depois da mídia pronta — evita answer sem tracks e ontrack sem <video>.
   useEffect(() => {
-    if (ended) return;
+    const userId = user?.id;
+    if (!mediaReady || !userId) return;
     pollStopped.current = false;
 
     async function poll() {
@@ -315,38 +375,62 @@ export function TeleconsultRoom({
             session.id,
             lastSignalId.current,
           );
+          // Paciente: se o lote trouxe várias offers, responde só a última.
+          const latestOfferId = !isInitiator
+            ? [...messages]
+                .reverse()
+                .find((m) => m.type === "offer" && m.fromUserId !== userId)
+                ?.id
+            : undefined;
+
+          const remoteMessages = messages.filter(
+            (m) => m.fromUserId !== userId,
+          );
           for (const msg of messages) {
             lastSignalId.current = msg.id;
-            if (msg.fromUserId === user?.id) continue;
-            const pc = ensurePeer();
+          }
+
+          const pc = ensurePeer();
+          if (activeStream) attachLocalTracks(pc, activeStream);
+
+          // SDP primeiro (offer/answer), ICE depois — evita candidatos no PC errado.
+          for (const msg of remoteMessages) {
             if (msg.type === "offer" && !isInitiator) {
-              if (pc.signalingState === "stable") {
-                await pc.setRemoteDescription(
-                  msg.payload as RTCSessionDescriptionInit,
-                );
-                const answer = await pc.createAnswer();
-                await pc.setLocalDescription(answer);
-                await postTeleconsultSignal(session.organizationId, session.id, {
-                  type: "answer",
-                  payload: answer,
-                });
-                await flushPendingIce(pc);
-                setError(null);
+              if (latestOfferId && msg.id !== latestOfferId) continue;
+              if (
+                pc.signalingState !== "stable" &&
+                pc.signalingState !== "have-remote-offer"
+              ) {
+                continue;
               }
-            } else if (msg.type === "answer" && isInitiator) {
-              if (!pc.remoteDescription) {
-                await pc.setRemoteDescription(
-                  msg.payload as RTCSessionDescriptionInit,
-                );
-                await flushPendingIce(pc);
-                setError(null);
-              }
-            } else if (msg.type === "ice") {
-              await addIceCandidateSafe(
-                pc,
-                msg.payload as RTCIceCandidateInit,
+              await pc.setRemoteDescription(
+                msg.payload as RTCSessionDescriptionInit,
               );
+              const answer = await pc.createAnswer();
+              await pc.setLocalDescription(answer);
+              await postTeleconsultSignal(session.organizationId, session.id, {
+                type: "answer",
+                payload: pc.localDescription ?? answer,
+              });
+              await flushPendingIce(pc);
+              setError(null);
+            } else if (msg.type === "answer" && isInitiator) {
+              if (pc.signalingState !== "have-local-offer") continue;
+              try {
+                await pc.setRemoteDescription(
+                  msg.payload as RTCSessionDescriptionInit,
+                );
+                await flushPendingIce(pc);
+                setError(null);
+              } catch {
+                // answer órfã (oferta já foi substituída) — ignora
+              }
             }
+          }
+
+          for (const msg of remoteMessages) {
+            if (msg.type !== "ice") continue;
+            await addIceCandidateSafe(pc, msg.payload as RTCIceCandidateInit);
           }
         } catch (err) {
           setError(
@@ -364,11 +448,13 @@ export function TeleconsultRoom({
       pollStopped.current = true;
     };
   }, [
+    activeStream,
     addIceCandidateSafe,
-    ended,
+    attachLocalTracks,
     ensurePeer,
     flushPendingIce,
     isInitiator,
+    mediaReady,
     session.id,
     session.organizationId,
     user?.id,
@@ -376,8 +462,10 @@ export function TeleconsultRoom({
 
   useEffect(() => {
     return () => {
+      pollStopped.current = true;
       pcRef.current?.close();
       pcRef.current = null;
+      remoteStreamRef.current = null;
       void stopAllStreaming();
     };
   }, [stopAllStreaming]);
@@ -390,6 +478,8 @@ export function TeleconsultRoom({
     if (asr.active) await asr.stop();
     pcRef.current?.close();
     pcRef.current = null;
+    remoteStreamRef.current = null;
+    setRemoteReady(false);
     await stopAllStreaming();
   }, [asr, multimodal, recording, stopAllStreaming]);
 
@@ -518,9 +608,11 @@ export function TeleconsultRoom({
               <span className="absolute left-3 bottom-3 text-[11px] px-2 py-0.5 rounded-md bg-black/50 text-white">
                 {remoteReady ? "Remoto" : "Aguardando participante…"}
               </span>
-              {!remoteReady && isInitiator && (
+              {!remoteReady && (
                 <span className="absolute right-3 top-3 text-[10px] px-2 py-0.5 rounded-md bg-black/50 text-white/80 max-w-[70%] text-right">
-                  Envie o link ao paciente e aguarde ele entrar
+                  {isInitiator
+                    ? "Envie o link ao paciente e aguarde ele entrar"
+                    : "Aguardando o profissional… Permita câmera/microfone nos dois lados"}
                 </span>
               )}
             </div>

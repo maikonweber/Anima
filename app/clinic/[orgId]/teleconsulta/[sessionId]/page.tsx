@@ -29,10 +29,14 @@ export default function ClinicTeleconsultPage() {
     [orgs, orgId],
   );
 
-  const isInitiator =
-    role === "CLINIC_ADMIN" ||
-    (role === "PROFESSIONAL" && data?.professionalUserId === user?.id) ||
-    orgs === undefined;
+  // Só clínico/profissional da sessão inicia o WebRTC (offer).
+  // Nunca presumir initiator enquanto orgs carrega — isso gerava glare.
+  const isInitiator = Boolean(
+    data &&
+      user &&
+      (role === "CLINIC_ADMIN" ||
+        data.professionalUserId === user.id),
+  );
 
   return (
     <div className="teleconsult-page max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
