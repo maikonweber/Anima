@@ -56,6 +56,8 @@ export const clinicUiEn = {
     whatsappShort: "WA",
     audit: "Audit",
     auditShort: "Logs",
+    support: "Support",
+    supportShort: "Help",
   },
   patientTabs: {
     summary: "Summary",
