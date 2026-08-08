@@ -2,7 +2,7 @@
 
 /**
  * WebRTC 1:1 para teleconsulta — signaling via HTTP poll (sem WebSocket).
- * Presence (joined/left/heartbeat) usa o mesmo canal de sinais.
+ * Presence vem do mapa no servidor (não compete com SDP/ICE no ring buffer).
  */
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -11,6 +11,7 @@ import {
 } from "@/lib/api/teleconsult";
 import type {
   TeleconsultPresencePayload,
+  TeleconsultSignalMessage,
   TeleconsultViewerRole,
 } from "@anima/shared";
 
@@ -19,9 +20,9 @@ const ICE_SERVERS: RTCIceServer[] = [
   { urls: "stun:stun1.l.google.com:19302" },
 ];
 
-const POLL_MS = 1200;
-const REOFFER_MS = 8000;
-const HEARTBEAT_MS = 5000;
+const POLL_MS = 1000;
+const REOFFER_MS = 10_000;
+const HEARTBEAT_MS = 8_000;
 
 export type UseTeleconsultWebRtcOptions = {
   orgId: string;
@@ -33,6 +34,21 @@ export type UseTeleconsultWebRtcOptions = {
   mediaReady: boolean;
   enabled?: boolean;
 };
+
+function attachStreamToVideo(
+  el: HTMLVideoElement | null,
+  stream: MediaStream | null,
+  { muted = false }: { muted?: boolean } = {},
+) {
+  if (!el || !stream) return;
+  if (el.srcObject !== stream) {
+    el.srcObject = stream;
+  }
+  if (muted) el.muted = true;
+  void el.play().catch(() => {
+    /* autoplay bloqueado — UI pode pedir gesto */
+  });
+}
 
 export function useTeleconsultWebRtc({
   orgId,
@@ -49,35 +65,40 @@ export function useTeleconsultWebRtc({
   const pcRef = useRef<RTCPeerConnection | null>(null);
   const lastSignalId = useRef<string | undefined>(undefined);
   const makingOffer = useRef(false);
-  const pollStopped = useRef(false);
+  const pollGenRef = useRef(0);
   const pendingIceRef = useRef<RTCIceCandidateInit[]>([]);
   const offerEpochRef = useRef(0);
+  const isInitiatorRef = useRef(isInitiator);
+  const localStreamRef = useRef(localStream);
+  const peerPresentRef = useRef(false);
+  /** SDP adiado (offer/answer) quando o PC não estava pronto — não perde o sinal. */
+  const deferredSdpRef = useRef<TeleconsultSignalMessage[]>([]);
 
   const [remoteReady, setRemoteReady] = useState(false);
   const [peerPresent, setPeerPresent] = useState(false);
   const [peerRole, setPeerRole] = useState<TeleconsultViewerRole | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [needsGesture, setNeedsGesture] = useState(false);
 
-  const attachStreamToVideo = useCallback(
-    (el: HTMLVideoElement | null, stream: MediaStream | null) => {
-      if (!el || !stream) return;
-      if (el.srcObject !== stream) {
-        el.srcObject = stream;
-      }
-      void el.play().catch(() => {
-        /* autoplay bloqueado */
-      });
-    },
-    [],
-  );
+  isInitiatorRef.current = isInitiator;
+  localStreamRef.current = localStream;
+  peerPresentRef.current = peerPresent;
 
-  const bindRemoteVideo = useCallback(
-    (el: HTMLVideoElement | null) => {
-      remoteVideoRef.current = el;
-      attachStreamToVideo(el, remoteStreamRef.current);
-    },
-    [attachStreamToVideo],
-  );
+  const bindRemoteVideo = useCallback((el: HTMLVideoElement | null) => {
+    remoteVideoRef.current = el;
+    attachStreamToVideo(el, remoteStreamRef.current);
+  }, []);
+
+  const tryPlayRemote = useCallback(() => {
+    const el = remoteVideoRef.current;
+    const stream = remoteStreamRef.current;
+    if (!el || !stream) return;
+    el.muted = false;
+    void el
+      .play()
+      .then(() => setNeedsGesture(false))
+      .catch(() => setNeedsGesture(true));
+  }, []);
 
   const flushPendingIce = useCallback(async (pc: RTCPeerConnection) => {
     if (!pc.remoteDescription) return;
@@ -87,7 +108,7 @@ export function useTeleconsultWebRtc({
       try {
         await pc.addIceCandidate(candidate);
       } catch {
-        // candidato expirado ou duplicado
+        // ignorar
       }
     }
   }, []);
@@ -102,7 +123,7 @@ export function useTeleconsultWebRtc({
       try {
         await pc.addIceCandidate(candidate);
       } catch {
-        pendingIceRef.current.push(candidate);
+        // candidato de época antiga
       }
     },
     [],
@@ -114,10 +135,13 @@ export function useTeleconsultWebRtc({
       try {
         await postTeleconsultSignal(orgId, sessionId, {
           type: "presence",
-          payload: { status, role: viewerRole } satisfies TeleconsultPresencePayload,
+          payload: {
+            status,
+            role: viewerRole,
+          } satisfies TeleconsultPresencePayload,
         });
       } catch {
-        // presence é best-effort
+        // best-effort
       }
     },
     [orgId, sessionId, userId, viewerRole],
@@ -132,22 +156,34 @@ export function useTeleconsultWebRtc({
         attachStreamToVideo(remoteVideoRef.current, stream);
         setRemoteReady(true);
         setPeerPresent(true);
+        peerPresentRef.current = true;
         setError(null);
+        // Tenta tocar; se o browser bloquear áudio, UI pede gesto.
+        const el = remoteVideoRef.current;
+        if (el) {
+          void el.play().catch(() => setNeedsGesture(true));
+        }
       };
 
       pc.onconnectionstatechange = () => {
-        if (pc.connectionState === "connected") {
+        const state = pc.connectionState;
+        if (state === "connected") {
           setRemoteReady(true);
           setPeerPresent(true);
+          peerPresentRef.current = true;
           setError(null);
-        } else if (pc.connectionState === "failed") {
+        } else if (state === "failed") {
           setError(
-            "Conexão de vídeo falhou. Verifique a rede ou peça ao outro participante para recarregar.",
+            "Conexão de vídeo falhou. Tentando reconectar… Se persistir, verifique a rede (NAT/firewall).",
           );
-        } else if (
-          pc.connectionState === "disconnected" ||
-          pc.connectionState === "closed"
-        ) {
+          try {
+            pc.restartIce();
+          } catch {
+            // browsers antigos
+          }
+        } else if (state === "disconnected") {
+          // pode ser transitório — não derruba UI imediatamente
+        } else if (state === "closed") {
           setRemoteReady(false);
         }
       };
@@ -166,7 +202,7 @@ export function useTeleconsultWebRtc({
         });
       };
     },
-    [attachStreamToVideo, orgId, sessionId],
+    [orgId, sessionId],
   );
 
   const attachLocalTracks = useCallback(
@@ -195,9 +231,11 @@ export function useTeleconsultWebRtc({
 
   const recreatePeer = useCallback(
     (stream: MediaStream) => {
+      offerEpochRef.current += 1;
       pcRef.current?.close();
       pcRef.current = null;
       pendingIceRef.current = [];
+      deferredSdpRef.current = [];
       const pc = new RTCPeerConnection({ iceServers: ICE_SERVERS });
       pcRef.current = pc;
       wirePeerHandlers(pc);
@@ -209,14 +247,12 @@ export function useTeleconsultWebRtc({
 
   const publishOffer = useCallback(
     async (pc: RTCPeerConnection) => {
+      if (makingOffer.current) return;
       makingOffer.current = true;
       offerEpochRef.current += 1;
       const epoch = offerEpochRef.current;
       try {
-        const offer = await pc.createOffer({
-          offerToReceiveAudio: true,
-          offerToReceiveVideo: true,
-        });
+        const offer = await pc.createOffer();
         if (epoch !== offerEpochRef.current) return;
         await pc.setLocalDescription(offer);
         if (epoch !== offerEpochRef.current) return;
@@ -234,16 +270,90 @@ export function useTeleconsultWebRtc({
     [orgId, sessionId],
   );
 
+  const applyRemoteOffer = useCallback(
+    async (pc: RTCPeerConnection, msg: TeleconsultSignalMessage) => {
+      const stream = localStreamRef.current;
+      if (stream) attachLocalTracks(pc, stream);
+
+      if (
+        pc.signalingState !== "stable" &&
+        pc.signalingState !== "have-remote-offer"
+      ) {
+        // Glare: se temos offer local e recebemos offer remota, recria como answerer.
+        if (pc.signalingState === "have-local-offer" && stream) {
+          const fresh = recreatePeer(stream);
+          await fresh.setRemoteDescription(
+            msg.payload as RTCSessionDescriptionInit,
+          );
+          const answer = await fresh.createAnswer();
+          await fresh.setLocalDescription(answer);
+          await postTeleconsultSignal(orgId, sessionId, {
+            type: "answer",
+            payload: fresh.localDescription ?? answer,
+          });
+          await flushPendingIce(fresh);
+          setError(null);
+          return true;
+        }
+        return false;
+      }
+
+      await pc.setRemoteDescription(msg.payload as RTCSessionDescriptionInit);
+      const answer = await pc.createAnswer();
+      await pc.setLocalDescription(answer);
+      await postTeleconsultSignal(orgId, sessionId, {
+        type: "answer",
+        payload: pc.localDescription ?? answer,
+      });
+      await flushPendingIce(pc);
+      setError(null);
+      return true;
+    },
+    [attachLocalTracks, flushPendingIce, orgId, recreatePeer, sessionId],
+  );
+
+  const applyRemoteAnswer = useCallback(
+    async (pc: RTCPeerConnection, msg: TeleconsultSignalMessage) => {
+      if (pc.signalingState !== "have-local-offer") return false;
+      try {
+        await pc.setRemoteDescription(
+          msg.payload as RTCSessionDescriptionInit,
+        );
+        await flushPendingIce(pc);
+        setError(null);
+        return true;
+      } catch {
+        return false;
+      }
+    },
+    [flushPendingIce],
+  );
+
+  // Tracks locais no PC
   useEffect(() => {
     if (!enabled || !localStream) return;
     const pc = ensurePeer();
     attachLocalTracks(pc, localStream);
   }, [attachLocalTracks, enabled, ensurePeer, localStream]);
 
-  // Oferta inicial
+  // Reset cursor ao trocar sessão
+  useEffect(() => {
+    lastSignalId.current = undefined;
+    deferredSdpRef.current = [];
+    pendingIceRef.current = [];
+    setRemoteReady(false);
+    setPeerPresent(false);
+    peerPresentRef.current = false;
+    setPeerRole(null);
+    setNeedsGesture(false);
+  }, [sessionId]);
+
+  // Oferta inicial — prefere esperar presença do peer; fallback após 12s
   useEffect(() => {
     if (!enabled || !mediaReady || !isInitiator || !localStream) return;
+    if (remoteReady) return;
     let cancelled = false;
+    let fallbackTimer: number | undefined;
 
     async function createOffer() {
       try {
@@ -251,6 +361,7 @@ export function useTeleconsultWebRtc({
         attachLocalTracks(pc, localStream!);
         if (cancelled) return;
         if (pc.signalingState !== "stable") return;
+        if (pc.remoteDescription) return;
         await publishOffer(pc);
       } catch (err) {
         if (!cancelled) {
@@ -261,9 +372,17 @@ export function useTeleconsultWebRtc({
       }
     }
 
-    void createOffer();
+    if (peerPresent) {
+      void createOffer();
+    } else {
+      fallbackTimer = window.setTimeout(() => {
+        if (!cancelled && !remoteReady) void createOffer();
+      }, 12_000);
+    }
+
     return () => {
       cancelled = true;
+      if (fallbackTimer) window.clearTimeout(fallbackTimer);
     };
   }, [
     attachLocalTracks,
@@ -272,34 +391,61 @@ export function useTeleconsultWebRtc({
     isInitiator,
     localStream,
     mediaReady,
+    peerPresent,
     publishOffer,
+    remoteReady,
   ]);
 
-  // Reoferece se o peer entrar depois
+  // Reoffer suave: reenvia offer sem recriar PC a cada ciclo;
+  // só recria em failed ou offer órfã > 2 ciclos.
   useEffect(() => {
     if (!enabled || !isInitiator || !mediaReady || remoteReady || !localStream)
       return;
+    let orphanCycles = 0;
     const interval = window.setInterval(() => {
       if (makingOffer.current || remoteReady) return;
       const existing = pcRef.current;
       if (!existing) return;
       if (existing.connectionState === "connected") return;
+      // Sem presença ainda: deixa o fallback de 12s / próximo ciclo cuidar
+      if (!peerPresentRef.current && existing.signalingState === "stable") {
+        return;
+      }
 
       void (async () => {
         try {
           let pc = existing;
+          if (pc.connectionState === "failed") {
+            pc = recreatePeer(localStream);
+            orphanCycles = 0;
+            await publishOffer(pc);
+            return;
+          }
           if (pc.remoteDescription) {
-            if (pc.connectionState === "failed") {
-              pc = recreatePeer(localStream);
-              await publishOffer(pc);
+            try {
+              pc.restartIce();
+            } catch {
+              // ignore
             }
             return;
           }
           if (pc.signalingState === "have-local-offer") {
-            pc = recreatePeer(localStream);
-          } else if (pc.signalingState !== "stable") {
+            orphanCycles += 1;
+            // Reenvia a mesma localDescription se ainda válida; recrea só após 2 ciclos (~20s)
+            if (orphanCycles >= 2) {
+              pc = recreatePeer(localStream);
+              orphanCycles = 0;
+              await publishOffer(pc);
+            } else if (pc.localDescription) {
+              await postTeleconsultSignal(orgId, sessionId, {
+                type: "offer",
+                payload: pc.localDescription,
+              });
+            }
             return;
           }
+          if (pc.signalingState !== "stable") return;
+          orphanCycles = 0;
           await publishOffer(pc);
         } catch {
           // próximo ciclo
@@ -312,117 +458,154 @@ export function useTeleconsultWebRtc({
     isInitiator,
     localStream,
     mediaReady,
+    orgId,
     publishOffer,
     recreatePeer,
     remoteReady,
+    sessionId,
   ]);
 
-  // Presence announce + heartbeat
+  // Presence announce + heartbeat (mapa no servidor; não enche ring SDP)
   useEffect(() => {
     if (!enabled || !mediaReady || !userId) return;
+    let cancelled = false;
     void publishPresence("joined");
     const interval = window.setInterval(() => {
-      void publishPresence("heartbeat");
+      if (!cancelled) void publishPresence("heartbeat");
     }, HEARTBEAT_MS);
     return () => {
+      cancelled = true;
       window.clearInterval(interval);
       void publishPresence("left");
     };
   }, [enabled, mediaReady, publishPresence, userId]);
 
-  // Poll signaling
+  // Poll signaling com generation token (mata loops duplicados)
   useEffect(() => {
     if (!enabled || !mediaReady || !userId) return;
-    pollStopped.current = false;
-    let lastPeerSeenAt = 0;
+    const gen = ++pollGenRef.current;
 
     async function poll() {
-      while (!pollStopped.current) {
+      while (pollGenRef.current === gen) {
         try {
           const messages = await pullTeleconsultSignals(
             orgId,
             sessionId,
             lastSignalId.current,
           );
-          const latestOfferId = !isInitiator
-            ? [...messages]
-                .reverse()
-                .find((m) => m.type === "offer" && m.fromUserId !== userId)
-                ?.id
-            : undefined;
+          if (pollGenRef.current !== gen) return;
 
+          const initiator = isInitiatorRef.current;
           const remoteMessages = messages.filter(
             (m) => m.fromUserId !== userId,
           );
-          for (const msg of messages) {
-            lastSignalId.current = msg.id;
-          }
 
+          // Presence (ids sintéticos — não avançam cursor SDP)
           for (const msg of remoteMessages) {
             if (msg.type !== "presence") continue;
-            const payload = msg.payload as TeleconsultPresencePayload;
+            const payload = msg.payload as TeleconsultPresencePayload & {
+              gap?: boolean;
+            };
             if (!payload?.status) continue;
             if (payload.status === "left") {
               setPeerPresent(false);
+              peerPresentRef.current = false;
               setPeerRole(null);
             } else {
-              lastPeerSeenAt = Date.now();
               setPeerPresent(true);
-              if (payload.role) setPeerRole(payload.role);
+              peerPresentRef.current = true;
+              if (payload.role) {
+                setPeerRole(payload.role as TeleconsultViewerRole);
+              }
             }
-          }
-
-          if (lastPeerSeenAt && Date.now() - lastPeerSeenAt > HEARTBEAT_MS * 3) {
-            setPeerPresent(false);
+            if (payload.gap) {
+              // Cursor perdido — força reoffer no próximo ciclo do initiator
+              deferredSdpRef.current = [];
+            }
           }
 
           const pc = ensurePeer();
-          if (localStream) attachLocalTracks(pc, localStream);
+          const stream = localStreamRef.current;
+          if (stream) attachLocalTracks(pc, stream);
 
-          for (const msg of remoteMessages) {
-            if (msg.type === "offer" && !isInitiator) {
-              if (latestOfferId && msg.id !== latestOfferId) continue;
-              if (
-                pc.signalingState !== "stable" &&
-                pc.signalingState !== "have-remote-offer"
-              ) {
-                continue;
-              }
-              await pc.setRemoteDescription(
-                msg.payload as RTCSessionDescriptionInit,
-              );
-              const answer = await pc.createAnswer();
-              await pc.setLocalDescription(answer);
-              await postTeleconsultSignal(orgId, sessionId, {
-                type: "answer",
-                payload: pc.localDescription ?? answer,
-              });
-              await flushPendingIce(pc);
-              setError(null);
-            } else if (msg.type === "answer" && isInitiator) {
-              if (pc.signalingState !== "have-local-offer") continue;
-              try {
-                await pc.setRemoteDescription(
-                  msg.payload as RTCSessionDescriptionInit,
-                );
-                await flushPendingIce(pc);
-                setError(null);
-              } catch {
-                // answer órfã
+          // Retry SDP adiado
+          if (deferredSdpRef.current.length > 0) {
+            const pending = [...deferredSdpRef.current];
+            deferredSdpRef.current = [];
+            for (const msg of pending) {
+              if (msg.type === "offer" && !initiator) {
+                const ok = await applyRemoteOffer(pc, msg);
+                if (!ok) deferredSdpRef.current.push(msg);
+              } else if (msg.type === "answer" && initiator) {
+                const ok = await applyRemoteAnswer(pc, msg);
+                if (!ok) deferredSdpRef.current.push(msg);
               }
             }
           }
 
+          const latestOffer = !initiator
+            ? [...remoteMessages]
+                .reverse()
+                .find((m) => m.type === "offer")
+            : undefined;
+
+          // Aplica SDP; só avança cursor em mensagens processadas com sucesso
+          // (presence não está no ring — ids começam com "presence-")
           for (const msg of remoteMessages) {
-            if (msg.type !== "ice") continue;
-            await addIceCandidateSafe(pc, msg.payload as RTCIceCandidateInit);
+            if (msg.type === "presence") continue;
+
+            if (msg.type === "offer") {
+              if (initiator) {
+                // Perfect negotiation (polite): cede se nosso userId > do peer
+                const polite =
+                  !!userId && !!msg.fromUserId && userId > msg.fromUserId;
+                if (!polite) {
+                  lastSignalId.current = msg.id;
+                  continue;
+                }
+              } else if (latestOffer && msg.id !== latestOffer.id) {
+                lastSignalId.current = msg.id;
+                continue;
+              }
+              const ok = await applyRemoteOffer(pc, msg);
+              if (ok) {
+                lastSignalId.current = msg.id;
+              } else {
+                deferredSdpRef.current.push(msg);
+              }
+              continue;
+            }
+
+            if (msg.type === "answer" && initiator) {
+              const ok = await applyRemoteAnswer(pc, msg);
+              if (ok) {
+                lastSignalId.current = msg.id;
+              } else {
+                deferredSdpRef.current.push(msg);
+              }
+              continue;
+            }
+
+            if (msg.type === "ice") {
+              await addIceCandidateSafe(
+                pcRef.current ?? pc,
+                msg.payload as RTCIceCandidateInit,
+              );
+              lastSignalId.current = msg.id;
+              continue;
+            }
+
+            // answer para answerer / etc. — descarta
+            lastSignalId.current = msg.id;
           }
         } catch (err) {
-          setError(
-            err instanceof Error
-              ? err.message
-              : "Falha na conexão com o servidor de sinais",
-          );
+          if (pollGenRef.current === gen) {
+            setError(
+              err instanceof Error
+                ? err.message
+                : "Falha na conexão com o servidor de sinais",
+            );
+          }
         }
         await new Promise((r) => setTimeout(r, POLL_MS));
       }
@@ -430,16 +613,18 @@ export function useTeleconsultWebRtc({
 
     void poll();
     return () => {
-      pollStopped.current = true;
+      // Invalida este loop; o próximo effect (se houver) sobe gen.
+      if (pollGenRef.current === gen) {
+        pollGenRef.current += 1;
+      }
     };
   }, [
     addIceCandidateSafe,
+    applyRemoteAnswer,
+    applyRemoteOffer,
     attachLocalTracks,
     enabled,
     ensurePeer,
-    flushPendingIce,
-    isInitiator,
-    localStream,
     mediaReady,
     orgId,
     sessionId,
@@ -447,18 +632,22 @@ export function useTeleconsultWebRtc({
   ]);
 
   const teardown = useCallback(async () => {
-    pollStopped.current = true;
+    pollGenRef.current += 1;
     void publishPresence("left");
     pcRef.current?.close();
     pcRef.current = null;
     remoteStreamRef.current = null;
+    deferredSdpRef.current = [];
+    pendingIceRef.current = [];
     setRemoteReady(false);
     setPeerPresent(false);
+    peerPresentRef.current = false;
+    setNeedsGesture(false);
   }, [publishPresence]);
 
   useEffect(() => {
     return () => {
-      pollStopped.current = true;
+      pollGenRef.current += 1;
       pcRef.current?.close();
       pcRef.current = null;
       remoteStreamRef.current = null;
@@ -471,6 +660,8 @@ export function useTeleconsultWebRtc({
     remoteReady,
     peerPresent,
     peerRole,
+    needsGesture,
+    tryPlayRemote,
     error,
     setError,
     teardown,

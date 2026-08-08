@@ -62,7 +62,7 @@ function resolveIsInitiator(
   if (typeof override === "boolean") return override;
   if (typeof session.isInitiator === "boolean") return session.isInitiator;
   if (viewerRole === "PATIENT") return false;
-  if (viewerRole === "CLINIC_ADMIN") return true;
+  // Só o profissional da sessão inicia (admin sem ser o pro responde).
   return Boolean(userId && session.professionalUserId === userId);
 }
 
@@ -130,6 +130,8 @@ export function TeleconsultRoom({
     remoteVideoRef,
     remoteReady,
     peerPresent,
+    needsGesture,
+    tryPlayRemote,
     error: webrtcError,
     setError: setWebrtcError,
     teardown: teardownRtc,
@@ -191,6 +193,23 @@ export function TeleconsultRoom({
     await stopAllStreaming();
   }, [asr, multimodal, recording, stopAllStreaming, teardownRtc]);
 
+  async function handleLeave() {
+    if (ending || ended) return;
+    setEnding(true);
+    setWebrtcError(null);
+    try {
+      await teardownMedia();
+      setEnded(true);
+      onEnded?.(session);
+    } catch (err) {
+      setWebrtcError(
+        err instanceof Error ? err.message : "Falha ao sair da sala",
+      );
+    } finally {
+      setEnding(false);
+    }
+  }
+
   async function handleEnd() {
     if (ending || ended) return;
     setEnding(true);
@@ -202,7 +221,7 @@ export function TeleconsultRoom({
       );
       await teardownMedia();
       setEnded(true);
-      if (showClinicalTools && isInitiator) {
+      if (showClinicalTools) {
         setShowBriefing(true);
       } else {
         onEnded?.(updated);
@@ -444,17 +463,47 @@ export function TeleconsultRoom({
                 {recording.active ? "Parar gravação" : "Gravar consulta"}
               </Button>
             )}
-            <Button
-              type="button"
-              variant="secondary"
-              fullWidth={false}
-              className="!w-full !py-2.5 !px-3 text-xs sm:text-sm !text-red-600 dark:!text-red-400 !border-red-500/25 hover:!bg-red-500/10"
-              isLoading={ending}
-              onClick={() => void handleEnd()}
-            >
-              {isPatient ? "Sair da consulta" : "Encerrar"}
-            </Button>
+            {isPatient ? (
+              <Button
+                type="button"
+                variant="secondary"
+                fullWidth={false}
+                className="!w-full !py-2.5 !px-3 text-xs sm:text-sm !text-red-600 dark:!text-red-400 !border-red-500/25 hover:!bg-red-500/10"
+                isLoading={ending}
+                onClick={() => void handleLeave()}
+              >
+                Sair da consulta
+              </Button>
+            ) : (
+              <Button
+                type="button"
+                variant="secondary"
+                fullWidth={false}
+                className="!w-full !py-2.5 !px-3 text-xs sm:text-sm !text-red-600 dark:!text-red-400 !border-red-500/25 hover:!bg-red-500/10"
+                isLoading={ending}
+                onClick={() => void handleEnd()}
+              >
+                Encerrar
+              </Button>
+            )}
           </div>
+
+          {needsGesture && remoteReady && (
+            <div className="glass-panel p-3 flex flex-wrap items-center gap-3">
+              <p className="text-xs text-foreground/60 flex-1">
+                O navegador bloqueou o áudio do vídeo remoto. Clique para
+                liberar.
+              </p>
+              <Button
+                type="button"
+                fullWidth={false}
+                className="!py-2 !px-3 text-xs"
+                onClick={tryPlayRemote}
+              >
+                Ativar áudio/vídeo
+              </Button>
+            </div>
+          )}
 
           {asr.active && (
             <p className="text-[11px] text-amber-500/90">

@@ -21,12 +21,15 @@ export default function ClinicTeleconsultPage() {
   const { data, isLoading, error, refetch } = useTeleconsult(orgId, sessionId);
   const [entered, setEntered] = useState(false);
 
-  // Papel e initiator vêm da API (viewerRole / isInitiator).
   const viewerRole = data?.viewerRole;
-  const isInitiator =
-    typeof data?.isInitiator === "boolean"
-      ? data.isInitiator
-      : Boolean(data && user && data.professionalUserId === user.id);
+  // Na rota clínica: profissional da sessão OU admin hospeda o offer.
+  // Perfect negotiation no client cobre glare se os dois abrirem.
+  const isInitiator = Boolean(
+    data &&
+      user &&
+      (data.professionalUserId === user.id ||
+        data.viewerRole === "CLINIC_ADMIN"),
+  );
 
   return (
     <div className="teleconsult-page max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
