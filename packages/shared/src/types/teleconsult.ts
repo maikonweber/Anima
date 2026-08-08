@@ -5,6 +5,11 @@ export type TeleconsultSessionStatus =
   | "ENCERRADA"
   | "CANCELADA";
 
+export type TeleconsultViewerRole =
+  | "PATIENT"
+  | "PROFESSIONAL"
+  | "CLINIC_ADMIN";
+
 export type TeleconsultSession = {
   id: string;
   organizationId: string;
@@ -19,9 +24,18 @@ export type TeleconsultSession = {
   endedAt: string | null;
   criadoEm: string;
   atualizadoEm: string;
+  /** Papel de quem está vendo a sessão (preenchido em get/join/end). */
+  viewerRole?: TeleconsultViewerRole;
+  /** Quem deve criar a oferta WebRTC (profissional ou admin clínico). */
+  isInitiator?: boolean;
 };
 
-export type TeleconsultSignalType = "offer" | "answer" | "ice";
+export type TeleconsultSignalType = "offer" | "answer" | "ice" | "presence";
+
+export type TeleconsultPresencePayload = {
+  status: "joined" | "left" | "heartbeat";
+  role: TeleconsultViewerRole;
+};
 
 export type TeleconsultSignalMessage = {
   id: string;

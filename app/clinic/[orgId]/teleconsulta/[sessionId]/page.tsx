@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { motion } from "motion/react";
@@ -9,7 +9,6 @@ import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { TeleconsultPatientLinkPanel } from "@/components/clinic/TeleconsultPatientLinkPanel";
 import { TeleconsultRoom } from "@/components/clinic/TeleconsultRoom";
 import { useTeleconsult } from "@/hooks/use-teleconsult";
-import { useMyOrganizations } from "@/hooks/use-organizations";
 import { useAuth } from "@/providers/auth-provider";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -19,24 +18,15 @@ export default function ClinicTeleconsultPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { user } = useAuth();
-  const { data: orgs } = useMyOrganizations();
   const { data, isLoading, error, refetch } = useTeleconsult(orgId, sessionId);
   const [entered, setEntered] = useState(false);
 
-  const role = useMemo(
-    () =>
-      orgs?.find((item) => item.organization.id === orgId)?.membership.role,
-    [orgs, orgId],
-  );
-
-  // Só clínico/profissional da sessão inicia o WebRTC (offer).
-  // Nunca presumir initiator enquanto orgs carrega — isso gerava glare.
-  const isInitiator = Boolean(
-    data &&
-      user &&
-      (role === "CLINIC_ADMIN" ||
-        data.professionalUserId === user.id),
-  );
+  // Papel e initiator vêm da API (viewerRole / isInitiator).
+  const viewerRole = data?.viewerRole;
+  const isInitiator =
+    typeof data?.isInitiator === "boolean"
+      ? data.isInitiator
+      : Boolean(data && user && data.professionalUserId === user.id);
 
   return (
     <div className="teleconsult-page max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
@@ -50,11 +40,15 @@ export default function ClinicTeleconsultPage() {
         >
           ← Agenda
         </Link>
+        <p className="text-xs font-medium tracking-wide text-[var(--clinic-accent,#0d7377)] mb-2">
+          Visão clínica
+        </p>
         <h1 className="text-2xl font-bold text-foreground/90 mb-2">
           Teleconsulta
         </h1>
         <p className="text-sm text-foreground/45 mb-6">
           Sessão autenticada · requer consentimento TELECONSULTA
+          {viewerRole ? ` · ${viewerRole === "PATIENT" ? "paciente" : "clínico"}` : ""}
         </p>
 
         {error && (
@@ -89,8 +83,9 @@ export default function ClinicTeleconsultPage() {
         {data && entered && (
           <TeleconsultRoom
             session={data}
-            isInitiator={!!isInitiator}
-            enablePostConsultBriefing={!!isInitiator}
+            viewerRole={viewerRole ?? "PROFESSIONAL"}
+            isInitiator={isInitiator}
+            enablePostConsultBriefing
             onEnded={(updated) => {
               queryClient.setQueryData(
                 ["teleconsult", orgId, sessionId],

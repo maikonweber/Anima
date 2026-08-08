@@ -313,6 +313,54 @@ select.anima-select option:disabled {
   box-shadow: 0 1px 2px rgba(15, 28, 36, 0.04);
 }
 
+/* Teleconsulta — cores unificadas (teal clínico) para paciente e clínico */
+.teleconsult-shell {
+  color-scheme: light;
+  --teleconsult-accent: #0d7377;
+  --teleconsult-accent-hover: #095c5f;
+  --teleconsult-accent-soft: rgba(13, 115, 119, 0.1);
+  --teleconsult-border: rgba(15, 28, 36, 0.09);
+  --teleconsult-panel: #ffffff;
+  --background: #f0f5f3;
+  --foreground: #0f1c24;
+  --anima-violet: #0d7377;
+  --anima-indigo: #095c5f;
+  --anima-lilac: #5eead4;
+  --anima-glow: rgba(13, 115, 119, 0.18);
+  background:
+    radial-gradient(ellipse 70% 45% at 92% -8%, rgba(13, 115, 119, 0.11), transparent 55%),
+    radial-gradient(ellipse 50% 35% at 0% 95%, rgba(20, 145, 155, 0.07), transparent 50%),
+    linear-gradient(180deg, #f4f8f6 0%, #f0f5f3 40%);
+  color: var(--foreground);
+}
+
+.teleconsult-shell .glass-panel {
+  background: var(--teleconsult-panel);
+  border: 1px solid var(--teleconsult-border);
+  box-shadow: 0 1px 2px rgba(15, 28, 36, 0.04);
+  backdrop-filter: none;
+}
+
+.teleconsult-role-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.55rem;
+  border-radius: 0.4rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  background: var(--teleconsult-accent-soft);
+  color: var(--teleconsult-accent);
+}
+
+.teleconsult-room--patient .teleconsult-role-pill {
+  background: rgba(13, 115, 119, 0.08);
+}
+
+.teleconsult-room--clinician .teleconsult-role-pill {
+  background: rgba(13, 115, 119, 0.14);
+}
+
 /* Teleconsulta — layout mobile-first (sala + chat) */
 .teleconsult-page {
   width: 100%;
@@ -345,11 +393,13 @@ select.anima-select option:disabled {
   background: rgba(0, 0, 0, 0.2);
 }
 
-.clinic-shell .teleconsult-controls button {
-  border-color: var(--clinic-border-strong) !important;
+.clinic-shell .teleconsult-controls button,
+.teleconsult-shell .teleconsult-controls button {
+  border-color: rgba(15, 28, 36, 0.14) !important;
 }
 
-.clinic-shell .teleconsult-chat-input:focus {
+.clinic-shell .teleconsult-chat-input:focus,
+.teleconsult-shell .teleconsult-chat-input:focus {
   border-color: rgba(13, 115, 119, 0.45);
   --tw-ring-color: rgba(13, 115, 119, 0.22);
 }

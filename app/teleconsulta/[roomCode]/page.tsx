@@ -57,45 +57,64 @@ export default function TeleconsultJoinPage() {
     }
   }
 
-  return (
-    <div className="teleconsult-page max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-      >
-        <h1 className="text-2xl font-bold text-foreground/90 mb-2">
-          Entrar na teleconsulta
-        </h1>
-        <p className="text-sm text-foreground/45 mb-6">
-          Use o código fornecido pela clínica. É necessário estar logado e ter
-          consentimento TELECONSULTA.
-        </p>
+  const isPatientView =
+    session?.viewerRole === "PATIENT" ||
+    (!session?.viewerRole &&
+      session?.professionalUserId !== user?.id);
 
-        {authLoading || (join.isPending && !session && !error) ? (
-          <div className="h-32 rounded-2xl bg-foreground/[0.06] animate-pulse" />
-        ) : session ? (
-          <TeleconsultRoom
-            session={session}
-            isInitiator={session.professionalUserId === user?.id}
-            onEnded={(updated) => {
-              setSession(updated);
-              router.push("/");
-            }}
-          />
-        ) : (
-          <form onSubmit={handleJoin} className="glass-panel p-6 space-y-3">
-            <Input
-              value={roomCode}
-              onChange={(e) => setRoomCode(e.target.value)}
-              placeholder="Código da sala"
+  return (
+    <div className="teleconsult-shell min-h-[100dvh]">
+      <div className="teleconsult-page max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <p className="text-xs font-medium tracking-wide text-[var(--teleconsult-accent)] mb-2">
+            EmotiveCare · Teleconsulta
+          </p>
+          <h1 className="text-2xl font-bold text-foreground/90 mb-2">
+            {session
+              ? isPatientView
+                ? "Sua consulta"
+                : "Sala clínica"
+              : "Entrar na teleconsulta"}
+          </h1>
+          <p className="text-sm text-foreground/45 mb-6">
+            {session
+              ? isPatientView
+                ? "Você está na sala do paciente. O profissional entra pelo painel da clínica."
+                : "Você entrou pelo link do paciente com perfil clínico."
+              : "Use o código fornecido pela clínica. É necessário estar logado e ter consentimento TELECONSULTA."}
+          </p>
+
+          {authLoading || (join.isPending && !session && !error) ? (
+            <div className="h-32 rounded-2xl bg-foreground/[0.06] animate-pulse" />
+          ) : session ? (
+            <TeleconsultRoom
+              session={session}
+              viewerRole={session.viewerRole}
+              isInitiator={session.isInitiator}
+              enablePostConsultBriefing={session.viewerRole !== "PATIENT"}
+              onEnded={(updated) => {
+                setSession(updated);
+                router.push(isPatientView ? "/dashboard" : "/");
+              }}
             />
-            {error && <p className="text-xs text-red-400">{error}</p>}
-            <Button type="submit" isLoading={join.isPending}>
-              Entrar
-            </Button>
-          </form>
-        )}
-      </motion.div>
+          ) : (
+            <form onSubmit={handleJoin} className="glass-panel p-6 space-y-3">
+              <Input
+                value={roomCode}
+                onChange={(e) => setRoomCode(e.target.value)}
+                placeholder="Código da sala"
+              />
+              {error && <p className="text-xs text-red-400">{error}</p>}
+              <Button type="submit" isLoading={join.isPending}>
+                Entrar
+              </Button>
+            </form>
+          )}
+        </motion.div>
+      </div>
     </div>
   );
 }
