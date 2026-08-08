@@ -413,7 +413,10 @@ export function useTeleconsultWebRtc({
   );
 
   const publishOffer = useCallback(
-    async (pc: RTCPeerConnection) => {
+    async (
+      pc: RTCPeerConnection,
+      { iceRestart = false }: { iceRestart?: boolean } = {},
+    ) => {
       if (makingOffer.current) {
         rtcLog("debug", "offer_skipped_busy");
         return;
@@ -422,8 +425,11 @@ export function useTeleconsultWebRtc({
       offerEpochRef.current += 1;
       const epoch = offerEpochRef.current;
       try {
-        rtcLog("info", "offer_create_start", summarizePc(pc));
-        const offer = await pc.createOffer();
+        rtcLog("info", "offer_create_start", {
+          ...summarizePc(pc),
+          iceRestart,
+        });
+        const offer = await pc.createOffer(iceRestart ? { iceRestart: true } : undefined);
         if (epoch !== offerEpochRef.current) return;
         await pc.setLocalDescription(offer);
         if (epoch !== offerEpochRef.current) return;
@@ -431,8 +437,9 @@ export function useTeleconsultWebRtc({
         rtcLog("info", "offer_posted", {
           sdpBytes: pc.localDescription?.sdp?.length ?? 0,
           epoch,
+          iceRestart,
         });
-        refreshDebug({ phase: "offer_posted" });
+        refreshDebug({ phase: iceRestart ? "offer_posted_restart" : "offer_posted" });
         setError(null);
       } catch (err) {
         rtcLog("error", "offer_failed", {
@@ -509,10 +516,15 @@ export function useTeleconsultWebRtc({
   const applyRemoteAnswer = useCallback(
     async (pc: RTCPeerConnection, msg: TeleconsultSignalMessage) => {
       if (pc.signalingState !== "have-local-offer") {
-        rtcLog("warn", "answer_ignored_wrong_state", {
-          signalingState: pc.signalingState,
-          from: msg.fromUserId,
-        });
+        // Answer obsoleta após stable — normal com polling HTTP.
+        rtcLog(
+          pc.signalingState === "stable" ? "debug" : "warn",
+          "answer_ignored_wrong_state",
+          {
+            signalingState: pc.signalingState,
+            from: msg.fromUserId,
+          },
+        );
         return false;
       }
       try {
@@ -643,18 +655,23 @@ export function useTeleconsultWebRtc({
       void (async () => {
         try {
           let pc = existing;
-          if (pc.connectionState === "failed") {
+          if (pc.connectionState === "failed" || pc.iceConnectionState === "failed") {
             pc = recreatePeer(localStream);
             orphanCycles = 0;
             await publishOffer(pc);
             return;
           }
-          if (pc.remoteDescription) {
-            try {
-              pc.restartIce();
-            } catch {
-              // ignore
+          // Stable + remoteDescription mas ICE preso: renegociar com iceRestart.
+          if (pc.remoteDescription && pc.signalingState === "stable") {
+            orphanCycles += 1;
+            if (orphanCycles >= 2) {
+              orphanCycles = 0;
+              rtcLog("warn", "ice_stuck_offer_restart", summarizePc(pc));
+              await publishOffer(pc, { iceRestart: true });
             }
+            return;
+          }
+          if (pc.remoteDescription) {
             return;
           }
           if (pc.signalingState === "have-local-offer") {
@@ -874,7 +891,13 @@ export function useTeleconsultWebRtc({
               }
 
               if (msg.type === "answer" && initiator) {
-                // Aplica se possível; answer em estado errado é obsoleta.
+                if (
+                  pc.signalingState === "stable" &&
+                  pc.remoteDescription
+                ) {
+                  lastSignalId.current = msg.id;
+                  continue;
+                }
                 await applyRemoteAnswer(pc, msg);
                 lastSignalId.current = msg.id;
                 continue;
