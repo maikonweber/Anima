@@ -52,7 +52,10 @@ export function useCreateTeleconsult(orgId: string) {
 
 export function useJoinTeleconsult() {
   return useMutation({
-    mutationFn: (roomCode: string) => joinTeleconsultByRoomCode(roomCode),
+    mutationFn: (input: {
+      roomCode: string;
+      as?: "PATIENT" | "PROFESSIONAL";
+    }) => joinTeleconsultByRoomCode(input.roomCode, { as: input.as }),
   });
 }
 

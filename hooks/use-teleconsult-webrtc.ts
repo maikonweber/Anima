@@ -22,9 +22,13 @@ const ICE_SERVERS: RTCIceServer[] = [
   { urls: "stun:stun1.l.google.com:19302" },
 ];
 
-const POLL_MS = 1000;
-const REOFFER_MS = 10_000;
-const HEARTBEAT_MS = 8_000;
+const POLL_MS = 700;
+const REOFFER_MS = 8_000;
+const HEARTBEAT_MS = 6_000;
+
+function peerKey(userId: string, role: TeleconsultViewerRole): string {
+  return `${userId}:${role}`;
+}
 
 export type UseTeleconsultWebRtcOptions = {
   orgId: string;
@@ -72,6 +76,7 @@ export function useTeleconsultWebRtc({
   const offerEpochRef = useRef(0);
   const isInitiatorRef = useRef(isInitiator);
   const localStreamRef = useRef(localStream);
+  const mediaReadyRef = useRef(mediaReady);
   const peerPresentRef = useRef(false);
   /** SDP adiado (offer/answer) quando o PC não estava pronto — não perde o sinal. */
   const deferredSdpRef = useRef<TeleconsultSignalMessage[]>([]);
@@ -94,6 +99,9 @@ export function useTeleconsultWebRtc({
     at: string;
   } | null>(null);
 
+  const viewerRoleRef = useRef(viewerRole);
+  viewerRoleRef.current = viewerRole;
+
   const publishSignal = useCallback(
     async (
       type: TeleconsultSignalMessage["type"],
@@ -107,6 +115,7 @@ export function useTeleconsultWebRtc({
         return await postTeleconsultSignal(orgId, sessionId, {
           type,
           payload,
+          peerRole: viewerRoleRef.current,
         });
       } catch (err) {
         const status = err instanceof ApiError ? err.status : 0;
@@ -137,6 +146,7 @@ export function useTeleconsultWebRtc({
 
   isInitiatorRef.current = isInitiator;
   localStreamRef.current = localStream;
+  mediaReadyRef.current = mediaReady;
   peerPresentRef.current = peerPresent;
 
   const refreshDebug = useCallback(
@@ -640,9 +650,9 @@ export function useTeleconsultWebRtc({
     remoteReady,
   ]);
 
-  // Presence announce + heartbeat (mapa no servidor; não enche ring SDP)
+  // Presence announce + heartbeat — não depende de mídia (detecta peer mais cedo)
   useEffect(() => {
-    if (!enabled || !mediaReady || !userId) return;
+    if (!enabled || !userId) return;
     let cancelled = false;
     void publishPresence("joined");
     const interval = window.setInterval(() => {
@@ -653,18 +663,21 @@ export function useTeleconsultWebRtc({
       window.clearInterval(interval);
       void publishPresence("left");
     };
-  }, [enabled, mediaReady, publishPresence, userId]);
+  }, [enabled, publishPresence, userId]);
 
   // Poll signaling com generation token (mata loops duplicados)
   useEffect(() => {
-    if (!enabled || !mediaReady || !userId) return;
+    if (!enabled || !userId) return;
     const gen = ++pollGenRef.current;
+    const selfPeer = peerKey(userId, viewerRole);
 
     async function poll() {
       rtcLog("info", "signal_poll_start", {
         orgId,
         sessionId,
         isInitiator: isInitiatorRef.current,
+        viewerRole,
+        selfPeer,
         gen,
       });
       while (pollGenRef.current === gen) {
@@ -673,14 +686,25 @@ export function useTeleconsultWebRtc({
             orgId,
             sessionId,
             lastSignalId.current,
+            viewerRole,
           );
           if (pollGenRef.current !== gen) return;
           pollCountRef.current += 1;
 
           const initiator = isInitiatorRef.current;
-          const remoteMessages = messages.filter(
-            (m) => m.fromUserId !== userId,
-          );
+          // Filtra por peer (userId:role), não só userId — mesma conta nos dois papéis.
+          const remoteMessages = messages.filter((m) => {
+            if (m.fromPeer) return m.fromPeer !== selfPeer;
+            if (m.type === "presence") {
+              const role = (m.payload as TeleconsultPresencePayload | undefined)
+                ?.role;
+              if (m.fromUserId === userId && role === viewerRole) return false;
+              if (m.fromUserId === userId && role && role !== viewerRole) {
+                return true;
+              }
+            }
+            return m.fromUserId !== userId;
+          });
 
           if (remoteMessages.length > 0) {
             const summary = remoteMessages
@@ -726,79 +750,106 @@ export function useTeleconsultWebRtc({
             }
           }
 
-          const pc = ensurePeer();
-          const stream = localStreamRef.current;
-          if (stream) attachLocalTracks(pc, stream);
-
-          // Retry SDP adiado
-          if (deferredSdpRef.current.length > 0) {
-            const pending = [...deferredSdpRef.current];
-            deferredSdpRef.current = [];
-            for (const msg of pending) {
-              if (msg.type === "offer" && !initiator) {
-                const ok = await applyRemoteOffer(pc, msg);
-                if (!ok) deferredSdpRef.current.push(msg);
-              } else if (msg.type === "answer" && initiator) {
-                const ok = await applyRemoteAnswer(pc, msg);
-                if (!ok) deferredSdpRef.current.push(msg);
+          // Presence já aplicada; SDP/ICE só com mídia pronta (senão answer sem tracks).
+          if (!mediaReadyRef.current) {
+            // Avança o cursor para não repuxar o mesmo lote a cada poll;
+            // dedup por id evita fila adiada crescer sem limite.
+            const known = new Set(deferredSdpRef.current.map((m) => m.id));
+            for (const msg of remoteMessages) {
+              if (msg.type === "presence") continue;
+              lastSignalId.current = msg.id;
+              if (
+                (msg.type === "offer" ||
+                  msg.type === "answer" ||
+                  msg.type === "ice") &&
+                !known.has(msg.id)
+              ) {
+                deferredSdpRef.current.push(msg);
+                known.add(msg.id);
               }
             }
-          }
+          } else {
+            const pc = ensurePeer();
+            const stream = localStreamRef.current;
+            if (stream) attachLocalTracks(pc, stream);
 
-          const latestOffer = !initiator
-            ? [...remoteMessages]
+            // Retry SDP adiado — aplica só a offer/answer mais recente; ICE todos.
+            if (deferredSdpRef.current.length > 0) {
+              const pending = [...deferredSdpRef.current];
+              deferredSdpRef.current = [];
+              const lastDeferredOffer = [...pending]
                 .reverse()
-                .find((m) => m.type === "offer")
-            : undefined;
+                .find((m) => m.type === "offer");
+              const lastDeferredAnswer = [...pending]
+                .reverse()
+                .find((m) => m.type === "answer");
+              if (lastDeferredOffer && !initiator) {
+                const ok = await applyRemoteOffer(pc, lastDeferredOffer);
+                if (!ok) deferredSdpRef.current.push(lastDeferredOffer);
+              }
+              if (lastDeferredAnswer && initiator) {
+                // Answer que não aplica agora é obsoleta (já stable ou nova
+                // offer a caminho) — não re-enfileira.
+                await applyRemoteAnswer(pc, lastDeferredAnswer);
+              }
+              for (const msg of pending) {
+                if (msg.type === "ice") {
+                  await addIceCandidateSafe(
+                    pcRef.current ?? pc,
+                    msg.payload as RTCIceCandidateInit,
+                  );
+                }
+              }
+            }
 
-          // Aplica SDP; só avança cursor em mensagens processadas com sucesso
-          // (presence não está no ring — ids começam com "presence-")
-          for (const msg of remoteMessages) {
-            if (msg.type === "presence") continue;
+            const latestOffer = !initiator
+              ? [...remoteMessages]
+                  .reverse()
+                  .find((m) => m.type === "offer")
+              : undefined;
 
-            if (msg.type === "offer") {
-              if (initiator) {
-                // Perfect negotiation (polite): cede se nosso userId > do peer
-                const polite =
-                  !!userId && !!msg.fromUserId && userId > msg.fromUserId;
-                if (!polite) {
+            for (const msg of remoteMessages) {
+              if (msg.type === "presence") continue;
+
+              if (msg.type === "offer") {
+                if (initiator) {
+                  const polite =
+                    !!userId && !!msg.fromUserId && userId > msg.fromUserId;
+                  if (!polite) {
+                    lastSignalId.current = msg.id;
+                    continue;
+                  }
+                } else if (latestOffer && msg.id !== latestOffer.id) {
                   lastSignalId.current = msg.id;
                   continue;
                 }
-              } else if (latestOffer && msg.id !== latestOffer.id) {
+                const ok = await applyRemoteOffer(pc, msg);
+                if (ok) {
+                  lastSignalId.current = msg.id;
+                } else {
+                  deferredSdpRef.current.push(msg);
+                }
+                continue;
+              }
+
+              if (msg.type === "answer" && initiator) {
+                // Aplica se possível; answer em estado errado é obsoleta.
+                await applyRemoteAnswer(pc, msg);
                 lastSignalId.current = msg.id;
                 continue;
               }
-              const ok = await applyRemoteOffer(pc, msg);
-              if (ok) {
-                lastSignalId.current = msg.id;
-              } else {
-                deferredSdpRef.current.push(msg);
-              }
-              continue;
-            }
 
-            if (msg.type === "answer" && initiator) {
-              const ok = await applyRemoteAnswer(pc, msg);
-              if (ok) {
+              if (msg.type === "ice") {
+                await addIceCandidateSafe(
+                  pcRef.current ?? pc,
+                  msg.payload as RTCIceCandidateInit,
+                );
                 lastSignalId.current = msg.id;
-              } else {
-                deferredSdpRef.current.push(msg);
+                continue;
               }
-              continue;
-            }
 
-            if (msg.type === "ice") {
-              await addIceCandidateSafe(
-                pcRef.current ?? pc,
-                msg.payload as RTCIceCandidateInit,
-              );
               lastSignalId.current = msg.id;
-              continue;
             }
-
-            // answer para answerer / etc. — descarta
-            lastSignalId.current = msg.id;
           }
         } catch (err) {
           if (pollGenRef.current === gen) {
@@ -834,11 +885,11 @@ export function useTeleconsultWebRtc({
     attachLocalTracks,
     enabled,
     ensurePeer,
-    mediaReady,
     orgId,
     refreshDebug,
     sessionId,
     userId,
+    viewerRole,
   ]);
 
   // Snapshot periódico do PC enquanto a sala está ativa

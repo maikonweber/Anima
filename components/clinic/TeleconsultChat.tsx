@@ -16,6 +16,8 @@ type Props = {
   className?: string;
 };
 
+const POLL_MS = 800;
+
 export function TeleconsultChat({
   orgId,
   sessionId,
@@ -29,9 +31,14 @@ export function TeleconsultChat({
   const [sending, setSending] = useState(false);
   const afterId = useRef<string | undefined>(undefined);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const knownIds = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     let stopped = false;
+    afterId.current = undefined;
+    knownIds.current = new Set();
+    setMessages([]);
+
     async function poll() {
       while (!stopped) {
         try {
@@ -42,18 +49,27 @@ export function TeleconsultChat({
           if (batch.length > 0) {
             afterId.current = batch[batch.length - 1]?.id;
             setMessages((prev) => {
-              const ids = new Set(prev.map((m) => m.id));
               const next = [...prev];
               for (const msg of batch) {
-                if (!ids.has(msg.id)) next.push(msg);
+                if (!knownIds.current.has(msg.id)) {
+                  knownIds.current.add(msg.id);
+                  next.push(msg);
+                }
               }
               return next;
             });
+            setError(null);
           }
-        } catch {
-          // keep polling
+        } catch (err) {
+          if (!stopped) {
+            setError(
+              err instanceof Error
+                ? err.message
+                : "Falha ao sincronizar o chat",
+            );
+          }
         }
-        await new Promise((r) => setTimeout(r, 2000));
+        await new Promise((r) => setTimeout(r, POLL_MS));
       }
     }
     void poll();
@@ -69,18 +85,23 @@ export function TeleconsultChat({
   async function handleSend(e: FormEvent) {
     e.preventDefault();
     if (!body.trim() || disabled) return;
+    const text = body.trim();
     setSending(true);
     setError(null);
+    setBody("");
     try {
       const msg = await postTeleconsultMessage(orgId, sessionId, {
-        body: body.trim(),
+        body: text,
       });
-      setMessages((prev) =>
-        prev.some((m) => m.id === msg.id) ? prev : [...prev, msg],
-      );
+      if (!knownIds.current.has(msg.id)) {
+        knownIds.current.add(msg.id);
+        setMessages((prev) =>
+          prev.some((m) => m.id === msg.id) ? prev : [...prev, msg],
+        );
+      }
       afterId.current = msg.id;
-      setBody("");
     } catch (err) {
+      setBody(text);
       setError(err instanceof Error ? err.message : "Falha ao enviar");
     } finally {
       setSending(false);

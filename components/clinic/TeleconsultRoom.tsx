@@ -122,7 +122,7 @@ export function TeleconsultRoom({
     switchInput,
     stopAllStreaming,
     checkPermission,
-  } = useUserMedia({ autoStart: false });
+  } = useUserMedia({ autoStart: true });
 
   const mediaReady = Boolean(ready && accessGranted && activeStream && !ended);
 

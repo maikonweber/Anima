@@ -11,6 +11,7 @@ import type {
   TeleconsultSession,
   TeleconsultSignalMessage,
   TeleconsultTranscription,
+  TeleconsultViewerRole,
 } from "../types/teleconsult";
 import type { AiSynthesis } from "../types/ai-syntheses";
 
@@ -41,9 +42,15 @@ export async function getTeleconsult(orgId: string, sessionId: string) {
   );
 }
 
-export async function joinTeleconsultByRoomCode(roomCode: string) {
+export async function joinTeleconsultByRoomCode(
+  roomCode: string,
+  options?: { as?: "PATIENT" | "PROFESSIONAL" },
+) {
+  const qs = options?.as
+    ? `?as=${encodeURIComponent(options.as)}`
+    : "";
   return api<TeleconsultSession>(
-    `/teleconsult/join/${encodeURIComponent(roomCode)}`,
+    `/teleconsult/join/${encodeURIComponent(roomCode)}${qs}`,
     { auth: true },
   );
 }
@@ -137,8 +144,12 @@ export async function pullTeleconsultSignals(
   orgId: string,
   sessionId: string,
   afterId?: string,
+  peerRole?: TeleconsultViewerRole,
 ) {
-  const qs = afterId ? `?afterId=${encodeURIComponent(afterId)}` : "";
+  const params = new URLSearchParams();
+  if (afterId) params.set("afterId", afterId);
+  if (peerRole) params.set("peerRole", peerRole);
+  const qs = params.toString() ? `?${params.toString()}` : "";
   return api<TeleconsultSignalMessage[]>(
     `/organizations/${encodeURIComponent(orgId)}/teleconsult/${encodeURIComponent(sessionId)}/signal${qs}`,
     { auth: true },

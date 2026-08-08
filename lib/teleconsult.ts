@@ -1,13 +1,20 @@
 import { absoluteUrl } from "@/lib/seo/site";
 
+/** Canonical patient room URL (WebRTC answer side). */
 export function buildTeleconsultPatientUrl(
   roomCode: string,
-  patientJoinUrl?: string | null,
+  _patientJoinUrl?: string | null,
 ): string {
-  if (patientJoinUrl?.trim()) {
-    return patientJoinUrl.trim();
-  }
-  return absoluteUrl(`/teleconsulta/${encodeURIComponent(roomCode)}`);
+  return absoluteUrl(
+    `/teleconsulta/${encodeURIComponent(roomCode)}/paciente`,
+  );
+}
+
+/** Canonical professional room URL (WebRTC offer side). */
+export function buildTeleconsultProfessionalUrl(roomCode: string): string {
+  return absoluteUrl(
+    `/teleconsulta/${encodeURIComponent(roomCode)}/profissional`,
+  );
 }
 
 export function buildTeleconsultWhatsAppMessage(

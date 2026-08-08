@@ -105,7 +105,9 @@ export default function AppointmentDetailPage() {
     setActionError(null);
     try {
       const session = await createTeleconsult.mutateAsync(appointmentId);
-      router.push(`/clinic/${orgId}/teleconsulta/${session.id}`);
+      router.push(
+        `/teleconsulta/${encodeURIComponent(session.roomCode)}/profissional`,
+      );
     } catch (err) {
       setActionError(
         err instanceof Error
@@ -292,7 +294,7 @@ export default function AppointmentDetailPage() {
                 <div className="flex flex-wrap items-center gap-3">
                   {existingTeleconsult.data ? (
                     <Link
-                      href={`/clinic/${orgId}/teleconsulta/${existingTeleconsult.data.id}`}
+                      href={`/teleconsulta/${encodeURIComponent(existingTeleconsult.data.roomCode)}/profissional`}
                       className="inline-flex"
                     >
                       <Button type="button" className="w-auto">

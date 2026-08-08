@@ -40,6 +40,8 @@ export type TeleconsultPresencePayload = {
 export type TeleconsultSignalMessage = {
   id: string;
   fromUserId: string;
+  /** Identidade do lado (`userId:ROLE`) — permite mesma conta em ambos os papéis. */
+  fromPeer?: string;
   type: TeleconsultSignalType;
   payload: unknown;
   createdAt: number;
@@ -48,6 +50,8 @@ export type TeleconsultSignalMessage = {
 export type PostTeleconsultSignalPayload = {
   type: TeleconsultSignalType;
   payload: unknown;
+  /** Papel na sala (rota /paciente|/profissional) — peer key WebRTC */
+  peerRole?: TeleconsultViewerRole;
 };
 
 export type TeleconsultMessage = {

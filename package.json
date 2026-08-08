@@ -14,7 +14,10 @@
     "favicons": "node scripts/generate-favicons.mjs",
     "postinstall": "node scripts/link-expo-router.cjs",
     "mobile": "npm run start --workspace=mobile",
-    "shared:typecheck": "npm run typecheck --workspace=@anima/shared"
+    "shared:typecheck": "npm run typecheck --workspace=@anima/shared",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed"
   },
   "dependencies": {
     "@anima/shared": "*",
@@ -33,7 +36,9 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.55.0",
     "@tailwindcss/postcss": "^4",
+    "dotenv": "^17.4.2",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
