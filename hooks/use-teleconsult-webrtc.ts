@@ -38,6 +38,8 @@ export type UseTeleconsultWebRtcOptions = {
 const POLL_MS = 700;
 const REOFFER_MS = 8_000;
 const HEARTBEAT_MS = 6_000;
+/** Sem heartbeat remoto → tratar peer como saiu (tab fechada sem "left"). */
+const REMOTE_PRESENCE_TIMEOUT_MS = 18_000;
 
 function peerKey(userId: string, role: TeleconsultViewerRole): string {
   return `${userId}:${role}`;
@@ -98,6 +100,8 @@ export function useTeleconsultWebRtc({
   const localStreamRef = useRef(localStream);
   const mediaReadyRef = useRef(mediaReady);
   const peerPresentRef = useRef(false);
+  const peerAwaitingRejoinRef = useRef(false);
+  const lastRemotePresenceAtRef = useRef(0);
   /** SDP adiado (offer/answer) quando o PC não estava pronto — não perde o sinal. */
   const deferredSdpRef = useRef<TeleconsultSignalMessage[]>([]);
 
@@ -260,6 +264,28 @@ export function useTeleconsultWebRtc({
       );
     },
     [publishSignal, userId, viewerRole],
+  );
+
+  const resetRemotePeer = useCallback(
+    (reason: string) => {
+      rtcLog("info", "peer_reset", { reason });
+      offerEpochRef.current += 1;
+      makingOffer.current = false;
+      pcRef.current?.close();
+      pcRef.current = null;
+      remoteStreamRef.current = null;
+      if (remoteVideoRef.current) {
+        remoteVideoRef.current.srcObject = null;
+      }
+      deferredSdpRef.current = [];
+      pendingIceRef.current = [];
+      lastSignalId.current = undefined;
+      setRemoteReady(false);
+      setNeedsGesture(false);
+      setError(null);
+      refreshDebug({ phase: `reset:${reason}` });
+    },
+    [refreshDebug],
   );
 
   const wirePeerHandlers = useCallback(
@@ -455,6 +481,31 @@ export function useTeleconsultWebRtc({
     [publishSignal, refreshDebug],
   );
 
+  const handlePeerLeft = useCallback(() => {
+    peerAwaitingRejoinRef.current = true;
+    resetRemotePeer("peer_left");
+    setPeerPresent(false);
+    peerPresentRef.current = false;
+    setPeerRole(null);
+  }, [resetRemotePeer]);
+
+  const handlePeerRejoined = useCallback(async () => {
+    const stream = localStreamRef.current;
+    if (!stream || !mediaReadyRef.current) return;
+    rtcLog("info", "peer_rejoined_reoffer");
+    resetRemotePeer("peer_rejoined");
+    peerAwaitingRejoinRef.current = false;
+    if (!isInitiatorRef.current) return;
+    try {
+      const pc = recreatePeer(stream);
+      await publishOffer(pc);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Falha ao reconectar vídeo",
+      );
+    }
+  }, [publishOffer, recreatePeer, resetRemotePeer]);
+
   const applyRemoteOffer = useCallback(
     async (pc: RTCPeerConnection, msg: TeleconsultSignalMessage) => {
       const stream = localStreamRef.current;
@@ -558,6 +609,8 @@ export function useTeleconsultWebRtc({
     lastSignalId.current = undefined;
     deferredSdpRef.current = [];
     pendingIceRef.current = [];
+    peerAwaitingRejoinRef.current = false;
+    lastRemotePresenceAtRef.current = 0;
     setRemoteReady(false);
     setPeerPresent(false);
     peerPresentRef.current = false;
@@ -716,8 +769,13 @@ export function useTeleconsultWebRtc({
     const interval = window.setInterval(() => {
       if (!cancelled) void publishPresence("heartbeat");
     }, HEARTBEAT_MS);
+    const onPageHide = () => {
+      void publishPresence("left");
+    };
+    window.addEventListener("pagehide", onPageHide);
     return () => {
       cancelled = true;
+      window.removeEventListener("pagehide", onPageHide);
       window.clearInterval(interval);
       void publishPresence("left");
     };
@@ -785,6 +843,7 @@ export function useTeleconsultWebRtc({
           }
 
           // Presence (ids sintéticos — não avançam cursor SDP)
+          let sawRemotePresence = false;
           for (const msg of remoteMessages) {
             if (msg.type !== "presence") continue;
             const payload = msg.payload as TeleconsultPresencePayload & {
@@ -792,20 +851,33 @@ export function useTeleconsultWebRtc({
             };
             if (!payload?.status) continue;
             if (payload.status === "left") {
-              setPeerPresent(false);
-              peerPresentRef.current = false;
-              setPeerRole(null);
+              handlePeerLeft();
             } else {
+              sawRemotePresence = true;
+              lastRemotePresenceAtRef.current = Date.now();
+              const awaiting = peerAwaitingRejoinRef.current;
               setPeerPresent(true);
               peerPresentRef.current = true;
               if (payload.role) {
                 setPeerRole(payload.role as TeleconsultViewerRole);
               }
+              if (awaiting) {
+                void handlePeerRejoined();
+              }
             }
             if (payload.gap) {
-              // Cursor perdido — força reoffer no próximo ciclo do initiator
               deferredSdpRef.current = [];
+              lastSignalId.current = undefined;
             }
+          }
+          if (
+            peerPresentRef.current &&
+            !sawRemotePresence &&
+            lastRemotePresenceAtRef.current > 0 &&
+            Date.now() - lastRemotePresenceAtRef.current >
+              REMOTE_PRESENCE_TIMEOUT_MS
+          ) {
+            handlePeerLeft();
           }
 
           // Presence já aplicada; SDP/ICE só com mídia pronta (senão answer sem tracks).
@@ -949,6 +1021,8 @@ export function useTeleconsultWebRtc({
     attachLocalTracks,
     enabled,
     ensurePeer,
+    handlePeerLeft,
+    handlePeerRejoined,
     orgId,
     refreshDebug,
     sessionId,
@@ -985,17 +1059,12 @@ export function useTeleconsultWebRtc({
     rtcLog("info", "teardown");
     pollGenRef.current += 1;
     void publishPresence("left");
-    pcRef.current?.close();
-    pcRef.current = null;
-    remoteStreamRef.current = null;
-    deferredSdpRef.current = [];
-    pendingIceRef.current = [];
-    setRemoteReady(false);
+    resetRemotePeer("teardown");
     setPeerPresent(false);
     peerPresentRef.current = false;
-    setNeedsGesture(false);
+    peerAwaitingRejoinRef.current = false;
     setDebugInfo({ phase: "torn_down" });
-  }, [publishPresence]);
+  }, [publishPresence, resetRemotePeer]);
 
   useEffect(() => {
     return () => {
