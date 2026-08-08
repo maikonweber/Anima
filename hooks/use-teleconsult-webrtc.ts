@@ -10,6 +10,7 @@ import {
   pullTeleconsultSignals,
 } from "@/lib/api/teleconsult";
 import { rtcLog, summarizePc } from "@/lib/teleconsult-debug";
+import { ApiError } from "@anima/shared";
 import type {
   TeleconsultPresencePayload,
   TeleconsultSignalMessage,
@@ -85,6 +86,54 @@ export function useTeleconsultWebRtc({
   });
   const pollCountRef = useRef(0);
   const lastSignalSummaryRef = useRef<string>("—");
+  const signalCapsRef = useRef({ presence: true });
+  const lastSignalErrorRef = useRef<{
+    type: string;
+    status: number;
+    message: string;
+    at: string;
+  } | null>(null);
+
+  const publishSignal = useCallback(
+    async (
+      type: TeleconsultSignalMessage["type"],
+      payload: unknown,
+      { optional = false }: { optional?: boolean } = {},
+    ) => {
+      if (type === "presence" && !signalCapsRef.current.presence) {
+        return null;
+      }
+      try {
+        return await postTeleconsultSignal(orgId, sessionId, {
+          type,
+          payload,
+        });
+      } catch (err) {
+        const status = err instanceof ApiError ? err.status : 0;
+        const message =
+          err instanceof Error ? err.message : "Falha ao publicar sinal";
+        lastSignalErrorRef.current = {
+          type,
+          status,
+          message,
+          at: new Date().toISOString(),
+        };
+        if (
+          type === "presence" &&
+          status === 400 &&
+          /presence|enum|invalid/i.test(message)
+        ) {
+          signalCapsRef.current.presence = false;
+          rtcLog("warn", "presence_unsupported_api", { message });
+          return null;
+        }
+        rtcLog("error", "signal_post_failed", { type, status, message });
+        if (!optional) throw err;
+        return null;
+      }
+    },
+    [orgId, sessionId],
+  );
 
   isInitiatorRef.current = isInitiator;
   localStreamRef.current = localStream;
@@ -108,6 +157,8 @@ export function useTeleconsultWebRtc({
         lastSignalId: lastSignalId.current ?? null,
         deferredSdp: deferredSdpRef.current.length,
         pendingIce: pendingIceRef.current.length,
+        presenceSupported: signalCapsRef.current.presence,
+        lastSignalError: lastSignalErrorRef.current,
         localTracks:
           localStreamRef.current?.getTracks().map((t) => ({
             kind: t.kind,
@@ -169,19 +220,16 @@ export function useTeleconsultWebRtc({
   const publishPresence = useCallback(
     async (status: TeleconsultPresencePayload["status"]) => {
       if (!userId) return;
-      try {
-        await postTeleconsultSignal(orgId, sessionId, {
-          type: "presence",
-          payload: {
-            status,
-            role: viewerRole,
-          } satisfies TeleconsultPresencePayload,
-        });
-      } catch {
-        // best-effort
-      }
+      await publishSignal(
+        "presence",
+        {
+          status,
+          role: viewerRole,
+        } satisfies TeleconsultPresencePayload,
+        { optional: true },
+      );
     },
-    [orgId, sessionId, userId, viewerRole],
+    [publishSignal, userId, viewerRole],
   );
 
   const wirePeerHandlers = useCallback(
@@ -256,13 +304,9 @@ export function useTeleconsultWebRtc({
           type: event.candidate.type,
           protocol: event.candidate.protocol,
         });
-        void postTeleconsultSignal(orgId, sessionId, {
-          type: "ice",
-          payload: event.candidate.toJSON(),
+        void publishSignal("ice", event.candidate.toJSON(), {
+          optional: true,
         }).catch((err: unknown) => {
-          rtcLog("error", "ice_post_failed", {
-            message: err instanceof Error ? err.message : String(err),
-          });
           setError(
             err instanceof Error
               ? err.message
@@ -271,7 +315,7 @@ export function useTeleconsultWebRtc({
         });
       };
     },
-    [orgId, refreshDebug, sessionId],
+    [publishSignal, refreshDebug],
   );
 
   const attachLocalTracks = useCallback(
@@ -332,10 +376,7 @@ export function useTeleconsultWebRtc({
         if (epoch !== offerEpochRef.current) return;
         await pc.setLocalDescription(offer);
         if (epoch !== offerEpochRef.current) return;
-        await postTeleconsultSignal(orgId, sessionId, {
-          type: "offer",
-          payload: pc.localDescription ?? offer,
-        });
+        await publishSignal("offer", pc.localDescription ?? offer);
         rtcLog("info", "offer_posted", {
           sdpBytes: pc.localDescription?.sdp?.length ?? 0,
           epoch,
@@ -353,7 +394,7 @@ export function useTeleconsultWebRtc({
         }
       }
     },
-    [orgId, refreshDebug, sessionId],
+    [publishSignal, refreshDebug],
   );
 
   const applyRemoteOffer = useCallback(
@@ -380,10 +421,7 @@ export function useTeleconsultWebRtc({
           );
           const answer = await fresh.createAnswer();
           await fresh.setLocalDescription(answer);
-          await postTeleconsultSignal(orgId, sessionId, {
-            type: "answer",
-            payload: fresh.localDescription ?? answer,
-          });
+          await publishSignal("answer", fresh.localDescription ?? answer);
           await flushPendingIce(fresh);
           rtcLog("info", "answer_posted_after_glare");
           setError(null);
@@ -399,10 +437,7 @@ export function useTeleconsultWebRtc({
       await pc.setRemoteDescription(msg.payload as RTCSessionDescriptionInit);
       const answer = await pc.createAnswer();
       await pc.setLocalDescription(answer);
-      await postTeleconsultSignal(orgId, sessionId, {
-        type: "answer",
-        payload: pc.localDescription ?? answer,
-      });
+      await publishSignal("answer", pc.localDescription ?? answer);
       await flushPendingIce(pc);
       rtcLog("info", "answer_posted", {
         sdpBytes: pc.localDescription?.sdp?.length ?? 0,
@@ -414,10 +449,9 @@ export function useTeleconsultWebRtc({
     [
       attachLocalTracks,
       flushPendingIce,
-      orgId,
+      publishSignal,
       recreatePeer,
       refreshDebug,
-      sessionId,
     ],
   );
 
@@ -520,13 +554,8 @@ export function useTeleconsultWebRtc({
     if (pc.remoteDescription) return;
     if (pc.signalingState === "have-local-offer" && pc.localDescription) {
       rtcLog("info", "offer_repost_on_peer_present");
-      void postTeleconsultSignal(orgId, sessionId, {
-        type: "offer",
-        payload: pc.localDescription,
-      }).catch((err: unknown) => {
-        rtcLog("error", "offer_repost_failed", {
-          message: err instanceof Error ? err.message : String(err),
-        });
+      void publishSignal("offer", pc.localDescription, {
+        optional: true,
       });
       return;
     }
@@ -538,11 +567,10 @@ export function useTeleconsultWebRtc({
     isInitiator,
     localStream,
     mediaReady,
-    orgId,
     peerPresent,
     publishOffer,
+    publishSignal,
     remoteReady,
-    sessionId,
   ]);
 
   // Reoffer suave: reenvia offer sem recriar PC a cada ciclo;
@@ -586,9 +614,8 @@ export function useTeleconsultWebRtc({
               orphanCycles = 0;
               await publishOffer(pc);
             } else if (pc.localDescription) {
-              await postTeleconsultSignal(orgId, sessionId, {
-                type: "offer",
-                payload: pc.localDescription,
+              await publishSignal("offer", pc.localDescription, {
+                optional: true,
               });
             }
             return;
@@ -607,11 +634,10 @@ export function useTeleconsultWebRtc({
     isInitiator,
     localStream,
     mediaReady,
-    orgId,
     publishOffer,
+    publishSignal,
     recreatePeer,
     remoteReady,
-    sessionId,
   ]);
 
   // Presence announce + heartbeat (mapa no servidor; não enche ring SDP)
