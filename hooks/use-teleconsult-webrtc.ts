@@ -17,18 +17,10 @@ import type {
   TeleconsultViewerRole,
 } from "@anima/shared";
 
-const ICE_SERVERS: RTCIceServer[] = [
+const DEFAULT_ICE_SERVERS: RTCIceServer[] = [
   { urls: "stun:stun.l.google.com:19302" },
   { urls: "stun:stun1.l.google.com:19302" },
 ];
-
-const POLL_MS = 700;
-const REOFFER_MS = 8_000;
-const HEARTBEAT_MS = 6_000;
-
-function peerKey(userId: string, role: TeleconsultViewerRole): string {
-  return `${userId}:${role}`;
-}
 
 export type UseTeleconsultWebRtcOptions = {
   orgId: string;
@@ -39,7 +31,17 @@ export type UseTeleconsultWebRtcOptions = {
   localStream: MediaStream | null | undefined;
   mediaReady: boolean;
   enabled?: boolean;
+  /** STUN/TURN from GET /feature-flags (relay para NAT/firewall). */
+  iceServers?: RTCIceServer[];
 };
+
+const POLL_MS = 700;
+const REOFFER_MS = 8_000;
+const HEARTBEAT_MS = 6_000;
+
+function peerKey(userId: string, role: TeleconsultViewerRole): string {
+  return `${userId}:${role}`;
+}
 
 function attachStreamToVideo(
   el: HTMLVideoElement | null,
@@ -65,6 +67,7 @@ export function useTeleconsultWebRtc({
   localStream,
   mediaReady,
   enabled = true,
+  iceServers = DEFAULT_ICE_SERVERS,
 }: UseTeleconsultWebRtcOptions) {
   const remoteVideoRef = useRef<HTMLVideoElement | null>(null);
   const remoteStreamRef = useRef<MediaStream | null>(null);
@@ -344,10 +347,14 @@ export function useTeleconsultWebRtc({
     [],
   );
 
+  const iceServersRef = useRef(iceServers);
+  iceServersRef.current = iceServers;
+
   const ensurePeer = useCallback(() => {
     if (pcRef.current) return pcRef.current;
-    rtcLog("info", "pc_create", { iceServers: ICE_SERVERS.length });
-    const pc = new RTCPeerConnection({ iceServers: ICE_SERVERS });
+    const servers = iceServersRef.current;
+    rtcLog("info", "pc_create", { iceServers: servers.length });
+    const pc = new RTCPeerConnection({ iceServers: servers });
     pcRef.current = pc;
     wirePeerHandlers(pc);
     refreshDebug({ phase: "pc_created" });
@@ -362,7 +369,7 @@ export function useTeleconsultWebRtc({
       pcRef.current = null;
       pendingIceRef.current = [];
       deferredSdpRef.current = [];
-      const pc = new RTCPeerConnection({ iceServers: ICE_SERVERS });
+      const pc = new RTCPeerConnection({ iceServers: iceServersRef.current });
       pcRef.current = pc;
       wirePeerHandlers(pc);
       attachLocalTracks(pc, stream);

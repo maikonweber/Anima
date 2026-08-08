@@ -1,11 +1,18 @@
 import { getApiUrl } from "../api-client";
 
+export type IceServerConfig = {
+  urls: string | string[];
+  username?: string;
+  credential?: string;
+};
+
 export type FeatureFlags = {
   previewMode: boolean;
   teleconsult: boolean;
   teleconsultTranscription: boolean;
   teleconsultMultimodal: boolean;
   teleconsultRecording: boolean;
+  iceServers: IceServerConfig[];
 };
 
 export async function fetchFeatureFlags(): Promise<FeatureFlags> {

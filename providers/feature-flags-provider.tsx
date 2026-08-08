@@ -8,12 +8,18 @@ import {
 } from "react";
 import { useFeatureFlags } from "@/hooks/use-feature-flags";
 
+const DEFAULT_ICE_SERVERS: import("@anima/shared").IceServerConfig[] = [
+  { urls: "stun:stun.l.google.com:19302" },
+  { urls: "stun:stun1.l.google.com:19302" },
+];
+
 interface FeatureFlagsContextValue {
   previewMode: boolean;
   teleconsult: boolean;
   teleconsultTranscription: boolean;
   teleconsultMultimodal: boolean;
   teleconsultRecording: boolean;
+  iceServers: import("@anima/shared").IceServerConfig[];
   isLoading: boolean;
 }
 
@@ -31,6 +37,7 @@ export function FeatureFlagsProvider({ children }: { children: ReactNode }) {
       teleconsultTranscription: data?.teleconsultTranscription ?? false,
       teleconsultMultimodal: data?.teleconsultMultimodal ?? false,
       teleconsultRecording: data?.teleconsultRecording ?? false,
+      iceServers: data?.iceServers ?? DEFAULT_ICE_SERVERS,
       isLoading,
     }),
     [
@@ -39,6 +46,7 @@ export function FeatureFlagsProvider({ children }: { children: ReactNode }) {
       data?.teleconsultTranscription,
       data?.teleconsultMultimodal,
       data?.teleconsultRecording,
+      data?.iceServers,
       isLoading,
     ],
   );

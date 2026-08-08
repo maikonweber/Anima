@@ -79,6 +79,7 @@ export function TeleconsultRoom({
     teleconsultTranscription,
     teleconsultMultimodal,
     teleconsultRecording,
+    iceServers,
   } = useFeatureFlagsContext();
 
   const viewerRole = resolveViewerRole(session, user?.id, viewerRoleProp);
@@ -146,6 +147,7 @@ export function TeleconsultRoom({
     localStream: activeStream,
     mediaReady,
     enabled: !ended,
+    iceServers,
   });
 
   const multimodal = useMultimodalAssistive({
