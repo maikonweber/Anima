@@ -231,12 +231,12 @@ export default function AvailabilityPage() {
                               key={item.id}
                               className="flex items-center justify-between gap-3 rounded-lg border border-[var(--clinic-border)] bg-foreground/[0.015] px-3 py-2"
                             >
-                              <div className="min-w-0 flex-1">
+                              <div className="min-w-0 flex-1 pr-2">
                                 <p className="text-sm font-medium text-foreground/85 truncate">
                                   {formatTimeLabel(item.startTime)}–
                                   {formatTimeLabel(item.endTime)}
                                 </p>
-                                <p className="text-xs text-foreground/40 mt-0.5">
+                                <p className="text-xs text-foreground/40 mt-0.5 truncate">
                                   {MODALITY_LABELS[item.modality]} ·{" "}
                                   {item.slotDurationMinutes} min
                                   {!item.active ? " · inativa" : ""}
@@ -245,9 +245,11 @@ export default function AvailabilityPage() {
                               <Button
                                 type="button"
                                 variant="ghost"
-                                fullWidth={false}
-                                className="!px-2.5 !py-1.5 text-xs shrink-0"
-                                isLoading={deleteAvailability.isPending}
+                                className="!w-auto !shrink-0 !px-2.5 !py-1.5 text-xs whitespace-nowrap"
+                                isLoading={
+                                  deleteAvailability.isPending &&
+                                  deleteAvailability.variables === item.id
+                                }
                                 onClick={() =>
                                   deleteAvailability.mutate(item.id)
                                 }

@@ -19,6 +19,7 @@ import type {
 } from "@anima/shared";
 import { useAuth } from "@/providers/auth-provider";
 import { useFeatureFlagsContext } from "@/providers/feature-flags-provider";
+import { isTeleconsultDebugEnabled } from "@/lib/teleconsult-debug";
 
 type Props = {
   session: TeleconsultSession;
@@ -132,6 +133,7 @@ export function TeleconsultRoom({
     peerPresent,
     needsGesture,
     tryPlayRemote,
+    debugInfo,
     error: webrtcError,
     setError: setWebrtcError,
     teardown: teardownRtc,
@@ -587,9 +589,24 @@ export function TeleconsultRoom({
       <p className="text-[11px] text-foreground/35">
         status {session.status}
         {isInitiator ? " · iniciando conexão" : " · respondendo conexão"}
+        {peerPresent ? " · peer presente" : ""}
+        {remoteReady ? " · mídia remota OK" : ""}
       </p>
       {webrtcError && (
         <p className="text-xs text-red-400">{webrtcError}</p>
+      )}
+      {isTeleconsultDebugEnabled() && (
+        <details className="glass-panel p-3 text-[11px] text-foreground/60">
+          <summary className="cursor-pointer font-medium text-[var(--teleconsult-accent,#0d7377)]">
+            Diagnóstico WebRTC (console: [teleconsult:webrtc])
+          </summary>
+          <pre className="mt-2 overflow-auto max-h-56 whitespace-pre-wrap break-all">
+            {JSON.stringify(debugInfo, null, 2)}
+          </pre>
+          <p className="mt-2 text-foreground/40">
+            Desligar logs: localStorage.setItem(&apos;teleconsultDebug&apos;,&apos;0&apos;)
+          </p>
+        </details>
       )}
     </div>
   );

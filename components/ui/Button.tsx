@@ -5,21 +5,23 @@ import { type ButtonHTMLAttributes } from "react";
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "secondary" | "ghost";
   isLoading?: boolean;
-  /** Largura total do container (padrão em formulários). */
+  /** Largura total. Padrão: true em primary/secondary, false em ghost. */
   fullWidth?: boolean;
 }
 
 export function Button({
   variant = "primary",
   isLoading = false,
-  fullWidth = true,
+  fullWidth,
   children,
   className = "",
   disabled,
   ...props
 }: ButtonProps) {
+  // Ghost/actions inline ficam `w-auto`; primary/secondary em formulários ficam `w-full`.
+  const resolvedFullWidth = fullWidth ?? variant !== "ghost";
   const base =
-    `relative ${fullWidth ? "w-full" : "w-auto"} rounded-xl px-5 py-3 text-sm font-medium transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-anima-violet/30`;
+    `relative ${resolvedFullWidth ? "w-full" : "w-auto"} rounded-xl px-5 py-3 text-sm font-medium transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-anima-violet/30`;
 
   const variants = {
     primary:

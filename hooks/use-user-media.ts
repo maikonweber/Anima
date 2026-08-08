@@ -1,16 +1,25 @@
 "use client";
 
 /**
- * Hook de mídia local inspirado em
+ * Hook de mídia local alinhado a
  * https://github.com/maikonweber/video-conf-hook (react-media-devices / useUserMedia).
- * Mantém a mesma superfície básica: stream, mute/vídeo, devices.
+ * `switchInput` devolve tracks antigas/novas para o WebRTC fazer replaceTrack.
  */
 import { useCallback, useEffect, useRef, useState } from "react";
+import { rtcLog } from "@/lib/teleconsult-debug";
 
 type UseUserMediaOptions = {
   preferEnvironmentCamera?: boolean;
   /** Se false, só solicita mídia após checkPermission() (gesto do usuário). */
   autoStart?: boolean;
+};
+
+export type SwitchInputResult = {
+  oldVideoTrack: MediaStreamTrack | undefined;
+  newVideoTrack: MediaStreamTrack | undefined;
+  oldAudioTrack: MediaStreamTrack | undefined;
+  newAudioTrack: MediaStreamTrack | undefined;
+  newStream: MediaStream;
 };
 
 function describeMediaError(err: unknown): string {
@@ -42,7 +51,7 @@ function describeMediaError(err: unknown): string {
 }
 
 export function useUserMedia(options: UseUserMediaOptions = {}) {
-  const { autoStart = false } = options;
+  const { autoStart = false, preferEnvironmentCamera = false } = options;
   const [activeStream, setActiveStream] = useState<MediaStream | undefined>();
   const [ready, setReady] = useState(!autoStart);
   const [accessGranted, setAccessGranted] = useState(false);
@@ -56,13 +65,28 @@ export function useUserMedia(options: UseUserMediaOptions = {}) {
   const [selectedAudioDevice, setSelectedAudioDevice] = useState<string>();
   const [selectedVideoDevice, setSelectedVideoDevice] = useState<string>();
   const streamRef = useRef<MediaStream | undefined>(undefined);
+  const mutedRef = useRef(false);
+  const videoOffRef = useRef(false);
+  const selectedAudioRef = useRef<string | undefined>(undefined);
+  const selectedVideoRef = useRef<string | undefined>(undefined);
+
+  mutedRef.current = muted;
+  videoOffRef.current = videoOff;
+  selectedAudioRef.current = selectedAudioDevice;
+  selectedVideoRef.current = selectedVideoDevice;
 
   const refreshDevices = useCallback(async () => {
     if (!navigator.mediaDevices?.enumerateDevices) return;
     const devices = await navigator.mediaDevices.enumerateDevices();
-    setAudioDevices(devices.filter((d) => d.kind === "audioinput"));
-    setVideoDevices(devices.filter((d) => d.kind === "videoinput"));
-    setOutputDevices(devices.filter((d) => d.kind === "audiooutput"));
+    setAudioDevices(
+      devices.filter((d) => d.kind === "audioinput" && !!d.deviceId),
+    );
+    setVideoDevices(
+      devices.filter((d) => d.kind === "videoinput" && !!d.deviceId),
+    );
+    setOutputDevices(
+      devices.filter((d) => d.kind === "audiooutput" && !!d.deviceId),
+    );
   }, []);
 
   const applyStream = useCallback(
@@ -70,10 +94,10 @@ export function useUserMedia(options: UseUserMediaOptions = {}) {
       streamRef.current?.getTracks().forEach((t) => t.stop());
       streamRef.current = stream;
       stream.getAudioTracks().forEach((t) => {
-        t.enabled = true;
+        t.enabled = !mutedRef.current;
       });
       stream.getVideoTracks().forEach((t) => {
-        t.enabled = true;
+        t.enabled = !videoOffRef.current;
       });
       setActiveStream(stream);
       setAccessGranted(true);
@@ -81,11 +105,17 @@ export function useUserMedia(options: UseUserMediaOptions = {}) {
       setMediaError(null);
       const audioTrack = stream.getAudioTracks()[0];
       const videoTrack = stream.getVideoTracks()[0];
-      setSelectedAudioDevice(audioTrack?.getSettings().deviceId);
-      setSelectedVideoDevice(videoTrack?.getSettings().deviceId);
-      if (!videoTrack) {
-        setVideoOff(true);
-      }
+      const audioId = audioTrack?.getSettings().deviceId;
+      const videoId = videoTrack?.getSettings().deviceId;
+      if (audioId) setSelectedAudioDevice(audioId);
+      if (videoId) setSelectedVideoDevice(videoId);
+      if (!videoTrack) setVideoOff(true);
+      rtcLog("info", "usermedia_stream_ready", {
+        audioTracks: stream.getAudioTracks().length,
+        videoTracks: stream.getVideoTracks().length,
+        audioId,
+        videoId,
+      });
       await refreshDevices();
     },
     [refreshDevices],
@@ -100,9 +130,13 @@ export function useUserMedia(options: UseUserMediaOptions = {}) {
     }
 
     const videoConstraint: boolean | MediaTrackConstraints =
-      options.preferEnvironmentCamera
+      preferEnvironmentCamera
         ? { facingMode: { ideal: "environment" } }
         : true;
+
+    rtcLog("info", "usermedia_getUserMedia_start", {
+      preferEnvironmentCamera,
+    });
 
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -112,6 +146,9 @@ export function useUserMedia(options: UseUserMediaOptions = {}) {
       await applyStream(stream);
       return stream;
     } catch (err) {
+      rtcLog("warn", "usermedia_av_failed_try_audio", {
+        message: err instanceof Error ? err.message : String(err),
+      });
       if (
         err instanceof DOMException &&
         (err.name === "NotFoundError" || err.name === "OverconstrainedError")
@@ -125,7 +162,7 @@ export function useUserMedia(options: UseUserMediaOptions = {}) {
       }
       throw err;
     }
-  }, [applyStream, options.preferEnvironmentCamera]);
+  }, [applyStream, preferEnvironmentCamera]);
 
   useEffect(() => {
     if (!autoStart) return;
@@ -133,6 +170,9 @@ export function useUserMedia(options: UseUserMediaOptions = {}) {
       setReady(true);
       setAccessGranted(false);
       setMediaError(describeMediaError(err));
+      rtcLog("error", "usermedia_autostart_failed", {
+        message: describeMediaError(err),
+      });
     });
     return () => {
       streamRef.current?.getTracks().forEach((t) => t.stop());
@@ -146,43 +186,83 @@ export function useUserMedia(options: UseUserMediaOptions = {}) {
   }, []);
 
   const toggleMute = useCallback(() => {
-    const next = !muted;
+    const next = !mutedRef.current;
     streamRef.current?.getAudioTracks().forEach((t) => {
       t.enabled = !next;
     });
     setMuted(next);
-  }, [muted]);
+    rtcLog("info", "usermedia_toggle_mute", { muted: next });
+  }, []);
 
   const toggleVideo = useCallback(() => {
-    const next = !videoOff;
+    const next = !videoOffRef.current;
     streamRef.current?.getVideoTracks().forEach((t) => {
       t.enabled = !next;
     });
     setVideoOff(next);
-  }, [videoOff]);
+    rtcLog("info", "usermedia_toggle_video", { videoOff: next });
+  }, []);
 
+  /**
+   * Troca câmera/microfone e devolve tracks para o PeerConnection.replaceTrack
+   * (padrão video-conf-hook).
+   */
   const switchInput = useCallback(
-    async (deviceId: string, type: "audio" | "video") => {
+    async (
+      deviceId: string,
+      type: "audio" | "video",
+    ): Promise<SwitchInputResult | undefined> => {
       const current = streamRef.current;
-      if (!current) return;
-      const constraints =
+      if (!current) return undefined;
+
+      const oldVideoTrack = current.getVideoTracks()[0];
+      const oldAudioTrack = current.getAudioTracks()[0];
+
+      const audioConstraint =
         type === "audio"
-          ? { audio: { deviceId: { exact: deviceId } }, video: true }
-          : { audio: true, video: { deviceId: { exact: deviceId } } };
-      const next = await navigator.mediaDevices.getUserMedia(constraints);
+          ? { deviceId: { exact: deviceId } }
+          : selectedAudioRef.current
+            ? { deviceId: { exact: selectedAudioRef.current } }
+            : true;
+      const videoConstraint =
+        type === "video"
+          ? { deviceId: { exact: deviceId } }
+          : selectedVideoRef.current
+            ? { deviceId: { exact: selectedVideoRef.current } }
+            : true;
+
+      rtcLog("info", "usermedia_switch_input", { type, deviceId });
+
+      const next = await navigator.mediaDevices.getUserMedia({
+        audio: audioConstraint,
+        video: videoConstraint,
+      });
+
+      const newVideoTrack = next.getVideoTracks()[0];
+      const newAudioTrack = next.getAudioTracks()[0];
+      if (newVideoTrack) newVideoTrack.enabled = !videoOffRef.current;
+      if (newAudioTrack) newAudioTrack.enabled = !mutedRef.current;
+
       current.getTracks().forEach((t) => t.stop());
       streamRef.current = next;
       setActiveStream(next);
       if (type === "audio") setSelectedAudioDevice(deviceId);
       else setSelectedVideoDevice(deviceId);
-      if (muted) next.getAudioTracks().forEach((t) => (t.enabled = false));
-      if (videoOff) next.getVideoTracks().forEach((t) => (t.enabled = false));
       await refreshDevices();
+
+      return {
+        oldVideoTrack,
+        newVideoTrack,
+        oldAudioTrack,
+        newAudioTrack,
+        newStream: next,
+      };
     },
-    [muted, refreshDevices, videoOff],
+    [refreshDevices],
   );
 
   const stopAllStreaming = useCallback(async () => {
+    rtcLog("info", "usermedia_stop_all");
     streamRef.current?.getTracks().forEach((t) => t.stop());
     streamRef.current = undefined;
     setActiveStream(undefined);
@@ -197,7 +277,9 @@ export function useUserMedia(options: UseUserMediaOptions = {}) {
     } catch (err) {
       setAccessGranted(false);
       setReady(true);
-      setMediaError(describeMediaError(err));
+      const message = describeMediaError(err);
+      setMediaError(message);
+      rtcLog("error", "usermedia_permission_denied", { message });
       return { video: false, audio: false };
     } finally {
       setRequesting(false);
