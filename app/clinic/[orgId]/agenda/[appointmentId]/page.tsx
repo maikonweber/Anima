@@ -28,7 +28,9 @@ import { useMyOrganizations } from "@/hooks/use-organizations";
 import { useCreateTeleconsult, useTeleconsultByAppointment } from "@/hooks/use-teleconsult";
 import { usePatient } from "@/hooks/use-patients";
 import { TeleconsultPatientLinkPanel } from "@/components/clinic/TeleconsultPatientLinkPanel";
+import { AppointmentMeetLinkPanel } from "@/components/clinic/AppointmentMeetLinkPanel";
 import type { AppointmentStatus } from "@anima/shared";
+import { useFeatureFlagsContext } from "@/providers/feature-flags-provider";
 
 export default function AppointmentDetailPage() {
   const params = useParams<{ orgId: string; appointmentId: string }>();
@@ -52,6 +54,8 @@ export default function AppointmentDetailPage() {
     data?.patientId ?? "",
   );
   const grantConsent = useGrantConsent(orgId, data?.patientId ?? "");
+  const { teleconsult: teleconsultEnabled, isLoading: flagsLoading } =
+    useFeatureFlagsContext();
 
   const [startsAt, setStartsAt] = useState("");
   const [endsAt, setEndsAt] = useState("");
@@ -67,7 +71,7 @@ export default function AppointmentDetailPage() {
   const existingTeleconsult = useTeleconsultByAppointment(
     orgId,
     appointmentId,
-    !!canTeleconsult,
+    !!canTeleconsult && teleconsultEnabled,
   );
 
   useEffect(() => {
@@ -221,7 +225,19 @@ export default function AppointmentDetailPage() {
               )}
             </div>
 
-            {canTeleconsult && (
+            {canTeleconsult && !flagsLoading && !teleconsultEnabled && (
+              <div className="mb-6">
+                <AppointmentMeetLinkPanel
+                  meetLink={data.locationOrLink}
+                  isSaving={updateAppointment.isPending}
+                  onSave={async (meetLink) => {
+                    await runUpdate({ locationOrLink: meetLink });
+                  }}
+                />
+              </div>
+            )}
+
+            {canTeleconsult && !flagsLoading && teleconsultEnabled && (
               <div className="mb-6 space-y-3">
                 <div className="glass-panel p-4 space-y-2">
                   <div className="flex flex-wrap items-center gap-2 text-sm">

@@ -2,6 +2,7 @@ import { getApiUrl } from "../api-client";
 
 export type FeatureFlags = {
   previewMode: boolean;
+  teleconsult: boolean;
   teleconsultTranscription: boolean;
   teleconsultMultimodal: boolean;
   teleconsultRecording: boolean;

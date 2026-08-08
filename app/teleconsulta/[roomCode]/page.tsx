@@ -6,6 +6,7 @@ import { motion } from "motion/react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { TeleconsultRoom } from "@/components/clinic/TeleconsultRoom";
+import { TeleconsultFeatureGate } from "@/components/clinic/TeleconsultDisabledNotice";
 import { useJoinTeleconsult } from "@/hooks/use-teleconsult";
 import { useAuth } from "@/providers/auth-provider";
 import type { TeleconsultSession } from "@anima/shared";
@@ -63,6 +64,7 @@ export default function TeleconsultJoinPage() {
       session?.professionalUserId !== user?.id);
 
   return (
+    <TeleconsultFeatureGate backHref="/dashboard" backLabel="← Voltar ao início">
     <div className="teleconsult-shell min-h-[100dvh]">
       <div className="teleconsult-page max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
         <motion.div
@@ -116,5 +118,6 @@ export default function TeleconsultJoinPage() {
         </motion.div>
       </div>
     </div>
+    </TeleconsultFeatureGate>
   );
 }

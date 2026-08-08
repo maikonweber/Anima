@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { TeleconsultPatientLinkPanel } from "@/components/clinic/TeleconsultPatientLinkPanel";
 import { TeleconsultRoom } from "@/components/clinic/TeleconsultRoom";
+import { TeleconsultFeatureGate } from "@/components/clinic/TeleconsultDisabledNotice";
 import { useTeleconsult } from "@/hooks/use-teleconsult";
 import { useAuth } from "@/providers/auth-provider";
 import { useQueryClient } from "@tanstack/react-query";
@@ -22,8 +23,6 @@ export default function ClinicTeleconsultPage() {
   const [entered, setEntered] = useState(false);
 
   const viewerRole = data?.viewerRole;
-  // Na rota clínica: profissional da sessão OU admin hospeda o offer.
-  // Perfect negotiation no client cobre glare se os dois abrirem.
   const isInitiator = Boolean(
     data &&
       user &&
@@ -32,7 +31,8 @@ export default function ClinicTeleconsultPage() {
   );
 
   return (
-    <div className="teleconsult-page max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
+    <TeleconsultFeatureGate backHref={`/clinic/${orgId}/agenda`}>
+      <div className="teleconsult-page max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
@@ -99,6 +99,7 @@ export default function ClinicTeleconsultPage() {
           />
         )}
       </motion.div>
-    </div>
+      </div>
+    </TeleconsultFeatureGate>
   );
 }

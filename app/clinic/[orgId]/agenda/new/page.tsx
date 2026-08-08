@@ -15,12 +15,14 @@ import {
   localInputToIso,
   toLocalInputValue,
 } from "@/components/clinic/AppointmentStatusBadge";
+import { useFeatureFlagsContext } from "@/providers/feature-flags-provider";
 
 export default function NewAppointmentPage() {
   const params = useParams<{ orgId: string }>();
   const orgId = params.orgId;
   const router = useRouter();
   const createAppointment = useCreateAppointment(orgId);
+  const { teleconsult: teleconsultEnabled } = useFeatureFlagsContext();
   const patientsQuery = usePatients(orgId, {
     status: "ATIVO",
     limit: 100,
@@ -168,10 +170,18 @@ export default function NewAppointmentPage() {
           </div>
 
           <Input
-            label="Link ou local"
+            label={
+              !teleconsultEnabled && modality === "ONLINE"
+                ? "Link do Google Meet"
+                : "Link ou local"
+            }
             value={locationOrLink}
             onChange={(e) => setLocationOrLink(e.target.value)}
-            placeholder="https://meet... ou endereço"
+            placeholder={
+              !teleconsultEnabled && modality === "ONLINE"
+                ? "https://meet.google.com/abc-defg-hij"
+                : "https://meet... ou endereço"
+            }
           />
 
           <div>
