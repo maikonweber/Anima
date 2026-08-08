@@ -43,6 +43,23 @@ function peerKey(userId: string, role: TeleconsultViewerRole): string {
   return `${userId}:${role}`;
 }
 
+function hasTurnServer(servers: RTCIceServer[]): boolean {
+  return servers.some((s) => {
+    const urls = Array.isArray(s.urls) ? s.urls : [s.urls];
+    return urls.some(
+      (u) => typeof u === "string" && (u.startsWith("turn:") || u.startsWith("turns:")),
+    );
+  });
+}
+
+/** Com TURN configurado, força relay — evita falha intermitente por NAT simétrico. */
+function buildPeerConfig(servers: RTCIceServer[]): RTCConfiguration {
+  return {
+    iceServers: servers,
+    ...(hasTurnServer(servers) ? { iceTransportPolicy: "relay" as const } : {}),
+  };
+}
+
 function attachStreamToVideo(
   el: HTMLVideoElement | null,
   stream: MediaStream | null,
@@ -281,7 +298,12 @@ export function useTeleconsultWebRtc({
           setPeerPresent(true);
           peerPresentRef.current = true;
           setError(null);
-        } else if (state === "failed") {
+        } else if (state === "failed" || state === "disconnected") {
+          setRemoteReady(false);
+          remoteStreamRef.current = null;
+          if (remoteVideoRef.current) {
+            remoteVideoRef.current.srcObject = null;
+          }
           setError(
             "Conexão de vídeo falhou. Tentando reconectar… Se persistir, verifique a rede (NAT/firewall).",
           );
@@ -293,6 +315,7 @@ export function useTeleconsultWebRtc({
           }
         } else if (state === "closed") {
           setRemoteReady(false);
+          remoteStreamRef.current = null;
         }
       };
 
@@ -306,6 +329,13 @@ export function useTeleconsultWebRtc({
           },
         );
         refreshDebug({ phase: `ice:${pc.iceConnectionState}` });
+        if (
+          pc.iceConnectionState === "failed" ||
+          pc.iceConnectionState === "disconnected"
+        ) {
+          setRemoteReady(false);
+          remoteStreamRef.current = null;
+        }
       };
 
       pc.onicecandidate = (event) => {
@@ -353,8 +383,12 @@ export function useTeleconsultWebRtc({
   const ensurePeer = useCallback(() => {
     if (pcRef.current) return pcRef.current;
     const servers = iceServersRef.current;
-    rtcLog("info", "pc_create", { iceServers: servers.length });
-    const pc = new RTCPeerConnection({ iceServers: servers });
+    const config = buildPeerConfig(servers);
+    rtcLog("info", "pc_create", {
+      iceServers: servers.length,
+      relayOnly: config.iceTransportPolicy === "relay",
+    });
+    const pc = new RTCPeerConnection(config);
     pcRef.current = pc;
     wirePeerHandlers(pc);
     refreshDebug({ phase: "pc_created" });
@@ -369,7 +403,7 @@ export function useTeleconsultWebRtc({
       pcRef.current = null;
       pendingIceRef.current = [];
       deferredSdpRef.current = [];
-      const pc = new RTCPeerConnection({ iceServers: iceServersRef.current });
+      const pc = new RTCPeerConnection(buildPeerConfig(iceServersRef.current));
       pcRef.current = pc;
       wirePeerHandlers(pc);
       attachLocalTracks(pc, stream);

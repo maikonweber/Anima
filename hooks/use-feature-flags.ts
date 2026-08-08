@@ -7,7 +7,7 @@ export function useFeatureFlags() {
   return useQuery({
     queryKey: ["feature-flags"],
     queryFn: fetchFeatureFlags,
-    staleTime: 300_000,
+    staleTime: 60_000,
     retry: 2,
   });
 }
