@@ -22,9 +22,11 @@ export type SubscriptionSummary = {
   stripeConfigured?: boolean;
   /** Usuário com benefícios tipo Pleno via profissional no plano Cuidado */
   sponsoredByPsychologist?: boolean;
-  /** Assentos Pleno patrocinados (Cuidado): R$ 5/mês por paciente vinculado */
+  /** Pacientes com Pleno via Cuidado (inclusos; sem custo por assento) */
   sponsoredPlenoSeats?: {
     count: number;
+    /** null = ilimitado */
+    limit: number | null;
     unitPriceBrl: number;
     estimatedMonthlyBrl: number;
   };

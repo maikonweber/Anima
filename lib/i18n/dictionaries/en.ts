@@ -91,7 +91,7 @@ export const en: MarketingDictionary = {
         tagline: "R$ 149/mo — for those who follow between sessions.",
         points: [
           "Unlimited invite-based dashboards",
-          "Up to 15 free accounts with sponsored Pleno (+ R$ 5/mo each)",
+          "Unlimited linked patients, no extra cost",
           "Emotional context in read-only mode between appointments",
           "Linked patients inherit Pleno-equivalent benefits",
         ],

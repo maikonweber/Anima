@@ -83,7 +83,7 @@ export type UpdatePatientPayload = Partial<CreatePatientPayload> & {
 
 export type LinkPatientAppUserPayload = {
   email: string;
-  /** Concede Pleno patrocinado (assento R$ 5). Default true no backend. */
+  /** Concede benefícios equivalentes ao Pleno (incluso no Cuidado, sem custo extra). Default true no backend. */
   grantPleno?: boolean;
 };
 

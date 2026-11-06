@@ -235,13 +235,17 @@ export default function PerfilPage() {
             {subscription?.sponsoredPlenoSeats &&
               subscription.sponsoredPlenoSeats.count > 0 && (
                 <p className="text-[10px] text-foreground/45 max-w-xs">
-                  Assentos Pleno patrocinados:{" "}
-                  {subscription.sponsoredPlenoSeats.count} × R${" "}
-                  {subscription.sponsoredPlenoSeats.unitPriceBrl.toFixed(2)} = R${" "}
-                  {subscription.sponsoredPlenoSeats.estimatedMonthlyBrl.toFixed(
-                    2,
-                  )}
-                  /mês
+                  {subscription.sponsoredPlenoSeats.unitPriceBrl > 0
+                    ? `Pacientes com Pleno via Cuidado: ${subscription.sponsoredPlenoSeats.count}${
+                        subscription.sponsoredPlenoSeats.limit == null
+                          ? " (ilimitado)"
+                          : ` / ${subscription.sponsoredPlenoSeats.limit}`
+                      } · R$ ${subscription.sponsoredPlenoSeats.estimatedMonthlyBrl.toFixed(2)}/mês`
+                    : `Pacientes vinculados com benefícios Pleno: ${subscription.sponsoredPlenoSeats.count}${
+                        subscription.sponsoredPlenoSeats.limit == null
+                          ? " · ilimitados, sem custo adicional"
+                          : ` / ${subscription.sponsoredPlenoSeats.limit}`
+                      }`}
                 </p>
               )}
             {(previewMode || isPreviewPlan) && (

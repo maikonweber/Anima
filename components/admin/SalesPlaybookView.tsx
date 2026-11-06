@@ -58,8 +58,8 @@ export function SalesPlaybookView() {
         </h1>
         <p className="max-w-2xl text-sm text-white/50 leading-relaxed">
           Pitches, descrições de planos, tabelas de preço e scripts prontos para
-          copiar. Atualizado com regra Cuidado: dashboards ilimitados · até 15
-          contas free patrocinadas (R$ 5/mês cada).
+          copiar. Atualizado com regra Cuidado: dashboards ilimitados · pacientes
+          ilimitados, sem custo adicional.
         </p>
       </header>
 

@@ -92,7 +92,7 @@ export const homePt = {
         text: "Plano do profissional no app — R$ 149/mês: dashboards em leitura dos pacientes que convidam você — não é o prontuário da clínica.",
         bullets: [
           "Dashboards ilimitados por convite",
-          "Até 15 contas free com Pleno patrocinado (+ R$ 5/mês por conta)",
+          "Pacientes ilimitados, sem custo adicional",
           "Convite por e-mail para vincular ao app",
         ],
         cta: "Assinar plano Cuidado",
@@ -187,7 +187,7 @@ export const homePt = {
         tagline: "Acompanhe quem te convida.",
         features: [
           "Dashboards ilimitados por convite",
-          "Até 15 contas free com Pleno patrocinado (+ R$ 5/mês por conta)",
+          "Pacientes ilimitados, sem custo adicional",
           "Convite por e-mail para vincular",
         ],
         cta: "Sou profissional",
@@ -231,7 +231,7 @@ export const homePt = {
       {
         question: "Como um profissional Cuidado concede Pleno a um paciente gratuito?",
         answer:
-          "Pela clínica (EmotiveCare Clínicas): o profissional no plano Cuidado envia convite ao e-mail do paciente com benefício Pleno patrocinado. O paciente aceita com a conta do app; continua Essencial no cadastro, mas ganha limites equivalentes ao Pleno. O profissional paga R$ 5/mês por paciente patrocinado.",
+          "Pela clínica (EmotiveCare Clínicas): o profissional no plano Cuidado envia convite ao e-mail do paciente com benefício Pleno. O paciente aceita com a conta do app; continua Essencial no cadastro, mas ganha limites equivalentes ao Pleno. Pacientes ilimitados, sem custo adicional.",
       },
       {
         question: "Posso compartilhar com meu(a) psicólogo(a)?",

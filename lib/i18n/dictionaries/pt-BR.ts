@@ -91,7 +91,7 @@ export const ptBR: MarketingDictionary = {
         tagline: "R$ 149/mês — para quem acompanha entre sessões.",
         points: [
           "Dashboards ilimitados por convite",
-          "Até 15 contas free com Pleno patrocinado (+ R$ 5/mês por conta)",
+          "Pacientes ilimitados, sem custo adicional",
           "Contexto emocional em leitura entre consultas",
           "Pacientes vinculados herdam benefícios equivalentes ao Pleno",
         ],

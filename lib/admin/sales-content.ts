@@ -58,7 +58,7 @@ O paciente começa grátis no Essencial. Quando faz sentido, faz upgrade pro Ple
 
 Para você, profissional, o plano Cuidado — R$ 149/mês — dá dashboards em leitura dos pacientes que te convidam, sem limite. Você vê tendências entre sessões, só o que a pessoa autorizou, e pode pausar ou revogar a qualquer momento.
 
-Se quiser oferecer o app a pacientes que ainda não pagam o Pleno, você patrocina até 15 contas free com benefícios Pleno — R$ 5 por conta ativa — direto pela clínica.
+Se quiser oferecer o app a pacientes que ainda não pagam o Pleno, você vincula quantos pacientes quiser com benefícios Pleno — pacientes ilimitados, sem custo adicional — direto pela clínica.
 
 E quando a equipe precisa de CRM, agenda e teleconsulta, entra EmotiveCare Clínicas — produto separado, multi-tenant, com auditoria e consentimento por propósito.
 
@@ -104,11 +104,11 @@ Resumindo: a pessoa cuida da jornada no app; você acompanha no Cuidado; a clín
       <p><strong>Para quem:</strong> psicólogo, psiquiatra ou profissional que acompanha entre sessões.</p>
       <ul>
         <li><strong>Dashboards ilimitados</strong> — pacientes Pleno que te convidam por e-mail</li>
-        <li><strong>Até 15 contas free patrocinadas</strong> — paciente Essencial com benefícios Pleno via clínica (+ R$ 5/mês por conta)</li>
+        <li><strong>Pacientes ilimitados, sem custo adicional</strong> — paciente Essencial com benefícios Pleno via clínica</li>
         <li>40 análises clínicas/mês · 500 mensagens assistente/mês</li>
         <li>Leitura apenas — não é prontuário</li>
       </ul>
-      <p><strong>Preço base:</strong> R$ 149/mês · <strong>Add-on:</strong> R$ 5/mês por conta patrocinada (máx. 15).</p>
+      <p><strong>Preço:</strong> R$ 149/mês · pacientes vinculados com benefícios Pleno inclusos (ilimitados, sem custo adicional).</p>
       <p><strong>Quem paga:</strong> o profissional. Pacientes Pleno que convidam não geram custo extra.</p>
     `,
   },
@@ -141,14 +141,13 @@ Resumindo: a pessoa cuida da jornada no app; você acompanha no Cuidado; a clín
           <tr><td>Essencial</td><td>Grátis</td><td>—</td></tr>
           <tr><td>Pleno</td><td>R$ 9,99/mês</td><td>Paciente</td></tr>
           <tr><td>Cuidado (base)</td><td>R$ 149/mês</td><td>Profissional</td></tr>
-          <tr><td>Assento Pleno patrocinado</td><td>R$ 5/mês (máx. 15)</td><td>Profissional Cuidado</td></tr>
+          <tr><td>Pleno via vínculo Cuidado</td><td>Incluso (ilimitado)</td><td>Profissional Cuidado</td></tr>
         </tbody>
       </table>
       <h4>Cenários Cuidado</h4>
       <ul>
         <li>Só base, pacientes Pleno te convidam → <strong>R$ 149/mês</strong></li>
-        <li>Base + 5 contas patrocinadas → <strong>R$ 174/mês</strong></li>
-        <li>Base + 15 contas patrocinadas (teto) → <strong>R$ 224/mês</strong></li>
+        <li>Cuidado com qualquer número de pacientes vinculados → <strong>R$ 149/mês</strong> (sem add-on por paciente)</li>
       </ul>
     `,
   },
@@ -188,10 +187,10 @@ Vou te mostrar três coisas: o app da pessoa, o plano Cuidado pro profissional, 
    → Você aceita e vê dashboard em leitura
    → Sem limite de quantos pacientes Pleno podem te convidar
 
-2. VOCÊ PATROCINA CONTA FREE (até 15, R$ 5/mês cada)
-   → Pela clínica, convite com Pleno patrocinado
+2. VOCÊ VINCULA PACIENTES FREE (ilimitados, sem custo adicional)
+   → Pela clínica, convite com benefícios Pleno
    → Paciente continua Essencial no cadastro, usa limites Pleno
-   → Você paga R$ 5/mês por conta ativa
+   → Incluso no plano Cuidado — sem custo adicional
    → Ideal pra quem ainda não quer assinar o app
 
 3. DIFERENCIAL
@@ -242,7 +241,7 @@ Quem precisa de CRM, agenda e teleconsulta usa EmotiveCare Clínicas. O Cuidado 
     copyText: `Entendo. Vamos olhar o retorno:
 
 • Se 3 pacientes Pleno te convidam, você já tem contexto ilimitado sem pagar assento extra — só os R$ 149 base.
-• Cada conta patrocinada (R$ 5) costuma ser menos que o valor de 5 minutos de consulta — e aumenta adesão entre sessões.
+• Vincular pacientes free com benefícios Pleno aumenta adesão entre sessões — e no Cuidado isso não tem custo adicional.
 • Comparado a ferramentas genéricas de diário, aqui o paciente tem IA, memória e fluxo desenhado pra saúde emocional.
 
 Quer começar só com pacientes que já pagam Pleno e patrocinar contas depois?`,
@@ -266,7 +265,7 @@ Oi [Nome],
 Obrigado pela conversa hoje. Resumo do que vimos:
 
 • App para o paciente: diário emocional + SENTIO AI (Essencial grátis · Pleno R$ 9,99/mês)
-• Plano Cuidado para você: dashboards ilimitados por convite + até 15 contas patrocinadas (R$ 149/mês + R$ 5/conta)
+• Plano Cuidado para você: dashboards ilimitados por convite + pacientes ilimitados, sem custo adicional (R$ 149/mês)
 • Clínicas: CRM, agenda, teleconsulta e prontuário quando a equipe precisar
 
 Link para criar conta: [URL]/register
@@ -292,7 +291,7 @@ Preparamos acesso ao plano Cuidado da EmotiveCare para você testar com 1–2 pa
 O que você consegue fazer:
 → Receber convites de pacientes Pleno (ilimitado)
 → Ver dashboards em leitura entre sessões
-→ Convidar pacientes free com Pleno patrocinado (até 15 contas)
+→ Convidar pacientes free com benefícios Pleno (ilimitados, sem custo adicional)
 
 Não é prontuário — é contexto emocional com consentimento do paciente.
 
@@ -310,7 +309,7 @@ Conte comigo no setup inicial.
 
 Ferramenta de diário emocional + dashboard pro profissional ver tendências entre sessões (só o que o paciente autorizar).
 
-Plano Cuidado: R$ 149/mês · dashboards ilimitados · até 15 pacientes free patrocinados (+ R$ 5/cada).
+Plano Cuidado: R$ 149/mês · dashboards ilimitados · pacientes ilimitados, sem custo adicional.
 
 Posso te mandar um vídeo de 2 min ou marcar uma call rápida?`,
   },
@@ -343,7 +342,7 @@ Precisa de ajuda no passo [X]?`,
           <tr><td>CRM / Agenda</td><td>—</td><td>—</td><td>✓</td></tr>
           <tr><td>Teleconsulta</td><td>—</td><td>—</td><td>✓</td></tr>
           <tr><td>Prontuário</td><td>—</td><td>—</td><td>✓</td></tr>
-          <tr><td>Patrocinar Pleno</td><td>—</td><td>Até 15 contas</td><td>Via convite clínica</td></tr>
+          <tr><td>Pleno via Cuidado</td><td>—</td><td>Ilimitado</td><td>Via convite clínica</td></tr>
         </tbody>
       </table>
     `,
@@ -355,7 +354,7 @@ Precisa de ajuda no passo [X]?`,
     copyText: `□ Identifiquei se o lead é paciente, profissional ou clínica
 □ Expliquei que NÃO é terapia nem diagnóstico
 □ Mostrei diferença Cuidado (dashboard) vs Clínicas (operação)
-□ Expliquei convite Pleno (ilimitado) vs patrocínio (15 × R$ 5)
+□ Expliquei convite Pleno do paciente vs vínculo pela clínica (pacientes ilimitados, sem custo adicional)
 □ Alinhei quem paga: paciente (Pleno) vs profissional (Cuidado)
 □ Próximo passo concreto com data (conta, convite, demo clínica)
 □ Enviei follow-up por e-mail ou WhatsApp em 24h`,

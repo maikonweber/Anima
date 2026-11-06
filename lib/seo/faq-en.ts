@@ -50,7 +50,7 @@ export const faqEntriesEn: FaqEntry[] = [
   {
     question: "How can a Cuidado professional grant Pleno to a free patient?",
     answer:
-      "Through the clinic (EmotiveCare Clinics): the Cuidado professional sends a patient invite with sponsored Pleno (grantPleno). The patient accepts with their app account; they stay Essential in the database but get Pleno-equivalent limits. The professional pays R$ 5/mo per sponsored patient on the Cuidado plan.",
+      "Through the clinic (EmotiveCare Clinics): the Cuidado professional sends a patient invite with Pleno benefits (grantPleno). The patient accepts with their app account; they stay Essential in the database but get Pleno-equivalent limits. Unlimited linked patients, no extra cost.",
   },
   {
     question: "Can I share records with my psychologist or psychiatrist?",

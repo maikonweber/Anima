@@ -93,7 +93,7 @@ export const homeEn = {
         text: "Professional plan in the app — R$ 149/mo: read-only dashboards for patients who invite you — not the clinic chart.",
         bullets: [
           "Unlimited invite-based dashboards",
-          "Up to 15 free accounts with sponsored Pleno (+ R$ 5/mo each)",
+          "Unlimited linked patients, no extra cost",
           "Email invite to link to the app",
         ],
         cta: "Subscribe to Cuidado",
@@ -188,7 +188,7 @@ export const homeEn = {
         tagline: "Follow those who invite you.",
         features: [
           "Unlimited invite-based dashboards",
-          "Up to 15 free accounts with sponsored Pleno (+ R$ 5/mo each)",
+          "Unlimited linked patients, no extra cost",
           "Email invite to link patients",
         ],
         cta: "I am a professional",
@@ -232,7 +232,7 @@ export const homeEn = {
       {
         question: "How can a Cuidado professional grant Pleno to a free patient?",
         answer:
-          "Through the clinic (EmotiveCare Clinics): a Cuidado professional sends a patient invite with sponsored Pleno. The patient accepts with their app account; they stay Essential in the database but get Pleno-equivalent limits. The professional pays R$ 5/mo per sponsored patient.",
+          "Through the clinic (EmotiveCare Clinics): a Cuidado professional sends a patient invite with Pleno benefits. The patient accepts with their app account; they stay Essential in the database but get Pleno-equivalent limits. Unlimited linked patients, no extra cost.",
       },
       {
         question: "Can I share with my psychologist?",

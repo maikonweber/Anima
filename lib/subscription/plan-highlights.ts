@@ -5,9 +5,9 @@ const PLAN_TAGLINES: Record<PlanSlug, string> = {
   essencial: "Para começar a se entender — diário e SENTIO AI no seu ritmo.",
   pleno:
     "Segundo cérebro completo: memória, tracking, 500 interações do assistente/mês, vínculo com clínica e 1 outro Pleno — R$ 9,99.",
-  /** Cuidado: base do profissional + R$ 5/mês por paciente Pleno patrocinado. */
+  /** Cuidado: pacientes vinculados ilimitados, sem custo adicional. */
   cuidado:
-    "R$ 149/mês — dashboards ilimitados, até 15 contas free com Pleno patrocinado (+ R$ 5/mês por conta) e 500 mensagens do assistente/mês.",
+    "R$ 149/mês — dashboards ilimitados, pacientes ilimitados sem custo adicional e 500 mensagens do assistente/mês.",
   preview: "Modo demonstração — limites ampliados durante o período experimental",
 };
 
@@ -63,12 +63,10 @@ export function buildPlanHighlights(limits: PlanLimits): string[] {
   if (limits.canViewSharedDashboard && limits.accessiblePatients === null) {
     if (!limits.canShareDashboard) {
       items.push("Dashboards ilimitados por convite");
-      items.push(
-        "Até 15 contas free com Pleno patrocinado (+ R$ 5/mês por conta)",
-      );
+      items.push("Pacientes ilimitados, sem custo adicional");
     } else {
       items.push(
-        "Dashboards Cuidado ilimitados · Pleno patrocinado (+ R$ 5/mês por paciente)",
+        "Dashboards Cuidado ilimitados · pacientes ilimitados sem custo adicional",
       );
     }
   } else if (limits.accessiblePatients === 1) {

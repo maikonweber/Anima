@@ -49,7 +49,7 @@ export function PatientAppLinkPanel({ orgId, patient }: Props) {
       });
       setOk(
         grantPleno
-          ? "Conta vinculada com Pleno patrocinado (+ R$ 5/mês no plano Cuidado)."
+          ? "Conta vinculada com benefícios Pleno (incluso no Cuidado, sem custo adicional)."
           : "Conta do app vinculada. O diário compartilhado passa a aparecer.",
       );
     } catch (err) {
@@ -102,8 +102,8 @@ export function PatientAppLinkPanel({ orgId, patient }: Props) {
         </h2>
         <p className="text-xs text-[var(--clinic-muted)] mt-1 leading-relaxed">
           Necessário para diário, lembretes e sínteses. Convide por e-mail ou
-          vincule uma conta existente. Pleno patrocinado custa R$ 5/mês por
-          paciente no plano Cuidado.
+          vincule uma conta existente. No Cuidado, pacientes vinculados com
+          benefícios Pleno são ilimitados, sem custo adicional.
         </p>
       </div>
 
@@ -142,8 +142,8 @@ export function PatientAppLinkPanel({ orgId, patient }: Props) {
               onChange={(e) => setGrantPleno(e.target.checked)}
             />
             <span>
-              Conceder Pleno patrocinado (+ R$ 5/mês no profissional Cuidado —
-              cobre as 500 mensagens do assistente).
+              Conceder benefícios Pleno (incluso no Cuidado, sem custo adicional
+              — inclui as 500 mensagens do assistente).
             </span>
           </label>
           <div className="flex flex-col sm:flex-row gap-2">

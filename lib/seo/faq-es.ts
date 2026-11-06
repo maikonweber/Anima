@@ -50,7 +50,7 @@ export const faqEntriesEs: FaqEntry[] = [
   {
     question: "¿Cómo un profesional Cuidado concede Pleno a un paciente gratuito?",
     answer:
-      "Desde la clínica (EmotiveCare Clínicas): el profesional Cuidado envía invitación al e-mail del paciente con Pleno patrocinado (grantPleno). El paciente acepta con su cuenta del app; sigue Essencial en el registro, pero gana límites equivalentes a Pleno. El profesional paga R$ 5/mes por paciente patrocinado en plan Cuidado.",
+      "Desde la clínica (EmotiveCare Clínicas): el profesional Cuidado envía invitación al e-mail del paciente con beneficios Pleno (grantPleno). El paciente acepta con su cuenta del app; sigue Essencial en el registro, pero gana límites equivalentes a Pleno. Pacientes ilimitados, sin costo adicional.",
   },
   {
     question: "¿Puedo compartir registros con mi psicólogo o psiquiatra?",

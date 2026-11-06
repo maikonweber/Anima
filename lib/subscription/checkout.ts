@@ -27,7 +27,7 @@ export function planAllowsCheckout(
 }
 
 /**
- * Plano pago efetivamente cobrado (ignora Pleno patrocinado).
+ * Plano pago efetivamente cobrado (ignora Pleno concedido via vínculo Cuidado).
  * Usado para bloquear troca entre trilha paciente (Pleno) e profissional (Cuidado).
  */
 export function getBilledPaidPlanSlug(opts: {
