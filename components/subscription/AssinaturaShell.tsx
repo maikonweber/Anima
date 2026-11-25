@@ -22,18 +22,20 @@ export function AssinaturaShell({ children }: { children: React.ReactNode }) {
       className={`patient-shell min-h-full flex flex-col ${dmSans.variable} font-[family-name:var(--font-patient)]`}
       style={{ colorScheme: "light" }}
     >
-      <header className="border-b border-foreground/[0.06] px-4 sm:px-6 py-5 sm:py-6 min-h-[5rem]">
-        <div className="max-w-5xl mx-auto flex items-center justify-between gap-3">
+      <header className="sticky top-0 z-30 border-b border-foreground/[0.06] bg-background/90 backdrop-blur-md px-4 sm:px-6">
+        <div className="max-w-5xl mx-auto flex h-16 items-center justify-between gap-3">
           <AnimaLogo
             href={localizedHref("/dashboard")}
-            size="header"
+            size="nav"
             showWordmark
+            className="min-w-0"
+            wordmarkClassName="max-[380px]:hidden"
           />
-          <div className="flex items-center gap-3">
+          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
             <LanguageSwitcher variant="pills" />
             <Link
               href={localizedHref("/dashboard/perfil")}
-              className="text-sm text-foreground/50 hover:text-anima-violet transition-colors"
+              className="text-sm whitespace-nowrap text-foreground/50 hover:text-anima-violet transition-colors"
             >
               {t.nav.profile}
             </Link>

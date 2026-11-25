@@ -8,6 +8,8 @@ export type NavDictionary = {
   blog: string;
   contact: string;
   login: string;
+  goToApp: string;
+  startFree: string;
   menuOpen: string;
   menuClose: string;
   ariaLabel: string;

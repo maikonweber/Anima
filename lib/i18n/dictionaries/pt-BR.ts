@@ -11,6 +11,8 @@ export const ptBR: MarketingDictionary = {
     blog: "Blog",
     contact: "Contato",
     login: "Entrar",
+    goToApp: "Ir para o app",
+    startFree: "Começar grátis",
     menuOpen: "Abrir menu",
     menuClose: "Fechar menu",
     ariaLabel: "Links institucionais",

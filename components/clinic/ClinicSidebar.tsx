@@ -199,22 +199,22 @@ export function ClinicSidebar() {
     <>
       {/* Mobile top bar */}
       <header className="lg:hidden fixed top-0 inset-x-0 z-40 border-b border-[var(--clinic-sidebar-edge)] bg-[var(--clinic-sidebar)]/95 backdrop-blur-md clinic-safe-top">
-        <div className="flex items-center justify-between gap-2 px-3 h-12">
-          <Link href={localizedHref("/clinic")} className="flex items-center gap-2 min-w-0 flex-1">
-            <AnimaLogo size="sm" className="scale-75 origin-left shrink-0" />
-            <div className="min-w-0 -ml-1">
-              <p className="text-[11px] font-semibold text-foreground leading-none truncate">
+        <div className="flex h-14 items-center justify-between gap-2 overflow-hidden px-3">
+          <Link href={localizedHref("/clinic")} className="flex min-w-0 flex-1 items-center gap-2">
+            <AnimaLogo size="nav" className="shrink-0" />
+            <div className="min-w-0">
+              <p className="truncate text-[11px] font-semibold leading-none text-foreground">
                 {t.brand.product}
               </p>
-              <p className="text-[9px] uppercase tracking-[0.14em] text-[var(--clinic-accent)] font-semibold mt-0.5">
+              <p className="mt-0.5 text-[9px] font-semibold uppercase tracking-[0.14em] text-[var(--clinic-accent)]">
                 {t.brand.clinics}
               </p>
             </div>
           </Link>
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex shrink-0 items-center gap-2">
             <LanguageSwitcher variant="pills" className="shrink-0" />
             {orgQuery.data ? (
-              <p className="hidden sm:block text-[11px] text-[var(--clinic-muted)] truncate max-w-[7rem] text-right font-medium">
+              <p className="hidden max-w-[7rem] truncate text-right text-[11px] font-medium text-[var(--clinic-muted)] sm:block">
                 {orgQuery.data.name}
               </p>
             ) : null}

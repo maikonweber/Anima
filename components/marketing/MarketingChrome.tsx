@@ -1,8 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { AnimaLogo } from "@/components/brand/AnimaLogo";
+import { MarketingHeader } from "@/components/marketing/MarketingHeader";
 import { marketingFontVariables } from "@/components/marketing/marketing-fonts";
-import { MarketingNav } from "@/components/marketing/MarketingNav";
 import type { Locale } from "@/lib/i18n/config";
 import { DEFAULT_LOCALE, localizedPath } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -20,24 +19,13 @@ export function MarketingChrome({
 }: MarketingChromeProps) {
   const footer = getDictionary(locale).footer;
   const nav = getDictionary(locale).nav;
-  const homeHref = localizedPath(locale, "/");
   const clinicsHref = localizedPath(locale, "/clinicas");
 
   return (
     <div
       className={`home-shell marketing-shell ${marketingFontVariables} flex min-h-dvh flex-col`}
     >
-      <header className="border-b border-[var(--home-line)] px-4 py-5 sm:px-8">
-        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-x-4 gap-y-3">
-          <span className="sm:hidden">
-            <AnimaLogo href={homeHref} size="sm" showWordmark />
-          </span>
-          <span className="hidden sm:inline-flex">
-            <AnimaLogo href={homeHref} size="header" showWordmark />
-          </span>
-          <MarketingNav locale={locale} />
-        </div>
-      </header>
+      <MarketingHeader locale={locale} />
 
       <main id="main-content" role="main" className="flex-1 px-4 py-12 sm:px-8">
         <div className="mx-auto max-w-3xl">{children}</div>

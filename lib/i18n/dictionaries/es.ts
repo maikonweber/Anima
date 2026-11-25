@@ -11,6 +11,8 @@ export const es: MarketingDictionary = {
     blog: "Blog",
     contact: "Contacto",
     login: "Entrar",
+    goToApp: "Ir a la app",
+    startFree: "Empezar gratis",
     menuOpen: "Abrir menú",
     menuClose: "Cerrar menú",
     ariaLabel: "Enlaces institucionales",

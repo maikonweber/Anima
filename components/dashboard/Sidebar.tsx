@@ -229,9 +229,9 @@ export function Sidebar() {
             className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"
           />
           <div className="absolute bottom-0 left-0 right-0 rounded-t-2xl border-t border-foreground/[0.06] bg-background p-4 pb-8 safe-area-pb shadow-2xl">
-            <div className="mb-3 flex items-center justify-between">
-              <div className="mx-auto h-1 w-10 rounded-full bg-foreground/15" />
-              <LanguageSwitcher variant="pills" />
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <div className="h-1 w-10 rounded-full bg-foreground/15" />
+              <LanguageSwitcher variant="pills" className="shrink-0" />
             </div>
             <div className="grid grid-cols-3 gap-2">
               {menuItems.map((item) => {

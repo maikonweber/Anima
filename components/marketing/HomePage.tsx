@@ -1,7 +1,6 @@
 import Link from "next/link";
-import { AnimaLogo } from "@/components/brand/AnimaLogo";
-import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
-import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import { LoggedInHomeRedirect } from "@/components/marketing/LoggedInHomeRedirect";
+import { MarketingHeader } from "@/components/marketing/MarketingHeader";
 import { marketingFontVariables } from "@/components/marketing/marketing-fonts";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { faqSchema, medicalHomePageSchema } from "@/components/seo/schema";
@@ -40,7 +39,6 @@ function productHref(
 export function HomePage({ locale }: { locale: Locale }) {
   const t = getHomeDictionary(locale);
   const faqEntries = getFaqEntries(locale);
-  const homeHref = localizedPath(locale, "/");
   const loginHref = localizedPath(locale, "/login");
   const registerHref = localizedPath(locale, "/register");
   const clinicsHref = localizedPath(locale, "/clinicas");
@@ -56,70 +54,16 @@ export function HomePage({ locale }: { locale: Locale }) {
           faqSchema(faqEntries),
         ]}
       />
+      <LoggedInHomeRedirect locale={locale} />
       <div
         className={`home-shell ${marketingFontVariables} flex flex-col min-h-full`}
         lang={htmlLang(locale)}
       >
-        <header>
-          <nav
-            aria-label={t.nav.ariaLabel}
-            className="relative z-10 flex items-center justify-between gap-3 px-4 sm:px-8 py-4 sm:py-5 max-w-6xl mx-auto w-full"
-          >
-            <div className="sm:hidden shrink-0">
-              <AnimaLogo href={homeHref} size="sm" />
-            </div>
-            <div className="hidden sm:block shrink-0">
-              <AnimaLogo href={homeHref} size="header" showWordmark />
-            </div>
-            <div className="flex items-center gap-2 sm:gap-3.5 justify-end flex-wrap">
-              <ThemeToggle
-                toDarkLabel={t.nav.themeToDark}
-                toLightLabel={t.nav.themeToLight}
-              />
-              <LanguageSwitcher
-                locale={locale}
-                barePath="/"
-                variant="compact"
-              />
-              <a
-                href="#produtos"
-                className="hidden lg:inline text-sm font-medium text-[var(--home-muted)] hover:text-[var(--home-ink)] transition-colors"
-              >
-                {t.nav.products}
-              </a>
-              <a
-                href="#planos"
-                className="hidden md:inline text-sm font-medium text-[var(--home-muted)] hover:text-[var(--home-ink)] transition-colors"
-              >
-                {t.nav.plans}
-              </a>
-              <Link
-                href={clinicsHref}
-                className="hidden md:inline text-sm font-medium text-[var(--home-clinic)] hover:underline"
-              >
-                {t.nav.clinics}
-              </Link>
-              <Link
-                href={clinicAppHref}
-                className="hidden sm:inline text-sm font-medium text-[var(--home-muted)] hover:text-[var(--home-clinic)] transition-colors"
-              >
-                {t.nav.clinicApp}
-              </Link>
-              <Link
-                href={loginHref}
-                className="text-sm font-medium text-[var(--home-muted)] hover:text-[var(--home-ink)] transition-colors"
-              >
-                {t.nav.login}
-              </Link>
-              <Link
-                href={registerHref}
-                className="shrink-0 whitespace-nowrap px-3.5 sm:px-4 py-2 rounded-lg text-sm font-semibold text-white bg-[var(--home-accent)] hover:bg-[var(--home-accent-hover)] transition-colors"
-              >
-                {t.nav.cta}
-              </Link>
-            </div>
-          </nav>
-        </header>
+        <MarketingHeader
+          locale={locale}
+          homeAnchors
+          ctaLabel={t.nav.cta}
+        />
 
         <main id="main-content" role="main" className="flex flex-col flex-1">
           <section
