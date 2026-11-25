@@ -102,6 +102,12 @@
     linear-gradient(180deg, #f7f8fa 0%, var(--background) 40%);
 }
 
+@media (max-width: 1023px) {
+  .patient-shell .patient-main {
+    padding-top: calc(3.5rem + env(safe-area-inset-top, 0px));
+  }
+}
+
 .patient-shell .glass-panel {
   background: var(--patient-panel);
   border: 1px solid var(--patient-border);

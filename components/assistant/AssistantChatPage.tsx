@@ -457,10 +457,10 @@ export function AssistantChatPage() {
       {/* Área principal do chat */}
       <section className="relative z-[1] flex min-h-0 min-w-0 max-w-full flex-1 flex-col overflow-hidden lg:rounded-r-[inherit] lg:bg-transparent">
         <header className="flex shrink-0 flex-col gap-0 border-b border-rose-100/12 bg-background/72 backdrop-blur-md dark:border-rose-950/20 dark:bg-background/50 lg:border-foreground/[0.06] lg:bg-background/35 lg:backdrop-blur-sm">
-          <div className="flex items-center gap-2 px-3 py-2.5 sm:px-4 lg:px-5 lg:py-4">
+          <div className="flex items-start gap-2 px-3 py-2.5 sm:items-center sm:px-4 lg:px-5 lg:py-4">
           <button
             type="button"
-            className="-ml-0.5 flex items-center gap-2 rounded-xl p-2 text-foreground/55 transition-colors duration-200 hover:bg-rose-100/25 active:scale-[0.98] dark:hover:bg-rose-950/25 lg:hidden"
+            className="-ml-0.5 mt-0.5 flex shrink-0 items-center gap-2 rounded-xl p-2 text-foreground/55 transition-colors duration-200 hover:bg-rose-100/25 active:scale-[0.98] dark:hover:bg-rose-950/25 lg:hidden"
             onClick={() => setMobileSidebarOpen(true)}
             aria-label="Abrir conversas"
           >
@@ -482,9 +482,9 @@ export function AssistantChatPage() {
                   </p>
                 ) : (
                   <p
-                    className={`text-[10px] sm:text-[11px] ${nearLimit ? "font-medium text-amber-600 dark:text-amber-400" : "text-foreground/38"}`}
+                    className={`text-[10px] leading-snug break-words sm:text-[11px] ${nearLimit ? "font-medium text-amber-600 dark:text-amber-400" : "text-foreground/38"}`}
                   >
-                    Enquanto não carrega o assistente: {used}/{limit} mensagens (plano)&nbsp;&nbsp;
+                    Enquanto não carrega o assistente: {used}/{limit} mensagens (plano){" "}
                     <span className="text-foreground/30">este mês</span>
                   </p>
                 )}
@@ -526,10 +526,7 @@ export function AssistantChatPage() {
             >
               <TrashIcon />
             </button>
-          ) : (
-            /* Spacer on mobile so title stays visually centered block */
-            <span className="w-14 shrink-0 lg:hidden" aria-hidden />
-          )}
+          ) : null}
           </div>
           <div className="border-t border-rose-100/8 bg-rose-50/[0.35] px-3 py-2 text-[10.5px] leading-snug text-foreground/50 dark:border-rose-950/20 dark:bg-rose-950/15 sm:text-[11px] sm:px-4 lg:px-5">
             <strong className="font-medium text-foreground/65">Assistente emocional</strong> — só

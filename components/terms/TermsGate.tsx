@@ -171,7 +171,7 @@ function TermsGateModal({ pendentes }: { pendentes: TermStatusItem[] }) {
       <div
         ref={dialogRef}
         tabIndex={-1}
-        className="relative flex w-full max-w-lg max-h-[90vh] flex-col glass-panel rounded-2xl shadow-xl animate-in fade-in slide-in-from-bottom-4 focus:outline-none"
+        className="relative flex w-full min-w-0 max-w-lg max-h-[min(90vh,40rem)] flex-col glass-panel rounded-2xl shadow-xl animate-in fade-in slide-in-from-bottom-4 focus:outline-none"
       >
         <div className="p-6 sm:p-8 pb-4">
           <h2
@@ -202,7 +202,7 @@ function TermsGateModal({ pendentes }: { pendentes: TermStatusItem[] }) {
                 className="rounded-xl border border-foreground/[0.08] bg-foreground/[0.02]"
               >
                 <header className="px-4 pt-4">
-                  <h3 className="text-sm font-semibold text-foreground/85">
+                  <h3 className="text-sm font-semibold text-foreground/85 break-words">
                     {term.titulo}
                   </h3>
                   <p className="text-[11px] text-foreground/35">
@@ -221,7 +221,7 @@ function TermsGateModal({ pendentes }: { pendentes: TermStatusItem[] }) {
                         [term.id]: e.target.checked,
                       }))
                     }
-                    label={`${copy.accept}: ${term.titulo}`}
+                    label={copy.accept}
                     aria-label={`${copy.accept} ${term.titulo} (${item.tipo})`}
                   />
                 </div>

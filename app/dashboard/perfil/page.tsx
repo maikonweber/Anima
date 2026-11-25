@@ -110,30 +110,30 @@ export default function PerfilPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.1 }}
       >
-        <div className="flex items-center gap-4 mb-6">
-          <div className="w-14 h-14 rounded-full bg-anima-violet/15 flex items-center justify-center">
+        <div className="flex items-center gap-4 mb-6 min-w-0">
+          <div className="w-14 h-14 shrink-0 rounded-full bg-anima-violet/15 flex items-center justify-center">
             <span className="text-xl font-bold text-anima-violet">
               {user?.nome?.charAt(0) ?? "U"}
             </span>
           </div>
-          <div>
-            <h2 className="text-lg font-semibold text-foreground/80">
+          <div className="min-w-0">
+            <h2 className="text-lg font-semibold text-foreground/80 truncate">
               {user?.nome}
             </h2>
-            <p className="text-sm text-foreground/40">{user?.email}</p>
+            <p className="text-sm text-foreground/40 break-all">{user?.email}</p>
           </div>
         </div>
 
         <div className="space-y-3 border-t border-foreground/[0.06] pt-6">
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
             <span className="text-sm text-foreground/50">Nome</span>
-            <span className="text-sm font-medium text-foreground/70">
+            <span className="text-sm font-medium text-foreground/70 break-words sm:text-right">
               {user?.nome}
             </span>
           </div>
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
             <span className="text-sm text-foreground/50">Email</span>
-            <span className="text-sm font-medium text-foreground/70">
+            <span className="text-sm font-medium text-foreground/70 break-all min-w-0 sm:text-right">
               {user?.email}
             </span>
           </div>

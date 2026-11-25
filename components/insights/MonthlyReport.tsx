@@ -56,8 +56,8 @@ export function MonthlyReport() {
 
   return (
     <section className="glass-panel p-5 sm:p-6" aria-label="Relatório mensal">
-      <div className="mb-4 flex items-center justify-between gap-3">
-        <h2 className="text-base font-semibold text-foreground/85">
+      <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
+        <h2 className="text-base font-semibold text-foreground/85 shrink-0">
           Relatório mensal
         </h2>
         <div className="flex items-center gap-1">

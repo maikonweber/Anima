@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { AnimaLogo } from "@/components/brand/AnimaLogo";
 import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
@@ -25,6 +25,11 @@ export function Sidebar() {
   const { subscription, shouldSuggestUpgrade, isCuidado } = useSubscription();
   const planLabel = subscription?.plan.nome ?? "Essencial";
   const [menuOpen, setMenuOpen] = useState(false);
+  const [menuPath, setMenuPath] = useState(barePath);
+  if (barePath !== menuPath) {
+    setMenuPath(barePath);
+    setMenuOpen(false);
+  }
   const homeHref = isCuidado ? "/clinic" : "/dashboard";
 
   const navItems: NavItem[] = useMemo(() => {
@@ -102,22 +107,42 @@ export function Sidebar() {
     if (href === "/clinic") {
       return barePath === "/clinic" || barePath.startsWith("/clinic/");
     }
-    return (
-      barePath === href || (href !== "/dashboard" && barePath.startsWith(href))
-    );
+    if (href === "/dashboard") {
+      return barePath === "/dashboard";
+    }
+    // /diary/new must not highlight "Linha do tempo" (/diary).
+    if (href === "/diary") {
+      return (
+        barePath === "/diary" ||
+        (barePath.startsWith("/diary/") && !barePath.startsWith("/diary/new"))
+      );
+    }
+    return barePath === href || barePath.startsWith(`${href}/`);
   };
 
   const isMenuActive = menuItems.some((item) => isItemActive(item.href));
 
-  useEffect(() => {
-    setMenuOpen(false);
-  }, [barePath]);
-
   return (
     <>
+      <header className="lg:hidden fixed top-0 inset-x-0 z-40 border-b border-foreground/[0.06] bg-background/90 backdrop-blur-md pt-[env(safe-area-inset-top,0px)]">
+        <div className="flex h-14 items-center gap-2 overflow-hidden px-3">
+          <AnimaLogo
+            href={localizedHref(homeHref)}
+            size="nav"
+            showWordmark
+            className="min-w-0"
+          />
+        </div>
+      </header>
       <aside className="hidden lg:flex flex-col w-64 shrink-0 h-dvh sticky top-0 overflow-hidden border-r border-foreground/[0.06] bg-[var(--patient-sidebar,#e8eef4)]">
-        <div className="p-5 pb-4 flex items-center justify-between gap-2 min-w-0">
-          <AnimaLogo href={localizedHref(homeHref)} size="sm" className="min-w-0" />
+        <div className="space-y-2 px-3 pt-3 pb-2">
+          <AnimaLogo
+            href={localizedHref(homeHref)}
+            size="nav"
+            showWordmark
+            className="min-w-0"
+            wordmarkClassName="text-base"
+          />
           <LanguageSwitcher variant="pills" className="shrink-0" />
         </div>
 
@@ -128,7 +153,7 @@ export function Sidebar() {
               <Link
                 key={item.href}
                 href={localizedHref(item.href)}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
+                className={`flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
                   isActive
                     ? "bg-anima-violet/10 text-anima-violet"
                     : "text-foreground/50 hover:text-foreground/80 hover:bg-foreground/[0.04]"
@@ -228,12 +253,30 @@ export function Sidebar() {
             onClick={() => setMenuOpen(false)}
             className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"
           />
-          <div className="absolute bottom-0 left-0 right-0 rounded-t-2xl border-t border-foreground/[0.06] bg-background p-4 pb-8 safe-area-pb shadow-2xl">
-            <div className="mb-4 flex items-center justify-between gap-3">
-              <div className="h-1 w-10 rounded-full bg-foreground/15" />
-              <LanguageSwitcher variant="pills" className="shrink-0" />
+          <div className="absolute bottom-0 left-0 right-0 max-h-[min(80dvh,36rem)] overflow-y-auto rounded-t-2xl border-t border-foreground/[0.06] bg-background p-4 pb-8 safe-area-pb shadow-2xl">
+            <div className="mb-4 flex flex-col gap-3">
+              <div className="flex justify-center">
+                <div className="h-1 w-10 rounded-full bg-foreground/15" />
+              </div>
+              <div className="flex items-center justify-between gap-3">
+                <AnimaLogo size="nav" showWordmark className="min-w-0" wordmarkClassName="text-base" />
+                <div className="flex shrink-0 items-center gap-1">
+                  <LanguageSwitcher variant="pills" className="shrink-0" />
+                  <button
+                    type="button"
+                    aria-label="Fechar menu"
+                    onClick={() => setMenuOpen(false)}
+                    className="rounded-lg p-2 text-foreground/45 transition-colors hover:bg-foreground/[0.05] hover:text-foreground/70"
+                  >
+                    <span className="sr-only">Fechar</span>
+                    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
             </div>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {menuItems.map((item) => {
                 const isActive = isItemActive(item.href);
                 return (
@@ -248,7 +291,7 @@ export function Sidebar() {
                     }`}
                   >
                     <item.icon active={isActive} />
-                    <span className="text-[11px] font-medium leading-tight">
+                    <span className="text-[11px] font-medium leading-tight text-balance">
                       {item.label}
                     </span>
                   </Link>
