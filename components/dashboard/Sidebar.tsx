@@ -94,6 +94,7 @@ export function Sidebar() {
       { href: "/dashboard/consents", label: t.nav.consents, icon: ShieldIcon },
       { href: "/dashboard/lembretes", label: t.nav.reminders, icon: BellIcon },
       { href: "/dashboard/plano", label: t.nav.carePlan, icon: PlanIcon },
+      { href: "/dashboard/respirar", label: t.nav.calm, icon: WindIcon },
       { href: "/dashboard/recursos", label: t.nav.crisis, icon: LifeBuoyIcon },
       { href: "/suporte", label: t.nav.support, icon: SupportIcon },
       { href: "/dashboard/perfil", label: t.nav.profile, icon: UserIcon },
@@ -574,6 +575,24 @@ function PlanIcon({ active }: { active: boolean }) {
         strokeLinecap="round"
         strokeLinejoin="round"
         d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+      />
+    </svg>
+  );
+}
+
+function WindIcon({ active }: { active: boolean }) {
+  return (
+    <svg
+      className="w-5 h-5"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={active ? 2 : 1.5}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M3 8h10.5a2.5 2.5 0 10-2.5-2.5M3 12h15.5a2.5 2.5 0 11-2.5 2.5M3 16h7.5a2.5 2.5 0 11-2.5 2.5"
       />
     </svg>
   );

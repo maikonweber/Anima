@@ -34,6 +34,7 @@ export const AUTHENTICATED_ROUTES = [
   "/dashboard/lembretes",
   "/dashboard/plano",
   "/dashboard/recursos",
+  "/dashboard/respirar",
   "/dashboard/consents",
   "/dashboard/care",
   "/diary",

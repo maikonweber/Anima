@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { motion } from "motion/react";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { CrisisResourcesList } from "@/components/crisis/CrisisResourcesList";
@@ -10,7 +11,7 @@ import { useLocale } from "@/lib/i18n/locale-provider";
 import { getProductDictionary } from "@/lib/i18n/product-dictionary";
 
 export default function PatientCrisisResourcesPage() {
-  const { locale } = useLocale();
+  const { locale, localizedHref } = useLocale();
   const t = getProductDictionary(locale);
   const {
     data: orgs,
@@ -48,6 +49,12 @@ export default function PatientCrisisResourcesPage() {
           Canais de apoio da sua clínica e redes públicas. Não é atendimento de
           emergência.
         </p>
+        <Link
+          href={localizedHref("/dashboard/respirar")}
+          className="mb-6 inline-flex items-center gap-2 rounded-full border border-anima-violet/30 bg-anima-violet/[0.06] px-4 py-2 text-sm font-medium text-anima-violet hover:bg-anima-violet/[0.12] transition-colors"
+        >
+          {t.nav.calm}: respiração e aterramento →
+        </Link>
 
         {orgsLoading && (
           <div className="h-24 rounded-2xl bg-foreground/[0.06] animate-pulse" />

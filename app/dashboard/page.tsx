@@ -10,11 +10,13 @@ import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { Button } from "@/components/ui/Button";
 import { useLocale } from "@/lib/i18n/locale-provider";
 import { getProductDictionary } from "@/lib/i18n/product-dictionary";
+import { getCalmDictionary } from "@/lib/i18n/dictionaries/calm";
 
 export default function DashboardHome() {
   const { user } = useAuth();
   const { locale, localizedHref } = useLocale();
   const t = getProductDictionary(locale);
+  const calm = getCalmDictionary(locale);
   const { data: summary, isLoading, error, refetch } = useWeekSummary();
   const greeting = getGreeting(t.pages.greetings);
 
@@ -100,6 +102,30 @@ export default function DashboardHome() {
           </Link>
         </motion.div>
       )}
+
+      <motion.div
+        className="relative mt-6"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.15 }}
+      >
+        <Link
+          href={localizedHref("/dashboard/respirar")}
+          className="glass-panel flex items-center justify-between gap-4 p-5 transition-colors hover:border-anima-violet/30"
+        >
+          <span>
+            <span className="block text-sm font-semibold text-foreground/80">
+              {calm.dashboardCardTitle}
+            </span>
+            <span className="block text-xs text-foreground/50 mt-0.5">
+              {calm.dashboardCardText}
+            </span>
+          </span>
+          <span className="shrink-0 text-sm font-medium text-anima-violet">
+            {calm.dashboardCardCta}
+          </span>
+        </Link>
+      </motion.div>
 
       <motion.div
         className="relative mt-10 flex gap-3 flex-wrap"
