@@ -4,11 +4,18 @@ import { motion, useReducedMotion } from "motion/react";
 import { TrendsChart } from "@/components/insights/TrendsChart";
 import { MonthlyReport } from "@/components/insights/MonthlyReport";
 import { CorrelationBars } from "@/components/insights/CorrelationBars";
+import { MoodCalendarCard } from "@/components/insights/MoodCalendarCard";
+import Link from "next/link";
+import { useLocale } from "@/lib/i18n/locale-provider";
+import { getProductDictionary } from "@/lib/i18n/product-dictionary";
 
 export default function InsightsPage() {
   const reduce = useReducedMotion() ?? false;
+  const { locale, localizedHref } = useLocale();
+  const t = getProductDictionary(locale);
 
   const sections = [
+    <MoodCalendarCard key="calendar" />,
     <TrendsChart key="trends" />,
     <MonthlyReport key="monthly" />,
     <CorrelationBars key="correlations" />,
@@ -28,6 +35,12 @@ export default function InsightsPage() {
         <p className="text-sm text-foreground/40">
           Padrões e tendências da sua jornada emocional
         </p>
+        <Link
+          href={localizedHref("/dashboard/relatorio")}
+          className="inline-block mt-3 text-sm font-medium text-anima-violet hover:underline"
+        >
+          {t.report.link} →
+        </Link>
       </motion.div>
 
       <div className="space-y-6">

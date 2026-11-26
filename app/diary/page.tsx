@@ -56,16 +56,24 @@ export default function DiaryListPage() {
             Seus momentos e sua memória emocional
           </p>
         </div>
-        <Link
-          href={localizedHref("/diary/new")}
-          className="shrink-0 px-4 py-2 rounded-full text-sm font-medium text-white"
-          style={{
-            background:
-              "linear-gradient(135deg, var(--anima-violet), var(--anima-indigo))",
-          }}
-        >
-          + Novo
-        </Link>
+        <div className="flex shrink-0 flex-col items-end gap-2 sm:flex-row sm:items-center">
+          <Link
+            href={localizedHref("/dashboard/relatorio")}
+            className="px-3 py-2 rounded-full text-sm font-medium text-anima-violet hover:bg-anima-violet/10"
+          >
+            {t.report.link}
+          </Link>
+          <Link
+            href={localizedHref("/diary/new")}
+            className="px-4 py-2 rounded-full text-sm font-medium text-white"
+            style={{
+              background:
+                "linear-gradient(135deg, var(--anima-violet), var(--anima-indigo))",
+            }}
+          >
+            + Novo
+          </Link>
+        </div>
       </div>
 
       <DiarySearchBar />

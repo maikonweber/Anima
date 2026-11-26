@@ -740,3 +740,38 @@ select.anima-select option:disabled {
 .dark .home-product--clinic {
   background: linear-gradient(180deg, #132226 0%, #182227 45%);
 }
+
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .patient-shell aside,
+  .patient-shell nav,
+  .patient-shell header {
+    display: none !important;
+  }
+
+  .patient-shell .patient-main {
+    padding: 0 !important;
+    background: #fff !important;
+  }
+
+  body,
+  html {
+    background: #fff !important;
+  }
+
+  .therapy-print-sheet {
+    box-shadow: none !important;
+    border: 0 !important;
+    background: #fff !important;
+    padding: 0 !important;
+  }
+
+  a {
+    text-decoration: none !important;
+    color: inherit !important;
+  }
+}

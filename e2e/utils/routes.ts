@@ -35,6 +35,7 @@ export const AUTHENTICATED_ROUTES = [
   "/dashboard/plano",
   "/dashboard/recursos",
   "/dashboard/respirar",
+  "/dashboard/relatorio",
   "/dashboard/consents",
   "/dashboard/care",
   "/diary",

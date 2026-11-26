@@ -6,6 +6,7 @@ import { useAuth } from "@/providers/auth-provider";
 import { useWeekSummary } from "@/hooks/use-diary";
 import { WeekSummaryChart } from "@/components/diary/WeekSummaryChart";
 import { StreakWidget } from "@/components/insights/StreakWidget";
+import { MoodCalendarCard } from "@/components/insights/MoodCalendarCard";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { Button } from "@/components/ui/Button";
 import { useLocale } from "@/lib/i18n/locale-provider";
@@ -59,6 +60,10 @@ export default function DashboardHome() {
 
       <div className="relative mb-6">
         <StreakWidget />
+      </div>
+
+      <div className="relative mb-6">
+        <MoodCalendarCard />
       </div>
 
       {error && (
@@ -138,6 +143,12 @@ export default function DashboardHome() {
           className="text-sm text-anima-violet hover:text-anima-lilac transition-colors"
         >
           {t.pages.dashboardSeeTimeline}
+        </Link>
+        <Link
+          href={localizedHref("/dashboard/relatorio")}
+          className="text-sm text-anima-violet hover:text-anima-lilac transition-colors"
+        >
+          {t.report.link} →
         </Link>
       </motion.div>
     </div>
