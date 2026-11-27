@@ -6,6 +6,7 @@ import { PreviewModeBanner } from "@/components/PreviewModeBanner";
 import { TermsGate } from "@/components/terms/TermsGate";
 import { SkipLink } from "@/components/layout/SkipLink";
 import { GlobalJsonLd } from "@/components/seo/GlobalJsonLd";
+import { AdSensePublicScript } from "@/components/adsense/AdSensePublicScript";
 import { AuthProvider } from "@/providers/auth-provider";
 import { FeatureFlagsProvider } from "@/providers/feature-flags-provider";
 import { SubscriptionConfigProvider } from "@/providers/subscription-config-provider";
@@ -98,6 +99,9 @@ export const metadata: Metadata = {
     shortcut: "/favicon.png",
     apple: [{ url: "/apple-touch-icon.png", type: "image/png", sizes: "180x180" }],
   },
+  other: {
+    "google-adsense-account": "ca-pub-1638014307034538",
+  },
 };
 
 export const viewport: Viewport = {
@@ -120,6 +124,9 @@ export default async function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
+      <head>
+        <AdSensePublicScript />
+      </head>
       <body className="min-h-full flex flex-col bg-background">
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <GlobalJsonLd />

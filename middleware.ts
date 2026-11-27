@@ -5,6 +5,7 @@ import {
   LOCALE_HEADER,
   type Locale,
 } from "@/lib/i18n/config";
+import { ADSENSE_PATHNAME_HEADER } from "@/lib/adsense";
 
 function isStaticAsset(pathname: string): boolean {
   return (
@@ -47,6 +48,7 @@ export function middleware(request: NextRequest) {
 
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set(LOCALE_HEADER, locale);
+  requestHeaders.set(ADSENSE_PATHNAME_HEADER, barePath);
 
   if (locale !== DEFAULT_LOCALE) {
     const url = request.nextUrl.clone();
